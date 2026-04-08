@@ -1,0 +1,4152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Rediance — App</title>
+  <style>
+    :root {
+      --primary: #7C3AED;
+      --primary-light: #A78BFA;
+      --primary-dark: #5B21B6;
+      --primary-bg: #F3EEFF;
+      --primary-bg-light: #F8F5FF;
+      --gold: #F59E0B;
+      --gold-light: #FCD34D;
+      --amber: #D97706;
+      --silver: #94A3B8;
+      --bg: #FFFFFF;
+      --surface: #FAFAFA;
+      --border: #E5E7EB;
+      --text-main: #111827;
+      --text-sub: #6B7280;
+      --text-light: #9CA3AF;
+      --success: #10B981;
+      --danger: #EF4444;
+      --inner-bg: #F3EEFF;
+      --trusted-bg: #F8F5FF;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-xl: 24px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --tab-height: 68px;
+      --header-height: 56px;
+      --status-height: 44px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+      background: #F0EBF8;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    /* ===== PHONE SHELL ===== */
+    .phone {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100vh;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 40px rgba(0,0,0,0.15);
+    }
+
+    /* ===== STATUS BAR ===== */
+    .status-bar {
+      height: var(--status-height);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+    .status-time {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .status-icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-main);
+    }
+
+    /* ===== SCREENS CONTAINER ===== */
+    .screens {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ===== SCREEN BASE ===== */
+    .screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      background: var(--bg);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(20px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .screen.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      position: sticky;
+      top: 0;
+      height: var(--header-height);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 50;
+    }
+    .header-logo {
+      font-size: 20px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--surface);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: background 0.15s;
+    }
+    .icon-btn:active { background: var(--primary-bg); }
+
+    /* ===== TAB BAR ===== */
+    .tab-bar {
+      height: var(--tab-height);
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      cursor: pointer;
+      padding: 6px 0;
+      border: none;
+      background: none;
+      transition: all 0.15s;
+    }
+    .tab-icon {
+      font-size: 22px;
+      transition: transform 0.15s;
+    }
+    .tab-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-light);
+      transition: color 0.15s;
+    }
+    .tab-item.active .tab-label { color: var(--primary); }
+    .tab-item.active .tab-icon { transform: scale(1.1); }
+
+    /* ===== POST BUTTON (center tab) ===== */
+    .tab-post {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+    .tab-post-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: white;
+      box-shadow: 0 4px 12px rgba(124,58,237,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .tab-post-btn:active {
+      transform: scale(0.93);
+      box-shadow: 0 2px 6px rgba(124,58,237,0.3);
+    }
+
+    /* ===== TIKTOK FEED ===== */
+    .tiktok-feed {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .tiktok-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+      overflow: hidden;
+    }
+
+    /* background overlay for text readability */
+    .tiktok-slide::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.05) 0%,
+        rgba(0,0,0,0) 30%,
+        rgba(0,0,0,0.5) 70%,
+        rgba(0,0,0,0.75) 100%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* decorative light blob */
+    .tiktok-slide-bg-blob {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .tiktok-slide-content {
+      position: relative;
+      z-index: 2;
+      padding: 0;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      height: 100%;
+    }
+
+    /* main text area (center) */
+    .tiktok-main {
+      flex: 1;
+      padding: 0 16px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    /* radiance label at top of slide */
+    .tiktok-radiance-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(135deg, rgba(124,58,237,0.7), rgba(217,119,6,0.7));
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 14px;
+      backdrop-filter: blur(4px);
+    }
+
+    /* reel overlay */
+    .tiktok-reel-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .tiktok-reel-play {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(8px);
+      border: 2px solid rgba(255,255,255,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .tiktok-reel-play:active { transform: scale(0.9); }
+
+    .tiktok-post-text {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.55;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6), 0 0 20px rgba(0,0,0,0.3);
+      margin-bottom: 18px;
+      white-space: pre-line;
+    }
+
+    .tiktok-bottom-bar {
+      position: absolute;
+      bottom: 80px;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 14px 0 16px;
+      z-index: 3;
+    }
+    .tiktok-user-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .tiktok-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.6);
+    }
+    .tiktok-user-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .tiktok-user-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+    .tiktok-user-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.95);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      font-weight: 700;
+    }
+    .tiktok-title-sun {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .tiktok-title-nova { color: #A78BFA; }
+    .tiktok-title-moon { color: #94A3B8; }
+    .tiktok-title-star { color: #FFFFFF; }
+    .tiktok-title-ember { color: #9CA3AF; }
+    .tiktok-tier-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+      backdrop-filter: blur(4px);
+    }
+
+    /* right action bar */
+    .tiktok-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      padding: 0 14px 0 0;
+      flex-shrink: 0;
+    }
+    .tiktok-action-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+    .tiktok-action-icon {
+      font-size: 28px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+      transition: transform 0.15s;
+    }
+    .tiktok-action-item:active .tiktok-action-icon { transform: scale(0.85); }
+    .tiktok-action-count {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    }
+
+    /* swipe hint */
+    .tiktok-swipe-hint {
+      position: absolute;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      pointer-events: none;
+      animation: tiktokHintBounce 1.5s ease-in-out infinite;
+    }
+    .tiktok-swipe-hint-text {
+      font-size: 10px;
+      color: rgba(255,255,255,0.7);
+      font-weight: 600;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+    @keyframes tiktokHintBounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-5px); }
+    }
+
+    /* dot indicators on right */
+    .tiktok-dots {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      z-index: 3;
+    }
+    .tiktok-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.4);
+      transition: height 0.2s, background 0.2s;
+    }
+    .tiktok-dot.active {
+      height: 16px;
+      background: #fff;
+    }
+
+    /* ===== POST CARD ===== */
+    .post-card {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px;
+      transition: background 0.15s;
+    }
+    .post-card.tier-inner { background: var(--inner-bg); }
+    .post-card.tier-trusted { background: var(--trusted-bg); }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+    .avatar-inner { background: linear-gradient(135deg, #7C3AED, #A78BFA); color: white; }
+    .avatar-trusted { background: linear-gradient(135deg, #5B21B6, #7C3AED); color: white; }
+    .avatar-close { background: linear-gradient(135deg, #8B5CF6, #C4B5FD); color: white; }
+    .avatar-connected { background: linear-gradient(135deg, #94A3B8, #CBD5E1); color: white; }
+    .avatar-radiance { background: linear-gradient(135deg, #1E1B4B, #312E81); color: #FCD34D; }
+
+    .post-meta { flex: 1; min-width: 0; }
+    .post-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .post-handle-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 1px;
+    }
+    .post-handle {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+    .tier-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 20px;
+      background: rgba(124,58,237,0.12);
+      color: var(--primary);
+    }
+    .tier-badge.inner { background: rgba(124,58,237,0.18); color: #5B21B6; }
+    .tier-badge.trusted { background: rgba(124,58,237,0.1); color: var(--primary); }
+    .tier-badge.close { background: rgba(139,92,246,0.1); color: #7C3AED; }
+    .tier-badge.connected { background: rgba(148,163,184,0.15); color: #64748B; }
+
+    .score-chip {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-left: auto;
+    }
+    .post-time {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-left: 6px;
+    }
+
+    .post-body {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      white-space: pre-line;
+    }
+    .post-actions {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      color: var(--text-sub);
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 4px 0;
+      transition: color 0.15s;
+    }
+    .action-btn.liked { color: #EF4444; }
+    .action-btn:active { opacity: 0.6; }
+    .action-count { font-size: 12px; }
+
+    /* ===== REEL CARD ===== */
+    .reel-thumb {
+      width: 100%;
+      height: 200px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #1E0B4E 0%, #0F172A 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 10px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .reel-thumb::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.6) 100%);
+    }
+    .reel-play {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(8px);
+      border: 2px solid rgba(255,255,255,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      z-index: 1;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .reel-thumb:active .reel-play { transform: scale(0.9); background: rgba(255,255,255,0.3); }
+    .reel-duration {
+      position: absolute;
+      bottom: 10px;
+      right: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: white;
+      z-index: 1;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+    .reel-tag {
+      position: absolute;
+      top: 10px;
+      left: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      background: rgba(124,58,237,0.7);
+      padding: 2px 8px;
+      border-radius: 20px;
+      z-index: 1;
+    }
+
+    /* ===== RADIANCE CARD ===== */
+    .radiance-card {
+      margin: 4px 0;
+      border-bottom: none !important;
+    }
+    .radiance-label {
+      background: linear-gradient(135deg, #7C3AED, #D97706);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .radiance-label-text {
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.3px;
+    }
+    .radiance-inner {
+      padding: 14px 16px;
+      border: 2px solid #F59E0B;
+      border-top: none;
+      box-shadow: 0 0 20px rgba(245,158,11,0.2), inset 0 0 20px rgba(245,158,11,0.03);
+      background: #FFFBF0;
+    }
+    .radiance-score {
+      font-size: 13px;
+      font-weight: 800;
+      color: #D97706;
+    }
+
+    /* ===== POKEMON CARD PROFILE ===== */
+    .pokemon-profile-card {
+      margin: 16px;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      text-align: center;
+      padding: 24px 20px 20px;
+      color: white;
+    }
+
+    /* Sun */
+    .pokemon-card-sun {
+      border: 3px solid #F59E0B;
+      background: linear-gradient(135deg, #1a1a0e, #2d2400, #1a1a0e);
+      box-shadow: 0 0 20px rgba(245,158,11,0.4), 0 0 40px rgba(245,158,11,0.15);
+    }
+    .pokemon-card-sun::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 20%, rgba(255,215,0,0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(245,158,11,0.08) 0%, transparent 50%);
+      pointer-events: none;
+      animation: sunSparkle 3s ease-in-out infinite;
+    }
+    @keyframes sunSparkle {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* Nova */
+    .pokemon-card-nova {
+      border: 3px solid #A78BFA;
+      background: linear-gradient(135deg, #1a1025, #2d1b4e, #1a1025);
+      box-shadow: 0 0 20px rgba(167,139,250,0.35), 0 0 40px rgba(167,139,250,0.12);
+    }
+
+    /* Moon */
+    .pokemon-card-moon {
+      border: 2px solid #94A3B8;
+      background: linear-gradient(135deg, #0f1923, #1a2a3a, #0f1923);
+      box-shadow: 0 0 16px rgba(148,163,184,0.25), 0 0 32px rgba(148,163,184,0.08);
+    }
+
+    /* Star */
+    .pokemon-card-star {
+      border: 2px solid #60A5FA;
+      background: linear-gradient(135deg, #0a1628, #152238, #0a1628);
+      box-shadow: 0 0 14px rgba(96,165,250,0.2), 0 0 28px rgba(96,165,250,0.06);
+    }
+
+    /* Ember */
+    .pokemon-card-ember {
+      border: 1px solid #78716C;
+      background: linear-gradient(135deg, #1c1917, #292524, #1c1917);
+      box-shadow: 0 0 10px rgba(120,113,108,0.15);
+    }
+
+    .pokemon-card-tier-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      opacity: 0.7;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .pokemon-card-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 12px;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+
+    .pokemon-card-name {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 2px;
+      color: white;
+    }
+    .pokemon-card-handle {
+      font-size: 13px;
+      opacity: 0.6;
+      margin-bottom: 6px;
+    }
+    .pokemon-card-bio {
+      font-size: 12px;
+      opacity: 0.8;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .pokemon-card-score-num {
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 4px;
+      line-height: 1;
+    }
+    .pokemon-card-score-num.score-sun {
+      background: linear-gradient(135deg, #F59E0B, #FCD34D, #D97706);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .pokemon-card-score-num.score-nova { color: #A78BFA; }
+    .pokemon-card-score-num.score-moon { color: #94A3B8; }
+    .pokemon-card-score-num.score-star { color: #60A5FA; }
+    .pokemon-card-score-num.score-ember { color: #9CA3AF; }
+
+    .pokemon-card-score-label {
+      font-size: 11px;
+      opacity: 0.55;
+      margin-bottom: 14px;
+    }
+
+    .pokemon-card-progress-label {
+      font-size: 10px;
+      opacity: 0.5;
+      margin-bottom: 5px;
+      text-align: right;
+    }
+    .pokemon-card-progress-track {
+      height: 6px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .pokemon-card-progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      width: 60%;
+    }
+    .pokemon-card-progress-fill-sun {
+      background: linear-gradient(90deg, #F59E0B, #FCD34D);
+    }
+    .pokemon-card-progress-fill-nova {
+      background: linear-gradient(90deg, #7C3AED, #A78BFA);
+    }
+    .pokemon-card-progress-fill-moon {
+      background: linear-gradient(90deg, #64748B, #94A3B8);
+    }
+    .pokemon-card-progress-fill-star {
+      background: linear-gradient(90deg, #2563EB, #60A5FA);
+    }
+    .pokemon-card-progress-fill-ember {
+      background: linear-gradient(90deg, #57534E, #78716C);
+    }
+    .pokemon-card-progress-hint {
+      font-size: 10px;
+      opacity: 0.5;
+      margin-top: 4px;
+    }
+
+    /* ===== USER PROFILE POKEMON CARD ===== */
+    .up-pokemon-card {
+      margin: 16px;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      text-align: center;
+      padding: 24px 20px 20px;
+      color: white;
+    }
+
+    .circle-settings-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      margin: 0 16px 24px;
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary);
+      transition: background 0.15s;
+    }
+    .circle-settings-link:active { background: var(--primary-bg); }
+
+    /* ===== MY PROFILE TABS ===== */
+    .my-profile-tab-bar {
+      display: flex;
+      border-bottom: 1.5px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 5;
+    }
+    .my-profile-tab {
+      flex: 1;
+      padding: 12px 0;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sub);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1.5px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .my-profile-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    .my-profile-posts-feed {
+      padding: 0 0 100px;
+    }
+
+    /* ===== CIRCLE SCREEN ===== */
+    .circle-screen-header {
+      padding: 20px 16px 0;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .circle-screen-sub {
+      padding: 4px 16px 16px;
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+
+    .circle-section {
+      margin: 0 16px 12px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border);
+      overflow: hidden;
+    }
+    .circle-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      cursor: pointer;
+      background: var(--bg);
+      transition: background 0.15s;
+      user-select: none;
+    }
+    .circle-section-header:active { background: var(--surface); }
+    .circle-section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .circle-capacity {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+    .circle-chevron {
+      font-size: 12px;
+      color: var(--text-light);
+      transition: transform 0.2s;
+    }
+    .circle-section.open .circle-chevron { transform: rotate(180deg); }
+
+    .circle-section-body {
+      display: none;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 14px 16px;
+    }
+    .circle-section.open .circle-section-body { display: block; }
+
+    .circle-members-scroll {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .circle-members-scroll::-webkit-scrollbar { display: none; }
+
+    .circle-member {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 60px;
+      cursor: pointer;
+    }
+    .circle-member-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      transition: border-color 0.15s;
+    }
+    .circle-member-avatar:active { border-color: var(--primary); }
+    .circle-member-name {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-sub);
+      text-align: center;
+      max-width: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .add-slot {
+      min-width: 60px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px dashed var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--primary-light);
+      cursor: pointer;
+      background: var(--primary-bg);
+      transition: all 0.15s;
+    }
+    .add-slot:active { background: var(--primary-bg); border-color: var(--primary); }
+    .add-slot-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 60px;
+    }
+    .add-slot-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--primary-light);
+      text-align: center;
+    }
+
+    .ambient-count {
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--text-sub);
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      display: none;
+    }
+    .circle-section.open .ambient-count { display: block; }
+
+    /* ===== DISCOVER SCREEN ===== */
+    .discover-search {
+      padding: 14px 16px 8px;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+    .search-input-wrap {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 8px;
+      height: 42px;
+    }
+    .search-input {
+      flex: 1;
+      border: none;
+      background: none;
+      font-size: 14px;
+      outline: none;
+      color: var(--text-main);
+    }
+    .search-input::placeholder { color: var(--text-light); }
+    .discover-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      padding: 14px 16px 8px;
+    }
+    .discover-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 0 16px 16px;
+    }
+    .discover-card {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .discover-card:active { transform: scale(0.97); }
+    .discover-card-thumb {
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+    }
+    .discover-card-body {
+      padding: 8px 10px 10px;
+      background: var(--bg);
+    }
+    .discover-card-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .discover-card-score {
+      font-size: 11px;
+      color: var(--primary);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* ===== NOTIFICATIONS ===== */
+    .notif-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .notif-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--primary-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .notif-body { flex: 1; }
+    .notif-text {
+      font-size: 13px;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+    .notif-text strong { font-weight: 700; }
+    .notif-time {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 3px;
+    }
+    .notif-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: calc(var(--tab-height) + 20px);
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(17,24,39,0.9);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      white-space: nowrap;
+      max-width: 320px;
+      text-align: center;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== ACTION SHEET ===== */
+    .action-sheet-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .action-sheet-overlay.show { opacity: 1; pointer-events: auto; }
+    .action-sheet {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(100%);
+      width: 100%;
+      max-width: 430px;
+      background: var(--bg);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      padding: 20px 16px 36px;
+      transition: transform 0.25s ease;
+    }
+    .action-sheet-overlay.show .action-sheet { transform: translateX(-50%) translateY(0); }
+    .action-sheet-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      margin: 0 auto 20px;
+    }
+    .action-sheet-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .action-sheet-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+    .action-sheet-item:last-child { border-bottom: none; }
+    .action-sheet-item.danger { color: var(--danger); }
+    .action-sheet-item .action-icon { font-size: 20px; }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      gap: 12px;
+    }
+    .empty-icon { font-size: 48px; }
+    .empty-title { font-size: 16px; font-weight: 700; color: var(--text-main); }
+    .empty-desc { font-size: 13px; color: var(--text-sub); text-align: center; line-height: 1.6; }
+
+    /* ===== NOTIFICATION BADGE ===== */
+    .tab-badge {
+      position: relative;
+      display: inline-block;
+    }
+    .badge-dot {
+      position: absolute;
+      top: -2px;
+      right: -4px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--danger);
+      border: 1.5px solid var(--bg);
+    }
+
+    /* ===== USER PROFILE OVERLAY ===== */
+    .user-profile-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      z-index: 200;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      transform: translateX(100%);
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+    .user-profile-overlay.open {
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    .up-header {
+      position: sticky;
+      top: 0;
+      height: var(--header-height);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      z-index: 10;
+    }
+    .up-back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--surface);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .up-back-btn:active { background: var(--primary-bg); }
+    .up-header-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .up-banner {
+      height: 120px;
+      position: relative;
+    }
+    .up-avatar-wrap {
+      position: absolute;
+      bottom: -40px;
+      left: 16px;
+    }
+    .up-avatar {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      border: 4px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .up-follow-row {
+      display: flex;
+      justify-content: flex-end;
+      padding: 12px 16px 0;
+    }
+    .up-follow-btn {
+      height: 36px;
+      padding: 0 20px;
+      border-radius: 18px;
+      border: 1.5px solid var(--primary);
+      background: var(--primary);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .up-follow-btn.following {
+      background: var(--bg);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+    .up-follow-btn:active { opacity: 0.75; }
+
+    .up-info {
+      padding: 48px 16px 16px;
+    }
+    .up-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+    .up-handle {
+      font-size: 14px;
+      color: var(--text-sub);
+      margin-bottom: 10px;
+    }
+    .up-bio {
+      font-size: 14px;
+      color: var(--text-main);
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    .up-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .up-meta-item {
+      font-size: 13px;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .up-score-section {
+      margin: 0 16px 16px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid rgba(124,58,237,0.18);
+      background: var(--primary-bg-light);
+    }
+    .up-score-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+    }
+    .up-title-text {
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .up-title-text.title-sun {
+      background: linear-gradient(135deg, #F59E0B, #D97706, #F59E0B);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .up-title-text.title-nova { color: #A78BFA; }
+    .up-title-text.title-moon { color: #94A3B8; }
+    .up-title-text.title-star { color: var(--text-main); }
+    .up-title-text.title-ember { color: #9CA3AF; }
+    .up-title-desc {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-bottom: 12px;
+    }
+    .up-radiance-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(245,158,11,0.15));
+      border: 1px solid rgba(245,158,11,0.4);
+      font-size: 12px;
+      font-weight: 700;
+      color: #92400E;
+      margin-bottom: 10px;
+    }
+    .up-circle-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .up-circle-stat-row {
+      font-size: 13px;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .up-circle-stat-row strong {
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    /* ===== USER PROFILE TABS ===== */
+    .up-tab-bar {
+      display: flex;
+      border-bottom: 1.5px solid var(--border);
+      margin: 0;
+      position: sticky;
+      top: var(--header-height);
+      background: var(--bg);
+      z-index: 5;
+    }
+    .up-tab {
+      flex: 1;
+      padding: 12px 0;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sub);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1.5px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .up-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .up-posts-feed {
+      padding: 0 0 80px;
+    }
+
+    /* clickable avatar/name in timeline */
+    .avatar.clickable, .post-name.clickable {
+      cursor: pointer;
+    }
+    .post-name.clickable:hover {
+      text-decoration: underline;
+      text-decoration-color: rgba(124,58,237,0.4);
+    }
+
+    /* ===== ADD MEMBER BOTTOM SHEET ===== */
+    .add-member-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .add-member-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .add-member-sheet {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(100%);
+      width: 100%;
+      max-width: 430px;
+      height: 70%;
+      background: var(--bg);
+      border-radius: 20px 20px 0 0;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease-out;
+      overflow: hidden;
+    }
+    .add-member-overlay.show .add-member-sheet {
+      transform: translateX(-50%) translateY(0);
+    }
+    .add-member-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      margin: 12px auto 0;
+      flex-shrink: 0;
+    }
+    .add-member-header {
+      padding: 12px 16px 0;
+      flex-shrink: 0;
+    }
+    .add-member-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+    .add-member-search {
+      background: #F3F4F6;
+      border: none;
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 8px;
+      height: 40px;
+      margin-bottom: 12px;
+    }
+    .add-member-search-icon {
+      font-size: 14px;
+      color: var(--text-light);
+    }
+    .add-member-search-input {
+      flex: 1;
+      border: none;
+      background: none;
+      font-size: 14px;
+      outline: none;
+      color: var(--text-main);
+    }
+    .add-member-search-input::placeholder { color: var(--text-light); }
+
+    .add-member-body {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 16px 24px;
+    }
+    .add-member-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-bottom: 10px;
+      margin-top: 4px;
+    }
+
+    /* recommended avatars */
+    .add-member-recommended {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 16px;
+    }
+    .add-member-recommended::-webkit-scrollbar { display: none; }
+    .add-member-rec-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .add-member-rec-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--primary-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      box-shadow: 0 2px 8px rgba(124,58,237,0.15);
+      transition: transform 0.15s, box-shadow 0.15s;
+      border: 2px solid rgba(124,58,237,0.12);
+    }
+    .add-member-rec-avatar:active {
+      transform: scale(0.92);
+      box-shadow: 0 1px 4px rgba(124,58,237,0.1);
+    }
+    .add-member-rec-name {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-sub);
+      text-align: center;
+      max-width: 64px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* follower list */
+    .add-member-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .add-member-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .add-member-row:last-child { border-bottom: none; }
+    .add-member-row-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--primary-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .add-member-row-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .add-member-row-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .add-member-row-handle {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+    .add-member-row.already .add-member-row-name {
+      opacity: 0.4;
+    }
+    .add-member-row.already .add-member-row-handle {
+      opacity: 0.4;
+    }
+    .add-member-already-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-bg);
+      padding: 3px 8px;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+    .add-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid var(--primary);
+      background: var(--bg);
+      color: var(--primary);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      line-height: 1;
+    }
+    .add-btn:active {
+      background: var(--primary);
+      color: white;
+    }
+    .add-btn.added {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    .add-btn.adding {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* ===== POST COMPOSER ===== */
+    .composer-screen {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: var(--bg);
+    }
+    .composer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--header-height);
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .composer-header-btn {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-sub);
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 6px 4px;
+    }
+    .composer-header-btn.primary {
+      color: var(--primary);
+    }
+    .composer-header-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .composer-header-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .composer-body {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Step 1 */
+    .composer-step1 {
+      padding: 20px 16px;
+    }
+    .composer-avatar-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .composer-my-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7C3AED, #A78BFA);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .composer-textarea-wrap {
+      flex: 1;
+    }
+    .composer-textarea {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-main);
+      resize: none;
+      min-height: 140px;
+      font-family: inherit;
+      background: transparent;
+    }
+    .composer-textarea::placeholder { color: var(--text-light); }
+    .composer-count {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 10px;
+      text-align: right;
+    }
+    .composer-count.near-limit { color: var(--gold); }
+    .composer-count.at-limit { color: var(--danger); }
+    .composer-ai-btn {
+      display: block;
+      width: 100%;
+      margin-top: 24px;
+      padding: 15px 0;
+      border-radius: var(--radius-lg);
+      border: none;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.15s;
+      box-shadow: 0 4px 16px rgba(124,58,237,0.35);
+    }
+    .composer-ai-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .composer-ai-btn:not(:disabled):active {
+      transform: scale(0.97);
+    }
+
+    /* Step 2: Loading */
+    .composer-step2 {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 40px 24px;
+      gap: 20px;
+    }
+    .composer-loading-icon {
+      font-size: 48px;
+      animation: composerSpin 2s linear infinite;
+    }
+    @keyframes composerSpin {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.1); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+    .composer-loading-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .composer-progress-wrap {
+      width: 100%;
+      max-width: 280px;
+    }
+    .composer-progress-bar {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .composer-progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-light));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .composer-progress-pct {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      text-align: right;
+    }
+    .composer-status-log {
+      font-size: 13px;
+      color: var(--text-sub);
+      text-align: center;
+      line-height: 1.8;
+      min-height: 60px;
+    }
+    .composer-status-log span.current {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Step 3: Design selection */
+    .composer-step3 {
+      padding: 16px;
+    }
+    .composer-design-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .composer-design-card {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 2.5px solid transparent;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.15s;
+      position: relative;
+    }
+    .composer-design-card.selected {
+      border-color: var(--primary);
+    }
+    .composer-design-card:active { transform: scale(0.96); }
+    .composer-design-preview {
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .composer-design-preview-text {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      line-height: 1.5;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+      z-index: 1;
+      position: relative;
+    }
+    .composer-design-check {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-size: 13px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .composer-design-card.selected .composer-design-check {
+      display: flex;
+    }
+    .composer-design-label {
+      padding: 8px 10px;
+      background: var(--bg);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+      border-top: 1px solid var(--border);
+    }
+
+    /* Step 4: Completion */
+    .composer-step4 {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 40px 24px;
+      gap: 20px;
+      text-align: center;
+    }
+    .composer-success-icon {
+      font-size: 60px;
+    }
+    .composer-success-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .composer-success-preview {
+      width: 100%;
+      max-width: 280px;
+      height: 180px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow: hidden;
+      position: relative;
+    }
+    .composer-success-preview-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      line-height: 1.6;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+      z-index: 1;
+      position: relative;
+    }
+    .composer-success-msg {
+      font-size: 14px;
+      color: var(--text-sub);
+    }
+    .composer-home-btn {
+      display: block;
+      width: 100%;
+      max-width: 280px;
+      padding: 14px 0;
+      border-radius: var(--radius-lg);
+      border: none;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(124,58,237,0.35);
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone">
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="status-time" id="statusTime">9:41</div>
+    <div class="status-icons">
+      <span>📶</span>
+      <span>🔋</span>
+    </div>
+  </div>
+
+  <!-- SCREENS -->
+  <div class="screens">
+
+    <!-- ===== HOME SCREEN ===== -->
+    <div class="screen active" id="screen-home" style="overflow:hidden; background:#000;">
+      <!-- TikTok feed container (full height) -->
+      <div class="tiktok-feed" id="tiktokFeed">
+        <!-- Slides injected by JS -->
+      </div>
+      <!-- dot indicators -->
+      <div class="tiktok-dots" id="tiktokDots"></div>
+    </div>
+
+    <!-- ===== DISCOVER SCREEN ===== -->
+    <div class="screen" id="screen-discover">
+      <div class="header">
+        <div class="header-logo">🔍 発見</div>
+      </div>
+      <div class="discover-search">
+        <div class="search-input-wrap">
+          <span>🔍</span>
+          <input class="search-input" placeholder="人・テーマを検索" readonly>
+        </div>
+      </div>
+      <div class="discover-section-title">✨ 光の強い人</div>
+      <div class="discover-grid">
+        <div class="discover-card" onclick="showToast('プロフィールを開く（開発中）')">
+          <div class="discover-card-thumb" style="background: linear-gradient(135deg, #1E0B4E, #4C1D95);">🧑‍💻</div>
+          <div class="discover-card-body">
+            <div class="discover-card-name">Yuki Tanaka</div>
+            <div class="discover-card-score" style="background: linear-gradient(135deg, #F59E0B, #D97706); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">☀️ Sun</div>
+          </div>
+        </div>
+        <div class="discover-card" onclick="showToast('プロフィールを開く（開発中）')">
+          <div class="discover-card-thumb" style="background: linear-gradient(135deg, #14532D, #166534);">👩‍🔬</div>
+          <div class="discover-card-body">
+            <div class="discover-card-name">Sarah Chen</div>
+            <div class="discover-card-score" style="background: linear-gradient(135deg, #F59E0B, #D97706); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">☀️ Sun</div>
+          </div>
+        </div>
+        <div class="discover-card" onclick="showToast('プロフィールを開く（開発中）')">
+          <div class="discover-card-thumb" style="background: linear-gradient(135deg, #7C2D12, #9A3412);">🎙</div>
+          <div class="discover-card-body">
+            <div class="discover-card-name">Kenji Ito</div>
+            <div class="discover-card-score" style="background: linear-gradient(135deg, #F59E0B, #D97706); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">☀️ Sun</div>
+          </div>
+        </div>
+        <div class="discover-card" onclick="showToast('プロフィールを開く（開発中）')">
+          <div class="discover-card-thumb" style="background: linear-gradient(135deg, #0C4A6E, #075985);">👨‍💼</div>
+          <div class="discover-card-body">
+            <div class="discover-card-name">Lena Müller</div>
+            <div class="discover-card-score" style="background: linear-gradient(135deg, #F59E0B, #D97706); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">☀️ Sun</div>
+          </div>
+        </div>
+      </div>
+      <div class="discover-section-title">🔥 あなたのCircleのトレンド</div>
+      <div style="padding: 0 16px 80px; display:flex; flex-direction:column; gap:12px;">
+        <div style="padding:14px; background:var(--inner-bg); border-radius:var(--radius-md); border:1px solid rgba(124,58,237,0.15); cursor:pointer;" onclick="showToast('トレンド詳細（開発中）')">
+          <div style="font-size:13px;font-weight:700;color:var(--text-main);">🔥 #AIエージェント</div>
+          <div style="font-size:12px;color:var(--text-sub);margin-top:4px;">あなたのInner 2人が話題にしています</div>
+        </div>
+        <div style="padding:14px; background:var(--trusted-bg); border-radius:var(--radius-md); border:1px solid rgba(124,58,237,0.1); cursor:pointer;" onclick="showToast('トレンド詳細（開発中）')">
+          <div style="font-size:13px;font-weight:700;color:var(--text-main);">💎 #シンガポール起業</div>
+          <div style="font-size:12px;color:var(--text-sub);margin-top:4px;">Trusted 4人が反応しています</div>
+        </div>
+        <div style="padding:14px; background:var(--bg); border-radius:var(--radius-md); border:1px solid var(--border); cursor:pointer;" onclick="showToast('トレンド詳細（開発中）')">
+          <div style="font-size:13px;font-weight:700;color:var(--text-main);">⭐ #投資2026</div>
+          <div style="font-size:12px;color:var(--text-sub);margin-top:4px;">Close 9人が話題にしています</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== POST COMPOSER SCREEN ===== -->
+    <div class="screen" id="screen-post">
+      <div class="composer-screen" id="composerScreen">
+
+        <!-- Step 1: Text input -->
+        <div id="composerStep1">
+          <div class="composer-header">
+            <button class="composer-header-btn" onclick="switchTab('home')">キャンセル</button>
+            <div class="composer-header-title">新規投稿</div>
+            <button class="composer-header-btn primary" disabled id="composerNextBtn" onclick="composerNext()">次へ</button>
+          </div>
+          <div class="composer-body">
+            <div class="composer-step1">
+              <div class="composer-avatar-row">
+                <div class="composer-my-avatar">🧔</div>
+                <div class="composer-textarea-wrap">
+                  <textarea class="composer-textarea" id="composerTextarea" placeholder="いまなにしてる？" maxlength="500" oninput="composerTextInput()"></textarea>
+                  <div class="composer-count" id="composerCount">0/500文字</div>
+                </div>
+              </div>
+              <button class="composer-ai-btn" id="composerAiBtn" disabled onclick="composerStartAI()">✨ AIデザインを生成</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Loading -->
+        <div id="composerStep2" style="display:none; height:100%; flex-direction:column;">
+          <div class="composer-header">
+            <div style="width:60px;"></div>
+            <div class="composer-header-title">✨ AI生成中</div>
+            <div style="width:60px;"></div>
+          </div>
+          <div class="composer-body" style="display:flex; align-items:center; justify-content:center;">
+            <div class="composer-step2">
+              <div class="composer-loading-icon">✨</div>
+              <div class="composer-loading-title">AIがデザイン中...</div>
+              <div class="composer-progress-wrap">
+                <div class="composer-progress-bar">
+                  <div class="composer-progress-fill" id="composerProgressFill"></div>
+                </div>
+                <div class="composer-progress-pct" id="composerProgressPct">0%</div>
+              </div>
+              <div class="composer-status-log" id="composerStatusLog">
+                <span class="current">投稿内容を分析しています...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Design selection -->
+        <div id="composerStep3" style="display:none; flex-direction:column; height:100%;">
+          <div class="composer-header">
+            <button class="composer-header-btn" onclick="composerBack()">← 戻る</button>
+            <div class="composer-header-title">デザインを選ぶ</div>
+            <button class="composer-header-btn primary" disabled id="composerPostBtn" onclick="composerPost()">投稿 →</button>
+          </div>
+          <div class="composer-body">
+            <div class="composer-step3" id="composerDesignGrid">
+              <div class="composer-design-grid" id="composerDesignCards"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Complete -->
+        <div id="composerStep4" style="display:none; flex-direction:column; height:100%;">
+          <div class="composer-header">
+            <div style="width:60px;"></div>
+            <div class="composer-header-title">投稿完了</div>
+            <div style="width:60px;"></div>
+          </div>
+          <div class="composer-body" style="display:flex; align-items:center; justify-content:center;">
+            <div class="composer-step4">
+              <div class="composer-success-icon">✅</div>
+              <div class="composer-success-title">投稿しました！</div>
+              <div class="composer-success-preview" id="composerSuccessPreview">
+                <div class="composer-success-preview-text" id="composerSuccessText"></div>
+              </div>
+              <div class="composer-success-msg">⚡ あなたの影響力に光が灯りました</div>
+              <button class="composer-home-btn" onclick="composerGoHome()">ホームに戻る</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== NOTIFICATIONS SCREEN ===== -->
+    <div class="screen" id="screen-notif">
+      <div class="header">
+        <div class="header-logo">🔔 通知</div>
+      </div>
+      <div>
+        <div class="notif-item">
+          <div class="notif-avatar">🔥</div>
+          <div class="notif-body">
+            <div class="notif-text"><strong>田中 悠</strong>さんがあなたの投稿に⚡反応しました</div>
+            <div class="notif-time">2分前</div>
+          </div>
+          <div class="notif-dot"></div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-avatar">💎</div>
+          <div class="notif-body">
+            <div class="notif-text"><strong>佐藤 健太</strong>さんがあなたをTrustedに追加しました</div>
+            <div class="notif-time">18分前</div>
+          </div>
+          <div class="notif-dot"></div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-avatar">✨</div>
+          <div class="notif-body">
+            <div class="notif-text"><strong>Sarah Chen</strong>の投稿があなたに届きました ☀️ Sun</div>
+            <div class="notif-time">45分前</div>
+          </div>
+          <div class="notif-dot"></div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-avatar">⭐</div>
+          <div class="notif-body">
+            <div class="notif-text"><strong>山田 彩香</strong>さんがコメントしました:「参考になります！」</div>
+            <div class="notif-time">1時間前</div>
+          </div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-avatar">🤝</div>
+          <div class="notif-body">
+            <div class="notif-text"><strong>中村 翔</strong>さんがあなたをConnectedに追加しました</div>
+            <div class="notif-time">3時間前</div>
+          </div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-avatar">📈</div>
+          <div class="notif-body">
+            <div class="notif-text">あなたの影響力スコアが<strong>+127</strong>増加しました ↑4.7%</div>
+            <div class="notif-time">今日 6:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PROFILE SCREEN ===== -->
+    <div class="screen" id="screen-profile">
+
+      <!-- POKEMON CARD PROFILE -->
+      <div class="pokemon-profile-card pokemon-card-moon">
+        <div class="pokemon-card-tier-label">🌙 Moon</div>
+        <div class="pokemon-card-avatar" style="background:linear-gradient(135deg,#64748B,#94A3B8);">🧔</div>
+        <div class="pokemon-card-name">木村 誠司</div>
+        <div class="pokemon-card-handle">@taisho_k</div>
+        <div class="pokemon-card-bio">シンガポール🇸🇬 ↔ 日本🇯🇵<br>経営者 / AI系 / 投資</div>
+        <div class="pokemon-card-score-num score-moon">2,847</div>
+        <div class="pokemon-card-score-label" style="margin-bottom:4px;">Radiance Score</div>
+        <div style="font-size:11px;opacity:0.5;margin-bottom:12px;">上位 5.2%</div>
+        <div class="pokemon-card-progress-label">次の光へ</div>
+        <div class="pokemon-card-progress-track">
+          <div class="pokemon-card-progress-fill pokemon-card-progress-fill-moon" style="width:60%;"></div>
+        </div>
+        <div class="pokemon-card-progress-hint">Nova まで あと 5,953</div>
+      </div>
+
+      <div class="circle-settings-link" onclick="switchTab('circle')">
+        <span>⚙️ あなたのCircle設定</span>
+        <span>→</span>
+      </div>
+
+      <!-- MY POSTS TAB BAR -->
+      <div class="my-profile-tab-bar">
+        <button class="my-profile-tab active" onclick="myProfileSwitchTab(this)">ポスト</button>
+        <button class="my-profile-tab" onclick="myProfileSwitchTab(this)">返信</button>
+        <button class="my-profile-tab" onclick="myProfileSwitchTab(this)">メディア</button>
+        <button class="my-profile-tab" onclick="myProfileSwitchTab(this)">いいね</button>
+      </div>
+
+      <!-- MY POSTS FEED -->
+      <div class="my-profile-posts-feed" id="myPostsFeed"></div>
+    </div>
+
+    <!-- ===== CIRCLE SCREEN ===== -->
+    <div class="screen" id="screen-circle">
+      <div class="header">
+        <div class="header-logo">🔗 Circle設定</div>
+      </div>
+      <div class="circle-screen-header">あなたのCircle</div>
+      <div class="circle-screen-sub">信頼の輪を育てよう。階層が高いほど影響力スコアへの貢献が大きくなります。</div>
+
+      <!-- Inner -->
+      <div class="circle-section open" id="sec-inner">
+        <div class="circle-section-header" onclick="toggleSection('sec-inner')">
+          <div class="circle-section-title">
+            <span>🔥</span>
+            <span>Inner</span>
+            <span style="font-size:11px;color:var(--primary);font-weight:600;">⚡+50pt</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="circle-capacity">2/3人</span>
+            <span class="circle-chevron">▾</span>
+          </div>
+        </div>
+        <div class="circle-section-body">
+          <div class="circle-members-scroll">
+            <div class="circle-member" onclick="showMemberAction('田中 悠', 'Inner')">
+              <div class="circle-member-avatar avatar-inner">🧑</div>
+              <div class="circle-member-name">田中 悠</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('鈴木 里奈', 'Inner')">
+              <div class="circle-member-avatar avatar-inner">👩</div>
+              <div class="circle-member-name">鈴木 里奈</div>
+            </div>
+            <div class="add-slot-wrap" onclick="openAddMemberSheet('inner')">
+              <div class="add-slot">＋</div>
+              <div class="add-slot-label">追加</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trusted -->
+      <div class="circle-section open" id="sec-trusted">
+        <div class="circle-section-header" onclick="toggleSection('sec-trusted')">
+          <div class="circle-section-title">
+            <span>💎</span>
+            <span>Trusted</span>
+            <span style="font-size:11px;color:var(--primary);font-weight:600;">⚡+20pt</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="circle-capacity">5/10人</span>
+            <span class="circle-chevron">▾</span>
+          </div>
+        </div>
+        <div class="circle-section-body">
+          <div class="circle-members-scroll">
+            <div class="circle-member" onclick="showMemberAction('佐藤 健太', 'Trusted')">
+              <div class="circle-member-avatar avatar-trusted">🧑</div>
+              <div class="circle-member-name">佐藤 健太</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('伊藤 大輔', 'Trusted')">
+              <div class="circle-member-avatar avatar-trusted">👨</div>
+              <div class="circle-member-name">伊藤 大輔</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('高橋 美咲', 'Trusted')">
+              <div class="circle-member-avatar avatar-trusted">👩</div>
+              <div class="circle-member-name">高橋 美咲</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('小林 亮', 'Trusted')">
+              <div class="circle-member-avatar avatar-trusted">🧔</div>
+              <div class="circle-member-name">小林 亮</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('渡辺 彩', 'Trusted')">
+              <div class="circle-member-avatar avatar-trusted">🙍</div>
+              <div class="circle-member-name">渡辺 彩</div>
+            </div>
+            <div class="add-slot-wrap" onclick="openAddMemberSheet('trusted')">
+              <div class="add-slot">＋</div>
+              <div class="add-slot-label">追加</div>
+            </div>
+            <div class="add-slot-wrap" onclick="openAddMemberSheet('trusted')">
+              <div class="add-slot">＋</div>
+              <div class="add-slot-label">追加</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Close -->
+      <div class="circle-section" id="sec-close">
+        <div class="circle-section-header" onclick="toggleSection('sec-close')">
+          <div class="circle-section-title">
+            <span>⭐</span>
+            <span>Close</span>
+            <span style="font-size:11px;color:var(--primary);font-weight:600;">⚡+8pt</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="circle-capacity">12/30人</span>
+            <span class="circle-chevron">▾</span>
+          </div>
+        </div>
+        <div class="circle-section-body">
+          <div class="circle-members-scroll">
+            <div class="circle-member" onclick="showMemberAction('山田 彩香', 'Close')">
+              <div class="circle-member-avatar avatar-close">👩</div>
+              <div class="circle-member-name">山田 彩香</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('中島 誠', 'Close')">
+              <div class="circle-member-avatar avatar-close">🧑</div>
+              <div class="circle-member-name">中島 誠</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('岡田 真由', 'Close')">
+              <div class="circle-member-avatar avatar-close">👩</div>
+              <div class="circle-member-name">岡田 真由</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('森 拓也', 'Close')">
+              <div class="circle-member-avatar avatar-close">👨</div>
+              <div class="circle-member-name">森 拓也</div>
+            </div>
+            <div class="add-slot-wrap" onclick="openAddMemberSheet('close')">
+              <div class="add-slot">＋</div>
+              <div class="add-slot-label">追加</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connected -->
+      <div class="circle-section" id="sec-connected">
+        <div class="circle-section-header" onclick="toggleSection('sec-connected')">
+          <div class="circle-section-title">
+            <span>🤝</span>
+            <span>Connected</span>
+            <span style="font-size:11px;color:var(--text-sub);font-weight:600;">⚡+2pt</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="circle-capacity">45/100人</span>
+            <span class="circle-chevron">▾</span>
+          </div>
+        </div>
+        <div class="circle-section-body">
+          <div class="circle-members-scroll">
+            <div class="circle-member" onclick="showMemberAction('中村 翔', 'Connected')">
+              <div class="circle-member-avatar avatar-connected">👨</div>
+              <div class="circle-member-name">中村 翔</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('松本 葵', 'Connected')">
+              <div class="circle-member-avatar avatar-connected">👩</div>
+              <div class="circle-member-name">松本 葵</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('藤田 悠斗', 'Connected')">
+              <div class="circle-member-avatar avatar-connected">🧑</div>
+              <div class="circle-member-name">藤田 悠斗</div>
+            </div>
+            <div style="font-size:12px;color:var(--text-sub);display:flex;align-items:center;min-width:60px;">他42人...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ambient -->
+      <div class="circle-section" id="sec-ambient" style="margin-bottom:100px;">
+        <div class="circle-section-header" onclick="toggleSection('sec-ambient')">
+          <div class="circle-section-title">
+            <span>👥</span>
+            <span>Ambient</span>
+            <span style="font-size:11px;color:var(--text-light);font-weight:600;">⚡+0pt</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="circle-capacity">制限なし</span>
+            <span class="circle-chevron">▾</span>
+          </div>
+        </div>
+        <div class="ambient-count">一般フォロワー: 1,243人</div>
+      </div>
+    </div>
+
+    <!-- ===== USER PROFILE OVERLAY ===== -->
+    <div class="user-profile-overlay" id="userProfileOverlay">
+      <div class="up-header">
+        <button class="up-back-btn" onclick="closeUserProfile()">←</button>
+        <div class="up-header-name" id="upHeaderName"></div>
+      </div>
+      <!-- Pokemon Card replaces banner+info+score -->
+      <div id="upPokemonCard"></div>
+      <div class="up-follow-row">
+        <button class="up-follow-btn" id="upFollowBtn" onclick="toggleFollow()">フォローする</button>
+      </div>
+      <div class="up-tab-bar">
+        <button class="up-tab active" onclick="upSwitchTab('posts', this)">ポスト</button>
+        <button class="up-tab" onclick="upSwitchTab('replies', this)">返信</button>
+        <button class="up-tab" onclick="upSwitchTab('media', this)">メディア</button>
+        <button class="up-tab" onclick="upSwitchTab('likes', this)">いいね</button>
+      </div>
+      <div class="up-posts-feed" id="upPostsFeed"></div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab-item active" onclick="switchTab('home')" id="tab-home">
+      <span class="tab-icon">🏠</span>
+      <span class="tab-label">ホーム</span>
+    </button>
+    <button class="tab-item" onclick="switchTab('discover')" id="tab-discover">
+      <span class="tab-icon">🔍</span>
+      <span class="tab-label">発見</span>
+    </button>
+    <button class="tab-post" onclick="switchTab('post')">
+      <div class="tab-post-btn">＋</div>
+    </button>
+    <button class="tab-item" onclick="switchTab('notif')" id="tab-notif">
+      <span class="tab-icon">
+        <span class="tab-badge">🔔<span class="badge-dot"></span></span>
+      </span>
+      <span class="tab-label">通知</span>
+    </button>
+    <button class="tab-item" onclick="switchTab('profile')" id="tab-profile">
+      <span class="tab-icon">🧔</span>
+      <span class="tab-label">マイ</span>
+    </button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ACTION SHEET -->
+<div class="action-sheet-overlay" id="actionSheet" onclick="closeActionSheet()">
+  <div class="action-sheet" onclick="event.stopPropagation()">
+    <div class="action-sheet-handle"></div>
+    <div class="action-sheet-title" id="actionSheetTitle">メンバー操作</div>
+    <div id="actionSheetBody"></div>
+  </div>
+</div>
+
+<!-- ADD MEMBER BOTTOM SHEET -->
+<div class="add-member-overlay" id="addMemberOverlay" onclick="closeAddMemberSheet()">
+  <div class="add-member-sheet" onclick="event.stopPropagation()">
+    <div class="add-member-handle"></div>
+    <div class="add-member-header">
+      <div class="add-member-title" id="addMemberTitle">🔥 Innerに追加（残り1枠）</div>
+      <div class="add-member-search">
+        <span class="add-member-search-icon">🔍</span>
+        <input class="add-member-search-input" id="addMemberSearchInput" placeholder="名前で検索..." oninput="filterAddMemberList()">
+      </div>
+    </div>
+    <div class="add-member-body">
+      <div class="add-member-section-title">✨ おすすめ</div>
+      <div class="add-member-recommended" id="addMemberRecommended"></div>
+      <div class="add-member-section-title">👥 すべてのフォロワー</div>
+      <div class="add-member-list" id="addMemberList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== CELESTIAL TITLE HELPERS =====
+  function getTitle(score) {
+    if (score >= 10000) return { emoji: '☀️', name: 'Sun',  cls: 'sun',   desc: 'この人の光は全てに届いています' };
+    if (score >= 800)   return { emoji: '💫', name: 'Nova', cls: 'nova',  desc: 'この人の光が爆発的に輝いています' };
+    if (score >= 400)   return { emoji: '🌙', name: 'Moon', cls: 'moon',  desc: 'この人の光は夜を照らしています' };
+    if (score >= 100)   return { emoji: '⭐', name: 'Star', cls: 'star',  desc: 'この人の光が夜空に輝いています' };
+    return               { emoji: '🕯️', name: 'Ember', cls: 'ember', desc: 'この人の光が芽生えています' };
+  }
+
+  function getMyTitle(score) {
+    const t = getTitle(score);
+    const myDescs = {
+      sun:   'あなたの光は全てに届いています',
+      nova:  'あなたの光が爆発的に輝いています',
+      moon:  'あなたの光は夜を照らしています',
+      star:  'あなたの光が夜空に輝いています',
+      ember: 'あなたの光が芽生えています',
+    };
+    return { ...t, desc: myDescs[t.cls] };
+  }
+
+  function getVagueCount(n) {
+    if (!n || n === 0) return null;
+    if (n <= 5)   return '光が芽生えています';
+    if (n <= 20)  return '光が広がっています';
+    if (n <= 50)  return '強い光を感じています';
+    if (n <= 100) return '大きな光に包まれています';
+    return '圧倒的な光を放っています';
+  }
+
+  // ===== USER PROFILES DATA =====
+  const userProfiles = {
+    'yu_tanaka': {
+      id: 'yu_tanaka',
+      name: '田中 悠',
+      handle: '@yu_tanaka',
+      avatarEmoji: '🧑',
+      avatarClass: 'avatar-inner',
+      bannerGradient: 'linear-gradient(135deg, #2D1B69, #4C1D95, #7C3AED)',
+      bio: 'AIエージェント研究者 / スタートアップ共同創業者\nシンガポール🇸🇬 在住。エージェントが世界を変えると信じてる。',
+      location: '東京 → シンガポール',
+      joinDate: '2024年1月から利用',
+      score: 932,
+      innerCount: 12,
+      trustedCount: 45,
+      closeCount: 89,
+      posts: [
+        { id: 'u1-1', body: 'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥\n今後のエージェント設計のヒントを掴んだ気がする。', time: '8分前', likes: 47, comments: 12, shares: 8 },
+        { id: 'u1-2', body: 'AIエージェントに「自己評価」機能を持たせる実験をしてる。\n精度が上がるかどうか、来週結果を共有します。', time: '2日前', likes: 83, comments: 21, shares: 15 },
+        { id: 'u1-3', body: 'スタートアップの初期フェーズで大事なのは、完璧なプロダクトより「誰のために作るか」の解像度。\nそれが全部を決める。', time: '5日前', likes: 126, comments: 34, shares: 29 },
+      ],
+    },
+    'rina_s': {
+      id: 'rina_s',
+      name: '鈴木 里奈',
+      handle: '@rina_s',
+      avatarEmoji: '👩',
+      avatarClass: 'avatar-inner',
+      bannerGradient: 'linear-gradient(135deg, #831843, #9D174D, #BE185D)',
+      bio: 'マーケター × コーチ\n「動き続ける人」を増やすのがライフワーク。朝活コミュニティ主宰。',
+      location: '大阪',
+      joinDate: '2024年2月から利用',
+      score: 620,
+      innerCount: 8,
+      trustedCount: 37,
+      closeCount: 74,
+      posts: [
+        { id: 'u2-1', body: '今朝の朝活で気づいたこと。\n\n「完璧なタイミング」を待っていると永遠に動けない。不完全なまま動いて、走りながら直す。それが最速。', time: '22分前', likes: 62, comments: 18, shares: 11 },
+        { id: 'u2-2', body: '朝活コミュニティ200人突破！\nゆっくりだけど確実に「動く人の輪」が広がってる。ありがとうございます🙏', time: '3日前', likes: 154, comments: 47, shares: 33 },
+        { id: 'u2-3', body: 'マーケの本質は「共感設計」だと思う。\n人が動くのは、理屈より感情。感情より「自分事」になった瞬間。', time: '1週間前', likes: 98, comments: 25, shares: 19 },
+      ],
+    },
+    'sarah_ai': {
+      id: 'sarah_ai',
+      name: 'Sarah Chen',
+      handle: '@sarah_ai',
+      avatarEmoji: '👩',
+      avatarClass: 'avatar-radiance',
+      bannerGradient: 'linear-gradient(135deg, #064E3B, #065F46, #047857)',
+      bio: 'AI Researcher & Founder @ Lumina Labs\nBuilding the future of human-AI collaboration. Stanford CS → DeepMind → Now.',
+      location: 'San Francisco / Singapore',
+      joinDate: '2023年6月から利用',
+      score: 12847,
+      innerCount: 234,
+      trustedCount: 1205,
+      closeCount: 3891,
+      posts: [
+        { id: 'u3-1', body: "The future of AI agents is not about replacing humans.\nIt's about amplifying the unique humans who know how to use them.\n\nThe leverage gap between those who understand agents and those who don't will be the biggest wealth divide of this decade.", time: '1h ago', likes: 1247, comments: 89, shares: 341 },
+        { id: 'u3-2', body: 'Just published my new paper on multi-agent coordination.\nTL;DR: agents that communicate in structured natural language outperform those using symbolic protocols by 34%.\n\nLink in bio.', time: '3 days ago', likes: 2103, comments: 156, shares: 487 },
+        { id: 'u3-3', body: "Hot take: the 'AI safety' debate is missing the point.\nThe risk isn't rogue superintelligence — it's mundane misuse by people with ordinary goals.\n\nWe need social infrastructure, not just technical guardrails.", time: '1 week ago', likes: 3812, comments: 234, shares: 891 },
+      ],
+    },
+    'kenta_s': {
+      id: 'kenta_s',
+      name: '佐藤 健太',
+      handle: '@kenta_s',
+      avatarEmoji: '🧑',
+      avatarClass: 'avatar-trusted',
+      bannerGradient: 'linear-gradient(135deg, #0C4A6E, #075985, #0369A1)',
+      bio: 'VCアナリスト / 投資家\nシンガポール × 東南アジアのスタートアップを追っています。AI・フィンテック専門。',
+      location: 'シンガポール',
+      joinDate: '2024年3月から利用',
+      score: 523,
+      innerCount: 5,
+      trustedCount: 28,
+      closeCount: 61,
+      posts: [
+        { id: 'u4-1', body: 'シンガポールのAIカンファレンス🇸🇬\n現場の熱量、やばすぎる。投資家とエンジニアが同じ言語で話している。', time: '30分前', likes: 38, comments: 9, shares: 6 },
+        { id: 'u4-2', body: '今週のポートフォリオレビュー完了。\nSEAのAIスタートアップ、評価額の割に実力が高い案件をいくつか発見。詳細は近日Trusted限定で共有します。', time: '4日前', likes: 51, comments: 14, shares: 7 },
+        { id: 'u4-3', body: 'VC業界でよく言われる「市場規模」より大事なのが「創業者の解像度」。\n問題を誰より深く知っているか。それだけで半分以上投資判断が決まる。', time: '1週間前', likes: 74, comments: 19, shares: 12 },
+      ],
+    },
+    'daisuke_ito': {
+      id: 'daisuke_ito',
+      name: '伊藤 大輔',
+      handle: '@daisuke_ito',
+      avatarEmoji: '👨',
+      avatarClass: 'avatar-trusted',
+      bannerGradient: 'linear-gradient(135deg, #422006, #7C2D12, #9A3412)',
+      bio: '個人投資家 / 元証券アナリスト\nインデックス投資とオルタナで資産設計中。数字で考える人。',
+      location: '名古屋',
+      joinDate: '2024年4月から利用',
+      score: 310,
+      innerCount: 3,
+      trustedCount: 19,
+      closeCount: 52,
+      posts: [
+        { id: 'u5-1', body: '新しいポートフォリオ構成を試してる。\nインデックス60% / 個別株20% / オルタナ20%\n\n2026年はボラティリティが高いと読んでいるので守り多め。みんなどう組んでる？', time: '1時間前', likes: 29, comments: 17, shares: 4 },
+        { id: 'u5-2', body: 'S&P500の過去50年データ再確認。\n暴落から回復するまでの平均期間：約14ヶ月。\n\nパニック売りが一番コスト高い。', time: '5日前', likes: 87, comments: 31, shares: 22 },
+        { id: 'u5-3', body: '積立NISAの出口戦略について考えてる。\n60歳時点で取り崩しペースをどう設計するか。\n誰かいい本を知ってたら教えてください📚', time: '2週間前', likes: 44, comments: 28, shares: 8 },
+      ],
+    },
+    'kenji_founder': {
+      id: 'kenji_founder',
+      name: 'Kenji Ito',
+      handle: '@kenji_founder',
+      avatarEmoji: '🎙',
+      avatarClass: 'avatar-radiance',
+      bannerGradient: 'linear-gradient(135deg, #1E1B4B, #312E81, #4338CA)',
+      bio: '連続起業家 / スピーカー\n3社創業 → 2社イグジット。今は「信頼のインフラ」を作っています。',
+      location: '東京 / バリ',
+      joinDate: '2023年9月から利用',
+      score: 11440,
+      innerCount: 189,
+      trustedCount: 892,
+      closeCount: 2734,
+      posts: [
+        { id: 'u6-1', body: '起業家として一番大切にしていること。\n\n「信頼の輪」を小さく深くつくること。フォロワー数より、本当に動ける3人の仲間を持て。\n\n規模より密度。それが長期的に最強のアドバンテージになる。', time: '2時間前', likes: 847, comments: 63, shares: 198 },
+        { id: 'u6-2', body: '3社目を創業した時、投資家に言われた言葉を今でも覚えてる。\n\n「君は何度でも立ち上がるから投資する」\n\n スキルより姿勢。これが全てだった。', time: '6日前', likes: 1203, comments: 91, shares: 267 },
+        { id: 'u6-3', body: 'TEDトーク登壇決定🎙\n\nテーマ：「信頼がお金より先に来る世界」\n\n詳細は来週発表。', time: '2週間前', likes: 2341, comments: 187, shares: 512 },
+      ],
+    },
+    'ayaka_y': {
+      id: 'ayaka_y',
+      name: '山田 彩香',
+      handle: '@ayaka_y',
+      avatarEmoji: '👩',
+      avatarClass: 'avatar-close',
+      bannerGradient: 'linear-gradient(135deg, #134E4A, #0F766E, #0D9488)',
+      bio: '書評ブロガー / 編集者\n年100冊読んで、本質だけ届けます。好きなジャンル：思考法・投資・AI。',
+      location: '京都',
+      joinDate: '2024年5月から利用',
+      score: 287,
+      innerCount: 2,
+      trustedCount: 14,
+      closeCount: 38,
+      posts: [
+        { id: 'u7-1', body: '読書記録📚\n「イシューからはじめよ」再読。\n\n問いの質が答えの質を決める、という話。仕事でも投資でも同じだなと改めて実感。', time: '3時間前', likes: 34, comments: 8, shares: 5 },
+        { id: 'u7-2', body: '今月のベスト本：「ファクトフルネス」\n\n思い込みで世界を見ていたことに気づかされる。データリテラシーを鍛えたい人に必読。', time: '1週間前', likes: 67, comments: 19, shares: 14 },
+        { id: 'u7-3', body: 'ブログ更新：「思考の解像度を上げる3冊」\n\n読書って、結局「問いの精度」を上げる行為だと思う。', time: '2週間前', likes: 51, comments: 12, shares: 9 },
+      ],
+    },
+    'sho_n': {
+      id: 'sho_n',
+      name: '中村 翔',
+      handle: '@sho_n',
+      avatarEmoji: '👨',
+      avatarClass: 'avatar-connected',
+      bannerGradient: 'linear-gradient(135deg, #374151, #4B5563, #6B7280)',
+      bio: 'エンジニア（転職活動中）\nWebフルスタック。次のステージへ踏み出し中💪',
+      location: '福岡',
+      joinDate: '2025年1月から利用',
+      score: 98,
+      innerCount: 0,
+      trustedCount: 4,
+      closeCount: 17,
+      posts: [
+        { id: 'u8-1', body: '最近ずっと悩んでた転職の件、一歩踏み出すことにしました。\n不安より期待の方が大きくなってきた。前に進みます💪', time: '4時間前', likes: 12, comments: 5, shares: 1 },
+        { id: 'u8-2', body: 'ポートフォリオサイトをリニューアルしました。\nReact + TypeScript + Tailwindで全部書き直し。フィードバックもらえたら嬉しいです！', time: '3日前', likes: 24, comments: 11, shares: 3 },
+        { id: 'u8-3', body: '面接が怖い理由って、「評価される」からじゃなくて「自分を言語化する」のが難しいから気がする。\n伝えることを練習しよう。', time: '1週間前', likes: 31, comments: 8, shares: 4 },
+      ],
+    },
+  };
+
+  // follow state
+  const followState = {};
+
+  // current profile user
+  let currentProfileUserId = null;
+
+  // ===== DATA =====
+  const posts = [
+    // Post 1: Inner, Reel
+    {
+      id: 1,
+      tier: 'inner',
+      tierLabel: '🔥 Inner',
+      tierClass: 'inner',
+      name: '田中 悠',
+      handle: '@yu_tanaka',
+      avatarClass: 'avatar-inner',
+      avatarEmoji: '🧑',
+      score: 932,
+      time: '8分前',
+      type: 'reel',
+      reelDuration: '1:12',
+      reelTag: '🔥 Inner',
+      body: 'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥\n今後のエージェント設計のヒントを掴んだ気がする。',
+    },
+    // Post 2: Inner, text
+    {
+      id: 2,
+      tier: 'inner',
+      tierLabel: '🔥 Inner',
+      tierClass: 'inner',
+      name: '鈴木 里奈',
+      handle: '@rina_s',
+      avatarClass: 'avatar-inner',
+      avatarEmoji: '👩',
+      score: 881,
+      time: '22分前',
+      type: 'text',
+      body: '今朝の朝活で気づいたこと。\n\n「完璧なタイミング」を待っていると永遠に動けない。不完全なまま動いて、走りながら直す。それが最速。\n\n誠司さんから学んだ考え方、本当に大事にしてる。',
+    },
+    // Post 3: Radiance (English)
+    {
+      id: 3,
+      tier: 'radiance',
+      name: 'Sarah Chen',
+      handle: '@sarah_ai',
+      avatarClass: 'avatar-radiance',
+      avatarEmoji: '👩',
+      score: 12847,
+      time: '1h ago',
+      type: 'text',
+      body: "The future of AI agents is not about replacing humans.\nIt's about amplifying the unique humans who know how to use them.\n\nThe leverage gap between those who understand agents and those who don't will be the biggest wealth divide of this decade.",
+    },
+    // Post 4: Trusted, Reel
+    {
+      id: 4,
+      tier: 'trusted',
+      tierLabel: '💎 Trusted',
+      tierClass: 'trusted',
+      name: '佐藤 健太',
+      handle: '@kenta_s',
+      avatarClass: 'avatar-trusted',
+      avatarEmoji: '🧑',
+      score: 523,
+      time: '30分前',
+      type: 'reel',
+      reelDuration: '0:45',
+      reelTag: '💎 Trusted',
+      body: 'シンガポールのAIカンファレンス🇸🇬\n現場の熱量、やばすぎる。投資家とエンジニアが同じ言語で話している。',
+    },
+    // Post 5: Trusted, text
+    {
+      id: 5,
+      tier: 'trusted',
+      tierLabel: '💎 Trusted',
+      tierClass: 'trusted',
+      name: '伊藤 大輔',
+      handle: '@daisuke_ito',
+      avatarClass: 'avatar-trusted',
+      avatarEmoji: '👨',
+      score: 468,
+      time: '1時間前',
+      type: 'text',
+      body: '新しいポートフォリオ構成を試してる。\nインデックス60% / 個別株20% / オルタナ20%\n\n2026年はボラティリティが高いと読んでいるので守り多め。みんなどう組んでる？',
+    },
+    // Post 6: Radiance (Japanese)
+    {
+      id: 6,
+      tier: 'radiance',
+      name: 'Kenji Ito',
+      handle: '@kenji_founder',
+      avatarClass: 'avatar-radiance',
+      avatarEmoji: '🎙',
+      score: 11440,
+      time: '2時間前',
+      type: 'text',
+      body: '起業家として一番大切にしていること。\n\n「信頼の輪」を小さく深くつくること。フォロワー数より、本当に動ける3人の仲間を持て。\n\n規模より密度。それが長期的に最強のアドバンテージになる。',
+    },
+    // Post 7: Close
+    {
+      id: 7,
+      tier: 'close',
+      tierLabel: '⭐ Close',
+      tierClass: 'close',
+      name: '山田 彩香',
+      handle: '@ayaka_y',
+      avatarClass: 'avatar-close',
+      avatarEmoji: '👩',
+      score: 287,
+      time: '3時間前',
+      type: 'text',
+      body: '読書記録📚\n「イシューからはじめよ」再読。\n\n問いの質が答えの質を決める、という話。仕事でも投資でも同じだなと改めて実感。',
+    },
+    // Post 8: Connected
+    {
+      id: 8,
+      tier: 'connected',
+      tierLabel: '🤝 Connected',
+      tierClass: 'connected',
+      name: '中村 翔',
+      handle: '@sho_n',
+      avatarClass: 'avatar-connected',
+      avatarEmoji: '👨',
+      score: 98,
+      time: '4時間前',
+      type: 'text',
+      body: '最近ずっと悩んでた転職の件、一歩踏み出すことにしました。\n不安より期待の方が大きくなってきた。前に進みます💪',
+    },
+  ];
+
+  // ===== LIKED STATE =====
+  const liked = {};
+
+  // ===== TIKTOK GRADIENT THEMES =====
+  const tikTokThemes = [
+    // cyber/tech
+    { grad: 'linear-gradient(160deg, #0f0c29 0%, #302b63 50%, #24243e 100%)', blob: '#7C3AED', blobX: '60%', blobY: '20%', category: 'cyber' },
+    // warm/daily
+    { grad: 'linear-gradient(160deg, #c94b4b 0%, #4b134f 100%)', blob: '#F59E0B', blobX: '30%', blobY: '30%', category: 'warm' },
+    // business/gold
+    { grad: 'linear-gradient(160deg, #0f0c00 0%, #1a1400 50%, #2a1f00 100%)', blob: '#D97706', blobX: '70%', blobY: '25%', category: 'gold' },
+    // travel/teal
+    { grad: 'linear-gradient(160deg, #004d40 0%, #00695c 50%, #26a69a 100%)', blob: '#00BFA5', blobX: '40%', blobY: '20%', category: 'teal' },
+    // AI/neon
+    { grad: 'linear-gradient(160deg, #1a0030 0%, #2d0060 40%, #1a0050 100%)', blob: '#A78BFA', blobX: '55%', blobY: '30%', category: 'ai' },
+    // radiance/gold
+    { grad: 'linear-gradient(160deg, #1a0a00 0%, #2d1800 50%, #3d2200 100%)', blob: '#F59E0B', blobX: '50%', blobY: '20%', category: 'radiance' },
+    // reading/indigo
+    { grad: 'linear-gradient(160deg, #1e1b4b 0%, #312e81 60%, #3730a3 100%)', blob: '#818CF8', blobX: '65%', blobY: '35%', category: 'indigo' },
+    // connected/slate
+    { grad: 'linear-gradient(160deg, #0f172a 0%, #1e293b 50%, #334155 100%)', blob: '#94A3B8', blobX: '40%', blobY: '25%', category: 'slate' },
+    // startup/crimson
+    { grad: 'linear-gradient(160deg, #1e0010 0%, #3d0020 50%, #5c0030 100%)', blob: '#F43F5E', blobX: '60%', blobY: '20%', category: 'crimson' },
+    // finance/deep blue
+    { grad: 'linear-gradient(160deg, #0a0a2e 0%, #15155a 50%, #1e1e7a 100%)', blob: '#3B82F6', blobX: '45%', blobY: '30%', category: 'deepblue' },
+  ];
+
+  function getThemeForPost(p, idx) {
+    if (p.tier === 'radiance') return tikTokThemes[5]; // gold
+    if (p.type === 'reel') return tikTokThemes[0]; // cyber dark
+    return tikTokThemes[idx % tikTokThemes.length];
+  }
+
+  // ===== TIKTOK FEED =====
+  let tiktokCurrentIdx = 0;
+  let tiktokSlides = [];
+  let tiktokDragging = false;
+  let tiktokDragStartY = 0;
+  let tiktokDragDelta = 0;
+  let tiktokWheelLocked = false;
+
+  function buildTikTokFeed() {
+    const container = document.getElementById('tiktokFeed');
+    const dotsEl = document.getElementById('tiktokDots');
+    container.innerHTML = '';
+    dotsEl.innerHTML = '';
+    tiktokSlides = [];
+
+    // Build 10 posts: existing 8 + 2 extras
+    const allTikTokPosts = [...posts];
+    // Add 2 more posts for 10 total
+    allTikTokPosts.push(
+      {
+        id: 9,
+        tier: 'trusted',
+        tierLabel: '💎 Trusted',
+        tierClass: 'trusted',
+        name: 'Kenji Ito',
+        handle: '@kenji_founder',
+        avatarClass: 'avatar-radiance',
+        avatarEmoji: '🎙',
+        score: 11440,
+        time: '2時間前',
+        type: 'text',
+        body: '3社目を創業した時、投資家に言われた言葉を今でも覚えてる。\n\n「君は何度でも立ち上がるから投資する」\n\nスキルより姿勢。これが全てだった。',
+        likes: 1203, comments: 91, shares: 267, views: '52K',
+      },
+      {
+        id: 10,
+        tier: 'close',
+        tierLabel: '⭐ Close',
+        tierClass: 'close',
+        name: '山田 彩香',
+        handle: '@ayaka_y',
+        avatarClass: 'avatar-close',
+        avatarEmoji: '👩',
+        score: 287,
+        time: '1週間前',
+        type: 'text',
+        body: '今月のベスト本：「ファクトフルネス」\n\n思い込みで世界を見ていたことに気づかされる。データリテラシーを鍛えたい人に必読。',
+        likes: 67, comments: 19, shares: 14, views: '3.1K',
+      }
+    );
+
+    allTikTokPosts.forEach((p, idx) => {
+      const theme = getThemeForPost(p, idx);
+      const slide = document.createElement('div');
+      slide.className = 'tiktok-slide';
+      slide.style.background = theme.grad;
+      slide.style.transform = `translateY(${idx === 0 ? 0 : 100}%)`;
+
+      const userId = p.handle.replace('@', '');
+      const isRadiance = p.tier === 'radiance';
+      const likesInit = p.likes || randomLikes(p.tier) || 0;
+      p.likes = likesInit;
+
+      const titleInfo = getTitle(p.score);
+      const titleCls = 'tiktok-title-' + titleInfo.cls;
+
+      const radianceLabelHtml = isRadiance
+        ? `<div class="tiktok-radiance-label">✨ 強い光が届きました</div>`
+        : '';
+
+      const reelHtml = p.type === 'reel'
+        ? `<div class="tiktok-reel-overlay">
+             <div class="tiktok-reel-play" onclick="showToast('動画再生は開発中です')">▶️</div>
+           </div>`
+        : '';
+
+      const tierBadgeHtml = p.tierLabel
+        ? `<span class="tiktok-tier-badge">${p.tierLabel}</span>`
+        : '';
+
+      slide.innerHTML = `
+        <div class="tiktok-slide-bg-blob" style="background:radial-gradient(circle, ${theme.blob} 0%, transparent 70%); left:${theme.blobX}; top:${theme.blobY};"></div>
+        ${reelHtml}
+        <div class="tiktok-slide-content">
+          <div class="tiktok-main">
+            ${radianceLabelHtml}
+            <div class="tiktok-post-text">${p.body}</div>
+          </div>
+        </div>
+        <div class="tiktok-bottom-bar">
+          <div class="tiktok-user-row" onclick="openUserProfile('${userId}')">
+            <div class="tiktok-avatar ${p.avatarClass}">${p.avatarEmoji}</div>
+            <div class="tiktok-user-info">
+              <div class="tiktok-user-name">${p.name}</div>
+              <div class="tiktok-user-meta">
+                <span class="${titleCls}">${titleInfo.emoji} ${titleInfo.name}</span>
+                ${tierBadgeHtml}
+              </div>
+            </div>
+          </div>
+          <div class="tiktok-actions" style="flex-direction:row;gap:16px;padding:0;">
+            <button class="tiktok-action-item" id="tt-like-${p.id}" onclick="tiktokToggleLike(${p.id}, this)">
+              <div class="tiktok-action-icon" id="tt-like-icon-${p.id}">🤍</div>
+              <div class="tiktok-action-count" id="tt-like-count-${p.id}">${likesInit}</div>
+            </button>
+            <button class="tiktok-action-item" onclick="showToast('コメント機能は開発中です')">
+              <div class="tiktok-action-icon">💬</div>
+              <div class="tiktok-action-count">${p.comments || randomComments(p.tier)}</div>
+            </button>
+            <button class="tiktok-action-item" onclick="showToast('シェア機能は開発中です')">
+              <div class="tiktok-action-icon">🔄</div>
+              <div class="tiktok-action-count">${p.shares || randomShares(p.tier)}</div>
+            </button>
+            <button class="tiktok-action-item" onclick="showToast('インプレッション数')">
+              <div class="tiktok-action-icon">📊</div>
+              <div class="tiktok-action-count">${p.views || randomViews(p.tier)}</div>
+            </button>
+          </div>
+        </div>
+      `;
+
+      // swipe hint only on first slide
+      if (idx === 0) {
+        const hint = document.createElement('div');
+        hint.className = 'tiktok-swipe-hint';
+        hint.id = 'tiktokSwipeHint';
+        hint.innerHTML = `<div class="tiktok-action-icon" style="font-size:16px;filter:none;opacity:0.7;">▲</div><div class="tiktok-swipe-hint-text">スワイプして次へ</div>`;
+        slide.appendChild(hint);
+      }
+
+      container.appendChild(slide);
+      tiktokSlides.push(slide);
+
+      // dot
+      const dot = document.createElement('div');
+      dot.className = 'tiktok-dot' + (idx === 0 ? ' active' : '');
+      dotsEl.appendChild(dot);
+    });
+
+    // Touch events
+    container.addEventListener('touchstart', onTouchStart, { passive: true });
+    container.addEventListener('touchmove', onTouchMove, { passive: false });
+    container.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    // Wheel event
+    container.addEventListener('wheel', onWheel, { passive: false });
+  }
+
+  function tiktokGoTo(newIdx) {
+    if (newIdx < 0 || newIdx >= tiktokSlides.length) return;
+    const oldIdx = tiktokCurrentIdx;
+    tiktokCurrentIdx = newIdx;
+
+    tiktokSlides.forEach((s, i) => {
+      if (i < newIdx) {
+        s.style.transform = 'translateY(-100%)';
+      } else if (i === newIdx) {
+        s.style.transform = 'translateY(0%)';
+      } else {
+        s.style.transform = 'translateY(100%)';
+      }
+    });
+
+    // update dots
+    const dots = document.querySelectorAll('.tiktok-dot');
+    dots.forEach((d, i) => {
+      d.classList.toggle('active', i === newIdx);
+    });
+
+    // hide hint after first navigation
+    const hint = document.getElementById('tiktokSwipeHint');
+    if (hint && newIdx !== 0) hint.style.opacity = '0';
+  }
+
+  function onTouchStart(e) {
+    tiktokDragging = true;
+    tiktokDragStartY = e.touches[0].clientY;
+    tiktokDragDelta = 0;
+    // disable transition during drag
+    tiktokSlides.forEach(s => s.style.transition = 'none');
+  }
+
+  function onTouchMove(e) {
+    if (!tiktokDragging) return;
+    e.preventDefault();
+    tiktokDragDelta = e.touches[0].clientY - tiktokDragStartY;
+    const pct = (tiktokDragDelta / window.innerHeight) * 100;
+
+    tiktokSlides.forEach((s, i) => {
+      const base = (i - tiktokCurrentIdx) * 100;
+      s.style.transform = `translateY(${base + pct}%)`;
+    });
+  }
+
+  function onTouchEnd(e) {
+    if (!tiktokDragging) return;
+    tiktokDragging = false;
+    // re-enable transition
+    tiktokSlides.forEach(s => s.style.transition = 'transform 0.38s cubic-bezier(0.4,0,0.2,1)');
+
+    const threshold = window.innerHeight * 0.22;
+    if (tiktokDragDelta < -threshold) {
+      tiktokGoTo(tiktokCurrentIdx + 1);
+    } else if (tiktokDragDelta > threshold) {
+      tiktokGoTo(tiktokCurrentIdx - 1);
+    } else {
+      tiktokGoTo(tiktokCurrentIdx); // snap back
+    }
+    tiktokDragDelta = 0;
+  }
+
+  function onWheel(e) {
+    e.preventDefault();
+    if (tiktokWheelLocked) return;
+    const absDelta = Math.abs(e.deltaY);
+    if (absDelta < 30) return;
+    tiktokWheelLocked = true;
+    setTimeout(() => { tiktokWheelLocked = false; }, 1000);
+    if (e.deltaY > 0) {
+      tiktokGoTo(tiktokCurrentIdx + 1);
+    } else {
+      tiktokGoTo(tiktokCurrentIdx - 1);
+    }
+  }
+
+  function tiktokToggleLike(id, btn) {
+    liked[id] = !liked[id];
+    const icon = document.getElementById('tt-like-icon-' + id);
+    const countEl = document.getElementById('tt-like-count-' + id);
+    const allPosts = [...posts, ...[]]; // extend if needed
+    const post = [...posts, { id: 9, likes: 1203 }, { id: 10, likes: 67 }].find(p => p.id === id);
+    if (liked[id]) {
+      icon.textContent = '❤️';
+      if (countEl) {
+        const cur = parseInt(countEl.textContent) || 0;
+        countEl.textContent = cur + 1;
+      }
+    } else {
+      icon.textContent = '🤍';
+      if (countEl) {
+        const cur = parseInt(countEl.textContent) || 0;
+        countEl.textContent = Math.max(0, cur - 1);
+      }
+    }
+  }
+
+  // ===== RENDER FEED (legacy, kept for profile screen) =====
+  function renderFeed() {
+    // No-op: home screen now uses TikTok mode
+  }
+
+  function renderPostCard(p) {
+    const div = document.createElement('div');
+    div.className = `post-card${p.tier === 'inner' ? ' tier-inner' : p.tier === 'trusted' ? ' tier-trusted' : ''}`;
+
+    const reelHTML = p.type === 'reel' ? `
+      <div class="reel-thumb" onclick="showToast('動画再生は開発中です')">
+        <div class="reel-tag">${p.reelTag}</div>
+        <div class="reel-play">▶️</div>
+        <div class="reel-duration">${p.reelDuration}</div>
+      </div>
+    ` : '';
+
+    const userId = p.handle.replace('@', '');
+    const tInfo = getTitle(p.score);
+    const titleStyle = tInfo.cls === 'sun'
+      ? 'background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;'
+      : tInfo.cls === 'nova' ? 'color:#A78BFA;'
+      : tInfo.cls === 'moon' ? 'color:#94A3B8;'
+      : tInfo.cls === 'ember' ? 'color:#9CA3AF;'
+      : '';
+    div.innerHTML = `
+      <div class="post-header">
+        <div class="avatar ${p.avatarClass} clickable" onclick="openUserProfile('${userId}')">${p.avatarEmoji}</div>
+        <div class="post-meta">
+          <div class="post-name clickable" onclick="openUserProfile('${userId}')">${p.name}</div>
+          <div class="post-handle-row">
+            <span class="post-handle">${p.handle}</span>
+            <span class="tier-badge ${p.tierClass}">${p.tierLabel}</span>
+          </div>
+        </div>
+        <div class="score-chip" style="${titleStyle}font-size:14px;">${tInfo.emoji} ${tInfo.name}</div>
+        <span class="post-time">${p.time}</span>
+      </div>
+      ${reelHTML}
+      <div class="post-body">${p.body}</div>
+      <div class="post-actions">
+        <button class="action-btn like-btn" id="like-${p.id}" onclick="toggleLike(${p.id}, this)">
+          <span id="like-icon-${p.id}">🤍</span>
+          <span class="action-count" id="like-count-${p.id}">${p.likes || randomLikes(p.tier)}</span>
+        </button>
+        <button class="action-btn" onclick="showToast('コメント機能は開発中です')">
+          <span>💬</span>
+          <span class="action-count">${p.comments || randomComments(p.tier)}</span>
+        </button>
+        <button class="action-btn" onclick="showToast('シェア機能は開発中です')">
+          <span>🔄</span>
+          <span class="action-count">${p.shares || randomShares(p.tier)}</span>
+        </button>
+        <button class="action-btn" onclick="showToast('インプレッション数')">
+          <span>📊</span>
+          <span class="action-count">${p.views || randomViews(p.tier)}</span>
+        </button>
+      </div>
+    `;
+    return div;
+  }
+
+  function renderRadianceCard(p) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'post-card radiance-card';
+    wrapper.style.padding = '0';
+    wrapper.style.background = 'transparent';
+    wrapper.innerHTML = `
+      <div class="radiance-label">
+        <span>✨</span>
+        <span class="radiance-label-text">強い光が届きました</span>
+      </div>
+      <div class="radiance-inner">
+        <div class="post-header" style="margin-bottom:10px;">
+          <div class="avatar ${p.avatarClass} clickable" onclick="openUserProfile('${p.handle.replace('@','')}')">${p.avatarEmoji}</div>
+          <div class="post-meta">
+            <div class="post-name clickable" onclick="openUserProfile('${p.handle.replace('@','')}')">${p.name}</div>
+            <div class="post-handle-row">
+              <span class="post-handle">${p.handle}</span>
+            </div>
+          </div>
+          <div class="score-chip" style="background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:14px;">☀️ Sun</div>
+          <span class="post-time">${p.time}</span>
+        </div>
+        <div class="post-body">${p.body}</div>
+        <div class="post-actions">
+          <button class="action-btn like-btn" id="like-${p.id}" onclick="toggleLike(${p.id}, this)">
+            <span id="like-icon-${p.id}">🤍</span>
+            <span class="action-count" id="like-count-${p.id}">1.2K</span>
+          </button>
+          <button class="action-btn" onclick="showToast('コメント機能は開発中です')"><span>💬</span><span class="action-count">89</span></button>
+          <button class="action-btn" onclick="showToast('シェア機能は開発中です')"><span>🔄</span><span class="action-count">234</span></button>
+          <button class="action-btn" onclick="showToast('インプレッション数')"><span>📊</span><span class="action-count">45K</span></button>
+        </div>
+      </div>
+    `;
+    return wrapper;
+  }
+
+  function randomLikes(tier) {
+    const ranges = { inner: [30, 120], trusted: [15, 80], close: [8, 40], connected: [2, 20], ambient: [0, 10] };
+    const [min, max] = ranges[tier] || [0, 10];
+    return Math.floor(Math.random() * (max - min) + min);
+  }
+  function randomComments(tier) {
+    const ranges = { inner: [5, 30], trusted: [3, 20], close: [1, 12], connected: [0, 8], ambient: [0, 5] };
+    const [min, max] = ranges[tier] || [0, 5];
+    return Math.floor(Math.random() * (max - min) + min);
+  }
+  function randomShares(tier) {
+    const ranges = { inner: [3, 20], trusted: [2, 12], close: [0, 8], connected: [0, 5], ambient: [0, 3] };
+    const [min, max] = ranges[tier] || [0, 3];
+    return Math.floor(Math.random() * (max - min) + min);
+  }
+  function randomViews(tier) {
+    const ranges = { inner: [500, 3000], trusted: [200, 1500], close: [80, 500], connected: [20, 200], ambient: [10, 100] };
+    const [min, max] = ranges[tier] || [10, 100];
+    const v = Math.floor(Math.random() * (max - min) + min);
+    return v >= 1000 ? (v / 1000).toFixed(1) + 'K' : v;
+  }
+
+
+  // ===== LIKE TOGGLE =====
+  function toggleLike(id, btn) {
+    liked[id] = !liked[id];
+    const icon = document.getElementById('like-icon-' + id);
+    const countEl = document.getElementById('like-count-' + id);
+    const post = posts.find(p => p.id === id);
+    const base = post ? (post.likes || 0) : 0;
+
+    if (liked[id]) {
+      icon.textContent = '❤️';
+      btn.classList.add('liked');
+      if (countEl && !isNaN(parseInt(countEl.textContent))) {
+        countEl.textContent = parseInt(countEl.textContent) + 1;
+      }
+    } else {
+      icon.textContent = '🤍';
+      btn.classList.remove('liked');
+      if (countEl && !isNaN(parseInt(countEl.textContent))) {
+        countEl.textContent = Math.max(0, parseInt(countEl.textContent) - 1);
+      }
+    }
+  }
+
+  // ===== TAB SWITCH =====
+  function switchTab(tab) {
+    // Map tab name to screen id
+    const screenMap = {
+      home: 'screen-home',
+      discover: 'screen-discover',
+      post: 'screen-post',
+      notif: 'screen-notif',
+      profile: 'screen-profile',
+      circle: 'screen-circle',
+    };
+
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(screenMap[tab]);
+    if (target) target.classList.add('active');
+
+    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+    const tabEl = document.getElementById('tab-' + tab);
+    if (tabEl) tabEl.classList.add('active');
+
+    // Remove badge on notif tab
+    if (tab === 'notif') {
+      const badge = document.querySelector('#tab-notif .badge-dot');
+      if (badge) badge.remove();
+    }
+  }
+
+  // ===== TOAST =====
+  let toastTimer = null;
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // ===== CIRCLE TOGGLE =====
+  function toggleSection(id) {
+    const sec = document.getElementById(id);
+    sec.classList.toggle('open');
+  }
+
+  // ===== ACTION SHEET =====
+  function showMemberAction(name, tier) {
+    const sheet = document.getElementById('actionSheet');
+    document.getElementById('actionSheetTitle').textContent = name + '（' + tier + '）';
+    document.getElementById('actionSheetBody').innerHTML = `
+      <div class="action-sheet-item" onclick="showToast('${name}のプロフィールを開きます');closeActionSheet()">
+        <span class="action-icon">👤</span>
+        <span>プロフィールを見る</span>
+      </div>
+      <div class="action-sheet-item" onclick="showToast('${name}をメッセージ（開発中）');closeActionSheet()">
+        <span class="action-icon">✉️</span>
+        <span>メッセージを送る</span>
+      </div>
+      <div class="action-sheet-item" onclick="showToast('${name}の階層を変更しました');closeActionSheet()">
+        <span class="action-icon">🔄</span>
+        <span>別の階層に移動</span>
+      </div>
+      <div class="action-sheet-item danger" onclick="showToast('${name}を${tier}から外しました');closeActionSheet()">
+        <span class="action-icon">✕</span>
+        <span>${tier}から外す</span>
+      </div>
+    `;
+    sheet.classList.add('show');
+  }
+
+  function closeActionSheet() {
+    document.getElementById('actionSheet').classList.remove('show');
+  }
+
+  // ===== USER POKEMON CARD BUILDER =====
+  function buildPokemonCard(user) {
+    const titleInfo = getTitle(user.score);
+    const cls = titleInfo.cls;
+
+    // Card border/bg class
+    const cardClass = 'up-pokemon-card pokemon-card-' + cls;
+
+    // Avatar bg per tier
+    const avatarBg = {
+      sun:   'linear-gradient(135deg,#7C2D12,#D97706)',
+      nova:  'linear-gradient(135deg,#2D1B69,#7C3AED)',
+      moon:  'linear-gradient(135deg,#0F172A,#1E293B)',
+      star:  'linear-gradient(135deg,#0C4A6E,#2563EB)',
+      ember: 'linear-gradient(135deg,#1C1917,#44403C)',
+    };
+
+    // Progress width: Moon→Nova example using score ranges
+    const nextMap = { ember: 100, star: 400, moon: 800, nova: 10000, sun: 99999 };
+    const prevMap = { ember: 0, star: 100, moon: 400, nova: 800, sun: 10000 };
+    const prev = prevMap[cls] || 0;
+    const next = nextMap[cls] || 99999;
+    const pct = Math.min(100, Math.round(((user.score - prev) / (next - prev)) * 100));
+    const nextName = cls === 'ember' ? 'Star' : cls === 'star' ? 'Moon' : cls === 'moon' ? 'Nova' : cls === 'nova' ? 'Sun' : 'MAX';
+    const remaining = cls === 'sun' ? '' : `${nextName} まで あと ${Math.max(0, next - user.score).toLocaleString()}`;
+
+    const scoreDisplay = user.score >= 1000
+      ? (user.score / 1000).toFixed(1).replace('.0','') + 'K'
+      : user.score;
+
+    // 全体比率の計算（ダミー: 全ユーザー115万人想定）
+    const totalUsers = 1_150_000;
+    const rankPct = ((1 - (user.score / totalUsers)) * 100);
+    const topPct = cls === 'sun' ? '0.01' : cls === 'nova' ? '0.8' : cls === 'moon' ? '5.2' : cls === 'star' ? '22' : '55';
+    const totalDisplay = totalUsers >= 1_000_000
+      ? (totalUsers / 1_000_000).toFixed(1).replace('.0','') + 'M'
+      : totalUsers >= 1000
+        ? (totalUsers / 1000).toFixed(1).replace('.0','') + 'K'
+        : totalUsers;
+
+    const isRadiance = user.score >= 10000;
+    const radianceLine = isRadiance
+      ? `<div style="font-size:11px;background:rgba(245,158,11,0.18);border:1px solid rgba(245,158,11,0.4);border-radius:20px;padding:4px 12px;display:inline-block;color:#FCD34D;margin-bottom:12px;">✨ この人の光があなたに届いています</div>`
+      : '';
+
+    const bioLines = user.bio.replace(/\n/g, '<br>');
+
+    return `
+      <div class="${cardClass}">
+        <div class="pokemon-card-tier-label">${titleInfo.emoji} ${titleInfo.name}</div>
+        <div class="pokemon-card-avatar" style="background:${avatarBg[cls] || avatarBg.ember};">${user.avatarEmoji}</div>
+        <div class="pokemon-card-name">${user.name}</div>
+        <div class="pokemon-card-handle">${user.handle}</div>
+        <div class="pokemon-card-bio">${bioLines}</div>
+        ${radianceLine}
+        <div class="pokemon-card-score-num score-${cls}">${scoreDisplay}</div>
+        <div class="pokemon-card-score-label" style="margin-bottom:4px;">Radiance Score</div>
+        <div style="font-size:11px;opacity:0.5;margin-bottom:12px;">上位 ${topPct}%</div>
+        <div class="pokemon-card-progress-label">次の光へ</div>
+        <div class="pokemon-card-progress-track">
+          <div class="pokemon-card-progress-fill pokemon-card-progress-fill-${cls}" style="width:${pct}%;"></div>
+        </div>
+        ${remaining ? `<div class="pokemon-card-progress-hint">${remaining}</div>` : ''}
+      </div>
+    `;
+  }
+
+  // ===== USER PROFILE =====
+  function openUserProfile(userId) {
+    const user = userProfiles[userId];
+    if (!user) { showToast('プロフィールを読み込み中...'); return; }
+
+    currentProfileUserId = userId;
+
+    // header name
+    document.getElementById('upHeaderName').textContent = user.name;
+
+    // Pokemon card
+    document.getElementById('upPokemonCard').innerHTML = buildPokemonCard(user);
+
+    // follow button
+    const followBtn = document.getElementById('upFollowBtn');
+    if (followState[userId]) {
+      followBtn.textContent = 'フォロー中 ▾';
+      followBtn.classList.add('following');
+    } else {
+      followBtn.textContent = 'フォローする';
+      followBtn.classList.remove('following');
+    }
+
+    // render posts
+    renderUserPosts(user);
+
+    // reset tabs
+    document.querySelectorAll('.up-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.up-tab')[0].classList.add('active');
+
+    // slide in
+    document.getElementById('userProfileOverlay').classList.add('open');
+  }
+
+  function closeUserProfile() {
+    document.getElementById('userProfileOverlay').classList.remove('open');
+    currentProfileUserId = null;
+  }
+
+  function toggleFollow() {
+    if (!currentProfileUserId) return;
+    followState[currentProfileUserId] = !followState[currentProfileUserId];
+    const btn = document.getElementById('upFollowBtn');
+    if (followState[currentProfileUserId]) {
+      btn.textContent = 'フォロー中 ▾';
+      btn.classList.add('following');
+      showToast(userProfiles[currentProfileUserId].name + 'をフォローしました');
+    } else {
+      btn.textContent = 'フォローする';
+      btn.classList.remove('following');
+      showToast('フォローを解除しました');
+    }
+  }
+
+  function upSwitchTab(tab, el) {
+    document.querySelectorAll('.up-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    // All tabs show posts content (replies/media/likes show same posts as stub)
+    if (currentProfileUserId) {
+      renderUserPosts(userProfiles[currentProfileUserId]);
+    }
+  }
+
+  function renderUserPosts(user) {
+    const feed = document.getElementById('upPostsFeed');
+    feed.innerHTML = '';
+    user.posts.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'post-card';
+      card.innerHTML = `
+        <div class="post-header">
+          <div class="avatar ${user.avatarClass}">${user.avatarEmoji}</div>
+          <div class="post-meta">
+            <div class="post-name">${user.name}</div>
+            <div class="post-handle-row">
+              <span class="post-handle">${user.handle}</span>
+            </div>
+          </div>
+          <span class="post-time">${p.time}</span>
+        </div>
+        <div class="post-body">${p.body}</div>
+        <div class="post-actions">
+          <button class="action-btn"><span>🤍</span><span class="action-count">${p.likes}</span></button>
+          <button class="action-btn" onclick="showToast('コメント機能は開発中です')"><span>💬</span><span class="action-count">${p.comments}</span></button>
+          <button class="action-btn" onclick="showToast('シェア機能は開発中です')"><span>🔄</span><span class="action-count">${p.shares}</span></button>
+        </div>
+      `;
+      feed.appendChild(card);
+    });
+  }
+
+  // ===== MY PROFILE POSTS =====
+  const myPosts = [
+    {
+      id: 'my-1',
+      body: 'シンガポールのAIスタートアップ界隈、日本より3年先を行ってる感覚。でも日本の技術力は本物。組み合わせたら最強やろ。',
+      time: '3h ago',
+      likes: 234,
+      comments: 45,
+      shares: 67,
+      views: '8.9K',
+    },
+    {
+      id: 'my-2',
+      body: 'Claude Codeで自分のAIチーム作ってるんやけど、毎朝勝手に資産運用レポート届くの最高すぎる。エンジニア雇わんでもここまでできる時代。',
+      time: '8h ago',
+      likes: 567,
+      comments: 89,
+      shares: 123,
+      views: '23K',
+    },
+    {
+      id: 'my-3',
+      body: '経営者に一番大事なスキルは『任せる力』。AIにも人にも。全部自分でやろうとするやつは伸びない。',
+      time: '1d ago',
+      likes: 1200,
+      comments: 156,
+      shares: 234,
+      views: '45K',
+    },
+    {
+      id: 'my-4',
+      body: 'ホーカーで$3のチキンライス食べながら$10Mの投資案件の話してるの、シンガポールっぽくて好き。',
+      time: '2d ago',
+      likes: 892,
+      comments: 67,
+      shares: 145,
+      views: '34K',
+    },
+    {
+      id: 'my-5',
+      body: 'フォロワー数じゃなくて、誰にフォローされてるかが本当の影響力。これを可視化するSNS作りたい。',
+      time: '3d ago',
+      likes: 2300,
+      comments: 345,
+      shares: 567,
+      views: '89K',
+    },
+  ];
+
+  const myLiked = {};
+
+  function formatMyLikes(n) {
+    if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'K';
+    return n;
+  }
+
+  function renderMyPosts() {
+    const feed = document.getElementById('myPostsFeed');
+    feed.innerHTML = '';
+    myPosts.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'post-card';
+      card.innerHTML = `
+        <div class="post-header">
+          <div class="avatar avatar-inner">🧔</div>
+          <div class="post-meta">
+            <div class="post-name">木村 誠司</div>
+            <div class="post-handle-row">
+              <span class="post-handle">@taisho_k</span>
+              <span class="score-chip" style="margin-left:0; color:#94A3B8; font-weight:700;">🌙 Moon</span>
+            </div>
+          </div>
+          <span class="post-time">${p.time}</span>
+        </div>
+        <div class="post-body">${p.body}</div>
+        <div class="post-actions">
+          <button class="action-btn my-like-btn" id="my-like-${p.id}" onclick="toggleMyLike('${p.id}', this)">
+            <span id="my-like-icon-${p.id}">🤍</span>
+            <span class="action-count" id="my-like-count-${p.id}">${formatMyLikes(p.likes)}</span>
+          </button>
+          <button class="action-btn" onclick="showToast('コメント機能は開発中です')">
+            <span>💬</span>
+            <span class="action-count">${p.comments}</span>
+          </button>
+          <button class="action-btn" onclick="showToast('シェア機能は開発中です')">
+            <span>🔄</span>
+            <span class="action-count">${p.shares}</span>
+          </button>
+          <button class="action-btn" onclick="showToast('インプレッション数')">
+            <span>📊</span>
+            <span class="action-count">${p.views}</span>
+          </button>
+        </div>
+      `;
+      feed.appendChild(card);
+    });
+  }
+
+  function toggleMyLike(id, btn) {
+    myLiked[id] = !myLiked[id];
+    const post = myPosts.find(p => p.id === id);
+    const icon = document.getElementById('my-like-icon-' + id);
+    const countEl = document.getElementById('my-like-count-' + id);
+    if (myLiked[id]) {
+      icon.textContent = '❤️';
+      btn.classList.add('liked');
+      post.likes += 1;
+    } else {
+      icon.textContent = '🤍';
+      btn.classList.remove('liked');
+      post.likes = Math.max(0, post.likes - 1);
+    }
+    countEl.textContent = formatMyLikes(post.likes);
+  }
+
+  function myProfileSwitchTab(el) {
+    document.querySelectorAll('.my-profile-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    // 全タブ同じ内容を表示（ポスト一覧）
+    renderMyPosts();
+  }
+
+  // ===== ADD MEMBER BOTTOM SHEET =====
+
+  // Circle tier definitions
+  const circleTiers = {
+    inner:     { emoji: '🔥', label: 'Inner',     max: 3,   ptLabel: '⚡+50pt' },
+    trusted:   { emoji: '💎', label: 'Trusted',   max: 10,  ptLabel: '⚡+20pt' },
+    close:     { emoji: '⭐', label: 'Close',     max: 30,  ptLabel: '⚡+8pt'  },
+    connected: { emoji: '🤝', label: 'Connected', max: 100, ptLabel: '⚡+2pt'  },
+  };
+
+  // Dynamic circle membership state
+  const circleMembers = {
+    inner:     ['田中 悠', '鈴木 里奈'],
+    trusted:   ['佐藤 健太', '伊藤 大輔', '高橋 美咲', '小林 亮', '渡辺 彩'],
+    close:     ['山田 彩香', '中島 誠', '岡田 真由', '森 拓也'],
+    connected: ['中村 翔', '松本 葵', '藤田 悠斗'],
+  };
+
+  // Follower pool (excludes already-in-circle members at render time)
+  const allFollowers = [
+    { id: 'rina_s',   name: '鈴木 里奈',   avatar: '👩',  recommended: true  },
+    { id: 'kenta_s',  name: '佐藤 健太',   avatar: '🧑',  recommended: true  },
+    { id: 'sho_n',    name: '中村 翔',     avatar: '👨',  recommended: true  },
+    { id: 'misaki_t', name: '高橋 美咲',   avatar: '👱‍♀️', recommended: false },
+    { id: 'takuya_k', name: '小林 拓也',   avatar: '🧔',  recommended: false },
+    { id: 'ayumi_w',  name: '渡辺 あゆみ', avatar: '👩',  recommended: false },
+    { id: 'yuto_m',   name: '松本 悠人',   avatar: '🧑',  recommended: true  },
+    { id: 'haruka_i', name: '井上 遥',     avatar: '👧',  recommended: false },
+    { id: 'daiki_o',  name: '大野 大輝',   avatar: '👨',  recommended: false },
+    { id: 'mao_f',    name: '藤田 真央',   avatar: '👩',  recommended: true  },
+    { id: 'ryo_h',    name: '橋本 涼',     avatar: '🧑',  recommended: false },
+    { id: 'sakura_n', name: '中島 さくら', avatar: '👧',  recommended: false },
+    { id: 'kenji_y',  name: '山口 健二',   avatar: '👴',  recommended: false },
+    { id: 'emi_t',    name: '田村 恵美',   avatar: '👩',  recommended: false },
+    { id: 'sota_a',   name: '青木 壮太',   avatar: '👱',  recommended: false },
+  ];
+
+  let currentSheetTier = null;
+  let sheetSearchQuery = '';
+
+  // Get set of all names already in any circle
+  function getAllCircleMemberNames() {
+    const names = new Set();
+    Object.values(circleMembers).forEach(arr => arr.forEach(n => names.add(n)));
+    return names;
+  }
+
+  // Get current count for a tier
+  function getTierCount(tier) {
+    return circleMembers[tier].length;
+  }
+
+  // Update the capacity label in the Circle screen
+  function updateCapacityLabel(tier) {
+    const t = circleTiers[tier];
+    const sec = document.getElementById('sec-' + tier);
+    if (!sec) return;
+    const cap = sec.querySelector('.circle-capacity');
+    if (cap) cap.textContent = getTierCount(tier) + '/' + t.max + '人';
+  }
+
+  // Add a member avatar to the circle section DOM
+  function addMemberToCircleDOM(tier, follower) {
+    const sec = document.getElementById('sec-' + tier);
+    if (!sec) return;
+    const scroll = sec.querySelector('.circle-members-scroll');
+    if (!scroll) return;
+    // Find the first add-slot-wrap to insert before
+    const addSlotWrap = scroll.querySelector('.add-slot-wrap');
+    const memberEl = document.createElement('div');
+    memberEl.className = 'circle-member';
+    memberEl.setAttribute('onclick', `showMemberAction('${follower.name}', '${circleTiers[tier].label}')`);
+    memberEl.innerHTML = `
+      <div class="circle-member-avatar avatar-${tier}">${follower.avatar}</div>
+      <div class="circle-member-name">${follower.name.split(' ')[0]}</div>
+    `;
+    if (addSlotWrap) {
+      scroll.insertBefore(memberEl, addSlotWrap);
+    } else {
+      scroll.appendChild(memberEl);
+    }
+  }
+
+  function openAddMemberSheet(tier) {
+    currentSheetTier = tier;
+    sheetSearchQuery = '';
+    document.getElementById('addMemberSearchInput').value = '';
+
+    const t = circleTiers[tier];
+    const current = getTierCount(tier);
+    const remaining = t.max - current;
+    document.getElementById('addMemberTitle').textContent =
+      `${t.emoji} ${t.label}に追加（残り${remaining}枠）`;
+
+    renderAddMemberSheet();
+    document.getElementById('addMemberOverlay').classList.add('show');
+  }
+
+  function closeAddMemberSheet() {
+    document.getElementById('addMemberOverlay').classList.remove('show');
+    currentSheetTier = null;
+  }
+
+  function filterAddMemberList() {
+    sheetSearchQuery = document.getElementById('addMemberSearchInput').value.trim().toLowerCase();
+    renderAddMemberSheet();
+  }
+
+  function renderAddMemberSheet() {
+    const tier = currentSheetTier;
+    if (!tier) return;
+
+    const allNames = getAllCircleMemberNames();
+    const t = circleTiers[tier];
+    const current = getTierCount(tier);
+    const remaining = t.max - current;
+
+    // Update title
+    document.getElementById('addMemberTitle').textContent =
+      `${t.emoji} ${t.label}に追加（残り${remaining}枠）`;
+
+    // Filter followers by search and split by recommended/available
+    const q = sheetSearchQuery;
+    const available = allFollowers.filter(f => {
+      if (q && !f.name.toLowerCase().includes(q) && !f.id.toLowerCase().includes(q)) return false;
+      return true;
+    });
+
+    // Recommended section (only not in any circle, and recommended flag)
+    const recContainer = document.getElementById('addMemberRecommended');
+    recContainer.innerHTML = '';
+    const recItems = available.filter(f => f.recommended && !allNames.has(f.name));
+    if (recItems.length === 0) {
+      recContainer.parentElement.querySelector('.add-member-section-title').style.display = 'none';
+      recContainer.style.display = 'none';
+    } else {
+      recContainer.parentElement.querySelector('.add-member-section-title').style.display = '';
+      recContainer.style.display = '';
+      recItems.forEach(f => {
+        const item = document.createElement('div');
+        item.className = 'add-member-rec-item';
+        item.innerHTML = `
+          <div class="add-member-rec-avatar" onclick="addMemberFromSheet('${f.id}', true)">${f.avatar}</div>
+          <div class="add-member-rec-name">${f.name.split(' ')[0]}</div>
+        `;
+        recContainer.appendChild(item);
+      });
+    }
+
+    // All followers list
+    const listEl = document.getElementById('addMemberList');
+    listEl.innerHTML = '';
+    available.forEach(f => {
+      const isInAnyCircle = allNames.has(f.name);
+      const row = document.createElement('div');
+      row.className = 'add-member-row' + (isInAnyCircle ? ' already' : '');
+      row.id = 'add-row-' + f.id;
+
+      // find which tier they're in
+      let inTierLabel = '';
+      if (isInAnyCircle) {
+        for (const [k, arr] of Object.entries(circleMembers)) {
+          if (arr.includes(f.name)) {
+            inTierLabel = circleTiers[k].emoji + ' ' + circleTiers[k].label;
+            break;
+          }
+        }
+      }
+
+      const rightEl = isInAnyCircle
+        ? `<div class="add-member-already-label">${inTierLabel}</div>`
+        : `<button class="add-btn" id="add-btn-${f.id}" onclick="addMemberFromSheet('${f.id}', false)">＋</button>`;
+
+      row.innerHTML = `
+        <div class="add-member-row-avatar">${f.avatar}</div>
+        <div class="add-member-row-info">
+          <div class="add-member-row-name">${f.name}</div>
+          <div class="add-member-row-handle">@${f.id}</div>
+        </div>
+        ${rightEl}
+      `;
+      listEl.appendChild(row);
+    });
+  }
+
+  function addMemberFromSheet(followerId, fromRec) {
+    const tier = currentSheetTier;
+    if (!tier) return;
+
+    const t = circleTiers[tier];
+    const current = getTierCount(tier);
+    if (current >= t.max) {
+      showToast(`${t.label}は満員です`);
+      return;
+    }
+
+    const follower = allFollowers.find(f => f.id === followerId);
+    if (!follower) return;
+
+    // Check already in a circle
+    const allNames = getAllCircleMemberNames();
+    if (allNames.has(follower.name)) {
+      showToast(`${follower.name}はすでにCircleに入っています`);
+      return;
+    }
+
+    // Button feedback
+    if (!fromRec) {
+      const btn = document.getElementById('add-btn-' + followerId);
+      if (btn) {
+        btn.textContent = '✓';
+        btn.classList.add('adding');
+        btn.disabled = true;
+      }
+    }
+
+    // Add after short delay for feedback
+    setTimeout(() => {
+      // Update state
+      circleMembers[tier].push(follower.name);
+
+      // Update Circle screen DOM
+      addMemberToCircleDOM(tier, follower);
+      updateCapacityLabel(tier);
+
+      const newRemaining = t.max - getTierCount(tier);
+
+      if (newRemaining <= 0) {
+        // Close sheet if full
+        showToast(`${follower.name}を${t.label}に追加しました。枠がいっぱいになりました！`);
+        closeAddMemberSheet();
+      } else {
+        showToast(`${follower.name}を${t.label}に追加しました`);
+        // Re-render sheet
+        renderAddMemberSheet();
+      }
+    }, 400);
+  }
+
+  // ===== POST COMPOSER =====
+  const composerDesigns = [
+    {
+      id: 'cyber',
+      label: '✨ サイバー',
+      grad: 'linear-gradient(135deg, #0f0c29, #302b63, #24243e)',
+      blob: 'radial-gradient(circle at 70% 30%, rgba(124,58,237,0.5) 0%, transparent 60%)',
+    },
+    {
+      id: 'natural',
+      label: '🌿 ナチュラル',
+      grad: 'linear-gradient(135deg, #2d5016, #4a7c3f, #6b8f5e)',
+      blob: 'radial-gradient(circle at 40% 40%, rgba(134,239,172,0.3) 0%, transparent 60%)',
+    },
+    {
+      id: 'elegant',
+      label: '💎 エレガント',
+      grad: 'linear-gradient(135deg, #1a1a2e, #16213e, #0f3460)',
+      blob: 'radial-gradient(circle at 60% 25%, rgba(245,158,11,0.4) 0%, transparent 60%)',
+    },
+    {
+      id: 'pop',
+      label: '🎨 ポップ',
+      grad: 'linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb)',
+      blob: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 60%)',
+    },
+  ];
+
+  let composerText = '';
+  let composerSelectedDesign = null;
+
+  function composerTextInput() {
+    const ta = document.getElementById('composerTextarea');
+    composerText = ta.value;
+    const len = composerText.length;
+    const countEl = document.getElementById('composerCount');
+    countEl.textContent = len + '/500文字';
+    countEl.className = 'composer-count' + (len >= 500 ? ' at-limit' : len >= 400 ? ' near-limit' : '');
+
+    const hasText = len > 0;
+    document.getElementById('composerNextBtn').disabled = !hasText;
+    document.getElementById('composerAiBtn').disabled = !hasText;
+  }
+
+  function composerNext() {
+    composerStartAI();
+  }
+
+  function composerStartAI() {
+    // Show step 2
+    document.getElementById('composerStep1').style.display = 'none';
+    const step2 = document.getElementById('composerStep2');
+    step2.style.display = 'flex';
+    step2.style.flexDirection = 'column';
+
+    const fill = document.getElementById('composerProgressFill');
+    const pct = document.getElementById('composerProgressPct');
+    const log = document.getElementById('composerStatusLog');
+
+    const steps = [
+      { pct: 25, msg: '投稿内容を分析しています...' },
+      { pct: 55, msg: '最適な背景を生成しています...' },
+      { pct: 80, msg: 'レイアウトを調整しています...' },
+      { pct: 100, msg: '完了！デザインを選んでください。' },
+    ];
+
+    let si = 0;
+    function nextStep() {
+      if (si >= steps.length) {
+        setTimeout(() => composerShowStep3(), 400);
+        return;
+      }
+      const s = steps[si++];
+      fill.style.width = s.pct + '%';
+      pct.textContent = s.pct + '%';
+      log.innerHTML = `<span class="current">${s.msg}</span>`;
+      setTimeout(nextStep, si === steps.length ? 300 : 500);
+    }
+    nextStep();
+  }
+
+  function composerShowStep3() {
+    document.getElementById('composerStep2').style.display = 'none';
+    const step3 = document.getElementById('composerStep3');
+    step3.style.display = 'flex';
+    composerSelectedDesign = null;
+    document.getElementById('composerPostBtn').disabled = true;
+
+    const grid = document.getElementById('composerDesignCards');
+    grid.innerHTML = '';
+    composerDesigns.forEach(d => {
+      const card = document.createElement('div');
+      card.className = 'composer-design-card';
+      card.id = 'design-card-' + d.id;
+      card.onclick = () => composerSelectDesign(d.id);
+
+      const shortText = composerText.length > 60
+        ? composerText.slice(0, 60) + '…'
+        : composerText;
+
+      card.innerHTML = `
+        <div class="composer-design-preview" style="background: ${d.grad};">
+          <div style="position:absolute;inset:0;${d.blob ? `background:${d.blob};` : ''}"></div>
+          <div class="composer-design-preview-text">${shortText}</div>
+          <div class="composer-design-check">✓</div>
+        </div>
+        <div class="composer-design-label">${d.label}</div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function composerSelectDesign(designId) {
+    composerSelectedDesign = designId;
+    document.querySelectorAll('.composer-design-card').forEach(c => {
+      c.classList.toggle('selected', c.id === 'design-card-' + designId);
+    });
+    document.getElementById('composerPostBtn').disabled = false;
+  }
+
+  function composerBack() {
+    document.getElementById('composerStep3').style.display = 'none';
+    document.getElementById('composerStep1').style.display = '';
+    // reset progress
+    document.getElementById('composerProgressFill').style.width = '0%';
+    document.getElementById('composerProgressPct').textContent = '0%';
+  }
+
+  function composerPost() {
+    if (!composerSelectedDesign) return;
+    const design = composerDesigns.find(d => d.id === composerSelectedDesign);
+    if (!design) return;
+
+    document.getElementById('composerStep3').style.display = 'none';
+    const step4 = document.getElementById('composerStep4');
+    step4.style.display = 'flex';
+
+    const preview = document.getElementById('composerSuccessPreview');
+    preview.style.background = design.grad;
+    const shortText = composerText.length > 80 ? composerText.slice(0, 80) + '…' : composerText;
+    document.getElementById('composerSuccessText').textContent = shortText;
+
+    // Add post to TikTok feed at the top
+    addNewPostToFeed(design);
+  }
+
+  function addNewPostToFeed(design) {
+    const newPost = {
+      id: Date.now(),
+      tier: 'inner',
+      tierLabel: '🔥 Inner',
+      tierClass: 'inner',
+      name: '木村 誠司',
+      handle: '@taisho_k',
+      avatarClass: 'avatar-inner',
+      avatarEmoji: '🧔',
+      score: 2847,
+      time: 'たった今',
+      type: 'text',
+      body: composerText,
+      likes: 0, comments: 0, shares: 0, views: 0,
+    };
+
+    // Prepend to posts array
+    posts.unshift(newPost);
+
+    // Build new slide
+    const container = document.getElementById('tiktokFeed');
+    const dotsEl = document.getElementById('tiktokDots');
+
+    const slide = document.createElement('div');
+    slide.className = 'tiktok-slide';
+    slide.style.background = design.grad;
+    slide.style.transform = 'translateY(-100%)'; // above viewport initially
+
+    slide.innerHTML = `
+      <div class="tiktok-slide-content">
+        <div class="tiktok-main">
+          <div class="tiktok-post-text">${composerText}</div>
+          <div class="tiktok-user-row" onclick="openUserProfile('taisho_k')">
+            <div class="tiktok-avatar avatar-inner">🧔</div>
+            <div class="tiktok-user-info">
+              <div class="tiktok-user-name">木村 誠司</div>
+              <div class="tiktok-user-meta">
+                <span class="tiktok-title-moon">🌙 Moon</span>
+                <span class="tiktok-tier-badge">🔥 Inner</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tiktok-actions">
+          <button class="tiktok-action-item" id="tt-like-${newPost.id}" onclick="tiktokToggleLike(${newPost.id}, this)">
+            <div class="tiktok-action-icon" id="tt-like-icon-${newPost.id}">🤍</div>
+            <div class="tiktok-action-count" id="tt-like-count-${newPost.id}">0</div>
+          </button>
+          <button class="tiktok-action-item" onclick="showToast('コメント機能は開発中です')">
+            <div class="tiktok-action-icon">💬</div>
+            <div class="tiktok-action-count">0</div>
+          </button>
+          <button class="tiktok-action-item" onclick="showToast('シェア機能は開発中です')">
+            <div class="tiktok-action-icon">🔄</div>
+            <div class="tiktok-action-count">0</div>
+          </button>
+          <button class="tiktok-action-item" onclick="showToast('インプレッション数')">
+            <div class="tiktok-action-icon">📊</div>
+            <div class="tiktok-action-count">0</div>
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Insert at beginning of container
+    container.insertBefore(slide, container.firstChild);
+    tiktokSlides.unshift(slide);
+    tiktokCurrentIdx++;
+
+    // Add dot at beginning
+    const dot = document.createElement('div');
+    dot.className = 'tiktok-dot';
+    dotsEl.insertBefore(dot, dotsEl.firstChild);
+
+    // Reposition all slides
+    tiktokGoTo(tiktokCurrentIdx);
+  }
+
+  function composerGoHome() {
+    // Reset composer
+    composerText = '';
+    composerSelectedDesign = null;
+    document.getElementById('composerTextarea').value = '';
+    document.getElementById('composerCount').textContent = '0/500文字';
+    document.getElementById('composerNextBtn').disabled = true;
+    document.getElementById('composerAiBtn').disabled = true;
+    document.getElementById('composerStep1').style.display = '';
+    document.getElementById('composerStep2').style.display = 'none';
+    document.getElementById('composerStep3').style.display = 'none';
+    document.getElementById('composerStep4').style.display = 'none';
+    document.getElementById('composerProgressFill').style.width = '0%';
+
+    switchTab('home');
+    // Navigate to the new post (index 0 now)
+    tiktokCurrentIdx = 0;
+    tiktokGoTo(0);
+  }
+
+  // ===== STATUS BAR CLOCK =====
+  function updateClock() {
+    const now = new Date();
+    const h = now.getHours().toString().padStart(2, '0');
+    const m = now.getMinutes().toString().padStart(2, '0');
+    document.getElementById('statusTime').textContent = h + ':' + m;
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+
+  // ===== INIT =====
+  posts.forEach(p => {
+    if (p.tier !== 'radiance') {
+      if (!p.likes)    p.likes    = randomLikes(p.tier);
+      if (!p.comments) p.comments = randomComments(p.tier);
+      if (!p.shares)   p.shares   = randomShares(p.tier);
+      if (!p.views)    p.views    = randomViews(p.tier);
+    }
+  });
+  buildTikTokFeed();
+  renderMyPosts();
+</script>
+</body>
+</html>
