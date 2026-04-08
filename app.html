@@ -910,6 +910,180 @@
       padding: 0 0 100px;
     }
 
+    /* ===== POST GRID (Instagram style) ===== */
+    .post-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      padding: 0 0 100px;
+    }
+    .post-grid-item {
+      aspect-ratio: 1;
+      position: relative;
+      cursor: pointer;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .post-grid-item:active { opacity: 0.8; }
+    .post-grid-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      padding: 8px 6px;
+    }
+    .post-grid-text {
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      line-height: 1.4;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.7), 0 0 12px rgba(0,0,0,0.4);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ===== POST FULLSCREEN OVERLAY (TikTok style) ===== */
+    .post-fs-overlay {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 100%;
+      max-width: 430px;
+      transform: translateX(-50%) translateY(100%);
+      z-index: 800;
+      background: #000;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+    .post-fs-overlay.open {
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+    .post-fs-slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .post-fs-slide::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.05) 0%,
+        rgba(0,0,0,0) 30%,
+        rgba(0,0,0,0.5) 70%,
+        rgba(0,0,0,0.8) 100%
+      );
+      pointer-events: none;
+    }
+    .post-fs-close {
+      position: absolute;
+      top: 48px;
+      left: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      line-height: 1;
+    }
+    .post-fs-body {
+      position: relative;
+      z-index: 2;
+      padding: 0 20px 24px;
+    }
+    .post-fs-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.6;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      margin-bottom: 18px;
+      white-space: pre-line;
+    }
+    .post-fs-user-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .post-fs-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.5);
+    }
+    .post-fs-username {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+    .post-fs-meta {
+      font-size: 11px;
+      color: rgba(255,255,255,0.75);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      margin-top: 1px;
+    }
+    .post-fs-actions {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .post-fs-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+      cursor: pointer;
+      border: none;
+      background: none;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    }
+    .post-fs-action-btn:active { opacity: 0.6; }
+    .post-fs-swipe-hint {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 5;
+      transition: opacity 0.3s;
+    }
+    .post-fs-swipe-hint.show { opacity: 1; }
+    .post-fs-swipe-hint-text {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      font-weight: 600;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
     /* ===== CIRCLE SCREEN ===== */
     .circle-screen-header {
       padding: 20px 16px 0;
@@ -2275,16 +2449,8 @@
         <span>→</span>
       </div>
 
-      <!-- MY POSTS TAB BAR -->
-      <div class="my-profile-tab-bar">
-        <button class="my-profile-tab active" onclick="myProfileSwitchTab(this)">ポスト</button>
-        <button class="my-profile-tab" onclick="myProfileSwitchTab(this)">返信</button>
-        <button class="my-profile-tab" onclick="myProfileSwitchTab(this)">メディア</button>
-        <button class="my-profile-tab" onclick="myProfileSwitchTab(this)">いいね</button>
-      </div>
-
-      <!-- MY POSTS FEED -->
-      <div class="my-profile-posts-feed" id="myPostsFeed"></div>
+      <!-- MY POSTS GRID -->
+      <div class="post-grid" id="myPostsFeed"></div>
     </div>
 
     <!-- ===== CIRCLE SCREEN ===== -->
@@ -2472,13 +2638,7 @@
       <div class="up-follow-row">
         <button class="up-follow-btn" id="upFollowBtn" onclick="toggleFollow()">フォローする</button>
       </div>
-      <div class="up-tab-bar">
-        <button class="up-tab active" onclick="upSwitchTab('posts', this)">ポスト</button>
-        <button class="up-tab" onclick="upSwitchTab('replies', this)">返信</button>
-        <button class="up-tab" onclick="upSwitchTab('media', this)">メディア</button>
-        <button class="up-tab" onclick="upSwitchTab('likes', this)">いいね</button>
-      </div>
-      <div class="up-posts-feed" id="upPostsFeed"></div>
+      <div class="post-grid" id="upPostsFeed"></div>
     </div>
 
   </div><!-- /screens -->
@@ -2541,6 +2701,12 @@
   </div>
 </div>
 
+<!-- POST FULLSCREEN OVERLAY -->
+<div class="post-fs-overlay" id="postFsOverlay">
+  <div id="postFsSlide" class="post-fs-slide"></div>
+  <button class="post-fs-close" onclick="closeFsPost()">✕</button>
+</div>
+
 <script>
   // ===== CELESTIAL TITLE HELPERS =====
   function getTitle(score) {
@@ -2589,9 +2755,9 @@
       trustedCount: 45,
       closeCount: 89,
       posts: [
-        { id: 'u1-1', body: 'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥\n今後のエージェント設計のヒントを掴んだ気がする。', time: '8分前', likes: 47, comments: 12, shares: 8 },
-        { id: 'u1-2', body: 'AIエージェントに「自己評価」機能を持たせる実験をしてる。\n精度が上がるかどうか、来週結果を共有します。', time: '2日前', likes: 83, comments: 21, shares: 15 },
-        { id: 'u1-3', body: 'スタートアップの初期フェーズで大事なのは、完璧なプロダクトより「誰のために作るか」の解像度。\nそれが全部を決める。', time: '5日前', likes: 126, comments: 34, shares: 29 },
+        { id: 'u1-1', body: 'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥\n今後のエージェント設計のヒントを掴んだ気がする。', time: '8分前', likes: 47, comments: 12, shares: 8, grad: 'linear-gradient(135deg, #2D1B69, #7C3AED)' },
+        { id: 'u1-2', body: 'AIエージェントに「自己評価」機能を持たせる実験をしてる。\n精度が上がるかどうか、来週結果を共有します。', time: '2日前', likes: 83, comments: 21, shares: 15, grad: 'linear-gradient(135deg, #0f0c29, #24243e)' },
+        { id: 'u1-3', body: 'スタートアップの初期フェーズで大事なのは、完璧なプロダクトより「誰のために作るか」の解像度。\nそれが全部を決める。', time: '5日前', likes: 126, comments: 34, shares: 29, grad: 'linear-gradient(135deg, #1a0030, #4C1D95)' },
       ],
     },
     'rina_s': {
@@ -2609,9 +2775,9 @@
       trustedCount: 37,
       closeCount: 74,
       posts: [
-        { id: 'u2-1', body: '今朝の朝活で気づいたこと。\n\n「完璧なタイミング」を待っていると永遠に動けない。不完全なまま動いて、走りながら直す。それが最速。', time: '22分前', likes: 62, comments: 18, shares: 11 },
-        { id: 'u2-2', body: '朝活コミュニティ200人突破！\nゆっくりだけど確実に「動く人の輪」が広がってる。ありがとうございます🙏', time: '3日前', likes: 154, comments: 47, shares: 33 },
-        { id: 'u2-3', body: 'マーケの本質は「共感設計」だと思う。\n人が動くのは、理屈より感情。感情より「自分事」になった瞬間。', time: '1週間前', likes: 98, comments: 25, shares: 19 },
+        { id: 'u2-1', body: '今朝の朝活で気づいたこと。\n\n「完璧なタイミング」を待っていると永遠に動けない。不完全なまま動いて、走りながら直す。それが最速。', time: '22分前', likes: 62, comments: 18, shares: 11, grad: 'linear-gradient(135deg, #831843, #BE185D)' },
+        { id: 'u2-2', body: '朝活コミュニティ200人突破！\nゆっくりだけど確実に「動く人の輪」が広がってる。ありがとうございます🙏', time: '3日前', likes: 154, comments: 47, shares: 33, grad: 'linear-gradient(135deg, #9D174D, #EC4899)' },
+        { id: 'u2-3', body: 'マーケの本質は「共感設計」だと思う。\n人が動くのは、理屈より感情。感情より「自分事」になった瞬間。', time: '1週間前', likes: 98, comments: 25, shares: 19, grad: 'linear-gradient(135deg, #4a044e, #BE185D)' },
       ],
     },
     'sarah_ai': {
@@ -2629,9 +2795,9 @@
       trustedCount: 1205,
       closeCount: 3891,
       posts: [
-        { id: 'u3-1', body: "The future of AI agents is not about replacing humans.\nIt's about amplifying the unique humans who know how to use them.\n\nThe leverage gap between those who understand agents and those who don't will be the biggest wealth divide of this decade.", time: '1h ago', likes: 1247, comments: 89, shares: 341 },
-        { id: 'u3-2', body: 'Just published my new paper on multi-agent coordination.\nTL;DR: agents that communicate in structured natural language outperform those using symbolic protocols by 34%.\n\nLink in bio.', time: '3 days ago', likes: 2103, comments: 156, shares: 487 },
-        { id: 'u3-3', body: "Hot take: the 'AI safety' debate is missing the point.\nThe risk isn't rogue superintelligence — it's mundane misuse by people with ordinary goals.\n\nWe need social infrastructure, not just technical guardrails.", time: '1 week ago', likes: 3812, comments: 234, shares: 891 },
+        { id: 'u3-1', body: "The future of AI agents is not about replacing humans.\nIt's about amplifying the unique humans who know how to use them.\n\nThe leverage gap between those who understand agents and those who don't will be the biggest wealth divide of this decade.", time: '1h ago', likes: 1247, comments: 89, shares: 341, grad: 'linear-gradient(135deg, #064E3B, #047857)' },
+        { id: 'u3-2', body: 'Just published my new paper on multi-agent coordination.\nTL;DR: agents that communicate in structured natural language outperform those using symbolic protocols by 34%.\n\nLink in bio.', time: '3 days ago', likes: 2103, comments: 156, shares: 487, grad: 'linear-gradient(135deg, #065F46, #10B981)' },
+        { id: 'u3-3', body: "Hot take: the 'AI safety' debate is missing the point.\nThe risk isn't rogue superintelligence — it's mundane misuse by people with ordinary goals.\n\nWe need social infrastructure, not just technical guardrails.", time: '1 week ago', likes: 3812, comments: 234, shares: 891, grad: 'linear-gradient(135deg, #022c22, #065F46)' },
       ],
     },
     'kenta_s': {
@@ -2649,9 +2815,9 @@
       trustedCount: 28,
       closeCount: 61,
       posts: [
-        { id: 'u4-1', body: 'シンガポールのAIカンファレンス🇸🇬\n現場の熱量、やばすぎる。投資家とエンジニアが同じ言語で話している。', time: '30分前', likes: 38, comments: 9, shares: 6 },
-        { id: 'u4-2', body: '今週のポートフォリオレビュー完了。\nSEAのAIスタートアップ、評価額の割に実力が高い案件をいくつか発見。詳細は近日Trusted限定で共有します。', time: '4日前', likes: 51, comments: 14, shares: 7 },
-        { id: 'u4-3', body: 'VC業界でよく言われる「市場規模」より大事なのが「創業者の解像度」。\n問題を誰より深く知っているか。それだけで半分以上投資判断が決まる。', time: '1週間前', likes: 74, comments: 19, shares: 12 },
+        { id: 'u4-1', body: 'シンガポールのAIカンファレンス🇸🇬\n現場の熱量、やばすぎる。投資家とエンジニアが同じ言語で話している。', time: '30分前', likes: 38, comments: 9, shares: 6, grad: 'linear-gradient(135deg, #0C4A6E, #0369A1)' },
+        { id: 'u4-2', body: '今週のポートフォリオレビュー完了。\nSEAのAIスタートアップ、評価額の割に実力が高い案件をいくつか発見。詳細は近日Trusted限定で共有します。', time: '4日前', likes: 51, comments: 14, shares: 7, grad: 'linear-gradient(135deg, #075985, #0ea5e9)' },
+        { id: 'u4-3', body: 'VC業界でよく言われる「市場規模」より大事なのが「創業者の解像度」。\n問題を誰より深く知っているか。それだけで半分以上投資判断が決まる。', time: '1週間前', likes: 74, comments: 19, shares: 12, grad: 'linear-gradient(135deg, #0a1628, #1e4d7b)' },
       ],
     },
     'daisuke_ito': {
@@ -2669,9 +2835,9 @@
       trustedCount: 19,
       closeCount: 52,
       posts: [
-        { id: 'u5-1', body: '新しいポートフォリオ構成を試してる。\nインデックス60% / 個別株20% / オルタナ20%\n\n2026年はボラティリティが高いと読んでいるので守り多め。みんなどう組んでる？', time: '1時間前', likes: 29, comments: 17, shares: 4 },
-        { id: 'u5-2', body: 'S&P500の過去50年データ再確認。\n暴落から回復するまでの平均期間：約14ヶ月。\n\nパニック売りが一番コスト高い。', time: '5日前', likes: 87, comments: 31, shares: 22 },
-        { id: 'u5-3', body: '積立NISAの出口戦略について考えてる。\n60歳時点で取り崩しペースをどう設計するか。\n誰かいい本を知ってたら教えてください📚', time: '2週間前', likes: 44, comments: 28, shares: 8 },
+        { id: 'u5-1', body: '新しいポートフォリオ構成を試してる。\nインデックス60% / 個別株20% / オルタナ20%\n\n2026年はボラティリティが高いと読んでいるので守り多め。みんなどう組んでる？', time: '1時間前', likes: 29, comments: 17, shares: 4, grad: 'linear-gradient(135deg, #422006, #9A3412)' },
+        { id: 'u5-2', body: 'S&P500の過去50年データ再確認。\n暴落から回復するまでの平均期間：約14ヶ月。\n\nパニック売りが一番コスト高い。', time: '5日前', likes: 87, comments: 31, shares: 22, grad: 'linear-gradient(135deg, #7C2D12, #D97706)' },
+        { id: 'u5-3', body: '積立NISAの出口戦略について考えてる。\n60歳時点で取り崩しペースをどう設計するか。\n誰かいい本を知ってたら教えてください📚', time: '2週間前', likes: 44, comments: 28, shares: 8, grad: 'linear-gradient(135deg, #292524, #78716C)' },
       ],
     },
     'kenji_founder': {
@@ -2689,9 +2855,9 @@
       trustedCount: 892,
       closeCount: 2734,
       posts: [
-        { id: 'u6-1', body: '起業家として一番大切にしていること。\n\n「信頼の輪」を小さく深くつくること。フォロワー数より、本当に動ける3人の仲間を持て。\n\n規模より密度。それが長期的に最強のアドバンテージになる。', time: '2時間前', likes: 847, comments: 63, shares: 198 },
-        { id: 'u6-2', body: '3社目を創業した時、投資家に言われた言葉を今でも覚えてる。\n\n「君は何度でも立ち上がるから投資する」\n\n スキルより姿勢。これが全てだった。', time: '6日前', likes: 1203, comments: 91, shares: 267 },
-        { id: 'u6-3', body: 'TEDトーク登壇決定🎙\n\nテーマ：「信頼がお金より先に来る世界」\n\n詳細は来週発表。', time: '2週間前', likes: 2341, comments: 187, shares: 512 },
+        { id: 'u6-1', body: '起業家として一番大切にしていること。\n\n「信頼の輪」を小さく深くつくること。フォロワー数より、本当に動ける3人の仲間を持て。\n\n規模より密度。それが長期的に最強のアドバンテージになる。', time: '2時間前', likes: 847, comments: 63, shares: 198, grad: 'linear-gradient(135deg, #1E1B4B, #4338CA)' },
+        { id: 'u6-2', body: '3社目を創業した時、投資家に言われた言葉を今でも覚えてる。\n\n「君は何度でも立ち上がるから投資する」\n\n スキルより姿勢。これが全てだった。', time: '6日前', likes: 1203, comments: 91, shares: 267, grad: 'linear-gradient(135deg, #312E81, #7C3AED)' },
+        { id: 'u6-3', body: 'TEDトーク登壇決定🎙\n\nテーマ：「信頼がお金より先に来る世界」\n\n詳細は来週発表。', time: '2週間前', likes: 2341, comments: 187, shares: 512, grad: 'linear-gradient(135deg, #0f0c29, #2D1B69)' },
       ],
     },
     'ayaka_y': {
@@ -2709,9 +2875,9 @@
       trustedCount: 14,
       closeCount: 38,
       posts: [
-        { id: 'u7-1', body: '読書記録📚\n「イシューからはじめよ」再読。\n\n問いの質が答えの質を決める、という話。仕事でも投資でも同じだなと改めて実感。', time: '3時間前', likes: 34, comments: 8, shares: 5 },
-        { id: 'u7-2', body: '今月のベスト本：「ファクトフルネス」\n\n思い込みで世界を見ていたことに気づかされる。データリテラシーを鍛えたい人に必読。', time: '1週間前', likes: 67, comments: 19, shares: 14 },
-        { id: 'u7-3', body: 'ブログ更新：「思考の解像度を上げる3冊」\n\n読書って、結局「問いの精度」を上げる行為だと思う。', time: '2週間前', likes: 51, comments: 12, shares: 9 },
+        { id: 'u7-1', body: '読書記録📚\n「イシューからはじめよ」再読。\n\n問いの質が答えの質を決める、という話。仕事でも投資でも同じだなと改めて実感。', time: '3時間前', likes: 34, comments: 8, shares: 5, grad: 'linear-gradient(135deg, #134E4A, #0D9488)' },
+        { id: 'u7-2', body: '今月のベスト本：「ファクトフルネス」\n\n思い込みで世界を見ていたことに気づかされる。データリテラシーを鍛えたい人に必読。', time: '1週間前', likes: 67, comments: 19, shares: 14, grad: 'linear-gradient(135deg, #0F766E, #14B8A6)' },
+        { id: 'u7-3', body: 'ブログ更新：「思考の解像度を上げる3冊」\n\n読書って、結局「問いの精度」を上げる行為だと思う。', time: '2週間前', likes: 51, comments: 12, shares: 9, grad: 'linear-gradient(135deg, #064E3B, #047857)' },
       ],
     },
     'sho_n': {
@@ -2729,9 +2895,9 @@
       trustedCount: 4,
       closeCount: 17,
       posts: [
-        { id: 'u8-1', body: '最近ずっと悩んでた転職の件、一歩踏み出すことにしました。\n不安より期待の方が大きくなってきた。前に進みます💪', time: '4時間前', likes: 12, comments: 5, shares: 1 },
-        { id: 'u8-2', body: 'ポートフォリオサイトをリニューアルしました。\nReact + TypeScript + Tailwindで全部書き直し。フィードバックもらえたら嬉しいです！', time: '3日前', likes: 24, comments: 11, shares: 3 },
-        { id: 'u8-3', body: '面接が怖い理由って、「評価される」からじゃなくて「自分を言語化する」のが難しいから気がする。\n伝えることを練習しよう。', time: '1週間前', likes: 31, comments: 8, shares: 4 },
+        { id: 'u8-1', body: '最近ずっと悩んでた転職の件、一歩踏み出すことにしました。\n不安より期待の方が大きくなってきた。前に進みます💪', time: '4時間前', likes: 12, comments: 5, shares: 1, grad: 'linear-gradient(135deg, #374151, #6B7280)' },
+        { id: 'u8-2', body: 'ポートフォリオサイトをリニューアルしました。\nReact + TypeScript + Tailwindで全部書き直し。フィードバックもらえたら嬉しいです！', time: '3日前', likes: 24, comments: 11, shares: 3, grad: 'linear-gradient(135deg, #1e293b, #475569)' },
+        { id: 'u8-3', body: '面接が怖い理由って、「評価される」からじゃなくて「自分を言語化する」のが難しいから気がする。\n伝えることを練習しよう。', time: '1週間前', likes: 31, comments: 8, shares: 4, grad: 'linear-gradient(135deg, #0f172a, #334155)' },
       ],
     },
   };
@@ -3455,10 +3621,6 @@
     // render posts
     renderUserPosts(user);
 
-    // reset tabs
-    document.querySelectorAll('.up-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.up-tab')[0].classList.add('active');
-
     // slide in
     document.getElementById('userProfileOverlay').classList.add('open');
   }
@@ -3484,39 +3646,25 @@
   }
 
   function upSwitchTab(tab, el) {
-    document.querySelectorAll('.up-tab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-    // All tabs show posts content (replies/media/likes show same posts as stub)
-    if (currentProfileUserId) {
-      renderUserPosts(userProfiles[currentProfileUserId]);
-    }
+    // no-op: tabs removed, grid is always shown
   }
 
   function renderUserPosts(user) {
     const feed = document.getElementById('upPostsFeed');
     feed.innerHTML = '';
-    user.posts.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'post-card';
-      card.innerHTML = `
-        <div class="post-header">
-          <div class="avatar ${user.avatarClass}">${user.avatarEmoji}</div>
-          <div class="post-meta">
-            <div class="post-name">${user.name}</div>
-            <div class="post-handle-row">
-              <span class="post-handle">${user.handle}</span>
-            </div>
-          </div>
-          <span class="post-time">${p.time}</span>
-        </div>
-        <div class="post-body">${p.body}</div>
-        <div class="post-actions">
-          <button class="action-btn"><span>🤍</span><span class="action-count">${p.likes}</span></button>
-          <button class="action-btn" onclick="showToast('コメント機能は開発中です')"><span>💬</span><span class="action-count">${p.comments}</span></button>
-          <button class="action-btn" onclick="showToast('シェア機能は開発中です')"><span>🔄</span><span class="action-count">${p.shares}</span></button>
+    const posts = user.posts || [];
+    posts.forEach((p, idx) => {
+      const item = document.createElement('div');
+      item.className = 'post-grid-item';
+      item.style.background = p.grad || 'linear-gradient(135deg, #1a1a2e, #7C3AED)';
+      item.onclick = () => openFsPost(posts, idx, user.id);
+      const snippet = p.body.replace(/\n/g, ' ').slice(0, 40);
+      item.innerHTML = `
+        <div class="post-grid-overlay">
+          <div class="post-grid-text">${snippet}</div>
         </div>
       `;
-      feed.appendChild(card);
+      feed.appendChild(item);
     });
   }
 
@@ -3530,6 +3678,7 @@
       comments: 45,
       shares: 67,
       views: '8.9K',
+      grad: 'linear-gradient(135deg, #0d9488, #0284c7)',
     },
     {
       id: 'my-2',
@@ -3539,6 +3688,7 @@
       comments: 89,
       shares: 123,
       views: '23K',
+      grad: 'linear-gradient(135deg, #7C3AED, #2563EB)',
     },
     {
       id: 'my-3',
@@ -3548,6 +3698,7 @@
       comments: 156,
       shares: 234,
       views: '45K',
+      grad: 'linear-gradient(135deg, #1a1a2e, #D97706)',
     },
     {
       id: 'my-4',
@@ -3557,6 +3708,7 @@
       comments: 67,
       shares: 145,
       views: '34K',
+      grad: 'linear-gradient(135deg, #059669, #10B981)',
     },
     {
       id: 'my-5',
@@ -3566,6 +3718,7 @@
       comments: 345,
       shares: 567,
       views: '89K',
+      grad: 'linear-gradient(135deg, #7C3AED, #EC4899)',
     },
   ];
 
@@ -3579,42 +3732,18 @@
   function renderMyPosts() {
     const feed = document.getElementById('myPostsFeed');
     feed.innerHTML = '';
-    myPosts.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'post-card';
-      card.innerHTML = `
-        <div class="post-header">
-          <div class="avatar avatar-inner">🧔</div>
-          <div class="post-meta">
-            <div class="post-name">木村 誠司</div>
-            <div class="post-handle-row">
-              <span class="post-handle">@taisho_k</span>
-              <span class="score-chip" style="margin-left:0; color:#94A3B8; font-weight:700;">🌙 Moon</span>
-            </div>
-          </div>
-          <span class="post-time">${p.time}</span>
-        </div>
-        <div class="post-body">${p.body}</div>
-        <div class="post-actions">
-          <button class="action-btn my-like-btn" id="my-like-${p.id}" onclick="toggleMyLike('${p.id}', this)">
-            <span id="my-like-icon-${p.id}">🤍</span>
-            <span class="action-count" id="my-like-count-${p.id}">${formatMyLikes(p.likes)}</span>
-          </button>
-          <button class="action-btn" onclick="showToast('コメント機能は開発中です')">
-            <span>💬</span>
-            <span class="action-count">${p.comments}</span>
-          </button>
-          <button class="action-btn" onclick="showToast('シェア機能は開発中です')">
-            <span>🔄</span>
-            <span class="action-count">${p.shares}</span>
-          </button>
-          <button class="action-btn" onclick="showToast('インプレッション数')">
-            <span>📊</span>
-            <span class="action-count">${p.views}</span>
-          </button>
+    myPosts.forEach((p, idx) => {
+      const item = document.createElement('div');
+      item.className = 'post-grid-item';
+      item.style.background = p.grad;
+      item.onclick = () => openFsPost(myPosts, idx, 'my');
+      const snippet = p.body.replace(/\n/g, ' ').slice(0, 40);
+      item.innerHTML = `
+        <div class="post-grid-overlay">
+          <div class="post-grid-text">${snippet}</div>
         </div>
       `;
-      feed.appendChild(card);
+      feed.appendChild(item);
     });
   }
 
@@ -3624,22 +3753,130 @@
     const icon = document.getElementById('my-like-icon-' + id);
     const countEl = document.getElementById('my-like-count-' + id);
     if (myLiked[id]) {
-      icon.textContent = '❤️';
-      btn.classList.add('liked');
+      if (icon) icon.textContent = '❤️';
+      if (btn) btn.classList.add('liked');
       post.likes += 1;
     } else {
-      icon.textContent = '🤍';
-      btn.classList.remove('liked');
+      if (icon) icon.textContent = '🤍';
+      if (btn) btn.classList.remove('liked');
       post.likes = Math.max(0, post.likes - 1);
     }
-    countEl.textContent = formatMyLikes(post.likes);
+    if (countEl) countEl.textContent = formatMyLikes(post.likes);
   }
 
-  function myProfileSwitchTab(el) {
-    document.querySelectorAll('.my-profile-tab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-    // 全タブ同じ内容を表示（ポスト一覧）
-    renderMyPosts();
+  // ===== FULLSCREEN POST VIEWER =====
+  let fsPostList = [];
+  let fsCurrentIdx = 0;
+  let fsContext = 'my'; // 'my' or userId
+  let fsDragStartY = 0;
+  let fsDragging = false;
+
+  function openFsPost(postList, idx, context) {
+    fsPostList = postList;
+    fsCurrentIdx = idx;
+    fsContext = context;
+    renderFsSlide();
+    document.getElementById('postFsOverlay').classList.add('open');
+    // bind swipe
+    const overlay = document.getElementById('postFsOverlay');
+    overlay.addEventListener('touchstart', fsTouchStart, { passive: true });
+    overlay.addEventListener('touchend', fsTouchEnd, { passive: true });
+  }
+
+  function closeFsPost() {
+    const overlay = document.getElementById('postFsOverlay');
+    overlay.classList.remove('open');
+    overlay.removeEventListener('touchstart', fsTouchStart);
+    overlay.removeEventListener('touchend', fsTouchEnd);
+  }
+
+  function fsTouchStart(e) {
+    fsDragStartY = e.touches[0].clientY;
+    fsDragging = true;
+  }
+  function fsTouchEnd(e) {
+    if (!fsDragging) return;
+    fsDragging = false;
+    const dy = e.changedTouches[0].clientY - fsDragStartY;
+    const threshold = 60;
+    if (dy < -threshold && fsCurrentIdx < fsPostList.length - 1) {
+      fsCurrentIdx++;
+      renderFsSlide();
+    } else if (dy > threshold && fsCurrentIdx > 0) {
+      fsCurrentIdx--;
+      renderFsSlide();
+    }
+  }
+
+  function renderFsSlide() {
+    const p = fsPostList[fsCurrentIdx];
+    if (!p) return;
+
+    // Determine grad, user info
+    let grad, userName, userAvatar, avatarClass, titleLabel, time;
+    if (fsContext === 'my') {
+      grad = p.grad || 'linear-gradient(135deg, #1a1a2e, #7C3AED)';
+      userName = '木村 誠司';
+      userAvatar = '🧔';
+      avatarClass = 'avatar-inner';
+      titleLabel = '🌙 Moon';
+      time = p.time;
+    } else {
+      // user profile post
+      const user = userProfiles[fsContext];
+      grad = p.grad || 'linear-gradient(135deg, #1a1a2e, #7C3AED)';
+      userName = user ? user.name : '';
+      userAvatar = user ? user.avatarEmoji : '👤';
+      avatarClass = user ? user.avatarClass : '';
+      const tInfo = user ? getTitle(user.score) : { emoji: '⭐', name: 'Star' };
+      titleLabel = tInfo.emoji + ' ' + tInfo.name;
+      time = p.time;
+    }
+
+    const likeId = 'fs-like-' + (p.id || fsCurrentIdx);
+    const liked = myLiked[likeId] || false;
+    const likeIcon = liked ? '❤️' : '🤍';
+    const likeCount = p.likes || 0;
+
+    const slide = document.getElementById('postFsSlide');
+    slide.style.background = grad;
+    slide.innerHTML = `
+      <div class="post-fs-body">
+        <div class="post-fs-text">${p.body}</div>
+        <div class="post-fs-user-row">
+          <div class="post-fs-avatar ${avatarClass}">${userAvatar}</div>
+          <div>
+            <div class="post-fs-username">${userName}</div>
+            <div class="post-fs-meta">${titleLabel} · ${time}</div>
+          </div>
+        </div>
+        <div class="post-fs-actions">
+          <button class="post-fs-action-btn" onclick="toggleFsLike('${p.id || fsCurrentIdx}')">
+            <span id="fs-like-icon-${p.id || fsCurrentIdx}">${likeIcon}</span>
+            <span id="fs-like-count-${p.id || fsCurrentIdx}">${formatMyLikes(likeCount)}</span>
+          </button>
+          <button class="post-fs-action-btn" onclick="showToast('コメント機能は開発中です')">💬 <span>${p.comments || 0}</span></button>
+          <button class="post-fs-action-btn" onclick="showToast('シェア機能は開発中です')">🔄 <span>${p.shares || 0}</span></button>
+          <button class="post-fs-action-btn" onclick="showToast('インプレッション数')">📊 <span>${p.views || 0}</span></button>
+        </div>
+      </div>
+    `;
+  }
+
+  function toggleFsLike(id) {
+    const likeKey = 'fs-like-' + id;
+    myLiked[likeKey] = !myLiked[likeKey];
+    const icon = document.getElementById('fs-like-icon-' + id);
+    const countEl = document.getElementById('fs-like-count-' + id);
+    const p = fsPostList[fsCurrentIdx];
+    if (myLiked[likeKey]) {
+      if (icon) icon.textContent = '❤️';
+      if (p) p.likes = (p.likes || 0) + 1;
+    } else {
+      if (icon) icon.textContent = '🤍';
+      if (p) p.likes = Math.max(0, (p.likes || 0) - 1);
+    }
+    if (countEl && p) countEl.textContent = formatMyLikes(p.likes);
   }
 
   // ===== ADD MEMBER BOTTOM SHEET =====
