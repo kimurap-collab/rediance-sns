@@ -734,19 +734,19 @@
         </div>
       </div>
 
-      <!-- Screen 2: 1st Circle -->
+      <!-- Screen 2: Core -->
       <div class="screen" id="screen-1st">
         <!-- Progress -->
         <div class="progress-area">
           <div class="progress-steps">
             <div style="display:flex;flex-direction:column;align-items:center;">
               <div class="step-dot active">1</div>
-              <div class="step-label active">1st</div>
+              <div class="step-label active">Core</div>
             </div>
             <div class="step-line" id="line-1-2"></div>
             <div style="display:flex;flex-direction:column;align-items:center;">
               <div class="step-dot" id="dot-2">2</div>
-              <div class="step-label" id="label-2">2nd</div>
+              <div class="step-label" id="label-2">Orbit</div>
             </div>
             <div class="step-line" id="line-2-3"></div>
             <div style="display:flex;flex-direction:column;align-items:center;">
@@ -757,8 +757,8 @@
         </div>
 
         <div class="select-header">
-          <div class="select-title">🥇 1st Circle</div>
-          <div class="select-desc">あなたの右腕 — 最も信頼できる人たち（最大5人）</div>
+          <div class="select-title">🔥 Core</div>
+          <div class="select-desc">あなたの核 — 最も信頼できる5人（ダンバー数）</div>
           <div class="select-count-bar">
             <div class="count-badge" id="count-1st">0 / 5人 選択中</div>
           </div>
@@ -780,19 +780,19 @@
         </div>
       </div>
 
-      <!-- Screen 3: 2nd Circle -->
+      <!-- Screen 3: Orbit -->
       <div class="screen" id="screen-2nd">
         <!-- Progress -->
         <div class="progress-area">
           <div class="progress-steps">
             <div style="display:flex;flex-direction:column;align-items:center;">
               <div class="step-dot done">✓</div>
-              <div class="step-label done">1st</div>
+              <div class="step-label done">Core</div>
             </div>
             <div class="step-line done"></div>
             <div style="display:flex;flex-direction:column;align-items:center;">
               <div class="step-dot active">2</div>
-              <div class="step-label active">2nd</div>
+              <div class="step-label active">Orbit</div>
             </div>
             <div class="step-line" id="line-2-3b"></div>
             <div style="display:flex;flex-direction:column;align-items:center;">
@@ -803,8 +803,8 @@
         </div>
 
         <div class="select-header">
-          <div class="select-title">🥈 2nd Circle</div>
-          <div class="select-desc">信頼する仲間（最大15人）— スキップ可</div>
+          <div class="select-title">💎 Orbit</div>
+          <div class="select-desc">信頼する仲間15人（ダンバー数）— スキップ可</div>
           <div class="select-count-bar">
             <div class="count-badge" id="count-2nd">0 / 15人 選択中</div>
           </div>
@@ -1030,12 +1030,12 @@
 
       const body = document.getElementById('result-body');
 
-      // 1st Circle
+      // Core
       const firstHtml = `
         <div class="tier-card first fade-in-up">
           <div class="tier-header">
-            <span class="tier-badge">🥇</span>
-            <span class="tier-title">1st Circle</span>
+            <span class="tier-badge">🔥</span>
+            <span class="tier-title">Core</span>
             <span class="tier-count">${first.length}人</span>
           </div>
           <div class="tier-avatars">
@@ -1049,12 +1049,12 @@
         </div>
       `;
 
-      // 2nd Circle
+      // Orbit
       const secondHtml = second.length > 0 ? `
         <div class="tier-card second fade-in-up" style="animation-delay:0.1s">
           <div class="tier-header">
-            <span class="tier-badge">🥈</span>
-            <span class="tier-title">2nd Circle</span>
+            <span class="tier-badge">💎</span>
+            <span class="tier-title">Orbit</span>
             <span class="tier-count">${second.length}人</span>
           </div>
           <div class="tier-avatars">
@@ -1113,7 +1113,7 @@
     function share() {
       const first = followers.filter(f => selected1st.has(f.id));
       const second = followers.filter(f => selected2nd.has(f.id));
-      alert(`組閣シェア機能（実装予定）\n\n🥇 1st Circle: ${first.map(f => f.name).join('、')}\n🥈 2nd Circle: ${second.length}人`);
+      alert(`組閣シェア機能（実装予定）\n\n🔥 Core: ${first.map(f => f.name).join('、')}\n💎 Orbit: ${second.length}人`);
     }
 
     // ===== RESTART =====

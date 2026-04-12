@@ -677,16 +677,10 @@
       font-weight: 700;
       flex-shrink: 0;
     }
-    .title-sun {
-      background: linear-gradient(135deg, #F59E0B, #D97706);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .story-tier-label {
+      color: #CBD5E1;
+      opacity: 0.9;
     }
-    .title-nova { color: #A78BFA; }
-    .title-moon { color: #94A3B8; }
-    .title-star { color: var(--text-main); }
-    .title-ember { color: #9CA3AF; }
 
     /* ===== STORIES PLAYER OVERLAY ===== */
     .stories-overlay {
@@ -1191,37 +1185,21 @@
       z-index: 2;
     }
     .pokemon-card-tier-badge {
-      font-size: 14px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-      background: rgba(0,0,0,0.35);
-      padding: 4px 10px;
-      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.42);
+      padding: 6px 12px;
+      border-radius: 10px;
       backdrop-filter: blur(4px);
+      color: rgba(255,255,255,0.98);
     }
-    .pokemon-card-hp {
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
-      background: rgba(0,0,0,0.35);
-      padding: 4px 10px;
-      border-radius: 8px;
-      backdrop-filter: blur(4px);
-    }
-    .pokemon-card-hp-label {
-      font-size: 10px;
+    .pokemon-card-tier-badge .pokemon-card-tier-rs {
+      font-size: 12px;
       font-weight: 700;
-      opacity: 0.9;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-    }
-    .pokemon-card-hp-num {
-      font-size: 28px;
-      font-weight: 900;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.6), 0 0 20px currentColor;
-      line-height: 1;
-      letter-spacing: -1px;
+      opacity: 0.8;
+      margin-left: 5px;
     }
     .pokemon-card-name {
       font-size: 18px;
@@ -1242,143 +1220,116 @@
       margin-bottom: 10px;
       text-shadow: 0 1px 3px rgba(0,0,0,0.5);
     }
-    .pokemon-card-progress-row {
+    /* Stats — 4-metric influence breakdown (stacked columns) */
+    .pokemon-card-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: 4px;
+      margin-bottom: 0;
+      padding: 8px 10px;
+      background: rgba(0,0,0,0.32);
+      border-radius: 10px;
+      backdrop-filter: blur(4px);
+    }
+    .pokemon-card-stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      flex: 1;
+      cursor: pointer;
+      transition: transform 0.12s;
+    }
+    .pokemon-card-stat-item:active { transform: scale(0.94); }
+    .pokemon-card-stat-icon {
+      font-size: 13px;
+      line-height: 1;
+    }
+    .pokemon-card-stat-label {
+      display: block;
+      font-size: 9px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.82);
+      letter-spacing: 0.2px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    }
+    .pokemon-card-stat-value {
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+      letter-spacing: -0.3px;
+    }
+
+    /* Stat info modal */
+    .stat-info-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
       display: flex;
       align-items: center;
-      gap: 8px;
-    }
-    .pokemon-card-progress-track {
-      flex: 1;
-      height: 5px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .pokemon-card-progress-fill {
-      height: 100%;
-      border-radius: 3px;
-    }
-    .pokemon-card-progress-fill-sun { background: linear-gradient(90deg, #F59E0B, #FCD34D); }
-    .pokemon-card-progress-fill-nova { background: linear-gradient(90deg, #7C3AED, #A78BFA); }
-    .pokemon-card-progress-fill-moon { background: linear-gradient(90deg, #64748B, #94A3B8); }
-    .pokemon-card-progress-fill-star { background: linear-gradient(90deg, #2563EB, #60A5FA); }
-    .pokemon-card-progress-fill-ember { background: linear-gradient(90deg, #57534E, #78716C); }
-    .pokemon-card-progress-hint {
-      font-size: 9px;
-      opacity: 0.7;
-      white-space: nowrap;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-    }
-
-    /* ===== TIER BORDER EFFECTS ===== */
-    /* Ember — matte, no glow */
-    .pokemon-card-ember {
-      border: 2px solid #57534E;
-    }
-    /* Star — subtle blue */
-    .pokemon-card-star {
-      border: 2px solid #60A5FA;
-      box-shadow: 0 0 8px rgba(96,165,250,0.2);
-    }
-    /* Moon — silver shimmer */
-    .pokemon-card-moon {
-      border: 2px solid #CBD5E1;
-      box-shadow: 0 0 12px rgba(203,213,225,0.35), 0 0 24px rgba(148,163,184,0.15);
-    }
-    .pokemon-card-moon::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.08) 45%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.08) 55%, transparent 60%);
-      background-size: 200% 100%;
-      animation: moonShimmer 3s ease-in-out infinite;
-      z-index: 1;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
       pointer-events: none;
-      border-radius: 16px;
+      transition: opacity 0.2s;
     }
-    @keyframes moonShimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-    /* Nova — purple glow + floating particles */
-    .pokemon-card-nova {
-      border: 3px solid #A78BFA;
-      box-shadow: 0 0 20px rgba(167,139,250,0.4), 0 0 40px rgba(124,58,237,0.2);
-    }
-    .pokemon-card-nova::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(2px 2px at 20% 30%, rgba(167,139,250,0.8), transparent),
-        radial-gradient(2px 2px at 70% 20%, rgba(196,181,253,0.6), transparent),
-        radial-gradient(1.5px 1.5px at 40% 70%, rgba(139,92,246,0.7), transparent),
-        radial-gradient(2px 2px at 80% 60%, rgba(167,139,250,0.5), transparent),
-        radial-gradient(1px 1px at 55% 45%, rgba(221,214,254,0.8), transparent),
-        radial-gradient(1.5px 1.5px at 15% 80%, rgba(139,92,246,0.6), transparent);
-      animation: novaFloat 4s ease-in-out infinite;
-      z-index: 1;
-      pointer-events: none;
-      border-radius: 16px;
-    }
-    @keyframes novaFloat {
-      0%, 100% { opacity: 0.4; transform: translateY(0); }
-      50% { opacity: 1; transform: translateY(-3px); }
-    }
-    /* Sun — gold holographic + sparkle border */
-    .pokemon-card-sun {
-      border: 3px solid transparent;
-      background-clip: padding-box;
-      box-shadow: 0 0 25px rgba(245,158,11,0.5), 0 0 50px rgba(255,215,0,0.2), inset 0 0 1px rgba(255,215,0,0.3);
-    }
-    .pokemon-card-sun-border {
-      position: relative;
-      margin: 12px 16px;
+    .stat-info-overlay.show { opacity: 1; pointer-events: auto; }
+    .stat-info-box {
+      width: 85%;
+      max-width: 340px;
+      background: var(--bg);
       border-radius: 18px;
-      padding: 3px;
-      background: linear-gradient(135deg, #F59E0B, #FCD34D, #D97706, #FCD34D, #F59E0B);
-      background-size: 300% 300%;
-      animation: sunBorderShift 3s ease infinite;
+      padding: 24px 22px 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      text-align: center;
+      transform: scale(0.92);
+      transition: transform 0.2s;
     }
-    .pokemon-card-sun-border .pokemon-profile-card,
-    .pokemon-card-sun-border .up-pokemon-card {
-      margin: 0;
+    .stat-info-overlay.show .stat-info-box { transform: scale(1); }
+    .stat-info-icon {
+      font-size: 36px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-info-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+    .stat-info-jp {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 14px;
+    }
+    .stat-info-desc {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--text-main);
+      text-align: left;
+      margin-bottom: 18px;
+    }
+    .stat-info-close {
+      background: var(--primary);
+      color: #fff;
       border: none;
-    }
-    @keyframes sunBorderShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .pokemon-card-sun::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(3px 3px at 15% 25%, rgba(255,215,0,0.9), transparent),
-        radial-gradient(2px 2px at 45% 15%, rgba(252,211,77,0.8), transparent),
-        radial-gradient(2.5px 2.5px at 75% 35%, rgba(245,158,11,0.7), transparent),
-        radial-gradient(2px 2px at 25% 65%, rgba(255,215,0,0.6), transparent),
-        radial-gradient(3px 3px at 85% 75%, rgba(252,211,77,0.9), transparent),
-        radial-gradient(1.5px 1.5px at 60% 55%, rgba(255,255,200,0.8), transparent),
-        radial-gradient(2px 2px at 35% 85%, rgba(245,158,11,0.7), transparent),
-        radial-gradient(1px 1px at 90% 20%, rgba(255,255,220,0.9), transparent);
-      animation: sunSparkle 2s ease-in-out infinite;
-      z-index: 1;
-      pointer-events: none;
-      border-radius: 16px;
-    }
-    @keyframes sunSparkle {
-      0%, 100% { opacity: 0.5; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.02); }
+      border-radius: 10px;
+      padding: 10px 0;
+      width: 100%;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
     }
 
-    /* HP number colors per tier */
-    .hp-sun { color: #FCD34D; }
-    .hp-nova { color: #C4B5FD; }
-    .hp-moon { color: #CBD5E1; }
-    .hp-star { color: #93C5FD; }
-    .hp-ember { color: #A8A29E; }
+    /* ===== TIER BORDER ===== */
+    /* Unified subtle border — tier differentiation via badge color, not card FX */
+    .pokemon-profile-card,
+    .up-pokemon-card {
+      border: 1px solid rgba(255,255,255,0.12);
+    }
 
     @keyframes slideInRight {
       from { transform: translateX(100%); }
@@ -3038,7 +2989,7 @@
         <div class="notif-item">
           <div class="notif-avatar">💎</div>
           <div class="notif-body">
-            <div class="notif-text"><strong>佐藤 健太</strong>さんがあなたをTrustedに追加しました</div>
+            <div class="notif-text"><strong>佐藤 健太</strong>さんがあなたをOrbitに追加しました</div>
             <div class="notif-time">18分前</div>
           </div>
           <div class="notif-dot"></div>
@@ -3046,7 +2997,7 @@
         <div class="notif-item">
           <div class="notif-avatar">✨</div>
           <div class="notif-body">
-            <div class="notif-text"><strong>Sarah Chen</strong>の投稿があなたに届きました ☀️ Sun</div>
+            <div class="notif-text"><strong>Sarah Chen</strong>の投稿があなたに届きました 💎 DiamondStar</div>
             <div class="notif-time">45分前</div>
           </div>
           <div class="notif-dot"></div>
@@ -3061,7 +3012,7 @@
         <div class="notif-item">
           <div class="notif-avatar">🤝</div>
           <div class="notif-body">
-            <div class="notif-text"><strong>中村 翔</strong>さんがあなたをConnectedに追加しました</div>
+            <div class="notif-text"><strong>中村 翔</strong>さんがあなたをGalaxyに追加しました</div>
             <div class="notif-time">3時間前</div>
           </div>
         </div>
@@ -3079,23 +3030,38 @@
     <div class="screen" id="screen-profile">
 
       <!-- POKEMON CARD PROFILE -->
-      <div class="pokemon-profile-card pokemon-card-moon" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=450&fit=crop&crop=faces&facepad=3');">
+      <div class="pokemon-profile-card" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=450&fit=crop&crop=faces&facepad=3');">
         <div class="pokemon-card-topbar">
-          <div class="pokemon-card-tier-badge">🌙 MOON</div>
-          <div class="pokemon-card-hp">
-            <span class="pokemon-card-hp-label">RS</span>
-            <span class="pokemon-card-hp-num hp-moon">2,847</span>
+          <div class="pokemon-card-tier-badge" style="color:#93C5FD;">
+            🟦 PlatinumStar
+            <span class="pokemon-card-tier-rs">(50.9K)</span>
           </div>
         </div>
         <div class="pokemon-card-overlay">
           <div class="pokemon-card-name">木村 誠司</div>
           <div class="pokemon-card-handle">@taisho_k</div>
           <div class="pokemon-card-bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
-          <div class="pokemon-card-progress-row">
-            <div class="pokemon-card-progress-track">
-              <div class="pokemon-card-progress-fill pokemon-card-progress-fill-moon" style="width:60%;"></div>
+          <div class="pokemon-card-stats">
+            <div class="pokemon-card-stat-item" onclick="showStatInfo('trust')">
+              <span class="pokemon-card-stat-icon">💖</span>
+              <span class="pokemon-card-stat-label">Trust</span>
+              <span class="pokemon-card-stat-value">23.0K</span>
             </div>
-            <span class="pokemon-card-progress-hint">→ Nova</span>
+            <div class="pokemon-card-stat-item" onclick="showStatInfo('prestige')">
+              <span class="pokemon-card-stat-icon">💎</span>
+              <span class="pokemon-card-stat-label">Prestige</span>
+              <span class="pokemon-card-stat-value">16.1K</span>
+            </div>
+            <div class="pokemon-card-stat-item" onclick="showStatInfo('insights')">
+              <span class="pokemon-card-stat-icon">📝</span>
+              <span class="pokemon-card-stat-label">Insights</span>
+              <span class="pokemon-card-stat-value">11.7K</span>
+            </div>
+            <div class="pokemon-card-stat-item" onclick="showStatInfo('stature')">
+              <span class="pokemon-card-stat-icon">🏛️</span>
+              <span class="pokemon-card-stat-label">Stature</span>
+              <span class="pokemon-card-stat-value">105.6K</span>
+            </div>
           </div>
         </div>
       </div>
@@ -3218,23 +3184,38 @@
       </div>
 
       <!-- POKEMON CARD — full photo style -->
-      <div class="pokemon-profile-card pokemon-card-moon" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=450&fit=crop&crop=faces&facepad=3');">
+      <div class="pokemon-profile-card" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=450&fit=crop&crop=faces&facepad=3');">
         <div class="pokemon-card-topbar">
-          <div class="pokemon-card-tier-badge">🌙 MOON</div>
-          <div class="pokemon-card-hp">
-            <span class="pokemon-card-hp-label">RS</span>
-            <span class="pokemon-card-hp-num hp-moon">2,847</span>
+          <div class="pokemon-card-tier-badge" style="color:#93C5FD;">
+            🟦 PlatinumStar
+            <span class="pokemon-card-tier-rs">(50.9K)</span>
           </div>
         </div>
         <div class="pokemon-card-overlay">
           <div class="pokemon-card-name">木村 誠司</div>
           <div class="pokemon-card-handle">@taisho_k</div>
           <div class="pokemon-card-bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
-          <div class="pokemon-card-progress-row">
-            <div class="pokemon-card-progress-track">
-              <div class="pokemon-card-progress-fill pokemon-card-progress-fill-moon" style="width:60%;"></div>
+          <div class="pokemon-card-stats">
+            <div class="pokemon-card-stat-item" onclick="showStatInfo('trust')">
+              <span class="pokemon-card-stat-icon">💖</span>
+              <span class="pokemon-card-stat-label">Trust</span>
+              <span class="pokemon-card-stat-value">23.0K</span>
             </div>
-            <span class="pokemon-card-progress-hint">→ Nova</span>
+            <div class="pokemon-card-stat-item" onclick="showStatInfo('prestige')">
+              <span class="pokemon-card-stat-icon">💎</span>
+              <span class="pokemon-card-stat-label">Prestige</span>
+              <span class="pokemon-card-stat-value">16.1K</span>
+            </div>
+            <div class="pokemon-card-stat-item" onclick="showStatInfo('insights')">
+              <span class="pokemon-card-stat-icon">📝</span>
+              <span class="pokemon-card-stat-label">Insights</span>
+              <span class="pokemon-card-stat-value">11.7K</span>
+            </div>
+            <div class="pokemon-card-stat-item" onclick="showStatInfo('stature')">
+              <span class="pokemon-card-stat-icon">🏛️</span>
+              <span class="pokemon-card-stat-label">Stature</span>
+              <span class="pokemon-card-stat-value">105.6K</span>
+            </div>
           </div>
         </div>
       </div>
@@ -3453,26 +3434,26 @@
       <div class="circle-screen-header">あなたのCircle</div>
       <div class="circle-screen-sub">信頼の輪を育てよう。階層が高いほど影響力スコアへの貢献が大きくなります。</div>
 
-      <!-- Inner -->
+      <!-- Core -->
       <div class="circle-section open" id="sec-inner">
         <div class="circle-section-header" onclick="toggleSection('sec-inner')">
           <div class="circle-section-title">
             <span>🔥</span>
-            <span>Inner</span>
-            <span style="font-size:11px;color:var(--primary);font-weight:600;">⚡+50pt</span>
+            <span>Core</span>
+            <span style="font-size:11px;color:var(--primary);font-weight:600;">⚡+100pt</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
-            <span class="circle-capacity">2/3人</span>
+            <span class="circle-capacity">2/10人</span>
             <span class="circle-chevron">▾</span>
           </div>
         </div>
         <div class="circle-section-body">
           <div class="circle-members-scroll">
-            <div class="circle-member" onclick="showMemberAction('田中 悠', 'Inner')">
+            <div class="circle-member" onclick="showMemberAction('田中 悠', 'Core')">
               <div class="circle-member-avatar avatar-inner">🧑</div>
               <div class="circle-member-name">田中 悠</div>
             </div>
-            <div class="circle-member" onclick="showMemberAction('鈴木 里奈', 'Inner')">
+            <div class="circle-member" onclick="showMemberAction('鈴木 里奈', 'Core')">
               <div class="circle-member-avatar avatar-inner">👩</div>
               <div class="circle-member-name">鈴木 里奈</div>
             </div>
@@ -3484,38 +3465,38 @@
         </div>
       </div>
 
-      <!-- Trusted -->
+      <!-- Orbit -->
       <div class="circle-section open" id="sec-trusted">
         <div class="circle-section-header" onclick="toggleSection('sec-trusted')">
           <div class="circle-section-title">
             <span>💎</span>
-            <span>Trusted</span>
-            <span style="font-size:11px;color:var(--primary);font-weight:600;">⚡+20pt</span>
+            <span>Orbit</span>
+            <span style="font-size:11px;color:var(--primary);font-weight:600;">⚡+30pt</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
-            <span class="circle-capacity">5/10人</span>
+            <span class="circle-capacity">5/15人</span>
             <span class="circle-chevron">▾</span>
           </div>
         </div>
         <div class="circle-section-body">
           <div class="circle-members-scroll">
-            <div class="circle-member" onclick="showMemberAction('佐藤 健太', 'Trusted')">
+            <div class="circle-member" onclick="showMemberAction('佐藤 健太', 'Orbit')">
               <div class="circle-member-avatar avatar-trusted">🧑</div>
               <div class="circle-member-name">佐藤 健太</div>
             </div>
-            <div class="circle-member" onclick="showMemberAction('伊藤 大輔', 'Trusted')">
+            <div class="circle-member" onclick="showMemberAction('伊藤 大輔', 'Orbit')">
               <div class="circle-member-avatar avatar-trusted">👨</div>
               <div class="circle-member-name">伊藤 大輔</div>
             </div>
-            <div class="circle-member" onclick="showMemberAction('高橋 美咲', 'Trusted')">
+            <div class="circle-member" onclick="showMemberAction('高橋 美咲', 'Orbit')">
               <div class="circle-member-avatar avatar-trusted">👩</div>
               <div class="circle-member-name">高橋 美咲</div>
             </div>
-            <div class="circle-member" onclick="showMemberAction('小林 亮', 'Trusted')">
+            <div class="circle-member" onclick="showMemberAction('小林 亮', 'Orbit')">
               <div class="circle-member-avatar avatar-trusted">🧔</div>
               <div class="circle-member-name">小林 亮</div>
             </div>
-            <div class="circle-member" onclick="showMemberAction('渡辺 彩', 'Trusted')">
+            <div class="circle-member" onclick="showMemberAction('渡辺 彩', 'Orbit')">
               <div class="circle-member-avatar avatar-trusted">🙍</div>
               <div class="circle-member-name">渡辺 彩</div>
             </div>
@@ -3527,34 +3508,34 @@
         </div>
       </div>
 
-      <!-- Close -->
+      <!-- Halo -->
       <div class="circle-section" id="sec-close">
         <div class="circle-section-header" onclick="toggleSection('sec-close')">
           <div class="circle-section-title">
             <span>⭐</span>
-            <span>Close</span>
-            <span style="font-size:11px;color:var(--primary);font-weight:600;">⚡+8pt</span>
+            <span>Halo</span>
+            <span style="font-size:11px;color:var(--primary);font-weight:600;">⚡+10pt</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
-            <span class="circle-capacity">12/30人</span>
+            <span class="circle-capacity">12/50人</span>
             <span class="circle-chevron">▾</span>
           </div>
         </div>
         <div class="circle-section-body">
           <div class="circle-members-scroll">
-            <div class="circle-member" onclick="showMemberAction('山田 彩香', 'Close')">
+            <div class="circle-member" onclick="showMemberAction('山田 彩香', 'Halo')">
               <div class="circle-member-avatar avatar-close">👩</div>
               <div class="circle-member-name">山田 彩香</div>
             </div>
-            <div class="circle-member" onclick="showMemberAction('中島 誠', 'Close')">
+            <div class="circle-member" onclick="showMemberAction('中島 誠', 'Halo')">
               <div class="circle-member-avatar avatar-close">🧑</div>
               <div class="circle-member-name">中島 誠</div>
             </div>
-            <div class="circle-member" onclick="showMemberAction('岡田 真由', 'Close')">
+            <div class="circle-member" onclick="showMemberAction('岡田 真由', 'Halo')">
               <div class="circle-member-avatar avatar-close">👩</div>
               <div class="circle-member-name">岡田 真由</div>
             </div>
-            <div class="circle-member" onclick="showMemberAction('森 拓也', 'Close')">
+            <div class="circle-member" onclick="showMemberAction('森 拓也', 'Halo')">
               <div class="circle-member-avatar avatar-close">👨</div>
               <div class="circle-member-name">森 拓也</div>
             </div>
@@ -3566,30 +3547,30 @@
         </div>
       </div>
 
-      <!-- Connected -->
+      <!-- Galaxy -->
       <div class="circle-section" id="sec-connected">
         <div class="circle-section-header" onclick="toggleSection('sec-connected')">
           <div class="circle-section-title">
-            <span>🤝</span>
-            <span>Connected</span>
-            <span style="font-size:11px;color:var(--text-sub);font-weight:600;">⚡+2pt</span>
+            <span>🌌</span>
+            <span>Galaxy</span>
+            <span style="font-size:11px;color:var(--text-sub);font-weight:600;">⚡+3pt</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
-            <span class="circle-capacity">45/100人</span>
+            <span class="circle-capacity">45/150人</span>
             <span class="circle-chevron">▾</span>
           </div>
         </div>
         <div class="circle-section-body">
           <div class="circle-members-scroll">
-            <div class="circle-member" onclick="showMemberAction('中村 翔', 'Connected')">
+            <div class="circle-member" onclick="showMemberAction('中村 翔', 'Galaxy')">
               <div class="circle-member-avatar avatar-connected">👨</div>
               <div class="circle-member-name">中村 翔</div>
             </div>
-            <div class="circle-member" onclick="showMemberAction('松本 葵', 'Connected')">
+            <div class="circle-member" onclick="showMemberAction('松本 葵', 'Galaxy')">
               <div class="circle-member-avatar avatar-connected">👩</div>
               <div class="circle-member-name">松本 葵</div>
             </div>
-            <div class="circle-member" onclick="showMemberAction('藤田 悠斗', 'Connected')">
+            <div class="circle-member" onclick="showMemberAction('藤田 悠斗', 'Galaxy')">
               <div class="circle-member-avatar avatar-connected">🧑</div>
               <div class="circle-member-name">藤田 悠斗</div>
             </div>
@@ -3598,20 +3579,20 @@
         </div>
       </div>
 
-      <!-- Ambient -->
+      <!-- Cosmos -->
       <div class="circle-section" id="sec-ambient" style="margin-bottom:100px;">
         <div class="circle-section-header" onclick="toggleSection('sec-ambient')">
           <div class="circle-section-title">
             <span>👥</span>
-            <span>Ambient</span>
-            <span style="font-size:11px;color:var(--text-light);font-weight:600;">⚡+0pt</span>
+            <span>Cosmos</span>
+            <span style="font-size:11px;color:var(--text-light);font-weight:600;">⚡+1pt</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
-            <span class="circle-capacity">制限なし</span>
+            <span class="circle-capacity">280/500人</span>
             <span class="circle-chevron">▾</span>
           </div>
         </div>
-        <div class="ambient-count">一般フォロワー: 1,243人</div>
+        <div class="ambient-count">Connect済み（上位階層未配置）: 280人 / Connect上限 500人</div>
       </div>
     </div>
 
@@ -3697,6 +3678,17 @@
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- STAT INFO MODAL -->
+<div class="stat-info-overlay" id="statInfoOverlay" onclick="closeStatInfo()">
+  <div class="stat-info-box" onclick="event.stopPropagation()">
+    <div class="stat-info-icon" id="statInfoIcon">💖</div>
+    <div class="stat-info-name" id="statInfoName">Trust</div>
+    <div class="stat-info-jp" id="statInfoJp">信頼度</div>
+    <div class="stat-info-desc" id="statInfoDesc"></div>
+    <button class="stat-info-close" onclick="closeStatInfo()">閉じる</button>
+  </div>
+</div>
+
 <!-- ACTION SHEET -->
 <div class="action-sheet-overlay" id="actionSheet" onclick="closeActionSheet()">
   <div class="action-sheet" onclick="event.stopPropagation()">
@@ -3711,7 +3703,7 @@
   <div class="add-member-sheet" onclick="event.stopPropagation()">
     <div class="add-member-handle"></div>
     <div class="add-member-header">
-      <div class="add-member-title" id="addMemberTitle">🔥 Innerに追加（残り1枠）</div>
+      <div class="add-member-title" id="addMemberTitle">🔥 Coreに追加（残り8枠）</div>
       <div class="add-member-search">
         <span class="add-member-search-icon">🔍</span>
         <input class="add-member-search-input" id="addMemberSearchInput" placeholder="名前で検索..." oninput="filterAddMemberList()">
@@ -3799,24 +3791,24 @@
     </div>
     <div class="msg-body">
       <div class="msg-section-title">📋 Circle階層から選ぶ</div>
-      <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Inner" data-count="3">
-        <div class="msg-option-left">🔥 Inner <span class="msg-option-count">（3人）</span></div>
+      <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Core" data-count="10">
+        <div class="msg-option-left">🔥 Core <span class="msg-option-count">（10人）</span></div>
         <div class="msg-check"></div>
       </div>
-      <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Trusted" data-count="10">
-        <div class="msg-option-left">💎 Trusted <span class="msg-option-count">（10人）</span></div>
+      <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Orbit" data-count="15">
+        <div class="msg-option-left">💎 Orbit <span class="msg-option-count">（15人）</span></div>
         <div class="msg-check"></div>
       </div>
-      <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Close" data-count="30">
-        <div class="msg-option-left">⭐ Close <span class="msg-option-count">（30人）</span></div>
+      <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Halo" data-count="50">
+        <div class="msg-option-left">⭐ Halo <span class="msg-option-count">（50人）</span></div>
         <div class="msg-check"></div>
       </div>
-      <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Connected" data-count="100">
-        <div class="msg-option-left">🤝 Connected <span class="msg-option-count">（100人）</span></div>
+      <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Galaxy" data-count="150">
+        <div class="msg-option-left">🌌 Galaxy <span class="msg-option-count">（150人）</span></div>
         <div class="msg-check"></div>
       </div>
-      <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Ambient" data-count="842">
-        <div class="msg-option-left">👥 Ambient <span class="msg-option-count">（842人）</span></div>
+      <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Cosmos" data-count="280">
+        <div class="msg-option-left">👥 Cosmos <span class="msg-option-count">（280人）</span></div>
         <div class="msg-check"></div>
       </div>
 
@@ -3872,16 +3864,16 @@
     <input type="text" class="msg-textarea" style="min-height:auto;padding:10px 12px;margin-bottom:8px;" placeholder="場所（例：渋谷 居酒屋〇〇）" id="eventPlace">
 
     <div class="msg-section-title">📋 招待先を選ぶ</div>
-    <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Inner" data-count="3">
-      <div class="msg-option-left">🔥 Inner <span class="msg-option-count">（3人）</span></div>
+    <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Core" data-count="10">
+      <div class="msg-option-left">🔥 Core <span class="msg-option-count">（10人）</span></div>
       <div class="msg-check"></div>
     </div>
-    <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Trusted" data-count="10">
-      <div class="msg-option-left">💎 Trusted <span class="msg-option-count">（10人）</span></div>
+    <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Orbit" data-count="15">
+      <div class="msg-option-left">💎 Orbit <span class="msg-option-count">（15人）</span></div>
       <div class="msg-check"></div>
     </div>
-    <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Close" data-count="30">
-      <div class="msg-option-left">⭐ Close <span class="msg-option-count">（30人）</span></div>
+    <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Halo" data-count="50">
+      <div class="msg-option-left">⭐ Halo <span class="msg-option-count">（50人）</span></div>
       <div class="msg-check"></div>
     </div>
 
@@ -3937,13 +3929,60 @@
 </div>
 
 <script>
-  // ===== CELESTIAL TITLE HELPERS =====
+  // ===== TIER HELPERS (LoL-style rank) =====
   function getTitle(score) {
-    if (score >= 10000) return { emoji: '☀️', name: 'Sun',   cls: 'sun',   desc: 'この人の光は全てに届いています' };
-    if (score >= 800)   return { emoji: '💫', name: 'Nova',  cls: 'nova',  desc: 'この人の光が爆発的に輝いています' };
-    if (score >= 400)   return { emoji: '🌙', name: 'Moon',  cls: 'moon',  desc: 'この人の光は夜を照らしています' };
-    if (score >= 100)   return { emoji: '⭐', name: 'Star',  cls: 'star',  desc: 'この人の光が夜空に輝いています' };
-    return               { emoji: '🕯️', name: 'Ember', cls: 'ember', desc: 'この人の光が芽生えています' };
+    if (score >= 500000) return { emoji: '💎', name: 'DiamondStar',  cls: 'diamondstar',  color: '#7DD3FC' };
+    if (score >= 150000) return { emoji: '💚', name: 'EmeraldStar',  cls: 'emeraldstar',  color: '#34D399' };
+    if (score >= 50000)  return { emoji: '🟦', name: 'PlatinumStar', cls: 'platinumstar', color: '#93C5FD' };
+    if (score >= 20000)  return { emoji: '🟨', name: 'GoldStar',     cls: 'goldstar',     color: '#FCD34D' };
+    if (score >= 5000)   return { emoji: '⬜', name: 'SilverStar',   cls: 'silverstar',   color: '#E2E8F0' };
+    if (score >= 1000)   return { emoji: '🟫', name: 'BronzeStar',   cls: 'bronzestar',   color: '#D97706' };
+    return                     { emoji: '⬛', name: 'IronStar',     cls: 'ironstar',     color: '#94A3B8' };
+  }
+  function formatRS(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0','') + 'M';
+    if (n >= 1000)    return (n / 1000).toFixed(1).replace('.0','') + 'K';
+    return String(n);
+  }
+
+  // ===== STAT INFO (RS構成要素の説明) =====
+  const STAT_INFO = {
+    trust: {
+      icon: '💖',
+      name: 'Trust',
+      jp: '信頼度',
+      desc: 'あなたを Core / Halo / Galaxy に入れている人たちからの流入の合計。相手があなたを「近い」と位置づけるほど重く、深い信頼関係ほど積み上がる指標。',
+    },
+    prestige: {
+      icon: '💎',
+      name: 'Prestige',
+      jp: 'ブランド力',
+      desc: 'Connect / Follow 経由で集まった支持の合計。深い関係ではないが、広くあなたを認知・応援してくれる層からの影響力を表す。',
+    },
+    insights: {
+      icon: '📝',
+      name: 'Insights',
+      jp: 'コンテンツ力',
+      desc: '投稿の平均視聴率が20%を超えた分だけ加算されるボーナス。フォロワーの中でどれだけ「実際に読まれているか」を反映する、質の指標。',
+    },
+    stature: {
+      icon: '🏛️',
+      name: 'The Stature',
+      jp: '柱（神殿の柱）',
+      desc: 'あなたを支えている人たち全員の影響力（RS）の総和。「どれだけ大きな柱に支えられているか」を独立して示す指標。RS本体には合算されない。',
+    },
+  };
+  function showStatInfo(key) {
+    const s = STAT_INFO[key];
+    if (!s) return;
+    document.getElementById('statInfoIcon').textContent = s.icon;
+    document.getElementById('statInfoName').textContent = s.name;
+    document.getElementById('statInfoJp').textContent = s.jp;
+    document.getElementById('statInfoDesc').textContent = s.desc;
+    document.getElementById('statInfoOverlay').classList.add('show');
+  }
+  function closeStatInfo() {
+    document.getElementById('statInfoOverlay').classList.remove('show');
   }
 
   // ===== STORIES DATA =====
@@ -3953,7 +3992,7 @@
       name: '木村 誠司',
       avatar: '🧔',
       handle: '@taisho_k',
-      score: 2847,
+      score: 50879,
       hasNew: true,
       isRadiance: false,
       stories: [
@@ -3967,7 +4006,7 @@
       name: '鈴木 里奈',
       avatar: '👩',
       handle: '@rina_s',
-      score: 881,
+      score: 28400,
       hasNew: true,
       isRadiance: false,
       stories: [
@@ -3981,7 +4020,7 @@
       name: '田中 悠',
       avatar: '🧑',
       handle: '@yu_tanaka',
-      score: 932,
+      score: 32100,
       hasNew: false,
       isRadiance: false,
       stories: [
@@ -3995,7 +4034,7 @@
       name: '佐藤 健太',
       avatar: '🧑',
       handle: '@kenta_s',
-      score: 523,
+      score: 14800,
       hasNew: true,
       isRadiance: false,
       stories: [
@@ -4009,7 +4048,7 @@
       name: '高橋 美咲',
       avatar: '👱‍♀️',
       handle: '@misaki_t',
-      score: 412,
+      score: 8400,
       hasNew: false,
       isRadiance: false,
       stories: [
@@ -4023,7 +4062,7 @@
       name: '伊藤 大輔',
       avatar: '👨',
       handle: '@daisuke_ito',
-      score: 310,
+      score: 6700,
       hasNew: true,
       isRadiance: false,
       stories: [
@@ -4037,7 +4076,7 @@
       name: 'Sarah Chen',
       avatar: '👩',
       handle: '@sarah_ai',
-      score: 12847,
+      score: 620000,
       hasNew: true,
       isRadiance: true,
       stories: [
@@ -4051,7 +4090,7 @@
       name: '山田 彩香',
       avatar: '👩',
       handle: '@ayaka_y',
-      score: 287,
+      score: 3200,
       hasNew: false,
       isRadiance: false,
       stories: [
@@ -4065,7 +4104,7 @@
       name: '中村 翔',
       avatar: '👨',
       handle: '@sho_n',
-      score: 98,
+      score: 540,
       hasNew: true,
       isRadiance: false,
       stories: [
@@ -4079,7 +4118,7 @@
       name: 'Kenji Ito',
       avatar: '🎙',
       handle: '@kenji_founder',
-      score: 11440,
+      score: 180000,
       hasNew: true,
       isRadiance: true,
       stories: [
@@ -4115,7 +4154,8 @@
       bio: 'AIエージェント研究者 / スタートアップ共同創業者\nシンガポール🇸🇬 在住。エージェントが世界を変えると信じてる。',
       location: '東京 → シンガポール',
       joinDate: '2024年1月から利用',
-      score: 932,
+      score: 32100,
+      stats: { trust: 14200, prestige: 13400, insights: 4500, stature: 58000 },
       innerCount: 12,
       trustedCount: 45,
       closeCount: 89,
@@ -4145,7 +4185,8 @@
       bio: 'マーケター × コーチ\n「動き続ける人」を増やすのがライフワーク。朝活コミュニティ主宰。',
       location: '大阪',
       joinDate: '2024年2月から利用',
-      score: 620,
+      score: 28400,
+      stats: { trust: 12800, prestige: 11200, insights: 4400, stature: 49000 },
       posts: [
         { id: 'u2-1', body: '今朝の朝活で気づいたこと。\n\n「完璧なタイミング」を待っていると永遠に動けない。', time: '22分前', likes: 62, shares: 11, grad: 'linear-gradient(135deg, #831843, #BE185D)' },
         { id: 'u2-2', body: '朝活コミュニティ200人突破！\nゆっくりだけど確実に「動く人の輪」が広がってる。', time: '3日前', likes: 154, shares: 33, grad: 'linear-gradient(135deg, #9D174D, #EC4899)' },
@@ -4170,7 +4211,8 @@
       bio: 'AI Researcher & Founder @ Lumina Labs\nBuilding the future of human-AI collaboration.',
       location: 'San Francisco / Singapore',
       joinDate: '2023年6月から利用',
-      score: 12847,
+      score: 620000,
+      stats: { trust: 240000, prestige: 260000, insights: 120000, stature: 1400000 },
       posts: [
         { id: 'u3-1', body: "The future of AI agents is not about replacing humans.\nIt's about amplifying the unique humans who know how to use them.", time: '1h ago', likes: 1247, shares: 341, grad: 'linear-gradient(135deg, #064E3B, #047857)' },
         { id: 'u3-2', body: 'Just published my new paper on multi-agent coordination.\nAgents that communicate in structured NL outperform symbolic by 34%.', time: '3 days ago', likes: 2103, shares: 487, grad: 'linear-gradient(135deg, #065F46, #10B981)' },
@@ -4187,7 +4229,8 @@
       bio: 'VCアナリスト / 投資家\nシンガポール × 東南アジアのスタートアップを追っています。',
       location: 'シンガポール',
       joinDate: '2024年3月から利用',
-      score: 523,
+      score: 14800,
+      stats: { trust: 6200, prestige: 7100, insights: 1500, stature: 32000 },
       posts: [
         { id: 'u4-1', body: 'シンガポールのAIカンファレンス🇸🇬\n現場の熱量、やばすぎる。', time: '30分前', likes: 38, shares: 6, grad: 'linear-gradient(135deg, #0C4A6E, #0369A1)' },
         { id: 'u4-2', body: 'SEAのAIスタートアップ、評価額の割に実力が高い案件をいくつか発見。', time: '4日前', likes: 51, shares: 7, grad: 'linear-gradient(135deg, #075985, #0ea5e9)' },
@@ -4209,7 +4252,8 @@
       bio: '個人投資家 / 元証券アナリスト\nインデックス投資とオルタナで資産設計中。',
       location: '名古屋',
       joinDate: '2024年4月から利用',
-      score: 310,
+      score: 6700,
+      stats: { trust: 2800, prestige: 3400, insights: 500, stature: 14500 },
       posts: [
         { id: 'u5-1', body: '新しいポートフォリオ構成を試してる。\nインデックス60% / 個別株20% / オルタナ20%', time: '1時間前', likes: 29, shares: 4, grad: 'linear-gradient(135deg, #422006, #9A3412)' },
         { id: 'u5-2', body: 'S&P500の過去50年データ再確認。\n暴落から回復するまでの平均期間：約14ヶ月。', time: '5日前', likes: 87, shares: 22, grad: 'linear-gradient(135deg, #7C2D12, #D97706)' },
@@ -4226,7 +4270,8 @@
       bio: '連続起業家 / スピーカー\n3社創業 → 2社イグジット。今は「信頼のインフラ」を作っています。',
       location: '東京 / バリ',
       joinDate: '2023年9月から利用',
-      score: 11440,
+      score: 180000,
+      stats: { trust: 72000, prestige: 82000, insights: 26000, stature: 410000 },
       posts: [
         { id: 'u6-1', body: '「信頼の輪」を小さく深くつくること。フォロワー数より、本当に動ける3人の仲間を持て。', time: '2時間前', likes: 847, shares: 198, grad: 'linear-gradient(135deg, #1E1B4B, #4338CA)' },
         { id: 'u6-2', body: '3社目を創業した時、投資家に言われた言葉。\n「君は何度でも立ち上がるから投資する」', time: '6日前', likes: 1203, shares: 267, grad: 'linear-gradient(135deg, #312E81, #7C3AED)' },
@@ -4243,7 +4288,8 @@
       bio: '書評ブロガー / 編集者\n年100冊読んで、本質だけ届けます。',
       location: '京都',
       joinDate: '2024年5月から利用',
-      score: 287,
+      score: 3200,
+      stats: { trust: 1400, prestige: 1500, insights: 300, stature: 7200 },
       posts: [
         { id: 'u7-1', body: '「イシューからはじめよ」再読。\n問いの質が答えの質を決める、という話。', time: '3時間前', likes: 34, shares: 5, grad: 'linear-gradient(135deg, #134E4A, #0D9488)' },
         { id: 'u7-2', body: '今月のベスト本：「ファクトフルネス」\n\nデータリテラシーを鍛えたい人に必読。', time: '1週間前', likes: 67, shares: 14, grad: 'linear-gradient(135deg, #0F766E, #14B8A6)' },
@@ -4260,7 +4306,8 @@
       bio: 'エンジニア（転職活動中）\nWebフルスタック。次のステージへ踏み出し中💪',
       location: '福岡',
       joinDate: '2025年1月から利用',
-      score: 98,
+      score: 540,
+      stats: { trust: 220, prestige: 260, insights: 60, stature: 1300 },
       posts: [
         { id: 'u8-1', body: '転職の件、一歩踏み出すことにしました。\n不安より期待の方が大きくなってきた。前に進みます💪', time: '4時間前', likes: 12, shares: 1, grad: 'linear-gradient(135deg, #374151, #6B7280)' },
         { id: 'u8-2', body: 'ポートフォリオサイトをReact + TypeScript + Tailwindで全部書き直し。', time: '3日前', likes: 24, shares: 3, grad: 'linear-gradient(135deg, #1e293b, #475569)' },
@@ -4277,7 +4324,8 @@
       bio: 'UI/UXデザイナー × フロントエンドエンジニア\nAIツールを使いこなして届けるデザインを作る人。',
       location: '東京',
       joinDate: '2024年6月から利用',
-      score: 412,
+      score: 8400,
+      stats: { trust: 3600, prestige: 4100, insights: 700, stature: 18500 },
       posts: [
         { id: 'u9-1', body: 'デザインとエンジニアリングの境界線がどんどん薄くなってる。\nAIが補完してくれるから、X字型スキルが求められる時代に。', time: '1時間前', likes: 29, shares: 5, grad: 'linear-gradient(135deg, #134E4A, #0D9488)' },
         { id: 'u9-2', body: 'Figmaで全部デザインしてたらいつの間にかコード生成もできるようになってた。', time: '3日前', likes: 43, shares: 8, grad: 'linear-gradient(135deg, #0F766E, #14B8A6)' },
@@ -4294,7 +4342,8 @@
       bio: 'シンガポール🇸🇬 ↔ 日本🇯🇵\n経営者 / AI系 / 投資',
       location: 'シンガポール',
       joinDate: '2023年12月から利用',
-      score: 2847,
+      score: 50879,
+      stats: { trust: 23015, prestige: 16123, insights: 11741, stature: 105600 },
       posts: [
         { id: 'tk-1', body: 'シンガポールのAI界隈、日本より3年先を行ってる感覚。でも日本の技術力は本物。組み合わせたら最強やろ。', time: '2時間前', likes: 234, shares: 67, grad: 'linear-gradient(135deg, #0d9488, #0284c7)' },
         { id: 'tk-2', body: 'Claude Codeで自分のAIチーム作ってるんやけど、毎朝勝手に資産運用レポート届くの最高すぎる。', time: '4時間前', likes: 567, shares: 123, grad: 'linear-gradient(135deg, #7C3AED, #2563EB)' },
@@ -4325,18 +4374,7 @@
 
       const ringClass = isSeen ? 'seen' : 'has-new';
 
-      let titleHtml;
-      if (titleInfo.cls === 'sun') {
-        titleHtml = `<span class="title-sun">${titleInfo.emoji} ${titleInfo.name}</span>`;
-      } else if (titleInfo.cls === 'nova') {
-        titleHtml = `<span class="title-nova">${titleInfo.emoji} ${titleInfo.name}</span>`;
-      } else if (titleInfo.cls === 'moon') {
-        titleHtml = `<span class="title-moon">${titleInfo.emoji} ${titleInfo.name}</span>`;
-      } else if (titleInfo.cls === 'star') {
-        titleHtml = `<span class="title-star">${titleInfo.emoji} ${titleInfo.name}</span>`;
-      } else {
-        titleHtml = `<span class="title-ember">${titleInfo.emoji} ${titleInfo.name}</span>`;
-      }
+      const titleHtml = `<span class="story-tier-label" style="color:${titleInfo.color};">${titleInfo.emoji} ${titleInfo.name}</span>`;
 
       row.innerHTML = `
         <div class="story-avatar-wrap">
@@ -4403,11 +4441,7 @@
     document.getElementById('storiesUserAvatar').textContent = user.avatar;
     document.getElementById('storiesUserName').textContent = user.name;
 
-    let titleStyle = '';
-    if (titleInfo.cls === 'sun') titleStyle = 'background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;';
-    else if (titleInfo.cls === 'nova') titleStyle = 'color:#A78BFA;';
-    else if (titleInfo.cls === 'moon') titleStyle = 'color:#94A3B8;';
-    document.getElementById('storiesUserMeta').innerHTML = `<span style="${titleStyle}font-weight:700;">${titleInfo.emoji} ${titleInfo.name}</span> · ${story.time}`;
+    document.getElementById('storiesUserMeta').innerHTML = `<span style="color:${titleInfo.color};font-weight:700;">${titleInfo.emoji} ${titleInfo.name}</span> · ${story.time}`;
 
     // Text
     document.getElementById('storiesText').textContent = story.text;
@@ -4611,26 +4645,13 @@
       : `background:${p.grad};`;
     const bodyClean = p.body.replace(/\n/g, ' ');
     const titleInfo = getTitle(p.score);
-    const scoreDisp = p.score >= 1000 ? (p.score / 1000).toFixed(1).replace('.0','') + 'K' : p.score;
-    let titleColor = 'rgba(255,255,255,0.9)';
-    if (titleInfo.cls === 'sun') titleColor = '#FCD34D';
-    else if (titleInfo.cls === 'nova') titleColor = '#C4B5FD';
-    else if (titleInfo.cls === 'moon') titleColor = '#CBD5E1';
-    else if (titleInfo.cls === 'star') titleColor = '#93C5FD';
-    const searchTierBorders = {
-      sun:   'border: 3px solid #F59E0B; box-shadow: 0 0 14px rgba(245,158,11,0.35);',
-      nova:  'border: 3px solid #A78BFA; box-shadow: 0 0 10px rgba(167,139,250,0.25);',
-      moon:  'border: 2.5px solid #CBD5E1; box-shadow: 0 0 8px rgba(203,213,225,0.2);',
-      star:  'border: 2.5px solid #60A5FA; box-shadow: 0 0 6px rgba(96,165,250,0.15);',
-      ember: 'border: 1.5px solid rgba(120,113,108,0.4);',
-    };
+    const scoreDisp = formatRS(p.score);
     return `
-      <div class="search-post-card" style="${bgStyle}${searchTierBorders[titleInfo.cls] || searchTierBorders.ember}" onclick="openUserProfile('${p.userId}')">
+      <div class="search-post-card" style="${bgStyle}border:1px solid rgba(255,255,255,0.12);" onclick="openUserProfile('${p.userId}')">
         <div class="search-post-top">
           <div class="search-post-avatar" style="background:rgba(255,255,255,0.2);">${p.avatar}</div>
           <span class="search-post-name">${p.name}</span>
-          <span style="font-size:10px;font-weight:700;color:${titleColor};text-shadow:0 1px 3px rgba(0,0,0,0.5);margin-left:2px;">${titleInfo.emoji} ${titleInfo.name}</span>
-          <span style="margin-left:auto;font-size:14px;font-weight:900;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,0.5);letter-spacing:-0.5px;">${scoreDisp}<span style="font-size:8px;opacity:0.6;margin-left:2px;">RS</span></span>
+          <span style="font-size:10px;font-weight:700;color:${titleInfo.color};text-shadow:0 1px 3px rgba(0,0,0,0.5);margin-left:2px;">${titleInfo.emoji} ${titleInfo.name} <span style="opacity:0.7;font-weight:600;">(${scoreDisp})</span></span>
         </div>
         <div class="search-post-body">${bodyClean}</div>
         <div class="search-post-stats">⚡${p.likes || 0}</div>
@@ -4714,47 +4735,50 @@
   // ===== USER POKEMON CARD BUILDER =====
   function buildPokemonCard(user) {
     const titleInfo = getTitle(user.score);
-    const cls = titleInfo.cls;
-    const nextMap = { ember: 100, star: 400, moon: 800, nova: 10000, sun: 99999 };
-    const prevMap = { ember: 0, star: 100, moon: 400, nova: 800, sun: 10000 };
-    const prev = prevMap[cls] || 0;
-    const next = nextMap[cls] || 99999;
-    const pct = Math.min(100, Math.round(((user.score - prev) / (next - prev)) * 100));
-    const nextName = cls === 'ember' ? 'Star' : cls === 'star' ? 'Moon' : cls === 'moon' ? 'Nova' : cls === 'nova' ? 'Sun' : 'MAX';
-    const hintText = cls === 'sun' ? 'MAX' : '→ ' + nextName;
-    const scoreDisplay = user.score >= 1000 ? (user.score / 1000).toFixed(1).replace('.0','') + 'K' : user.score;
+    const scoreDisplay = formatRS(user.score);
     const bioLine = user.bio.replace(/\n/g, ' / ');
     const photo = user.profilePhoto || '';
     const bgStyle = photo
       ? `background-image:url('${photo}');`
       : `background:${user.bannerGradient || 'linear-gradient(135deg,#1c1917,#292524)'};`;
-    const isSun = cls === 'sun';
-    const cardHtml = `
-      <div class="up-pokemon-card pokemon-card-${cls}" style="${bgStyle}">
+    const stats = user.stats || { trust: 0, prestige: 0, insights: 0, stature: 0 };
+    return `
+      <div class="up-pokemon-card" style="${bgStyle}">
         <div class="pokemon-card-topbar">
-          <div class="pokemon-card-tier-badge">${titleInfo.emoji} ${titleInfo.name.toUpperCase()}</div>
-          <div class="pokemon-card-hp">
-            <span class="pokemon-card-hp-label">RS</span>
-            <span class="pokemon-card-hp-num hp-${cls}">${scoreDisplay}</span>
+          <div class="pokemon-card-tier-badge" style="color:${titleInfo.color};">
+            ${titleInfo.emoji} ${titleInfo.name}
+            <span class="pokemon-card-tier-rs">(${scoreDisplay})</span>
           </div>
         </div>
         <div class="pokemon-card-overlay">
           <div class="pokemon-card-name">${user.name}</div>
           <div class="pokemon-card-handle">${user.handle}</div>
           <div class="pokemon-card-bio">${bioLine}</div>
-          <div class="pokemon-card-progress-row">
-            <div class="pokemon-card-progress-track">
-              <div class="pokemon-card-progress-fill pokemon-card-progress-fill-${cls}" style="width:${pct}%;"></div>
+          <div class="pokemon-card-stats">
+            <div class="pokemon-card-stat-item" onclick="event.stopPropagation(); showStatInfo('trust');">
+              <span class="pokemon-card-stat-icon">💖</span>
+              <span class="pokemon-card-stat-label">Trust</span>
+              <span class="pokemon-card-stat-value">${formatRS(stats.trust)}</span>
             </div>
-            <span class="pokemon-card-progress-hint">${hintText}</span>
+            <div class="pokemon-card-stat-item" onclick="event.stopPropagation(); showStatInfo('prestige');">
+              <span class="pokemon-card-stat-icon">💎</span>
+              <span class="pokemon-card-stat-label">Prestige</span>
+              <span class="pokemon-card-stat-value">${formatRS(stats.prestige)}</span>
+            </div>
+            <div class="pokemon-card-stat-item" onclick="event.stopPropagation(); showStatInfo('insights');">
+              <span class="pokemon-card-stat-icon">📝</span>
+              <span class="pokemon-card-stat-label">Insights</span>
+              <span class="pokemon-card-stat-value">${formatRS(stats.insights)}</span>
+            </div>
+            <div class="pokemon-card-stat-item" onclick="event.stopPropagation(); showStatInfo('stature');">
+              <span class="pokemon-card-stat-icon">🏛️</span>
+              <span class="pokemon-card-stat-label">Stature</span>
+              <span class="pokemon-card-stat-value">${formatRS(stats.stature)}</span>
+            </div>
           </div>
         </div>
       </div>
     `;
-    if (isSun) {
-      return `<div class="pokemon-card-sun-border">${cardHtml}</div>`;
-    }
-    return cardHtml;
   }
 
   // ===== USER PROFILE =====
@@ -4929,7 +4953,7 @@
       userName = '木村 誠司';
       userAvatar = '🧔';
       avatarClass = 'avatar-inner';
-      titleLabel = '🌙 Moon';
+      titleLabel = '🟦 PlatinumStar (50.9K)';
       time = p.time;
     } else {
       const user = userProfiles[fsContext];
@@ -4985,10 +5009,10 @@
 
   // ===== ADD MEMBER BOTTOM SHEET =====
   const circleTiers = {
-    inner:     { emoji: '🔥', label: 'Inner',     max: 3,   ptLabel: '⚡+50pt' },
-    trusted:   { emoji: '💎', label: 'Trusted',   max: 10,  ptLabel: '⚡+20pt' },
-    close:     { emoji: '⭐', label: 'Close',     max: 30,  ptLabel: '⚡+8pt'  },
-    connected: { emoji: '🤝', label: 'Connected', max: 100, ptLabel: '⚡+2pt'  },
+    inner:     { emoji: '🔥', label: 'Core',   max: 10,  ptLabel: '⚡+100pt' },
+    trusted:   { emoji: '💎', label: 'Orbit',  max: 15,  ptLabel: '⚡+30pt'  },
+    close:     { emoji: '⭐', label: 'Halo',   max: 50,  ptLabel: '⚡+10pt'  },
+    connected: { emoji: '🌌', label: 'Galaxy', max: 150, ptLabel: '⚡+3pt'   },
   };
   const circleMembers = {
     inner:     ['田中 悠', '鈴木 里奈'],
@@ -5309,16 +5333,16 @@
   // Center = 50%, 48%
   const starMapPositions = {
     'taisho_k':      { x: 50,  y: 48 },   // center, self
-    // Inner orbit
+    // Core ring
     'rina_s':        { x: 28,  y: 30 },
     'yu_tanaka':     { x: 72,  y: 30 },
-    // Trusted orbit
+    // Orbit ring
     'kenta_s':       { x: 18,  y: 55 },
     'misaki_t':      { x: 38,  y: 22 },
     'daisuke_ito':   { x: 62,  y: 22 },
     'kobayashi_r':   { x: 82,  y: 55 },
     'watanabe_a':    { x: 50,  y: 70 },
-    // Close / outer orbit
+    // Halo / outer ring
     'ayaka_y':       { x: 18,  y: 78 },
     'sho_n':         { x: 82,  y: 78 },
     // Sun/Radiance (special, gold)
@@ -5574,7 +5598,7 @@
       name: 'Sarah Chen',
       avatar: '👩',
       avatarClass: 'avatar-radiance',
-      score: 12847,
+      score: 620000,
       time: '1時間前',
       body: "The future of AI agents is not about replacing humans.\nIt's about amplifying the unique humans who know how to use them.\n\nThe leverage gap will be the biggest wealth divide of this decade.",
       grad: 'linear-gradient(135deg, #064E3B, #047857)',
@@ -5588,7 +5612,7 @@
       name: '田中 悠',
       avatar: '🧑',
       avatarClass: 'avatar-inner',
-      score: 932,
+      score: 32100,
       time: '8分前',
       body: 'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥\n今後のエージェント設計のヒントを掴んだ気がする。',
       grad: 'linear-gradient(135deg, #2D1B69, #7C3AED)',
@@ -5603,7 +5627,7 @@
       name: '鈴木 里奈',
       avatar: '👩',
       avatarClass: 'avatar-inner',
-      score: 881,
+      score: 28400,
       time: '22分前',
       body: '今朝の朝活で気づいたこと。\n\n「完璧なタイミング」を待っていると永遠に動けない。不完全なまま動いて、走りながら直す。それが最速。',
       grad: 'linear-gradient(135deg, #831843, #BE185D)',
@@ -5617,7 +5641,7 @@
       name: 'Kenji Ito',
       avatar: '🎙',
       avatarClass: 'avatar-radiance',
-      score: 11440,
+      score: 180000,
       time: '2時間前',
       body: "Building trust infrastructure for the AI era.\n\nMost platforms optimize for attention. We should optimize for quality of connection.\n\nThat's what Radiance is about.",
       grad: 'linear-gradient(135deg, #1E1B4B, #4338CA)',
@@ -5631,7 +5655,7 @@
       name: '佐藤 健太',
       avatar: '🧑',
       avatarClass: 'avatar-trusted',
-      score: 523,
+      score: 14800,
       time: '30分前',
       body: 'シンガポールのAIカンファレンス🇸🇬 現場の熱量、やばすぎる。投資家とエンジニアが同じ言語で話している。',
       grad: 'linear-gradient(135deg, #0C4A6E, #0369A1)',
@@ -5646,7 +5670,7 @@
       name: '木村 誠司',
       avatar: '🧔',
       avatarClass: 'avatar-inner',
-      score: 2847,
+      score: 50879,
       time: '4時間前',
       body: 'Claude Codeで自分のAIチーム作ってるんやけど、毎朝勝手に資産運用レポート届くの最高すぎる。エンジニア雇わんでもここまでできる時代。',
       grad: 'linear-gradient(135deg, #7C3AED, #2563EB)',
@@ -5660,7 +5684,7 @@
       name: '伊藤 大輔',
       avatar: '👨',
       avatarClass: 'avatar-trusted',
-      score: 310,
+      score: 6700,
       time: '1時間前',
       body: '新しいポートフォリオ構成を試してる。\nインデックス60% / 個別株20% / オルタナ20%\n\n2026年はボラティリティが高いと読んでいるので守り多め。',
       grad: 'linear-gradient(135deg, #422006, #9A3412)',
@@ -5674,7 +5698,7 @@
       name: '山田 彩香',
       avatar: '👩',
       avatarClass: 'avatar-close',
-      score: 287,
+      score: 3200,
       time: '3時間前',
       body: '読書記録📚「イシューからはじめよ」再読。\n\n問いの質が答えの質を決める、という話。仕事でも投資でも同じだなと改めて実感。',
       grad: 'linear-gradient(135deg, #134E4A, #0D9488)',
@@ -5703,13 +5727,6 @@
         ? 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.7) 100%)'
         : 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.7) 100%)';
 
-      const tierBorders = {
-        sun:   'border: 4px solid #F59E0B; box-shadow: 0 0 20px rgba(245,158,11,0.4);',
-        nova:  'border: 4px solid #A78BFA; box-shadow: 0 0 16px rgba(167,139,250,0.3);',
-        moon:  'border: 3px solid #CBD5E1; box-shadow: 0 0 12px rgba(203,213,225,0.25);',
-        star:  'border: 3px solid #60A5FA; box-shadow: 0 0 10px rgba(96,165,250,0.2);',
-        ember: 'border: 2px solid rgba(120,113,108,0.5);',
-      };
       card.style.cssText = `
         margin: 8px 12px;
         border-radius: 16px;
@@ -5718,22 +5735,17 @@
         height: 220px;
         position: relative;
         ${bgStyle}
-        ${tierBorders[titleInfo.cls] || tierBorders.ember}
+        border: 1px solid rgba(255,255,255,0.12);
         transition: transform 0.15s;
       `;
       card.onclick = () => openFeedFs(idx);
 
-      const sunLabel = isSun ? `<div style="display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,0.25);border:1px solid rgba(245,158,11,0.5);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;color:#FCD34D;margin-bottom:6px;">✨ 強い光が届きました</div>` : '';
-
-      let titleStyle = '';
-      if (titleInfo.cls === 'sun') titleStyle = 'background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;';
-      else if (titleInfo.cls === 'nova') titleStyle = 'color:#A78BFA;';
-      else if (titleInfo.cls === 'moon') titleStyle = 'color:#94A3B8;';
+      const sunLabel = isSun ? `<div style="display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,0.22);border:1px solid rgba(245,158,11,0.45);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;color:#FCD34D;margin-bottom:6px;">✨ 強い光が届きました</div>` : '';
 
       const snippetText = post.body.replace(/\n/g, ' ');
       const snippet = snippetText.length > 80 ? snippetText.slice(0, 80) + '…' : snippetText;
 
-      const scoreDisp = post.score >= 1000 ? (post.score / 1000).toFixed(1).replace('.0','') + 'K' : post.score;
+      const scoreDisp = formatRS(post.score);
       card.innerHTML = `
         <div style="position:absolute;inset:0;background:${overlayGrad};pointer-events:none;"></div>
         <!-- 上部: ユーザー情報 -->
@@ -5743,12 +5755,8 @@
               <div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;border:1.5px solid rgba(255,255,255,0.5);">${post.avatar}</div>
               <div>
                 <div style="font-size:13px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.5);">${post.name}</div>
-                <div style="font-size:11px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,0.5);"><span style="${titleStyle}">${titleInfo.emoji} ${titleInfo.name}</span></div>
+                <div style="font-size:11px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,0.5);color:${titleInfo.color};">${titleInfo.emoji} ${titleInfo.name} <span style="opacity:0.75;font-weight:600;">(${scoreDisp})</span></div>
               </div>
-            </div>
-            <div style="text-align:right;">
-              <div style="font-size:18px;font-weight:900;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.5),0 0 12px ${titleInfo.cls === 'sun' ? 'rgba(245,158,11,0.6)' : titleInfo.cls === 'nova' ? 'rgba(167,139,250,0.5)' : 'rgba(255,255,255,0.2)'};letter-spacing:-0.5px;line-height:1;">${scoreDisp}</div>
-              <div style="font-size:9px;color:rgba(255,255,255,0.5);font-weight:600;">RS</div>
             </div>
           </div>
           ${sunLabel}
@@ -5779,13 +5787,10 @@
     const post = feedPosts[feedFsIdx];
     if (!post) return;
     const titleInfo = getTitle(post.score);
+    const scoreDisp = formatRS(post.score);
     const likeKey = 'feed-' + post.id;
     const isLiked = feedLiked[likeKey] || false;
     const likeIcon = isLiked ? '❤️' : '🤍';
-    let titleStyle = '';
-    if (titleInfo.cls === 'sun') titleStyle = 'background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;';
-    else if (titleInfo.cls === 'nova') titleStyle = 'color:#A78BFA;';
-    else if (titleInfo.cls === 'moon') titleStyle = 'color:#94A3B8;';
 
     const slide = document.getElementById('feedFsSlide');
     if (post.img) {
@@ -5804,7 +5809,7 @@
           <div class="post-fs-avatar ${post.avatarClass}">${post.avatar}</div>
           <div>
             <div class="post-fs-username">${post.name}</div>
-            <div class="post-fs-meta"><span style="${titleStyle}">${titleInfo.emoji} ${titleInfo.name}</span> · ${post.time}</div>
+            <div class="post-fs-meta"><span style="color:${titleInfo.color};">${titleInfo.emoji} ${titleInfo.name} (${scoreDisp})</span> · ${post.time}</div>
           </div>
         </div>
         <div class="post-fs-actions">
