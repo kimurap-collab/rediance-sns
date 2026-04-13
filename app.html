@@ -6667,64 +6667,88 @@
     }
   }
 
-  function renderFsSlide() {
-    const p = fsPostList[fsCurrentIdx];
-    if (!p) return;
-    let grad, userName, userAvatar, avatarClass, titleLabel, time;
-    if (fsContext === 'my') {
-      grad = p.grad || 'linear-gradient(135deg, #1a1a2e, #7C3AED)';
-      userName = '木村 誠司';
-      userAvatar = '🧔';
-      avatarClass = 'avatar-inner';
-      titleLabel = '🟦 PlatinumStar (50.9K)';
-      time = p.time;
+  function renderPostFsSlide(slideEl, post, options) {
+    const { isMine, likeKey, likeToggleFn, profileNav } = options;
+    // Background
+    if (post.img) {
+      slideEl.style.background = 'none';
+      slideEl.style.backgroundImage = `url('${post.img}')`;
+      slideEl.style.backgroundSize = 'cover';
+      slideEl.style.backgroundPosition = 'center';
     } else {
-      const user = userProfiles[fsContext];
-      grad = p.grad || 'linear-gradient(135deg, #1a1a2e, #7C3AED)';
-      userName = user ? user.name : '';
-      userAvatar = user ? user.avatarEmoji : '👤';
-      avatarClass = user ? user.avatarClass : '';
-      const tInfo = user ? getTitle(user.score) : { emoji: '⭐', name: 'Star' };
-      titleLabel = tInfo.emoji + ' ' + tInfo.name;
-      time = p.time;
+      slideEl.style.backgroundImage = '';
+      slideEl.style.background = post.grad || 'linear-gradient(135deg,#1a1a2e,#7C3AED)';
     }
-    const likeId = 'fs-like-' + (p.id || fsCurrentIdx);
-    const isLiked = myLiked[likeId] || false;
+    const titleInfo = getTitle(post.score || 0);
+    const scoreDisp = formatRS(post.score || 0);
+    const isLiked = feedLiked[likeKey] || myLiked[likeKey] || false;
     const likeIcon = isLiked ? '❤️' : '🤍';
-    const footprintBtn = fsContext === 'my' ? `
-      <button class="post-fs-action-btn" onclick="openFootprint('${p.id || fsCurrentIdx}', \`${(p.body||'').replace(/`/g,'\\`')}\`, '${p.grad || '#000'}')">👁 <span>${p.views || '0'}</span></button>
+    const userRowClick = profileNav ? `style="cursor:pointer;" onclick="${profileNav}"` : '';
+    const footprintBtn = isMine ? `
+      <button class="post-fs-action-btn" onclick="openFootprint('${post.id}', \`${(post.body||'').replace(/`/g,'\\`').replace(/\n/g,'\\n')}\`, '${post.grad||'#000'}')">👁 <span>${post.views || '0'}</span></button>
     ` : '';
-    const slide = document.getElementById('postFsSlide');
-    slide.style.background = grad;
-    slide.innerHTML = `
+    slideEl.innerHTML = `
       <div class="post-fs-text-center">
-        <div class="post-fs-text-centered">${p.body}</div>
+        <div class="post-fs-text-centered">${post.body}</div>
       </div>
       <div class="post-fs-body">
-        <div class="post-fs-user-row">
-          <div class="post-fs-avatar ${avatarClass}">${userAvatar}</div>
+        <div class="post-fs-user-row" ${userRowClick}>
+          <div class="post-fs-avatar ${post.avatarClass||''}">${post.avatar||'👤'}</div>
           <div>
-            <div class="post-fs-username">${userName}</div>
-            <div class="post-fs-meta">${titleLabel} · ${time}</div>
+            <div class="post-fs-username">${post.name||''}</div>
+            <div class="post-fs-meta"><span style="color:${titleInfo.color};">${titleInfo.emoji} ${titleInfo.name} (${scoreDisp})</span> · ${post.time||''}</div>
           </div>
         </div>
         <div class="post-fs-actions">
-          <button class="post-fs-action-btn" onclick="toggleFsLike('${p.id || fsCurrentIdx}')">
-            <span id="fs-like-icon-${p.id || fsCurrentIdx}">${likeIcon}</span>
-            <span id="fs-like-count-${p.id || fsCurrentIdx}">${formatMyLikes(p.likes || 0)}</span>
+          <button class="post-fs-action-btn" id="like-btn-${likeKey}" onclick="${likeToggleFn}">
+            <span id="like-icon-${likeKey}">${likeIcon}</span>
+            <span id="like-count-${likeKey}">${formatCount(post.likes||0)}</span>
           </button>
-          <button class="post-fs-action-btn" onclick="showToast('シェア機能は開発中です')">🔄 <span>${p.shares || 0}</span></button>
+          <button class="post-fs-action-btn" onclick="showToast('シェア機能は開発中です')">🔄 <span>${post.shares||0}</span></button>
           ${footprintBtn}
         </div>
       </div>
     `;
   }
 
+  function renderFsSlide() {
+    const p = fsPostList[fsCurrentIdx];
+    if (!p) return;
+    const slideEl = document.getElementById('postFsSlide');
+    const isMine = fsContext === 'my';
+    let post;
+    if (isMine) {
+      post = {
+        ...p,
+        name: '木村 誠司',
+        avatar: '🧔',
+        avatarClass: 'avatar-inner',
+        score: 50879,
+      };
+    } else {
+      const user = userProfiles[fsContext];
+      post = {
+        ...p,
+        name: user ? user.name : '',
+        avatar: user ? user.avatarEmoji : '👤',
+        avatarClass: user ? (user.avatarClass || '') : '',
+        score: user ? user.score : 0,
+      };
+    }
+    const likeKey = 'fs-like-' + (p.id || fsCurrentIdx);
+    renderPostFsSlide(slideEl, post, {
+      isMine,
+      likeKey,
+      likeToggleFn: `toggleFsLike('${p.id || fsCurrentIdx}')`,
+      profileNav: isMine ? null : `closeUserProfile && openUserProfile('${fsContext}')`,
+    });
+  }
+
   function toggleFsLike(id) {
     const likeKey = 'fs-like-' + id;
     myLiked[likeKey] = !myLiked[likeKey];
-    const icon = document.getElementById('fs-like-icon-' + id);
-    const countEl = document.getElementById('fs-like-count-' + id);
+    const icon = document.getElementById('like-icon-' + likeKey);
+    const countEl = document.getElementById('like-count-' + likeKey);
     const p = fsPostList[fsCurrentIdx];
     if (myLiked[likeKey]) {
       if (icon) icon.textContent = '❤️';
@@ -6733,7 +6757,7 @@
       if (icon) icon.textContent = '🤍';
       if (p) p.likes = Math.max(0, (p.likes || 0) - 1);
     }
-    if (countEl && p) countEl.textContent = formatMyLikes(p.likes);
+    if (countEl && p) countEl.textContent = formatCount(p.likes);
   }
 
   // ===== ADD MEMBER BOTTOM SHEET =====
@@ -7790,92 +7814,34 @@
   function renderFeedFs() {
     const post = feedPosts[feedFsIdx];
     if (!post) return;
-    const titleInfo = getTitle(post.score);
-    const scoreDisp = formatRS(post.score);
+    const slideEl = document.getElementById('feedFsSlide');
     const likeKey = 'feed-' + post.id;
-    const isLiked = feedLiked[likeKey] || false;
-    const likeIcon = isLiked ? '❤️' : '🤍';
-
-    const slide = document.getElementById('feedFsSlide');
-    if (post.img) {
-      slide.style.background = 'none';
-      slide.style.backgroundImage = `url('${post.img}')`;
-      slide.style.backgroundSize = 'cover';
-      slide.style.backgroundPosition = 'center';
-    } else {
-      slide.style.backgroundImage = '';
-      slide.style.background = post.grad;
-    }
-    slide.innerHTML = `
-      <div class="post-fs-text-center">
-        <div class="post-fs-text-centered">${post.body}</div>
-      </div>
-      <div class="post-fs-body">
-        <div class="post-fs-user-row" style="cursor:pointer;" onclick="closeFeedFs(); setTimeout(()=>openUserProfile('${post.userId}'),300);">
-          <div class="post-fs-avatar ${post.avatarClass}">${post.avatar}</div>
-          <div>
-            <div class="post-fs-username">${post.name}</div>
-            <div class="post-fs-meta"><span style="color:${titleInfo.color};">${titleInfo.emoji} ${titleInfo.name} (${scoreDisp})</span> · ${post.time}</div>
-          </div>
-        </div>
-        <div class="post-fs-actions">
-          <button class="post-fs-action-btn" onclick="toggleFeedFsLike('${post.id}')">
-            <span id="feedfs-like-icon-${post.id}">${likeIcon}</span>
-            <span id="feedfs-like-count-${post.id}">${formatCount(post.likes)}</span>
-          </button>
-          <button class="post-fs-action-btn" onclick="showToast('シェア機能は開発中です')">🔄 <span>${post.shares}</span></button>
-        </div>
-      </div>
-    `;
+    renderPostFsSlide(slideEl, post, {
+      isMine: false,
+      likeKey,
+      likeToggleFn: `toggleFeedFsLike('${post.id}')`,
+      profileNav: `closeFeedFs(); setTimeout(()=>openUserProfile('${post.userId}'),300);`,
+    });
   }
 
   function openSearchPostFs(encodedData) {
     const postData = JSON.parse(decodeURIComponent(encodedData));
-    const titleInfo = getTitle(postData.score);
-    const scoreDisp = formatRS(postData.score);
+    const slideEl = document.getElementById('feedFsSlide');
     const likeKey = 'search-' + postData.id;
-    const isLiked = feedLiked[likeKey] || false;
-    const likeIcon = isLiked ? '❤️' : '🤍';
-
-    const slide = document.getElementById('feedFsSlide');
-    if (postData.img) {
-      slide.style.background = 'none';
-      slide.style.backgroundImage = `url('${postData.img}')`;
-      slide.style.backgroundSize = 'cover';
-      slide.style.backgroundPosition = 'center';
-    } else {
-      slide.style.backgroundImage = '';
-      slide.style.background = postData.grad;
-    }
-    slide.innerHTML = `
-      <div class="post-fs-text-center">
-        <div class="post-fs-text-centered">${postData.body}</div>
-      </div>
-      <div class="post-fs-body">
-        <div class="post-fs-user-row" style="cursor:pointer;" onclick="closeFeedFs(); setTimeout(()=>openUserProfile('${postData.userId}'),300);">
-          <div class="post-fs-avatar" style="background:rgba(255,255,255,0.2);">${postData.avatar}</div>
-          <div>
-            <div class="post-fs-username">${postData.name}</div>
-            <div class="post-fs-meta"><span style="color:${titleInfo.color};">${titleInfo.emoji} ${titleInfo.name} (${scoreDisp})</span> · ${postData.time || '今'}</div>
-          </div>
-        </div>
-        <div class="post-fs-actions">
-          <button class="post-fs-action-btn" onclick="toggleSearchFsLike('${postData.id}')">
-            <span id="searchfs-like-icon-${postData.id}">${likeIcon}</span>
-            <span id="searchfs-like-count-${postData.id}">${formatCount(postData.likes)}</span>
-          </button>
-          <button class="post-fs-action-btn" onclick="showToast('シェア機能は開発中です')">🔄 <span>${postData.shares || 0}</span></button>
-        </div>
-      </div>
-    `;
+    renderPostFsSlide(slideEl, postData, {
+      isMine: false,
+      likeKey,
+      likeToggleFn: `toggleSearchFsLike('${postData.id}')`,
+      profileNav: `closeFeedFs(); setTimeout(()=>openUserProfile('${postData.userId}'),300);`,
+    });
     document.getElementById('feedFsOverlay').classList.add('open');
   }
 
   function toggleSearchFsLike(postId) {
     const likeKey = 'search-' + postId;
     feedLiked[likeKey] = !feedLiked[likeKey];
-    const icon = document.getElementById('searchfs-like-icon-' + postId);
-    const countEl = document.getElementById('searchfs-like-count-' + postId);
+    const icon = document.getElementById('like-icon-' + likeKey);
+    const countEl = document.getElementById('like-count-' + likeKey);
     if (feedLiked[likeKey]) {
       if (icon) icon.textContent = '❤️';
     } else {
@@ -7889,8 +7855,8 @@
     const likeKey = 'feed-' + postId;
     feedLiked[likeKey] = !feedLiked[likeKey];
     const post = feedPosts.find(p => p.id === postId);
-    const icon = document.getElementById('feedfs-like-icon-' + postId);
-    const countEl = document.getElementById('feedfs-like-count-' + postId);
+    const icon = document.getElementById('like-icon-' + likeKey);
+    const countEl = document.getElementById('like-count-' + likeKey);
     if (feedLiked[likeKey]) {
       if (icon) icon.textContent = '❤️';
       if (post) post.likes += 1;
