@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Rediance — App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Serif+JP:wght@400;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #7C3AED;
@@ -385,6 +388,385 @@
     .msg-dest-summary { font-size: 13px; color: var(--text-sub); margin-bottom: 12px; }
     .msg-note { font-size: 11px; color: var(--text-light); margin-top: 12px; text-align: center; }
 
+    /* ===== NEW MESSAGE OVERLAY ===== */
+    .nm-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--bg);
+      z-index: 3000;
+      display: none;
+      flex-direction: column;
+      max-width: 430px;
+      margin: 0 auto;
+    }
+    .nm-overlay.open { display: flex; }
+
+    .nm-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      height: var(--header-height);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .nm-header-close {
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-main);
+    }
+    .nm-header-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .nm-header-spacer { width: 32px; }
+
+    /* チップエリア */
+    .nm-chips-area {
+      padding: 10px 16px 8px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+    }
+    .nm-chips-area.has-chips { border-bottom-color: var(--border); }
+    .nm-chips-scroll {
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .nm-chips-scroll::-webkit-scrollbar { display: none; }
+    .nm-chip {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--primary-bg);
+      border: 1.5px solid var(--primary-light);
+      border-radius: 20px;
+      padding: 4px 8px 4px 6px;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .nm-chip:active { background: var(--primary-bg-light); }
+    .nm-chip-avatar { font-size: 14px; }
+    .nm-chip-name { font-size: 12px; font-weight: 600; color: var(--primary-dark); white-space: nowrap; }
+    .nm-chip-remove { font-size: 12px; color: var(--primary); line-height: 1; }
+    .nm-chips-empty { font-size: 13px; color: var(--text-light); }
+
+    /* 検索バー */
+    .nm-search-bar {
+      padding: 10px 16px 8px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .nm-search-wrap {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 8px;
+      height: 38px;
+    }
+    .nm-search-wrap:focus-within { border-color: var(--primary); }
+    .nm-search-icon { font-size: 14px; color: var(--text-light); }
+    .nm-search-input {
+      flex: 1;
+      border: none;
+      background: none;
+      font-size: 14px;
+      outline: none;
+      color: var(--text-main);
+    }
+    .nm-search-input::placeholder { color: var(--text-light); }
+
+    /* セクション一覧 */
+    .nm-body {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 80px;
+    }
+
+    .nm-section {
+      border-bottom: 1px solid var(--border);
+    }
+    .nm-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      cursor: pointer;
+      user-select: none;
+      background: var(--surface);
+    }
+    .nm-section-header:active { background: var(--primary-bg); }
+    .nm-section-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nm-section-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .nm-section-count {
+      font-size: 12px;
+      color: var(--text-light);
+      font-weight: 400;
+    }
+    .nm-section-chevron {
+      font-size: 12px;
+      color: var(--text-light);
+      transition: transform 0.2s;
+    }
+    .nm-section.open .nm-section-chevron { transform: rotate(180deg); }
+    .nm-select-all-btn {
+      padding: 4px 10px;
+      border-radius: 14px;
+      border: 1.5px solid var(--primary);
+      background: none;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+    .nm-select-all-btn.all-selected {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .nm-member-list {
+      display: none;
+    }
+    .nm-section.open .nm-member-list { display: block; }
+
+    .nm-member-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      border-top: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .nm-member-row:active { background: var(--surface); }
+    .nm-member-row.hidden { display: none; }
+
+    .nm-checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .nm-member-row.checked .nm-checkbox {
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+    .nm-checkbox-check {
+      font-size: 12px;
+      color: #fff;
+      display: none;
+    }
+    .nm-member-row.checked .nm-checkbox-check { display: block; }
+
+    .nm-member-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      border: 1.5px solid var(--border);
+      flex-shrink: 0;
+    }
+    .nm-member-name {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .nm-divider {
+      height: 6px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* 次へボタン */
+    .nm-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 16px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+    }
+    .nm-next-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: var(--primary);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .nm-next-btn:disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
+
+    /* ===== NEW MESSAGE STEP2 OVERLAY ===== */
+    .nm2-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--bg);
+      z-index: 3100;
+      display: none;
+      flex-direction: column;
+      max-width: 430px;
+      margin: 0 auto;
+    }
+    .nm2-overlay.open { display: flex; }
+
+    .nm2-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      height: var(--header-height);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .nm2-back-btn {
+      background: none;
+      border: none;
+      font-size: 15px;
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .nm2-header-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .nm2-header-spacer { width: 60px; }
+
+    .nm2-dest-area {
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .nm2-dest-label {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-bottom: 10px;
+    }
+    .nm2-dest-avatars {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .nm2-dest-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .nm2-dest-more {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      padding: 0 6px;
+    }
+    .nm2-edit-members-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      cursor: pointer;
+    }
+    .nm2-edit-members-btn:active { opacity: 0.7; }
+
+    .nm2-body {
+      flex: 1;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .nm2-textarea {
+      width: 100%;
+      min-height: 140px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      font-size: 15px;
+      font-family: inherit;
+      resize: none;
+      outline: none;
+      color: var(--text-main);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+    .nm2-textarea:focus { border-color: var(--primary); }
+    .nm2-send-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: var(--primary);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(124,58,237,0.3);
+    }
+    .nm2-send-btn:active { opacity: 0.85; }
+
     /* ===== TALK LIST ===== */
     .talk-list { padding: 0 0 80px; }
     .talk-row {
@@ -732,14 +1114,14 @@
     .stories-seg-fill.active { transition: width linear; }
 
     /* header row */
-    .stories-header {
+    .stories-user-footer {
       position: absolute;
-      top: 22px;
+      bottom: 90px;
       left: 0;
       right: 0;
       display: flex;
       align-items: center;
-      padding: 0 12px;
+      padding: 0 14px;
       z-index: 10;
       gap: 10px;
     }
@@ -1580,6 +1962,7 @@
       text-shadow: 0 2px 8px rgba(0,0,0,0.6);
       margin-bottom: 18px;
       white-space: pre-line;
+      text-align: center;
     }
     .post-fs-user-row {
       display: flex;
@@ -1766,6 +2149,457 @@
       display: none;
     }
     .circle-section.open .ambient-count { display: block; }
+
+    /* ===== TALK SCREEN (redesign) ===== */
+    .talk-screen-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: var(--header-height);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      flex-shrink: 0;
+    }
+    .talk-screen-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    /* セグメントタブ */
+    .talk-seg-bar {
+      display: flex;
+      border-bottom: 1.5px solid var(--border);
+      position: sticky;
+      top: var(--header-height);
+      background: var(--bg);
+      z-index: 40;
+      flex-shrink: 0;
+    }
+    .talk-seg-tab {
+      flex: 1;
+      padding: 11px 0;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sub);
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1.5px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .talk-seg-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    /* タブコンテンツ切り替え */
+    .talk-tab-content { display: none; }
+    .talk-tab-content.active { display: block; }
+
+    /* ----- トーク一覧 ----- */
+    .tl-list { padding: 0 0 100px; }
+    .tl-row {
+      display: flex;
+      gap: 12px;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      align-items: center;
+      transition: background 0.12s;
+    }
+    .tl-row:active { background: var(--surface); }
+    .tl-avatar-wrap { position: relative; flex-shrink: 0; }
+    .tl-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      border: 1.5px solid var(--border);
+    }
+    .tl-body { flex: 1; min-width: 0; }
+    .tl-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3px;
+    }
+    .tl-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .tl-name.unread { font-weight: 800; }
+    .tl-time { font-size: 11px; color: var(--text-light); flex-shrink: 0; }
+    .tl-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tl-preview {
+      font-size: 13px;
+      color: var(--text-sub);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+      min-width: 0;
+    }
+    .tl-preview.unread { font-weight: 600; color: var(--text-main); }
+    .tl-badge {
+      flex-shrink: 0;
+      min-width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      background: var(--danger);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 5px;
+      margin-left: 8px;
+    }
+
+    /* ----- Circle管理 ----- */
+    .tc-wrap { padding: 0 0 100px; }
+    .tc-header {
+      padding: 16px 16px 4px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    /* ----- グループ管理 ----- */
+    .tg-wrap { padding: 0 0 100px; }
+    .tg-add-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin: 12px 16px;
+      padding: 12px 0;
+      border-radius: var(--radius-md);
+      border: 1.5px dashed var(--primary-light);
+      background: var(--primary-bg);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .tg-add-btn:active { background: var(--primary-bg-light); }
+    .tg-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .tg-row:active { background: var(--surface); }
+    .tg-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .tg-body { flex: 1; min-width: 0; }
+    .tg-name { font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 2px; }
+    .tg-meta { font-size: 12px; color: var(--text-sub); }
+    .tg-send-btn {
+      flex-shrink: 0;
+      padding: 7px 14px;
+      border-radius: 20px;
+      border: 1.5px solid var(--primary);
+      background: none;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .tg-send-btn:active { background: var(--primary); color: #fff; }
+
+    /* ===== CONTACTS TAB (連絡先) ===== */
+    .contacts-wrap { padding: 0 0 100px; }
+
+    /* セクションヘッダー */
+    .contacts-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.06);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .contacts-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+    .contacts-section-edit-btn {
+      background: none;
+      border: none;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      padding: 2px 6px;
+    }
+    .contacts-section-edit-btn:active { opacity: 0.7; }
+
+    /* Circle折りたたみ行 */
+    .contacts-tier-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      background: var(--bg);
+      transition: background 0.12s;
+      user-select: none;
+    }
+    .contacts-tier-row:active { background: var(--surface); }
+    .contacts-tier-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .contacts-tier-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .contacts-tier-count {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    .contacts-tier-chevron {
+      font-size: 11px;
+      color: var(--text-light);
+      transition: transform 0.2s;
+    }
+    .contacts-tier-section.open .contacts-tier-chevron { transform: rotate(180deg); }
+
+    /* メンバーリスト */
+    .contacts-member-list { display: none; }
+    .contacts-tier-section.open .contacts-member-list { display: block; }
+
+    .contacts-member-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px 10px 32px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      background: var(--surface);
+      transition: background 0.12s;
+    }
+    .contacts-member-row:active { background: rgba(124,58,237,0.06); }
+    .contacts-member-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .contacts-member-name {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+    .contacts-tier-badge-small {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+
+    /* グループ行 */
+    .contacts-group-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      background: var(--bg);
+      transition: background 0.12s;
+      user-select: none;
+    }
+    .contacts-group-row:active { background: var(--surface); }
+    .contacts-group-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .contacts-group-body { flex: 1; min-width: 0; }
+    .contacts-group-name { font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 1px; }
+    .contacts-group-meta { font-size: 12px; color: var(--text-sub); }
+    .contacts-group-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .contacts-group-chevron {
+      font-size: 11px;
+      color: var(--text-light);
+      transition: transform 0.2s;
+    }
+    .contacts-group-section.open .contacts-group-chevron { transform: rotate(180deg); }
+
+    /* グループ展開エリア */
+    .contacts-group-body-expanded {
+      display: none;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .contacts-group-section.open .contacts-group-body-expanded { display: block; }
+    .contacts-group-member-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 16px 9px 28px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .contacts-group-member-row:last-child { border-bottom: none; }
+    .contacts-group-member-row:active { background: rgba(124,58,237,0.06); }
+    .contacts-group-member-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .contacts-group-member-name {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+    .contacts-group-send-all-btn {
+      margin: 10px 16px;
+      padding: 10px 0;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--primary);
+      background: none;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      width: calc(100% - 32px);
+      display: block;
+      text-align: center;
+      transition: background 0.15s, color 0.15s;
+    }
+    .contacts-group-send-all-btn:active { background: var(--primary); color: #fff; }
+
+    /* 連絡先タブ 検索バー */
+    .contacts-search-bar {
+      padding: 10px 16px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .contacts-search-wrap {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 8px;
+    }
+    .contacts-search-wrap:focus-within {
+      border-color: var(--primary-light);
+    }
+    .contacts-search-icon {
+      font-size: 14px;
+      opacity: 0.4;
+      flex-shrink: 0;
+    }
+    .contacts-search-input {
+      flex: 1;
+      border: none;
+      background: none;
+      font-size: 14px;
+      color: var(--text-main);
+      padding: 9px 0;
+      outline: none;
+    }
+    .contacts-search-input::placeholder { color: var(--text-light); }
+
+    /* 検索結果エリア */
+    .contacts-search-results {
+      display: none;
+    }
+    .contacts-search-results.active {
+      display: block;
+    }
+    .contacts-main-content.search-active {
+      display: none;
+    }
+
+    /* 新しいアクションボタン (全員に送信・編集) */
+    .contacts-action-btn {
+      background: none;
+      border: 1px solid rgba(124,58,237,0.3);
+      color: #7C3AED;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .contacts-action-btn:hover {
+      background: rgba(124,58,237,0.08);
+    }
+    .contacts-action-btn:active {
+      opacity: 0.7;
+    }
 
     /* ===== DISCOVER SCREEN ===== */
     .discover-search {
@@ -2434,299 +3268,374 @@
     .add-btn.added { background: var(--primary); color: white; border-color: var(--primary); }
     .add-btn.adding { background: var(--primary); color: white; border-color: var(--primary); }
 
-    /* ===== POST COMPOSER ===== */
-    .composer-screen {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      background: var(--bg);
+    /* ===== POST COMPOSER (Instagram Stories-style) ===== */
+    #screen-post {
+      overflow: hidden;
+      background: #000;
     }
-    .composer-header {
+    .composer-screen {
+      position: absolute;
+      inset: 0;
+      background: #000;
+      overflow: hidden;
+    }
+
+    /* --- Stories Editor: fullscreen canvas --- */
+    .stories-editor {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    /* Fullscreen background layer */
+    .stories-bg-canvas {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #7C3AED, #A78BFA);
+      z-index: 0;
+    }
+    .stories-bg-canvas img,
+    .stories-bg-canvas video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .stories-bg-canvas img.active,
+    .stories-bg-canvas video.active { display: block; }
+
+    /* Text layers container — fullscreen */
+    #storiesTextLayers {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+    }
+
+    /* ===== TOP TOOLBAR (floating) ===== */
+    .stories-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 40;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: var(--header-height);
-      padding: 0 16px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
+      padding: 12px 16px 16px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, transparent 100%);
     }
-    .composer-header-btn {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-sub);
-      border: none;
-      background: none;
-      cursor: pointer;
-      padding: 6px 4px;
-    }
-    .composer-header-btn.primary { color: var(--primary); }
-    .composer-header-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-    .composer-header-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-    .composer-body {
-      flex: 1;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    /* Step 1 */
-    .composer-step1 { padding: 20px 16px; }
-    .composer-avatar-row {
+    .stories-header-center {
       display: flex;
       gap: 12px;
-      align-items: flex-start;
+      align-items: center;
     }
-    .composer-my-avatar {
-      width: 42px;
-      height: 42px;
+    .stories-close-btn {
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #7C3AED, #A78BFA);
+      border: none;
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+      font-size: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
       flex-shrink: 0;
     }
-    .composer-textarea-wrap { flex: 1; }
-    .composer-textarea {
-      width: 100%;
-      border: none;
-      outline: none;
-      font-size: 16px;
-      line-height: 1.6;
-      color: var(--text-main);
-      resize: none;
-      min-height: 140px;
-      font-family: inherit;
-      background: transparent;
-    }
-    .composer-textarea::placeholder { color: var(--text-light); }
-    .composer-count {
-      font-size: 12px;
-      color: var(--text-light);
-      margin-top: 10px;
-      text-align: right;
-    }
-    .composer-count.near-limit { color: var(--gold); }
-    .composer-count.at-limit { color: var(--danger); }
+    .stories-close-btn:active { opacity: 0.7; }
 
-    /* tag button in composer */
-    .composer-tag-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 16px;
-      padding: 12px 16px;
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--primary);
-      cursor: pointer;
-      width: 100%;
-      text-align: left;
-    }
-    .composer-tag-btn:active { background: var(--primary-bg); }
-
-    .composer-ai-btn {
-      display: block;
-      width: 100%;
-      margin-top: 16px;
-      padding: 15px 0;
-      border-radius: var(--radius-lg);
+    .stories-tool-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
       border: none;
-      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      background: rgba(255,255,255,0.18);
       color: #fff;
       font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      flex-shrink: 0;
+    }
+    .stories-tool-btn:active { background: rgba(255,255,255,0.35); }
+
+    .stories-post-btn {
+      padding: 8px 18px;
+      border-radius: 20px;
+      border: none;
+      background: #2563EB;
+      color: #fff;
+      font-size: 14px;
       font-weight: 700;
       cursor: pointer;
       transition: opacity 0.15s, transform 0.15s;
-      box-shadow: 0 4px 16px rgba(124,58,237,0.35);
+      backdrop-filter: blur(4px);
     }
-    .composer-ai-btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
-    .composer-ai-btn:not(:disabled):active { transform: scale(0.97); }
+    .stories-post-btn:active { transform: scale(0.95); opacity: 0.85; }
 
-    /* Step 2: Loading */
-    .composer-step2 {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      padding: 40px 24px;
-      gap: 20px;
-    }
-    .composer-loading-icon {
-      font-size: 48px;
-      animation: composerSpin 2s linear infinite;
-    }
-    @keyframes composerSpin {
-      0% { transform: rotate(0deg) scale(1); }
-      50% { transform: rotate(180deg) scale(1.1); }
-      100% { transform: rotate(360deg) scale(1); }
-    }
-    .composer-loading-title {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--text-main);
-    }
-    .composer-progress-wrap {
-      width: 100%;
-      max-width: 280px;
-    }
-    .composer-progress-bar {
-      height: 8px;
-      background: var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 8px;
-    }
-    .composer-progress-fill {
-      height: 100%;
-      border-radius: 4px;
-      background: linear-gradient(90deg, var(--primary), var(--primary-light));
-      width: 0%;
-      transition: width 0.3s ease;
-    }
-    .composer-progress-pct {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--primary);
-      text-align: right;
-    }
-    .composer-status-log {
-      font-size: 13px;
-      color: var(--text-sub);
-      text-align: center;
-      line-height: 1.8;
-      min-height: 60px;
-    }
-    .composer-status-log span.current {
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    /* Step 3: Design selection */
-    .composer-step3 { padding: 16px; }
-    .composer-design-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .composer-design-card {
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      border: 2.5px solid transparent;
-      cursor: pointer;
-      transition: border-color 0.15s, transform 0.15s;
-      position: relative;
-    }
-    .composer-design-card.selected { border-color: var(--primary); }
-    .composer-design-card:active { transform: scale(0.96); }
-    .composer-design-preview {
-      height: 180px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 14px;
-      position: relative;
-      overflow: hidden;
-    }
-    .composer-design-preview-text {
-      font-size: 12px;
-      font-weight: 700;
-      color: #fff;
-      text-align: center;
-      line-height: 1.5;
-      text-shadow: 0 1px 6px rgba(0,0,0,0.5);
-      z-index: 1;
-      position: relative;
-    }
-    .composer-design-check {
+    /* ===== LEFT SIDE: vertical size slider (floating) ===== */
+    .stories-size-slider-wrap {
       position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--primary);
-      color: #fff;
-      font-size: 13px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2;
-    }
-    .composer-design-card.selected .composer-design-check { display: flex; }
-    .composer-design-label {
-      padding: 8px 10px;
-      background: var(--bg);
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-main);
-      border-top: 1px solid var(--border);
-    }
-
-    /* Step 4: Completion */
-    .composer-step4 {
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 40;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100%;
-      padding: 40px 24px;
-      gap: 20px;
-      text-align: center;
+      gap: 6px;
     }
-    .composer-success-icon { font-size: 60px; }
-    .composer-success-title {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--text-main);
+    .stories-size-slider-arrow {
+      color: rgba(255,255,255,0.8);
+      font-size: 13px;
+      line-height: 1;
+      user-select: none;
     }
-    .composer-success-preview {
+    .stories-size-slider-track {
+      width: 3px;
+      height: 140px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+    .stories-size-slider-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
       width: 100%;
-      max-width: 280px;
-      height: 180px;
-      border-radius: var(--radius-lg);
+      background: #fff;
+      border-radius: 2px;
+      transition: height 0.1s;
+    }
+    .stories-size-slider-thumb {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 4px rgba(0,0,0,0.4);
+      cursor: grab;
+    }
+    .stories-size-slider {
+      position: absolute;
+      inset: -8px;
+      opacity: 0;
+      width: calc(100% + 16px);
+      height: calc(100% + 16px);
+      cursor: pointer;
+      -webkit-appearance: slider-vertical;
+      appearance: slider-vertical;
+      writing-mode: bt-lr;
+      margin: 0;
+    }
+
+    /* ===== BOTTOM AREA (floating) ===== */
+    .stories-bottom-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      padding: 12px 14px 16px;
+      background: linear-gradient(to top, rgba(0,0,0,0.60) 0%, transparent 100%);
+    }
+
+    /* Color palette row */
+    .stories-color-palette {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .stories-color-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .stories-color-dot.active {
+      border-color: #fff;
+      transform: scale(1.3);
+    }
+    .stories-color-dot:active { opacity: 0.75; }
+
+    /* BG selector row */
+    .stories-bg-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .stories-bg-type-btns {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .stories-bg-type-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7);
+      font-size: 17px;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px;
-      overflow: hidden;
-      position: relative;
+      cursor: pointer;
+      transition: all 0.15s;
+      backdrop-filter: blur(4px);
     }
-    .composer-success-preview-text {
+    .stories-bg-type-btn.active {
+      background: rgba(255,255,255,0.30);
+      color: #fff;
+    }
+    .stories-bg-type-btn:active { opacity: 0.7; }
+
+    .stories-grad-palette {
+      flex: 1;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      align-items: center;
+    }
+    .stories-grad-palette::-webkit-scrollbar { display: none; }
+    .stories-grad-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      cursor: pointer;
+      border: 2.5px solid rgba(255,255,255,0.2);
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .stories-grad-dot.active {
+      border-color: #fff;
+      transform: scale(1.18);
+    }
+    .stories-grad-dot:active { opacity: 0.75; }
+
+    /* Add text + font btn row (shown as floating pill at top center when text selected) */
+    .stories-add-text-btn {
+      padding: 6px 14px;
+      border-radius: 18px;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.15);
+      color: #fff;
       font-size: 13px;
       font-weight: 700;
-      color: #fff;
-      text-align: center;
-      line-height: 1.6;
-      text-shadow: 0 1px 6px rgba(0,0,0,0.5);
-      z-index: 1;
-      position: relative;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      white-space: nowrap;
     }
-    .composer-success-msg {
+    .stories-add-text-btn:active { background: rgba(255,255,255,0.3); }
+
+    .stories-font-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.15);
+      color: #fff;
       font-size: 14px;
-      color: var(--text-sub);
-    }
-    .composer-home-btn {
-      display: block;
-      width: 100%;
-      max-width: 280px;
-      padding: 14px 0;
-      border-radius: var(--radius-lg);
-      border: none;
-      background: linear-gradient(135deg, var(--primary), var(--primary-light));
-      color: #fff;
-      font-size: 15px;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 4px 16px rgba(124,58,237,0.35);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .stories-font-btn:active { background: rgba(255,255,255,0.3); }
+
+    /* Identity row */
+    .stories-identity-row {
+      margin-top: 10px;
+    }
+    .stories-identity-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 7px 10px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(4px);
+    }
+    .stories-identity-label input {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .stories-identity-label span {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+    }
+    .stories-identity-cats {
+      display: none;
+      margin-top: 6px;
+      padding: 8px 10px;
+      background: rgba(124,58,237,0.25);
+      border: 1px solid rgba(124,58,237,0.5);
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(4px);
+    }
+    .stories-identity-cats.open { display: block; }
+    .stories-identity-cats-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 6px;
+    }
+    .stories-identity-cats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    /* Text layer styles */
+    .stories-text-layer {
+      position: absolute;
+      cursor: move;
+      max-width: 85%;
+      white-space: pre-wrap;
+      word-break: break-word;
+      user-select: none;
+      z-index: 50;
+      touch-action: none;
+    }
+    .stories-text-layer.selected {
+      outline: 1px dashed rgba(255,255,255,0.6);
+      outline-offset: 4px;
+    }
+    .stories-text-layer.editing {
+      outline: 1.5px solid var(--primary-light);
+      outline-offset: 4px;
+      background: rgba(0,0,0,0.25);
+      border-radius: 4px;
+      padding: 2px 4px;
+    }
+
+    /* hidden file inputs */
+    #storiesPhotoInput, #storiesVideoInput {
+      display: none;
     }
 
     /* ===== IDENTITY CATEGORY BUTTON ===== */
@@ -2747,6 +3656,18 @@
       border-color: var(--primary);
     }
     .identity-cat-btn:active { opacity: 0.7; }
+
+    /* composer内のidentity-cat-btn は暗い背景に合わせる */
+    .stories-identity-cats-row .identity-cat-btn {
+      color: rgba(255,255,255,0.85);
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.25);
+    }
+    .stories-identity-cats-row .identity-cat-btn.selected {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
 
     /* ===== IDENTITY SECTION (profile) ===== */
     .identity-section {
@@ -2864,111 +3785,96 @@
     </div>
 
 
-    <!-- ===== POST COMPOSER SCREEN ===== -->
+    <!-- ===== POST COMPOSER SCREEN (Instagram Stories-style) ===== -->
     <div class="screen" id="screen-post">
       <div class="composer-screen" id="composerScreen">
+        <div class="stories-editor" id="storiesEditor">
 
-        <!-- Step 1: Text input -->
-        <div id="composerStep1">
-          <div class="composer-header">
-            <button class="composer-header-btn" onclick="switchTab('home')">キャンセル</button>
-            <div class="composer-header-title">新規投稿</div>
-            <button class="composer-header-btn primary" disabled id="composerNextBtn" onclick="composerNext()">次へ</button>
+          <!-- Hidden file inputs -->
+          <input type="file" id="storiesPhotoInput" accept="image/*" onchange="storiesLoadPhoto(event)">
+          <input type="file" id="storiesVideoInput" accept="video/*" onchange="storiesLoadVideo(event)">
+
+          <!-- Fullscreen background canvas -->
+          <div class="stories-bg-canvas" id="storiesBgCanvas">
+            <img id="storiesPreviewImg" src="" alt="">
+            <video id="storiesPreviewVid" src="" loop muted playsinline></video>
           </div>
-          <div class="composer-body">
-            <div class="composer-step1">
-              <div class="composer-avatar-row">
-                <div class="composer-my-avatar">🧔</div>
-                <div class="composer-textarea-wrap">
-                  <textarea class="composer-textarea" id="composerTextarea" placeholder="いまなにしてる？" maxlength="500" oninput="composerTextInput()"></textarea>
-                  <div class="composer-count" id="composerCount">0/500文字</div>
+
+          <!-- Text layers container (fullscreen) -->
+          <div id="storiesTextLayers"></div>
+
+          <!-- Floating top toolbar -->
+          <div class="stories-header">
+            <button class="stories-close-btn" onclick="storiesClose()">✕</button>
+            <div class="stories-header-center">
+              <button class="stories-add-text-btn" onclick="storiesAddText()">＋Aa</button>
+              <button class="stories-tool-btn stories-font-btn" id="storiesFontBtn" onclick="storiesCycleFont()" title="フォント切替">Aa</button>
+            </div>
+            <button class="stories-post-btn" onclick="storiesPost()">投稿</button>
+          </div>
+
+          <!-- Left side: vertical size slider -->
+          <div class="stories-size-slider-wrap" id="storiesSizeSliderWrap">
+            <div class="stories-size-slider-arrow">▲</div>
+            <div class="stories-size-slider-track" id="storiesSizeTrack">
+              <div class="stories-size-slider-fill" id="storiesSizeFill" style="height:35%;"></div>
+              <div class="stories-size-slider-thumb" id="storiesSizeThumb" style="bottom:35%;"></div>
+              <input type="range" id="storiesSizeSlider" class="stories-size-slider" min="14" max="48" value="24" oninput="storiesSliderSize(this.value)">
+            </div>
+            <div class="stories-size-slider-arrow">▼</div>
+          </div>
+
+          <!-- Floating bottom overlay -->
+          <div class="stories-bottom-overlay">
+            <!-- Color palette -->
+            <div class="stories-color-palette" id="storiesColorPalette">
+              <div class="stories-color-dot active" style="background:#ffffff;" data-color="#ffffff" onclick="storiesSetColor(this)"></div>
+              <div class="stories-color-dot" style="background:#111111;" data-color="#111111" onclick="storiesSetColor(this)"></div>
+              <div class="stories-color-dot" style="background:#EF4444;" data-color="#EF4444" onclick="storiesSetColor(this)"></div>
+              <div class="stories-color-dot" style="background:#3B82F6;" data-color="#3B82F6" onclick="storiesSetColor(this)"></div>
+              <div class="stories-color-dot" style="background:#FBBF24;" data-color="#FBBF24" onclick="storiesSetColor(this)"></div>
+              <div class="stories-color-dot" style="background:#F472B6;" data-color="#F472B6" onclick="storiesSetColor(this)"></div>
+            </div>
+
+            <!-- BG type buttons + gradient palette -->
+            <div class="stories-bg-row">
+              <div class="stories-bg-type-btns">
+                <button class="stories-bg-type-btn active" id="bgTypeGrad" onclick="storiesBgType('grad')" title="グラデ">🎨</button>
+                <button class="stories-bg-type-btn" id="bgTypePhoto" onclick="storiesBgType('photo')" title="写真">📷</button>
+                <button class="stories-bg-type-btn" id="bgTypeVideo" onclick="storiesBgType('video')" title="動画">🎬</button>
+              </div>
+              <div class="stories-grad-palette" id="storiesGradPalette">
+                <div class="stories-grad-dot active" style="background:linear-gradient(135deg,#7C3AED,#60A5FA);" data-grad="linear-gradient(135deg,#7C3AED,#60A5FA)" onclick="storiesSetGrad(this)"></div>
+                <div class="stories-grad-dot" style="background:linear-gradient(135deg,#F97316,#EC4899);" data-grad="linear-gradient(135deg,#F97316,#EC4899)" onclick="storiesSetGrad(this)"></div>
+                <div class="stories-grad-dot" style="background:linear-gradient(135deg,#10B981,#06B6D4);" data-grad="linear-gradient(135deg,#10B981,#06B6D4)" onclick="storiesSetGrad(this)"></div>
+                <div class="stories-grad-dot" style="background:linear-gradient(135deg,#1E3A8A,#7C3AED);" data-grad="linear-gradient(135deg,#1E3A8A,#7C3AED)" onclick="storiesSetGrad(this)"></div>
+                <div class="stories-grad-dot" style="background:linear-gradient(135deg,#EC4899,#EF4444);" data-grad="linear-gradient(135deg,#EC4899,#EF4444)" onclick="storiesSetGrad(this)"></div>
+                <div class="stories-grad-dot" style="background:linear-gradient(135deg,#111827,#374151);" data-grad="linear-gradient(135deg,#111827,#374151)" onclick="storiesSetGrad(this)"></div>
+                <div class="stories-grad-dot" style="background:linear-gradient(135deg,#FBBF24,#F97316);" data-grad="linear-gradient(135deg,#FBBF24,#F97316)" onclick="storiesSetGrad(this)"></div>
+                <div class="stories-grad-dot" style="background:linear-gradient(135deg,#0EA5E9,#6366F1);" data-grad="linear-gradient(135deg,#0EA5E9,#6366F1)" onclick="storiesSetGrad(this)"></div>
+              </div>
+            </div>
+
+            <!-- Identity row -->
+            <div class="stories-identity-row">
+              <label class="stories-identity-label">
+                <input type="checkbox" id="storiesIdentityCheck" onchange="storiesToggleIdentity()">
+                <span>✨ アイデンティティに残す</span>
+              </label>
+              <div class="stories-identity-cats" id="storiesIdentityCats">
+                <div class="stories-identity-cats-label">カテゴリを選ぶ</div>
+                <div class="stories-identity-cats-row">
+                  <button class="identity-cat-btn" onclick="selectIdentityCat(this)">🇸🇬 シンガポール</button>
+                  <button class="identity-cat-btn" onclick="selectIdentityCat(this)">💼 経営</button>
+                  <button class="identity-cat-btn" onclick="selectIdentityCat(this)">🤖 AI・テック</button>
+                  <button class="identity-cat-btn" onclick="selectIdentityCat(this)">📈 投資</button>
+                  <button onclick="showToast('カテゴリ作成（開発中）')" style="font-size:11px;font-weight:600;color:var(--primary-light);background:none;border:1.5px dashed rgba(167,139,250,0.6);border-radius:16px;padding:3px 10px;cursor:pointer;">＋ 新しいカテゴリ</button>
                 </div>
               </div>
-              <button class="composer-tag-btn" onclick="showToast('この機能は開発中です')">
-                📎 タグ付け
-              </button>
-
-              <!-- アイデンティティに残す -->
-              <div style="margin-top:16px;">
-                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:12px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-md);">
-                  <input type="checkbox" id="identityCheck" onchange="toggleIdentityCategory()" style="width:18px;height:18px;accent-color:var(--primary);cursor:pointer;">
-                  <span style="font-size:14px;font-weight:600;color:var(--text-main);">✨ アイデンティティに残す</span>
-                </label>
-                <div id="identityCategoryWrap" style="display:none;margin-top:8px;padding:12px;background:var(--primary-bg-light);border:1.5px solid var(--primary-bg);border-radius:var(--radius-md);">
-                  <div style="font-size:12px;font-weight:700;color:var(--text-sub);margin-bottom:8px;">カテゴリを選ぶ</div>
-                  <div style="display:flex;flex-wrap:wrap;gap:8px;">
-                    <button class="identity-cat-btn" onclick="selectIdentityCat(this)">🇸🇬 シンガポール</button>
-                    <button class="identity-cat-btn" onclick="selectIdentityCat(this)">💼 経営</button>
-                    <button class="identity-cat-btn" onclick="selectIdentityCat(this)">🤖 AI・テック</button>
-                    <button class="identity-cat-btn" onclick="selectIdentityCat(this)">📈 投資</button>
-                    <button onclick="showToast('カテゴリ作成（開発中）')" style="font-size:12px;font-weight:600;color:var(--primary);background:none;border:1.5px dashed var(--primary-light);border-radius:16px;padding:4px 12px;cursor:pointer;">＋ 新しいカテゴリ</button>
-                  </div>
-                </div>
-              </div>
-
-              <button class="composer-ai-btn" id="composerAiBtn" disabled onclick="composerStartAI()">✨ AIデザインを生成</button>
             </div>
           </div>
-        </div>
 
-        <!-- Step 2: Loading -->
-        <div id="composerStep2" style="display:none; height:100%; flex-direction:column;">
-          <div class="composer-header">
-            <div style="width:60px;"></div>
-            <div class="composer-header-title">✨ AI生成中</div>
-            <div style="width:60px;"></div>
-          </div>
-          <div class="composer-body" style="display:flex; align-items:center; justify-content:center;">
-            <div class="composer-step2">
-              <div class="composer-loading-icon">✨</div>
-              <div class="composer-loading-title">AIがデザイン中...</div>
-              <div class="composer-progress-wrap">
-                <div class="composer-progress-bar">
-                  <div class="composer-progress-fill" id="composerProgressFill"></div>
-                </div>
-                <div class="composer-progress-pct" id="composerProgressPct">0%</div>
-              </div>
-              <div class="composer-status-log" id="composerStatusLog">
-                <span class="current">投稿内容を分析しています...</span>
-              </div>
-            </div>
-          </div>
         </div>
-
-        <!-- Step 3: Design selection -->
-        <div id="composerStep3" style="display:none; flex-direction:column; height:100%;">
-          <div class="composer-header">
-            <button class="composer-header-btn" onclick="composerBack()">← 戻る</button>
-            <div class="composer-header-title">デザインを選ぶ</div>
-            <button class="composer-header-btn primary" disabled id="composerPostBtn" onclick="composerPost()">投稿 →</button>
-          </div>
-          <div class="composer-body">
-            <div class="composer-step3" id="composerDesignGrid">
-              <div class="composer-design-grid" id="composerDesignCards"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 4: Complete -->
-        <div id="composerStep4" style="display:none; flex-direction:column; height:100%;">
-          <div class="composer-header">
-            <div style="width:60px;"></div>
-            <div class="composer-header-title">投稿完了</div>
-            <div style="width:60px;"></div>
-          </div>
-          <div class="composer-body" style="display:flex; align-items:center; justify-content:center;">
-            <div class="composer-step4">
-              <div class="composer-success-icon">✅</div>
-              <div class="composer-success-title">投稿しました！</div>
-              <div class="composer-success-preview" id="composerSuccessPreview">
-                <div class="composer-success-preview-text" id="composerSuccessText"></div>
-              </div>
-              <div class="composer-success-msg">⚡ あなたの影響力に光が灯りました</div>
-              <button class="composer-home-btn" onclick="composerGoHome()">ホームに戻る</button>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
 
@@ -3322,81 +4228,414 @@
     </div>
 
     <!-- ===== TALK SCREEN ===== -->
-    <div class="screen" id="screen-talk" style="overflow-y:auto;">
-      <div class="header">
-        <div class="header-logo">💬 トーク</div>
+    <div class="screen" id="screen-talk">
+      <!-- ヘッダー -->
+      <div class="talk-screen-header">
+        <div class="talk-screen-title">トーク</div>
+        <div style="display:flex;gap:8px;">
+          <button class="icon-btn" onclick="openNewMessage()" title="新規メッセージ" style="font-size:16px;">✏️</button>
+        </div>
       </div>
-      <div class="talk-list">
-        <!-- 一斉送信 -->
-        <div class="talk-row talk-broadcast" onclick="openBroadcastChat()">
-          <div class="talk-avatar-wrap">
-            <div class="talk-avatar">🍻</div>
-            <div class="talk-broadcast-badge">📢</div>
-          </div>
-          <div class="talk-body">
-            <div class="talk-top">
-              <div class="talk-name">飲み会のお誘い<span class="talk-group-count">（5人）</span></div>
-              <div class="talk-time">3時間前</div>
+
+      <!-- セグメントタブ（2タブ） -->
+      <div class="talk-seg-bar">
+        <button class="talk-seg-tab active" id="talkSegTab-dm" onclick="switchTalkTab('dm')">💬 トーク</button>
+        <button class="talk-seg-tab" id="talkSegTab-contacts" onclick="switchTalkTab('contacts')">📒 連絡先</button>
+      </div>
+
+      <!-- ===== タブ①：トーク一覧 ===== -->
+      <div class="talk-tab-content active" id="talkContent-dm">
+        <div class="tl-list">
+          <!-- 田中 悠（未読2） -->
+          <div class="tl-row" onclick="openDmChat('yu_tanaka', '田中 悠', '🧑')">
+            <div class="tl-avatar-wrap">
+              <div class="tl-avatar">🧑</div>
             </div>
-            <div class="talk-preview">今週金曜、飲み行かない？19時くらいで渋谷...</div>
-            <div class="talk-reply-status">🟢 3人返信 / 2人未読</div>
+            <div class="tl-body">
+              <div class="tl-top">
+                <div class="tl-name unread">田中 悠</div>
+                <div class="tl-time">12:30</div>
+              </div>
+              <div class="tl-bottom">
+                <div class="tl-preview unread">AGIの件、面白いアイデアがあるんだけど...</div>
+                <div class="tl-badge">2</div>
+              </div>
+            </div>
+          </div>
+          <!-- 鈴木 里奈（未読1） -->
+          <div class="tl-row" onclick="openDmChat('rina_s', '鈴木 里奈', '👩')">
+            <div class="tl-avatar-wrap">
+              <div class="tl-avatar">👩</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-top">
+                <div class="tl-name unread">鈴木 里奈</div>
+                <div class="tl-time">昨日</div>
+              </div>
+              <div class="tl-bottom">
+                <div class="tl-preview unread">朝活の件ありがとう！来週も参加するね...</div>
+                <div class="tl-badge">1</div>
+              </div>
+            </div>
+          </div>
+          <!-- Sarah Chen（既読） -->
+          <div class="tl-row" onclick="openDmChat('sarah_ai', 'Sarah Chen', '👩')">
+            <div class="tl-avatar-wrap">
+              <div class="tl-avatar">👩</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-top">
+                <div class="tl-name">Sarah Chen</div>
+                <div class="tl-time">2日前</div>
+              </div>
+              <div class="tl-bottom">
+                <div class="tl-preview">That sounds amazing! Let me check my...</div>
+              </div>
+            </div>
+          </div>
+          <!-- 佐藤 健太（既読） -->
+          <div class="tl-row" onclick="openDmChat('kenta_s', '佐藤 健太', '🧑')">
+            <div class="tl-avatar-wrap">
+              <div class="tl-avatar">🧑</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-top">
+                <div class="tl-name">佐藤 健太</div>
+                <div class="tl-time">4日前</div>
+              </div>
+              <div class="tl-bottom">
+                <div class="tl-preview">SEAのスタートアップの件、資料送るね</div>
+              </div>
+            </div>
+          </div>
+          <!-- 伊藤 大輔（既読） -->
+          <div class="tl-row" onclick="openDmChat('daisuke_ito', '伊藤 大輔', '👨')">
+            <div class="tl-avatar-wrap">
+              <div class="tl-avatar">👨</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-top">
+                <div class="tl-name">伊藤 大輔</div>
+                <div class="tl-time">5日前</div>
+              </div>
+              <div class="tl-bottom">
+                <div class="tl-preview">了解です！よろしくお願いします</div>
+              </div>
+            </div>
+          </div>
+          <!-- 高橋 美咲（既読） -->
+          <div class="tl-row" onclick="openDmChat('misaki_t', '高橋 美咲', '👩')">
+            <div class="tl-avatar-wrap">
+              <div class="tl-avatar">👩</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-top">
+                <div class="tl-name">高橋 美咲</div>
+                <div class="tl-time">1週間前</div>
+              </div>
+              <div class="tl-bottom">
+                <div class="tl-preview">またコラボしましょう！楽しかったです</div>
+              </div>
+            </div>
           </div>
         </div>
-        <!-- 個別DM -->
-        <div class="talk-row" onclick="openDmChat('yu_tanaka', '田中 悠', '🧑')">
-          <div class="talk-avatar-wrap"><div class="talk-avatar">🧑</div></div>
-          <div class="talk-body">
-            <div class="talk-top">
-              <div class="talk-name">田中 悠</div>
-              <div class="talk-time">12:30</div>
+      </div>
+
+      <!-- ===== タブ②：連絡先 ===== -->
+      <div class="talk-tab-content" id="talkContent-contacts">
+        <div class="contacts-wrap">
+
+          <!-- 検索バー -->
+          <div class="contacts-search-bar">
+            <div class="contacts-search-wrap">
+              <span class="contacts-search-icon">🔍</span>
+              <input class="contacts-search-input" id="contactsSearchInput" type="text" placeholder="名前で検索..." oninput="contactsFilterMembers(this.value)">
             </div>
-            <div class="talk-preview">AGIの件、面白いアイデアがあるんだけど...</div>
           </div>
-        </div>
-        <div class="talk-row" onclick="openDmChat('rina_s', '鈴木 里奈', '👩')">
-          <div class="talk-avatar-wrap"><div class="talk-avatar">👩</div></div>
-          <div class="talk-body">
-            <div class="talk-top">
-              <div class="talk-name">鈴木 里奈</div>
-              <div class="talk-time">昨日</div>
+
+          <!-- 検索結果エリア（検索時のみ表示） -->
+          <div class="contacts-search-results" id="contactsSearchResults"></div>
+
+          <!-- メインコンテンツ（通常時表示） -->
+          <div class="contacts-main-content" id="contactsMainContent">
+
+          <!-- ===== セクション1: あなたのCircle ===== -->
+          <div class="contacts-section-header">
+            <span class="contacts-section-title">あなたのCircle</span>
+          </div>
+
+          <!-- Core -->
+          <div class="contacts-tier-section open" id="ctier-core">
+            <div class="contacts-tier-row" onclick="toggleContactsTier('ctier-core')">
+              <div class="contacts-tier-left">
+                <span>🔥</span>
+                <span class="contacts-tier-label">Core</span>
+                <span class="contacts-tier-count">2人</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'},{id:'rina_s',name:'鈴木 里奈',avatar:'👩'}])">全員に送信</button>
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'},{id:'rina_s',name:'鈴木 里奈',avatar:'👩'}])">編集して送信</button>
+                <span class="contacts-tier-chevron">▾</span>
+              </div>
             </div>
-            <div class="talk-preview">朝活の件ありがとう！来週も参加するね...</div>
-          </div>
-        </div>
-        <!-- 一斉送信2 -->
-        <div class="talk-row talk-broadcast" onclick="showToast('トーク画面（開発中）')">
-          <div class="talk-avatar-wrap">
-            <div class="talk-avatar">📊</div>
-            <div class="talk-broadcast-badge">📢</div>
-          </div>
-          <div class="talk-body">
-            <div class="talk-top">
-              <div class="talk-name">投資勉強会<span class="talk-group-count">（3人）</span></div>
-              <div class="talk-time">3日前</div>
+            <div class="contacts-member-list">
+              <div class="contacts-member-row" onclick="openDmChat('yu_tanaka','田中 悠','🧑')">
+                <div class="contacts-member-avatar">🧑</div>
+                <span class="contacts-member-name">田中 悠</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(124,58,237,0.15);color:#5B21B6;">🔥 Core</span>
+              </div>
+              <div class="contacts-member-row" onclick="openDmChat('rina_s','鈴木 里奈','👩')">
+                <div class="contacts-member-avatar">👩</div>
+                <span class="contacts-member-name">鈴木 里奈</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(124,58,237,0.15);color:#5B21B6;">🔥 Core</span>
+              </div>
             </div>
-            <div class="talk-preview">来月の勉強会、日程決めたいんだけど...</div>
-            <div class="talk-reply-status">🟢 2人返信 / 1人未読</div>
           </div>
-        </div>
-        <div class="talk-row" onclick="openDmChat('sarah_ai', 'Sarah Chen', '👩')">
-          <div class="talk-avatar-wrap"><div class="talk-avatar">👩</div></div>
-          <div class="talk-body">
-            <div class="talk-top">
-              <div class="talk-name">Sarah Chen</div>
-              <div class="talk-time">2日前</div>
+
+          <!-- Orbit -->
+          <div class="contacts-tier-section" id="ctier-orbit">
+            <div class="contacts-tier-row" onclick="toggleContactsTier('ctier-orbit')">
+              <div class="contacts-tier-left">
+                <span>💎</span>
+                <span class="contacts-tier-label">Orbit</span>
+                <span class="contacts-tier-count">5人</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'kenta_s',name:'佐藤 健太',avatar:'🧑'},{id:'daisuke_ito',name:'伊藤 大輔',avatar:'👨'},{id:'misaki_t',name:'高橋 美咲',avatar:'👱‍♀️'},{id:'ryo_k',name:'小林 亮',avatar:'🧔'},{id:'aya_w',name:'渡辺 彩',avatar:'🙍'}])">全員に送信</button>
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'kenta_s',name:'佐藤 健太',avatar:'🧑'},{id:'daisuke_ito',name:'伊藤 大輔',avatar:'👨'},{id:'misaki_t',name:'高橋 美咲',avatar:'👱‍♀️'},{id:'ryo_k',name:'小林 亮',avatar:'🧔'},{id:'aya_w',name:'渡辺 彩',avatar:'🙍'}])">編集して送信</button>
+                <span class="contacts-tier-chevron">▾</span>
+              </div>
             </div>
-            <div class="talk-preview">That sounds amazing! Let me check my...</div>
-          </div>
-        </div>
-        <div class="talk-row" onclick="openDmChat('kenta_s', '佐藤 健太', '🧑')">
-          <div class="talk-avatar-wrap"><div class="talk-avatar">🧑</div></div>
-          <div class="talk-body">
-            <div class="talk-top">
-              <div class="talk-name">佐藤 健太</div>
-              <div class="talk-time">4日前</div>
+            <div class="contacts-member-list">
+              <div class="contacts-member-row" onclick="openDmChat('kenta_s','佐藤 健太','🧑')">
+                <div class="contacts-member-avatar">🧑</div>
+                <span class="contacts-member-name">佐藤 健太</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(59,130,246,0.12);color:#1D4ED8;">💎 Orbit</span>
+              </div>
+              <div class="contacts-member-row" onclick="openDmChat('daisuke_ito','伊藤 大輔','👨')">
+                <div class="contacts-member-avatar">👨</div>
+                <span class="contacts-member-name">伊藤 大輔</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(59,130,246,0.12);color:#1D4ED8;">💎 Orbit</span>
+              </div>
+              <div class="contacts-member-row" onclick="openDmChat('misaki_t','高橋 美咲','👱‍♀️')">
+                <div class="contacts-member-avatar">👱‍♀️</div>
+                <span class="contacts-member-name">高橋 美咲</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(59,130,246,0.12);color:#1D4ED8;">💎 Orbit</span>
+              </div>
+              <div class="contacts-member-row" onclick="openDmChat('ryo_k','小林 亮','🧔')">
+                <div class="contacts-member-avatar">🧔</div>
+                <span class="contacts-member-name">小林 亮</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(59,130,246,0.12);color:#1D4ED8;">💎 Orbit</span>
+              </div>
+              <div class="contacts-member-row" onclick="openDmChat('aya_w','渡辺 彩','🙍')">
+                <div class="contacts-member-avatar">🙍</div>
+                <span class="contacts-member-name">渡辺 彩</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(59,130,246,0.12);color:#1D4ED8;">💎 Orbit</span>
+              </div>
             </div>
-            <div class="talk-preview">SEAのスタートアップの件、資料送るね</div>
           </div>
+
+          <!-- Halo -->
+          <div class="contacts-tier-section" id="ctier-halo">
+            <div class="contacts-tier-row" onclick="toggleContactsTier('ctier-halo')">
+              <div class="contacts-tier-left">
+                <span>⭐</span>
+                <span class="contacts-tier-label">Halo</span>
+                <span class="contacts-tier-count">3人</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'ayaka_y',name:'山田 彩香',avatar:'👩'},{id:'sho_n',name:'中村 花',avatar:'👩'},{id:'kato_sho',name:'加藤 翔',avatar:'👨'}])">全員に送信</button>
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'ayaka_y',name:'山田 彩香',avatar:'👩'},{id:'sho_n',name:'中村 花',avatar:'👩'},{id:'kato_sho',name:'加藤 翔',avatar:'👨'}])">編集して送信</button>
+                <span class="contacts-tier-chevron">▾</span>
+              </div>
+            </div>
+            <div class="contacts-member-list">
+              <div class="contacts-member-row" onclick="openDmChat('ayaka_y','山田 彩香','👩')">
+                <div class="contacts-member-avatar">👩</div>
+                <span class="contacts-member-name">山田 彩香</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(245,158,11,0.12);color:#B45309;">⭐ Halo</span>
+              </div>
+              <div class="contacts-member-row" onclick="openDmChat('sho_n','中村 花','👩')">
+                <div class="contacts-member-avatar">👩</div>
+                <span class="contacts-member-name">中村 花</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(245,158,11,0.12);color:#B45309;">⭐ Halo</span>
+              </div>
+              <div class="contacts-member-row" onclick="openDmChat('kato_sho','加藤 翔','👨')">
+                <div class="contacts-member-avatar">👨</div>
+                <span class="contacts-member-name">加藤 翔</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(245,158,11,0.12);color:#B45309;">⭐ Halo</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Galaxy -->
+          <div class="contacts-tier-section" id="ctier-galaxy">
+            <div class="contacts-tier-row" onclick="toggleContactsTier('ctier-galaxy')">
+              <div class="contacts-tier-left">
+                <span>🌌</span>
+                <span class="contacts-tier-label">Galaxy</span>
+                <span class="contacts-tier-count">3人</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'matsuda_e',name:'松田 恵',avatar:'👩'},{id:'fujii_m',name:'藤井 誠',avatar:'🧑'},{id:'kinoshita_a',name:'木下 彩',avatar:'👩'}])">全員に送信</button>
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'matsuda_e',name:'松田 恵',avatar:'👩'},{id:'fujii_m',name:'藤井 誠',avatar:'🧑'},{id:'kinoshita_a',name:'木下 彩',avatar:'👩'}])">編集して送信</button>
+                <span class="contacts-tier-chevron">▾</span>
+              </div>
+            </div>
+            <div class="contacts-member-list">
+              <div class="contacts-member-row" onclick="openDmChat('matsuda_e','松田 恵','👩')">
+                <div class="contacts-member-avatar">👩</div>
+                <span class="contacts-member-name">松田 恵</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(99,102,241,0.12);color:#4338CA;">🌌 Galaxy</span>
+              </div>
+              <div class="contacts-member-row" onclick="openDmChat('fujii_m','藤井 誠','🧑')">
+                <div class="contacts-member-avatar">🧑</div>
+                <span class="contacts-member-name">藤井 誠</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(99,102,241,0.12);color:#4338CA;">🌌 Galaxy</span>
+              </div>
+              <div class="contacts-member-row" onclick="openDmChat('kinoshita_a','木下 彩','👩')">
+                <div class="contacts-member-avatar">👩</div>
+                <span class="contacts-member-name">木下 彩</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(99,102,241,0.12);color:#4338CA;">🌌 Galaxy</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Connect -->
+          <div class="contacts-tier-section" id="ctier-connect">
+            <div class="contacts-tier-row" onclick="toggleContactsTier('ctier-connect')">
+              <div class="contacts-tier-left">
+                <span>🤝</span>
+                <span class="contacts-tier-label">Connect</span>
+                <span class="contacts-tier-count">3人</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'ishikawa_t',name:'石川 拓',avatar:'🧑'},{id:'shimizu_m',name:'清水 美穂',avatar:'👩'},{id:'noda_k',name:'野田 健一',avatar:'👨'}])">全員に送信</button>
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'ishikawa_t',name:'石川 拓',avatar:'🧑'},{id:'shimizu_m',name:'清水 美穂',avatar:'👩'},{id:'noda_k',name:'野田 健一',avatar:'👨'}])">編集して送信</button>
+                <span class="contacts-tier-chevron">▾</span>
+              </div>
+            </div>
+            <div class="contacts-member-list">
+              <div class="contacts-member-row" onclick="openDmChat('ishikawa_t','石川 拓','🧑')">
+                <div class="contacts-member-avatar">🧑</div>
+                <span class="contacts-member-name">石川 拓</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(148,163,184,0.15);color:#64748B;">🤝 Connect</span>
+              </div>
+              <div class="contacts-member-row" onclick="openDmChat('shimizu_m','清水 美穂','👩')">
+                <div class="contacts-member-avatar">👩</div>
+                <span class="contacts-member-name">清水 美穂</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(148,163,184,0.15);color:#64748B;">🤝 Connect</span>
+              </div>
+              <div class="contacts-member-row" onclick="openDmChat('noda_k','野田 健一','👨')">
+                <div class="contacts-member-avatar">👨</div>
+                <span class="contacts-member-name">野田 健一</span>
+                <span class="contacts-tier-badge-small" style="background:rgba(148,163,184,0.15);color:#64748B;">🤝 Connect</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== セクション2: グループ ===== -->
+          <div class="contacts-section-header" style="margin-top:4px;">
+            <span class="contacts-section-title">グループ</span>
+            <button class="contacts-section-edit-btn" onclick="var n=prompt('新しいグループ名を入力');if(n)showToast(n+'を作成しました！');">＋</button>
+          </div>
+
+          <!-- 酒好き -->
+          <div class="contacts-group-section" id="cgrp-sake">
+            <div class="contacts-group-row" onclick="toggleContactsGroup('cgrp-sake')">
+              <div class="contacts-group-icon">🍺</div>
+              <div class="contacts-group-body">
+                <div class="contacts-group-name">酒好き</div>
+                <div class="contacts-group-meta">3人のメンバー</div>
+              </div>
+              <div class="contacts-group-right">
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'},{id:'kenta_s',name:'佐藤 健太',avatar:'🧑'},{id:'daisuke_ito',name:'伊藤 大輔',avatar:'👨'}])">全員に送信</button>
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'},{id:'kenta_s',name:'佐藤 健太',avatar:'🧑'},{id:'daisuke_ito',name:'伊藤 大輔',avatar:'👨'}])">編集して送信</button>
+                <span class="contacts-group-chevron">▾</span>
+              </div>
+            </div>
+            <div class="contacts-group-body-expanded">
+              <div class="contacts-group-member-row" onclick="openDmChat('yu_tanaka','田中 悠','🧑')">
+                <div class="contacts-group-member-avatar">🧑</div>
+                <span class="contacts-group-member-name">田中 悠</span>
+              </div>
+              <div class="contacts-group-member-row" onclick="openDmChat('kenta_s','佐藤 健太','🧑')">
+                <div class="contacts-group-member-avatar">🧑</div>
+                <span class="contacts-group-member-name">佐藤 健太</span>
+              </div>
+              <div class="contacts-group-member-row" onclick="openDmChat('daisuke_ito','伊藤 大輔','👨')">
+                <div class="contacts-group-member-avatar">👨</div>
+                <span class="contacts-group-member-name">伊藤 大輔</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 投資仲間 -->
+          <div class="contacts-group-section" id="cgrp-toshi">
+            <div class="contacts-group-row" onclick="toggleContactsGroup('cgrp-toshi')">
+              <div class="contacts-group-icon">📈</div>
+              <div class="contacts-group-body">
+                <div class="contacts-group-name">投資仲間</div>
+                <div class="contacts-group-meta">3人のメンバー</div>
+              </div>
+              <div class="contacts-group-right">
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'rina_s',name:'鈴木 里奈',avatar:'👩'},{id:'kenji_founder',name:'Kenji Ito',avatar:'🎙'},{id:'sarah_ai',name:'Sarah Chen',avatar:'👩'}])">全員に送信</button>
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'rina_s',name:'鈴木 里奈',avatar:'👩'},{id:'kenji_founder',name:'Kenji Ito',avatar:'🎙'},{id:'sarah_ai',name:'Sarah Chen',avatar:'👩'}])">編集して送信</button>
+                <span class="contacts-group-chevron">▾</span>
+              </div>
+            </div>
+            <div class="contacts-group-body-expanded">
+              <div class="contacts-group-member-row" onclick="openDmChat('rina_s','鈴木 里奈','👩')">
+                <div class="contacts-group-member-avatar">👩</div>
+                <span class="contacts-group-member-name">鈴木 里奈</span>
+              </div>
+              <div class="contacts-group-member-row" onclick="openDmChat('kenji_founder','Kenji Ito','🎙')">
+                <div class="contacts-group-member-avatar">🎙</div>
+                <span class="contacts-group-member-name">Kenji Ito</span>
+              </div>
+              <div class="contacts-group-member-row" onclick="openDmChat('sarah_ai','Sarah Chen','👩')">
+                <div class="contacts-group-member-avatar">👩</div>
+                <span class="contacts-group-member-name">Sarah Chen</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ゴルフ部 -->
+          <div class="contacts-group-section" id="cgrp-golf">
+            <div class="contacts-group-row" onclick="toggleContactsGroup('cgrp-golf')">
+              <div class="contacts-group-icon">⛳</div>
+              <div class="contacts-group-body">
+                <div class="contacts-group-name">ゴルフ部</div>
+                <div class="contacts-group-meta">4人のメンバー</div>
+              </div>
+              <div class="contacts-group-right">
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'kenta_s',name:'佐藤 健太',avatar:'🧑'},{id:'ryo_k',name:'小林 亮',avatar:'🧔'},{id:'misaki_t',name:'高橋 美咲',avatar:'👱‍♀️'},{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'}])">全員に送信</button>
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'kenta_s',name:'佐藤 健太',avatar:'🧑'},{id:'ryo_k',name:'小林 亮',avatar:'🧔'},{id:'misaki_t',name:'高橋 美咲',avatar:'👱‍♀️'},{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'}])">編集して送信</button>
+                <span class="contacts-group-chevron">▾</span>
+              </div>
+            </div>
+            <div class="contacts-group-body-expanded">
+              <div class="contacts-group-member-row" onclick="openDmChat('kenta_s','佐藤 健太','🧑')">
+                <div class="contacts-group-member-avatar">🧑</div>
+                <span class="contacts-group-member-name">佐藤 健太</span>
+              </div>
+              <div class="contacts-group-member-row" onclick="openDmChat('ryo_k','小林 亮','🧔')">
+                <div class="contacts-group-member-avatar">🧔</div>
+                <span class="contacts-group-member-name">小林 亮</span>
+              </div>
+              <div class="contacts-group-member-row" onclick="openDmChat('misaki_t','高橋 美咲','👱‍♀️')">
+                <div class="contacts-group-member-avatar">👱‍♀️</div>
+                <span class="contacts-group-member-name">高橋 美咲</span>
+              </div>
+              <div class="contacts-group-member-row" onclick="openDmChat('yu_tanaka','田中 悠','🧑')">
+                <div class="contacts-group-member-avatar">🧑</div>
+                <span class="contacts-group-member-name">田中 悠</span>
+              </div>
+            </div>
+          </div>
+
+          </div><!-- /contacts-main-content -->
+
         </div>
       </div>
     </div>
@@ -3410,11 +4649,11 @@
         </div>
       </div>
       <!-- 検索結果 -->
-      <div id="searchResults" style="padding:8px 0;"></div>
+      <div id="searchResults" style="padding:56px 0 8px 0;display:none;"></div>
       <!-- デフォルト：おすすめユーザー -->
       <div id="searchDefault">
-        <div style="padding:12px 16px 8px;font-size:13px;font-weight:700;color:var(--text-sub);">おすすめ投稿</div>
-        <div id="searchRecommended"></div>
+        <div style="padding:56px 16px 8px;font-size:13px;font-weight:700;color:var(--text-sub);">おすすめ投稿</div>
+        <div id="searchRecommended" style="padding-top:0;"></div>
         <div style="padding:16px 16px 8px;font-size:13px;font-weight:700;color:var(--text-sub);">トレンド</div>
         <div style="padding:0 16px;">
           <div class="search-trend-item" onclick="document.getElementById('searchInput').value='AIエージェント';handleSearch();">#AIエージェント</div>
@@ -3617,6 +4856,328 @@
 
   </div><!-- /screens -->
 
+  <!-- ===== NEW MESSAGE OVERLAY: STEP 1 (送信先選択) ===== -->
+  <div class="nm-overlay" id="nmOverlay">
+    <div class="nm-header">
+      <button class="nm-header-close" onclick="closeNewMessage()">✕</button>
+      <div class="nm-header-title">新規メッセージ</div>
+      <div class="nm-header-spacer"></div>
+    </div>
+
+    <!-- 選択済みチップエリア -->
+    <div class="nm-chips-area" id="nmChipsArea">
+      <div class="nm-chips-empty" id="nmChipsEmpty">送信先を選んでください</div>
+      <div class="nm-chips-scroll" id="nmChipsScroll" style="display:none;"></div>
+    </div>
+
+    <!-- 検索バー -->
+    <div class="nm-search-bar">
+      <div class="nm-search-wrap">
+        <span class="nm-search-icon">🔍</span>
+        <input class="nm-search-input" id="nmSearchInput" type="text" placeholder="名前で検索..." oninput="nmFilterMembers(this.value)">
+      </div>
+    </div>
+
+    <!-- セクション一覧 -->
+    <div class="nm-body" id="nmBody">
+      <!-- Core -->
+      <div class="nm-section open" id="nmSec-core">
+        <div class="nm-section-header" onclick="nmToggleSection('core')">
+          <div class="nm-section-header-left">
+            <span>🔥</span>
+            <span class="nm-section-label">Core</span>
+            <span class="nm-section-count">2人</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="nm-select-all-btn" id="nmAllBtn-core" onclick="event.stopPropagation();nmToggleSelectAll('core')">全選択</button>
+            <span class="nm-section-chevron">▾</span>
+          </div>
+        </div>
+        <div class="nm-member-list" id="nmList-core">
+          <div class="nm-member-row" data-id="yu_tanaka" data-section="core" onclick="nmToggleMember('yu_tanaka','core')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">🧑</div>
+            <div class="nm-member-name">田中 悠</div>
+          </div>
+          <div class="nm-member-row" data-id="rina_s" data-section="core" onclick="nmToggleMember('rina_s','core')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👩</div>
+            <div class="nm-member-name">鈴木 里奈</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orbit -->
+      <div class="nm-section open" id="nmSec-orbit">
+        <div class="nm-section-header" onclick="nmToggleSection('orbit')">
+          <div class="nm-section-header-left">
+            <span>💎</span>
+            <span class="nm-section-label">Orbit</span>
+            <span class="nm-section-count">5人</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="nm-select-all-btn" id="nmAllBtn-orbit" onclick="event.stopPropagation();nmToggleSelectAll('orbit')">全選択</button>
+            <span class="nm-section-chevron">▾</span>
+          </div>
+        </div>
+        <div class="nm-member-list" id="nmList-orbit">
+          <div class="nm-member-row" data-id="kenta_s" data-section="orbit" onclick="nmToggleMember('kenta_s','orbit')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">🧑</div>
+            <div class="nm-member-name">佐藤 健太</div>
+          </div>
+          <div class="nm-member-row" data-id="daisuke_ito" data-section="orbit" onclick="nmToggleMember('daisuke_ito','orbit')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👨</div>
+            <div class="nm-member-name">伊藤 大輔</div>
+          </div>
+          <div class="nm-member-row" data-id="misaki_t" data-section="orbit" onclick="nmToggleMember('misaki_t','orbit')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👱‍♀️</div>
+            <div class="nm-member-name">高橋 美咲</div>
+          </div>
+          <div class="nm-member-row" data-id="ryo_k" data-section="orbit" onclick="nmToggleMember('ryo_k','orbit')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">🧔</div>
+            <div class="nm-member-name">小林 亮</div>
+          </div>
+          <div class="nm-member-row" data-id="aya_w" data-section="orbit" onclick="nmToggleMember('aya_w','orbit')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">🙍</div>
+            <div class="nm-member-name">渡辺 彩</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Halo -->
+      <div class="nm-section" id="nmSec-halo">
+        <div class="nm-section-header" onclick="nmToggleSection('halo')">
+          <div class="nm-section-header-left">
+            <span>⭐</span>
+            <span class="nm-section-label">Halo</span>
+            <span class="nm-section-count">4人</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="nm-select-all-btn" id="nmAllBtn-halo" onclick="event.stopPropagation();nmToggleSelectAll('halo')">全選択</button>
+            <span class="nm-section-chevron">▾</span>
+          </div>
+        </div>
+        <div class="nm-member-list" id="nmList-halo">
+          <div class="nm-member-row" data-id="sarah_ai" data-section="halo" onclick="nmToggleMember('sarah_ai','halo')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👩</div>
+            <div class="nm-member-name">Sarah Chen</div>
+          </div>
+          <div class="nm-member-row" data-id="ayaka_y" data-section="halo" onclick="nmToggleMember('ayaka_y','halo')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👩</div>
+            <div class="nm-member-name">山田 彩香</div>
+          </div>
+          <div class="nm-member-row" data-id="sho_n" data-section="halo" onclick="nmToggleMember('sho_n','halo')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👨</div>
+            <div class="nm-member-name">中村 翔</div>
+          </div>
+          <div class="nm-member-row" data-id="kenji_founder" data-section="halo" onclick="nmToggleMember('kenji_founder','halo')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">🎙</div>
+            <div class="nm-member-name">Kenji Ito</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Galaxy -->
+      <div class="nm-section" id="nmSec-galaxy">
+        <div class="nm-section-header" onclick="nmToggleSection('galaxy')">
+          <div class="nm-section-header-left">
+            <span>🌌</span>
+            <span class="nm-section-label">Galaxy</span>
+            <span class="nm-section-count">3人</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="nm-select-all-btn" id="nmAllBtn-galaxy" onclick="event.stopPropagation();nmToggleSelectAll('galaxy')">全選択</button>
+            <span class="nm-section-chevron">▾</span>
+          </div>
+        </div>
+        <div class="nm-member-list" id="nmList-galaxy">
+          <div class="nm-member-row" data-id="masa_o" data-section="galaxy" onclick="nmToggleMember('masa_o','galaxy')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">🧑</div>
+            <div class="nm-member-name">岡田 雅也</div>
+          </div>
+          <div class="nm-member-row" data-id="yuki_f" data-section="galaxy" onclick="nmToggleMember('yuki_f','galaxy')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👩</div>
+            <div class="nm-member-name">藤井 雪</div>
+          </div>
+          <div class="nm-member-row" data-id="tom_b" data-section="galaxy" onclick="nmToggleMember('tom_b','galaxy')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👨</div>
+            <div class="nm-member-name">Tom Baker</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connect -->
+      <div class="nm-section" id="nmSec-connect">
+        <div class="nm-section-header" onclick="nmToggleSection('connect')">
+          <div class="nm-section-header-left">
+            <span>🤝</span>
+            <span class="nm-section-label">Connect</span>
+            <span class="nm-section-count">3人</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="nm-select-all-btn" id="nmAllBtn-connect" onclick="event.stopPropagation();nmToggleSelectAll('connect')">全選択</button>
+            <span class="nm-section-chevron">▾</span>
+          </div>
+        </div>
+        <div class="nm-member-list" id="nmList-connect">
+          <div class="nm-member-row" data-id="haruka_m" data-section="connect" onclick="nmToggleMember('haruka_m','connect')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👩</div>
+            <div class="nm-member-name">松本 遥</div>
+          </div>
+          <div class="nm-member-row" data-id="jin_l" data-section="connect" onclick="nmToggleMember('jin_l','connect')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👨</div>
+            <div class="nm-member-name">Jin Lee</div>
+          </div>
+          <div class="nm-member-row" data-id="nao_h" data-section="connect" onclick="nmToggleMember('nao_h','connect')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👩</div>
+            <div class="nm-member-name">林 奈緒</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- グループ divider -->
+      <div class="nm-divider"></div>
+
+      <!-- グループセクション -->
+      <div class="nm-section" id="nmSec-grp-sake">
+        <div class="nm-section-header" onclick="nmToggleSection('grp-sake')">
+          <div class="nm-section-header-left">
+            <span>🍶</span>
+            <span class="nm-section-label">酒好き</span>
+            <span class="nm-section-count">3人</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="nm-select-all-btn" id="nmAllBtn-grp-sake" onclick="event.stopPropagation();nmToggleSelectAll('grp-sake')">全選択</button>
+            <span class="nm-section-chevron">▾</span>
+          </div>
+        </div>
+        <div class="nm-member-list" id="nmList-grp-sake">
+          <div class="nm-member-row" data-id="yu_tanaka" data-section="grp-sake" onclick="nmToggleMember('yu_tanaka','grp-sake')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">🧑</div>
+            <div class="nm-member-name">田中 悠</div>
+          </div>
+          <div class="nm-member-row" data-id="kenta_s" data-section="grp-sake" onclick="nmToggleMember('kenta_s','grp-sake')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">🧑</div>
+            <div class="nm-member-name">佐藤 健太</div>
+          </div>
+          <div class="nm-member-row" data-id="daisuke_ito" data-section="grp-sake" onclick="nmToggleMember('daisuke_ito','grp-sake')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👨</div>
+            <div class="nm-member-name">伊藤 大輔</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nm-section" id="nmSec-grp-toshi">
+        <div class="nm-section-header" onclick="nmToggleSection('grp-toshi')">
+          <div class="nm-section-header-left">
+            <span>📈</span>
+            <span class="nm-section-label">投資仲間</span>
+            <span class="nm-section-count">3人</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="nm-select-all-btn" id="nmAllBtn-grp-toshi" onclick="event.stopPropagation();nmToggleSelectAll('grp-toshi')">全選択</button>
+            <span class="nm-section-chevron">▾</span>
+          </div>
+        </div>
+        <div class="nm-member-list" id="nmList-grp-toshi">
+          <div class="nm-member-row" data-id="rina_s" data-section="grp-toshi" onclick="nmToggleMember('rina_s','grp-toshi')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👩</div>
+            <div class="nm-member-name">鈴木 里奈</div>
+          </div>
+          <div class="nm-member-row" data-id="kenji_founder" data-section="grp-toshi" onclick="nmToggleMember('kenji_founder','grp-toshi')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">🎙</div>
+            <div class="nm-member-name">Kenji Ito</div>
+          </div>
+          <div class="nm-member-row" data-id="sarah_ai" data-section="grp-toshi" onclick="nmToggleMember('sarah_ai','grp-toshi')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👩</div>
+            <div class="nm-member-name">Sarah Chen</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nm-section" id="nmSec-grp-golf">
+        <div class="nm-section-header" onclick="nmToggleSection('grp-golf')">
+          <div class="nm-section-header-left">
+            <span>⛳</span>
+            <span class="nm-section-label">ゴルフ部</span>
+            <span class="nm-section-count">4人</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="nm-select-all-btn" id="nmAllBtn-grp-golf" onclick="event.stopPropagation();nmToggleSelectAll('grp-golf')">全選択</button>
+            <span class="nm-section-chevron">▾</span>
+          </div>
+        </div>
+        <div class="nm-member-list" id="nmList-grp-golf">
+          <div class="nm-member-row" data-id="kenta_s" data-section="grp-golf" onclick="nmToggleMember('kenta_s','grp-golf')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">🧑</div>
+            <div class="nm-member-name">佐藤 健太</div>
+          </div>
+          <div class="nm-member-row" data-id="ryo_k" data-section="grp-golf" onclick="nmToggleMember('ryo_k','grp-golf')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">🧔</div>
+            <div class="nm-member-name">小林 亮</div>
+          </div>
+          <div class="nm-member-row" data-id="misaki_t" data-section="grp-golf" onclick="nmToggleMember('misaki_t','grp-golf')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👱‍♀️</div>
+            <div class="nm-member-name">高橋 美咲</div>
+          </div>
+          <div class="nm-member-row" data-id="yu_tanaka" data-section="grp-golf" onclick="nmToggleMember('yu_tanaka','grp-golf')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">🧑</div>
+            <div class="nm-member-name">田中 悠</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /nm-body -->
+
+    <!-- 次へボタン -->
+    <div class="nm-footer">
+      <button class="nm-next-btn" id="nmNextBtn" disabled onclick="openNewMessageStep2()">次へ</button>
+    </div>
+  </div><!-- /nmOverlay -->
+
+  <!-- ===== NEW MESSAGE OVERLAY: STEP 2 (メッセージ入力) ===== -->
+  <div class="nm2-overlay" id="nm2Overlay">
+    <div class="nm2-header">
+      <button class="nm2-back-btn" onclick="closeNewMessageStep2()">← 戻る</button>
+      <div class="nm2-header-title">メッセージ作成</div>
+      <div class="nm2-header-spacer"></div>
+    </div>
+
+    <div class="nm2-dest-area">
+      <div class="nm2-dest-label" id="nm2DestLabel">0人に送信</div>
+      <button class="nm2-edit-members-btn" onclick="openMemberEditFromThread()">メンバーを確認する</button>
+    </div>
+
+    <div class="nm2-body">
+      <textarea class="nm2-textarea" id="nm2Textarea" placeholder="メッセージを入力..."></textarea>
+      <button class="nm2-send-btn" onclick="nmSendMessage()">送信</button>
+    </div>
+  </div><!-- /nm2Overlay -->
+
   <!-- TAB BAR -->
   <div class="tab-bar">
     <button class="tab-item active" onclick="switchTab('home')" id="tab-home">
@@ -3734,9 +5295,19 @@
 <div class="chat-overlay" id="dmChatOverlay">
   <div class="chat-header">
     <button class="chat-back" onclick="closeDmChat()">←</button>
-    <div class="chat-header-avatar" id="dmChatAvatar"></div>
-    <div>
-      <div class="chat-header-name" id="dmChatName"></div>
+    <!-- 1:1 mode header -->
+    <div id="dmHeaderNormal" style="display:flex;align-items:center;gap:10px;">
+      <div class="chat-header-avatar" id="dmChatAvatar"></div>
+      <div>
+        <div class="chat-header-name" id="dmChatName"></div>
+      </div>
+    </div>
+    <!-- Broadcast mode header -->
+    <div id="dmHeaderBroadcast" style="display:none;align-items:center;gap:10px;flex:1;">
+      <div>
+        <div class="chat-header-name" id="dmBroadcastLabel"></div>
+      </div>
+      <button class="nm2-edit-members-btn" onclick="openMemberEditFromThread()" style="margin-left:auto;">メンバーを確認する</button>
     </div>
   </div>
   <div class="chat-messages" id="dmChatMessages"></div>
@@ -3900,15 +5471,8 @@
 <div class="stories-overlay" id="storiesOverlay">
   <!-- progress bars -->
   <div class="stories-progress-bar" id="storiesProgressBar"></div>
-  <!-- header -->
-  <div class="stories-header" id="storiesHeader">
-    <div class="stories-user-avatar" id="storiesUserAvatar" onclick="var uid=currentStoriesUserId;closeStories();openUserProfile(uid);" style="cursor:pointer;"></div>
-    <div class="stories-user-info" onclick="var uid=currentStoriesUserId;closeStories();openUserProfile(uid);" style="cursor:pointer;">
-      <div class="stories-user-name" id="storiesUserName"></div>
-      <div class="stories-user-meta" id="storiesUserMeta"></div>
-    </div>
-    <button class="stories-close-btn" onclick="closeStories()">✕</button>
-  </div>
+  <!-- close button (top right) -->
+  <button class="stories-close-btn" onclick="closeStories()" style="position:absolute;top:22px;right:12px;z-index:10;">✕</button>
   <!-- radiance label (shown conditionally) -->
   <div class="stories-radiance-label" id="storiesRadianceLabel" style="display:none;">✨ 強い光が届きました</div>
   <!-- slide background -->
@@ -3919,6 +5483,14 @@
     <!-- text -->
     <div class="stories-text-wrap">
       <div class="stories-text" id="storiesText"></div>
+    </div>
+  </div>
+  <!-- user info footer (bottom-left, above actions) -->
+  <div class="stories-user-footer" id="storiesUserFooter">
+    <div class="stories-user-avatar" id="storiesUserAvatar" onclick="var uid=currentStoriesUserId;closeStories();openUserProfile(uid);" style="cursor:pointer;"></div>
+    <div class="stories-user-info" onclick="var uid=currentStoriesUserId;closeStories();openUserProfile(uid);" style="cursor:pointer;">
+      <div class="stories-user-name" id="storiesUserName"></div>
+      <div class="stories-user-meta" id="storiesUserMeta"></div>
     </div>
   </div>
   <!-- actions bar -->
@@ -4608,12 +6180,23 @@
       search: 'screen-search',
       my: 'screen-my',
     };
+
+    // プロフィールオーバーレイが開いていたら閉じる
+    const userProfileOverlay = document.getElementById('userProfileOverlay');
+    if (userProfileOverlay && userProfileOverlay.classList.contains('open')) {
+      closeUserProfile();
+    }
+
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const target = document.getElementById(screenMap[tab]);
     if (target) target.classList.add('active');
     document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
     const tabEl = document.getElementById('tab-' + tab);
     if (tabEl) tabEl.classList.add('active');
+    // コンポーザーを開いたら最初のレイヤーを自動追加
+    if (tab === 'post' && storiesTextLayers.length === 0) {
+      storiesAddTextInitial();
+    }
   }
 
   function showNotif() {
@@ -4644,17 +6227,20 @@
       ? `background-image:url('${p.img}');`
       : `background:${p.grad};`;
     const bodyClean = p.body.replace(/\n/g, ' ');
+    const bodyTruncated = bodyClean.length > 60
+      ? bodyClean.slice(0, 60) + '<span style="opacity:0.6;">…続きを読む</span>'
+      : bodyClean;
     const titleInfo = getTitle(p.score);
     const scoreDisp = formatRS(p.score);
     return `
-      <div class="search-post-card" style="${bgStyle}border:1px solid rgba(255,255,255,0.12);" onclick="openUserProfile('${p.userId}')">
+      <div class="search-post-card" style="${bgStyle}border:1px solid rgba(255,255,255,0.12);" onclick="openSearchPostFs('${encodeURIComponent(JSON.stringify(p))}')">
         <div class="search-post-top">
           <div class="search-post-avatar" style="background:rgba(255,255,255,0.2);">${p.avatar}</div>
           <span class="search-post-name">${p.name}</span>
           <span style="font-size:10px;font-weight:700;color:${titleInfo.color};text-shadow:0 1px 3px rgba(0,0,0,0.5);margin-left:2px;">${titleInfo.emoji} ${titleInfo.name} <span style="opacity:0.7;font-weight:600;">(${scoreDisp})</span></span>
         </div>
-        <div class="search-post-body">${bodyClean}</div>
-        <div class="search-post-stats">⚡${p.likes || 0}</div>
+        <div class="search-post-body">${bodyTruncated}</div>
+        <div class="search-post-stats">♡ ${p.likes || 0}　🔄 ${p.shares || 0}</div>
       </div>
     `;
   }
@@ -4674,10 +6260,12 @@
     const defaultEl = document.getElementById('searchDefault');
     if (!query) {
       resultsEl.innerHTML = '';
+      resultsEl.style.display = 'none';
       defaultEl.style.display = 'block';
       return;
     }
     defaultEl.style.display = 'none';
+    resultsEl.style.display = 'block';
     const all = getAllSearchablePosts();
     const matches = all.filter(p => {
       return p.body.toLowerCase().includes(query)
@@ -4799,7 +6387,10 @@
 
     // Build identity section if data exists
     let identityHtml = '';
-    if (user.identity && user.identity.length > 0) {
+    const hasIdentity = user.identity && user.identity.length > 0;
+    const allPosts = user.posts || [];
+
+    if (hasIdentity) {
       identityHtml = `<div class="identity-section" style="margin-top:16px;">
         <div class="identity-section-title">✨ アイデンティティ</div>`;
       user.identity.forEach((cat, ci) => {
@@ -4824,6 +6415,18 @@
         identityHtml += `</div></div></div>`;
       });
       identityHtml += `</div>`;
+    } else if (allPosts.length > 0) {
+      // If no identity is set, display all posts as identity
+      identityHtml = `<div class="identity-section" style="margin-top:16px;">
+        <div class="identity-section-title">✨ すべての投稿</div>
+        <div class="identity-posts-grid">`;
+      allPosts.forEach((p, pi) => {
+        const snippet = p.body.replace(/\n/g, ' ').slice(0, 30);
+        identityHtml += `<div class="identity-post-item" style="background:${p.grad || 'linear-gradient(135deg, #1a1a2e, #7C3AED)'};" onclick="showToast('${snippet}...')">
+          <div class="identity-post-text">${snippet}</div>
+        </div>`;
+      });
+      identityHtml += `</div></div>`;
     }
 
     // Inject into identity section
@@ -5196,137 +6799,402 @@
     if (el) el.classList.toggle('open');
   }
 
-  // ===== POST COMPOSER =====
-  const composerDesigns = [
-    { id: 'cyber',   label: '✨ サイバー',   grad: 'linear-gradient(135deg, #0f0c29, #302b63, #24243e)', blob: 'radial-gradient(circle at 70% 30%, rgba(124,58,237,0.5) 0%, transparent 60%)' },
-    { id: 'natural', label: '🌿 ナチュラル', grad: 'linear-gradient(135deg, #2d5016, #4a7c3f, #6b8f5e)', blob: 'radial-gradient(circle at 40% 40%, rgba(134,239,172,0.3) 0%, transparent 60%)' },
-    { id: 'elegant', label: '💎 エレガント', grad: 'linear-gradient(135deg, #1a1a2e, #16213e, #0f3460)',  blob: 'radial-gradient(circle at 60% 25%, rgba(245,158,11,0.4) 0%, transparent 60%)' },
-    { id: 'pop',     label: '🎨 ポップ',     grad: 'linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb)', blob: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 60%)' },
+  // ===== STORIES EDITOR (Instagram Stories-style) =====
+  const STORIES_FONTS = [
+    { label: 'Aa',  family: "'Noto Sans JP', sans-serif",  weight: '700' },
+    { label: '明',  family: "'Noto Serif JP', serif",      weight: '700' },
+    { label: '手',  family: "'Kosugi Maru', cursive",      weight: '400' },
+    { label: 'POP', family: "'Noto Sans JP', sans-serif",  weight: '900' },
   ];
-  let composerText = '';
-  let composerSelectedDesign = null;
+  let storiesFontIdx   = 0;
+  let storiesColorVal  = '#ffffff';
+  let storiesCurrentGrad = 'linear-gradient(135deg,#7C3AED,#60A5FA)';
+  let storiesBgMode    = 'grad';  // 'grad' | 'photo' | 'video'
+  let storiesTextLayers = []; // Array of {id, text, fontSize, color, fontIdx, x, y}
+  let selectedTextLayerId = null;
+  let draggingTextLayerId = null;
+  let dragOffsetX = 0;
+  let dragOffsetY = 0;
+  let currentFontSize = 24;
 
-  function composerTextInput() {
-    const ta = document.getElementById('composerTextarea');
-    composerText = ta.value;
-    const len = composerText.length;
-    const countEl = document.getElementById('composerCount');
-    countEl.textContent = len + '/500文字';
-    countEl.className = 'composer-count' + (len >= 500 ? ' at-limit' : len >= 400 ? ' near-limit' : '');
-    const hasText = len > 0;
-    document.getElementById('composerNextBtn').disabled = !hasText;
-    document.getElementById('composerAiBtn').disabled = !hasText;
+  // ---- slider UI sync ----
+  function storiesUpdateSliderUI(value) {
+    const min = 14, max = 48;
+    const pct = (value - min) / (max - min) * 100;
+    const fill = document.getElementById('storiesSizeFill');
+    const thumb = document.getElementById('storiesSizeThumb');
+    if (fill) fill.style.height = pct + '%';
+    if (thumb) thumb.style.bottom = pct + '%';
   }
-  function composerNext() { composerStartAI(); }
-  function composerStartAI() {
-    document.getElementById('composerStep1').style.display = 'none';
-    const step2 = document.getElementById('composerStep2');
-    step2.style.display = 'flex';
-    step2.style.flexDirection = 'column';
-    const fill = document.getElementById('composerProgressFill');
-    const pct = document.getElementById('composerProgressPct');
-    const log = document.getElementById('composerStatusLog');
-    const steps = [
-      { pct: 25, msg: '投稿内容を分析しています...' },
-      { pct: 55, msg: '最適な背景を生成しています...' },
-      { pct: 80, msg: 'レイアウトを調整しています...' },
-      { pct: 100, msg: '完了！デザインを選んでください。' },
-    ];
-    let si = 0;
-    function nextStep() {
-      if (si >= steps.length) { setTimeout(() => composerShowStep3(), 400); return; }
-      const s = steps[si++];
-      fill.style.width = s.pct + '%';
-      pct.textContent = s.pct + '%';
-      log.innerHTML = `<span class="current">${s.msg}</span>`;
-      setTimeout(nextStep, si === steps.length ? 300 : 500);
-    }
-    nextStep();
+
+  function storiesApplyTextStyle() {
+    const f = STORIES_FONTS[storiesFontIdx];
+    document.getElementById('storiesFontBtn').textContent = f.label;
+    storiesUpdateSliderUI(currentFontSize);
   }
-  function composerShowStep3() {
-    document.getElementById('composerStep2').style.display = 'none';
-    const step3 = document.getElementById('composerStep3');
-    step3.style.display = 'flex';
-    composerSelectedDesign = null;
-    document.getElementById('composerPostBtn').disabled = true;
-    const grid = document.getElementById('composerDesignCards');
-    grid.innerHTML = '';
-    composerDesigns.forEach(d => {
-      const card = document.createElement('div');
-      card.className = 'composer-design-card';
-      card.id = 'design-card-' + d.id;
-      card.onclick = () => composerSelectDesign(d.id);
-      const shortText = composerText.length > 60 ? composerText.slice(0, 60) + '…' : composerText;
-      card.innerHTML = `
-        <div class="composer-design-preview" style="background: ${d.grad};">
-          <div style="position:absolute;inset:0;${d.blob ? `background:${d.blob};` : ''}"></div>
-          <div class="composer-design-preview-text">${shortText}</div>
-          <div class="composer-design-check">✓</div>
-        </div>
-        <div class="composer-design-label">${d.label}</div>
+
+  // ---- add text ----
+  function storiesAddText() {
+    const layerId = 'text-' + Date.now();
+    const editor = document.getElementById('storiesEditor');
+    const ew = editor ? editor.offsetWidth : 390;
+    const eh = editor ? editor.offsetHeight : 700;
+    const layer = {
+      id: layerId,
+      text: '新しいテキスト',
+      fontSize: currentFontSize,
+      color: storiesColorVal,
+      fontIdx: storiesFontIdx,
+      x: Math.round(ew * 0.1),
+      y: Math.round(eh * 0.35) + storiesTextLayers.length * 55
+    };
+    storiesTextLayers.push(layer);
+    selectedTextLayerId = layerId;
+    storiesRenderTextLayers();
+    // すぐ編集状態にする
+    setTimeout(() => storiesStartTextEdit(layerId), 50);
+  }
+
+  function storiesAddTextInitial() {
+    const layerId = 'text-' + Date.now();
+    const editor = document.getElementById('storiesEditor');
+    const ew = editor ? editor.offsetWidth : 390;
+    const eh = editor ? editor.offsetHeight : 700;
+    const layer = {
+      id: layerId,
+      text: 'タップして編集',
+      fontSize: currentFontSize,
+      color: storiesColorVal,
+      fontIdx: storiesFontIdx,
+      x: Math.round(ew * 0.1),
+      y: Math.round(eh * 0.38)
+    };
+    storiesTextLayers.push(layer);
+    selectedTextLayerId = layerId;
+    storiesRenderTextLayers();
+  }
+
+  // ---- render ----
+  function storiesRenderTextLayers() {
+    const container = document.getElementById('storiesTextLayers');
+    if (!container) return;
+    container.innerHTML = '';
+    storiesTextLayers.forEach(layer => {
+      const el = document.createElement('div');
+      el.className = 'stories-text-layer';
+      if (layer.id === selectedTextLayerId) el.classList.add('selected');
+      const font = STORIES_FONTS[layer.fontIdx];
+      el.style.cssText = `
+        left: ${layer.x}px;
+        top: ${layer.y}px;
+        font-size: ${layer.fontSize}px;
+        color: ${layer.color};
+        font-family: ${font.family};
+        font-weight: ${font.weight};
+        text-shadow: ${layer.color === '#111111' ? '0 1px 6px rgba(255,255,255,0.5)' : '0 1px 8px rgba(0,0,0,0.7)'};
+        padding: 4px 6px;
       `;
-      grid.appendChild(card);
+      el.textContent = layer.text;
+      el.dataset.layerId = layer.id;
+
+      // シングルタップ → 選択 + 即編集
+      let didDrag = false;
+      el.addEventListener('pointerdown', (e) => {
+        // 編集中（contentEditable）はドラッグしない
+        if (el.contentEditable === 'true') return;
+        e.preventDefault();
+        didDrag = false;
+        storiesStartTextDrag(e, layer.id);
+      });
+      el.addEventListener('pointermove', (e) => {
+        if (draggingTextLayerId === layer.id) didDrag = true;
+      });
+      el.addEventListener('pointerup', (e) => {
+        // ドラッグ終了を先に処理してリスナーを解除
+        storiesEndTextDrag(e);
+        if (!didDrag) {
+          e.stopPropagation();
+          selectedTextLayerId = layer.id;
+          storiesRenderTextLayers();
+          setTimeout(() => storiesStartTextEdit(layer.id), 20);
+        }
+      });
+
+      // 長押し → 削除
+      let longPressTimer = null;
+      el.addEventListener('touchstart', () => {
+        longPressTimer = setTimeout(() => {
+          if (confirm('このテキストを削除しますか？')) {
+            storiesTextLayers = storiesTextLayers.filter(l => l.id !== layer.id);
+            if (selectedTextLayerId === layer.id) selectedTextLayerId = null;
+            storiesRenderTextLayers();
+          }
+        }, 600);
+      }, { passive: true });
+      el.addEventListener('touchend', () => clearTimeout(longPressTimer));
+      el.addEventListener('touchmove', () => clearTimeout(longPressTimer));
+
+      // マウス右クリック削除
+      el.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        if (confirm('このテキストを削除しますか？')) {
+          storiesTextLayers = storiesTextLayers.filter(l => l.id !== layer.id);
+          if (selectedTextLayerId === layer.id) selectedTextLayerId = null;
+          storiesRenderTextLayers();
+        }
+      });
+
+      container.appendChild(el);
     });
-  }
-  function composerSelectDesign(designId) {
-    composerSelectedDesign = designId;
-    document.querySelectorAll('.composer-design-card').forEach(c => {
-      c.classList.toggle('selected', c.id === 'design-card-' + designId);
-    });
-    document.getElementById('composerPostBtn').disabled = false;
-  }
-  function composerBack() {
-    document.getElementById('composerStep3').style.display = 'none';
-    document.getElementById('composerStep1').style.display = '';
-    document.getElementById('composerProgressFill').style.width = '0%';
-    document.getElementById('composerProgressPct').textContent = '0%';
-  }
-  function composerPost() {
-    if (!composerSelectedDesign) return;
-    const design = composerDesigns.find(d => d.id === composerSelectedDesign);
-    if (!design) return;
-    document.getElementById('composerStep3').style.display = 'none';
-    const step4 = document.getElementById('composerStep4');
-    step4.style.display = 'flex';
-    const preview = document.getElementById('composerSuccessPreview');
-    preview.style.background = design.grad;
-    const shortText = composerText.length > 80 ? composerText.slice(0, 80) + '…' : composerText;
-    document.getElementById('composerSuccessText').textContent = shortText;
-    addNewStoryToFeed(design);
+
+    // テキスト外タップ → deselect
+    container.onclick = (e) => {
+      if (e.target === container) {
+        selectedTextLayerId = null;
+        storiesRenderTextLayers();
+      }
+    };
   }
 
-  function addNewStoryToFeed(design) {
-    // Add new story to the top of taisho_k's stories
+  // ---- drag ----
+  function storiesStartTextDrag(e, layerId) {
+    const layer = storiesTextLayers.find(l => l.id === layerId);
+    if (!layer) return;
+    draggingTextLayerId = layerId;
+    const editor = document.getElementById('storiesEditor');
+    const rect = editor.getBoundingClientRect();
+
+    let clientX = e.clientX, clientY = e.clientY;
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    }
+    dragOffsetX = clientX - rect.left - layer.x;
+    dragOffsetY = clientY - rect.top - layer.y;
+
+    document.addEventListener('pointermove', storiesOnTextDrag);
+    document.addEventListener('pointerup', storiesEndTextDrag);
+  }
+
+  function storiesOnTextDrag(e) {
+    if (!draggingTextLayerId) return;
+    const layer = storiesTextLayers.find(l => l.id === draggingTextLayerId);
+    if (!layer) return;
+    const editor = document.getElementById('storiesEditor');
+    const rect = editor.getBoundingClientRect();
+    let x = e.clientX - rect.left - dragOffsetX;
+    let y = e.clientY - rect.top - dragOffsetY;
+    x = Math.max(0, Math.min(x, rect.width - 50));
+    y = Math.max(0, Math.min(y, rect.height - 30));
+    layer.x = x;
+    layer.y = y;
+    // DOM直接更新（rerenderより軽量）
+    const el = document.querySelector(`.stories-text-layer[data-layer-id="${layer.id}"]`);
+    if (el) { el.style.left = x + 'px'; el.style.top = y + 'px'; }
+  }
+
+  function storiesEndTextDrag(e) {
+    draggingTextLayerId = null;
+    document.removeEventListener('pointermove', storiesOnTextDrag);
+    document.removeEventListener('pointerup', storiesEndTextDrag);
+  }
+
+  // ---- edit ----
+  function storiesStartTextEdit(layerId) {
+    const layer = storiesTextLayers.find(l => l.id === layerId);
+    if (!layer) return;
+    const el = document.querySelector(`.stories-text-layer[data-layer-id="${layerId}"]`);
+    if (!el) return;
+    if (el.contentEditable === 'true') return; // 既に編集中
+
+    el.classList.add('editing');
+    el.classList.remove('selected');
+    el.contentEditable = 'true';
+    el.focus();
+
+    // テキスト全選択
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const sel = window.getSelection();
+    if (sel) { sel.removeAllRanges(); sel.addRange(range); }
+
+    const onBlur = () => {
+      el.contentEditable = 'false';
+      el.classList.remove('editing');
+      layer.text = el.textContent;
+      el.removeEventListener('blur', onBlur);
+      storiesRenderTextLayers();
+    };
+    el.addEventListener('blur', onBlur);
+  }
+
+  // ---- size slider ----
+  function storiesSliderSize(value) {
+    const newSize = parseInt(value);
+    currentFontSize = newSize;
+    storiesUpdateSliderUI(newSize);
+    if (selectedTextLayerId) {
+      const layer = storiesTextLayers.find(l => l.id === selectedTextLayerId);
+      if (layer) {
+        layer.fontSize = newSize;
+        const el = document.querySelector(`.stories-text-layer[data-layer-id="${layer.id}"]`);
+        if (el) el.style.fontSize = newSize + 'px';
+      }
+    }
+  }
+
+  // ---- font cycle ----
+  function storiesCycleFont() {
+    if (selectedTextLayerId) {
+      const layer = storiesTextLayers.find(l => l.id === selectedTextLayerId);
+      if (layer) {
+        layer.fontIdx = (layer.fontIdx + 1) % STORIES_FONTS.length;
+        storiesFontIdx = layer.fontIdx;
+        storiesRenderTextLayers();
+      }
+    } else {
+      storiesFontIdx = (storiesFontIdx + 1) % STORIES_FONTS.length;
+    }
+    storiesApplyTextStyle();
+  }
+
+  // ---- color ----
+  function storiesSetColor(dot) {
+    const color = dot.dataset.color;
+    storiesColorVal = color;
+    if (selectedTextLayerId) {
+      const layer = storiesTextLayers.find(l => l.id === selectedTextLayerId);
+      if (layer) {
+        layer.color = color;
+        storiesRenderTextLayers();
+      }
+    }
+    document.querySelectorAll('.stories-color-dot').forEach(d => d.classList.remove('active'));
+    dot.classList.add('active');
+  }
+
+  // ---- background ----
+  function storiesBgType(type) {
+    storiesBgMode = type;
+    ['grad','photo','video'].forEach(t => {
+      const btn = document.getElementById('bgType' + t.charAt(0).toUpperCase() + t.slice(1));
+      if (btn) btn.classList.toggle('active', t === type);
+    });
+    const gradPalette = document.getElementById('storiesGradPalette');
+    if (gradPalette) gradPalette.style.display = type === 'grad' ? 'flex' : 'none';
+
+    if (type === 'photo') document.getElementById('storiesPhotoInput').click();
+    else if (type === 'video') document.getElementById('storiesVideoInput').click();
+  }
+
+  function storiesSetGrad(dot) {
+    storiesCurrentGrad = dot.dataset.grad;
+    document.querySelectorAll('.stories-grad-dot').forEach(d => d.classList.remove('active'));
+    dot.classList.add('active');
+    document.getElementById('storiesPreviewImg').classList.remove('active');
+    document.getElementById('storiesPreviewVid').classList.remove('active');
+    document.getElementById('storiesBgCanvas').style.background = storiesCurrentGrad;
+  }
+
+  function storiesLoadPhoto(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const img = document.getElementById('storiesPreviewImg');
+    const vid = document.getElementById('storiesPreviewVid');
+    img.src = url;
+    img.classList.add('active');
+    vid.classList.remove('active');
+    document.getElementById('storiesBgCanvas').style.background = '#000';
+    event.target.value = '';
+  }
+
+  function storiesLoadVideo(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const img = document.getElementById('storiesPreviewImg');
+    const vid = document.getElementById('storiesPreviewVid');
+    vid.src = url;
+    vid.classList.add('active');
+    vid.play();
+    img.classList.remove('active');
+    document.getElementById('storiesBgCanvas').style.background = '#000';
+    event.target.value = '';
+  }
+
+  // ---- identity ----
+  function storiesToggleIdentity() {
+    const checked = document.getElementById('storiesIdentityCheck').checked;
+    document.getElementById('storiesIdentityCats').classList.toggle('open', checked);
+  }
+
+  // ---- post ----
+  function storiesPost() {
+    const textContent = storiesTextLayers.length > 0
+      ? storiesTextLayers.map(l => l.text).join('\n')
+      : '(画像投稿)';
     const userData = storiesData.find(u => u.id === 'taisho_k');
     if (userData) {
       userData.stories.unshift({
-        text: composerText,
+        text: textContent,
         time: 'たった今',
         likes: 0,
         shares: 0,
         tags: [],
-        grad: design.grad
+        grad: storiesCurrentGrad,
+        textLayers: storiesTextLayers.length > 0 ? JSON.parse(JSON.stringify(storiesTextLayers)) : null
       });
       userData.hasNew = true;
       storiesSeen['taisho_k'] = false;
     }
+    showToast('投稿しました！');
+    setTimeout(() => {
+      storiesResetEditor();
+      switchTab('home');
+      buildHomeStories();
+    }, 800);
   }
 
-  function composerGoHome() {
-    composerText = '';
-    composerSelectedDesign = null;
-    document.getElementById('composerTextarea').value = '';
-    document.getElementById('composerCount').textContent = '0/500文字';
-    document.getElementById('composerNextBtn').disabled = true;
-    document.getElementById('composerAiBtn').disabled = true;
-    document.getElementById('composerStep1').style.display = '';
-    document.getElementById('composerStep2').style.display = 'none';
-    document.getElementById('composerStep3').style.display = 'none';
-    document.getElementById('composerStep4').style.display = 'none';
-    document.getElementById('composerProgressFill').style.width = '0%';
+  function storiesClose() {
+    storiesResetEditor();
     switchTab('home');
-    buildHomeStories();
   }
+
+  function storiesResetEditor() {
+    storiesTextLayers = [];
+    selectedTextLayerId = null;
+    storiesFontIdx  = 0;
+    storiesColorVal = '#ffffff';
+    currentFontSize = 24;
+    const container = document.getElementById('storiesTextLayers');
+    if (container) container.innerHTML = '';
+    storiesCurrentGrad = 'linear-gradient(135deg,#7C3AED,#60A5FA)';
+    storiesBgMode = 'grad';
+    const canvas = document.getElementById('storiesBgCanvas');
+    if (canvas) canvas.style.background = storiesCurrentGrad;
+    document.getElementById('storiesPreviewImg').classList.remove('active');
+    const vid = document.getElementById('storiesPreviewVid');
+    vid.classList.remove('active');
+    vid.src = '';
+    storiesBgType('grad');
+    document.querySelectorAll('.stories-grad-dot').forEach((d, i) => d.classList.toggle('active', i === 0));
+    document.querySelectorAll('.stories-color-dot').forEach((d, i) => d.classList.toggle('active', i === 0));
+    document.getElementById('storiesIdentityCheck').checked = false;
+    document.getElementById('storiesIdentityCats').classList.remove('open');
+    document.querySelectorAll('.identity-cat-btn').forEach(b => b.classList.remove('selected'));
+    storiesApplyTextStyle();
+    storiesUpdateSliderUI(24);
+    const slider = document.getElementById('storiesSizeSlider');
+    if (slider) slider.value = 24;
+  }
+
+  // init on first load
+  document.addEventListener('DOMContentLoaded', () => {
+    storiesApplyTextStyle();
+    document.getElementById('storiesGradPalette').style.display = 'flex';
+    storiesUpdateSliderUI(24);
+  });
 
   // ===== STAR MAP =====
   // Fixed positions (x%, y%) within the star-map-container (430px wide)
@@ -5543,6 +7411,9 @@
   };
 
   function openDmChat(userId, name, avatar) {
+    dmBroadcastMode = false;
+    document.getElementById('dmHeaderNormal').style.display = 'flex';
+    document.getElementById('dmHeaderBroadcast').style.display = 'none';
     document.getElementById('dmChatAvatar').textContent = avatar;
     document.getElementById('dmChatName').textContent = name;
     const container = document.getElementById('dmChatMessages');
@@ -5570,6 +7441,9 @@
     container.appendChild(bubble);
     input.value = '';
     container.scrollTop = container.scrollHeight;
+    if (dmBroadcastMode) {
+      showToast(nmSelected.size + '人にメッセージを送信しました！');
+    }
   }
 
   // ===== BROADCAST CHAT =====
@@ -5743,7 +7617,7 @@
       const sunLabel = isSun ? `<div style="display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,0.22);border:1px solid rgba(245,158,11,0.45);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;color:#FCD34D;margin-bottom:6px;">✨ 強い光が届きました</div>` : '';
 
       const snippetText = post.body.replace(/\n/g, ' ');
-      const snippet = snippetText.length > 80 ? snippetText.slice(0, 80) + '…' : snippetText;
+      const snippet = snippetText.length > 80 ? snippetText.slice(0, 80) + '…<span style="opacity:0.6;">続きを読む</span>' : snippetText;
 
       const scoreDisp = formatRS(post.score);
       card.innerHTML = `
@@ -5764,6 +7638,10 @@
         <!-- 中央: 投稿テキスト -->
         <div style="position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);padding:0 14px;z-index:2;pointer-events:none;">
           <div style="font-size:13px;font-weight:600;color:#fff;line-height:1.55;text-shadow:0 1px 4px rgba(0,0,0,0.6);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${snippet}</div>
+        </div>
+        <!-- 下部: いいね・転用数 -->
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:12px 14px;z-index:2;">
+          <div style="font-size:12px;color:#fff;opacity:0.75;text-shadow:0 1px 3px rgba(0,0,0,0.5);">♡ ${post.likes || 0}　🔄 ${post.shares || 0}</div>
         </div>
       `;
       container.appendChild(card);
@@ -5821,6 +7699,60 @@
         </div>
       </div>
     `;
+  }
+
+  function openSearchPostFs(encodedData) {
+    const postData = JSON.parse(decodeURIComponent(encodedData));
+    const titleInfo = getTitle(postData.score);
+    const scoreDisp = formatRS(postData.score);
+    const likeKey = 'search-' + postData.id;
+    const isLiked = feedLiked[likeKey] || false;
+    const likeIcon = isLiked ? '❤️' : '🤍';
+
+    const slide = document.getElementById('feedFsSlide');
+    if (postData.img) {
+      slide.style.background = 'none';
+      slide.style.backgroundImage = `url('${postData.img}')`;
+      slide.style.backgroundSize = 'cover';
+      slide.style.backgroundPosition = 'center';
+    } else {
+      slide.style.backgroundImage = '';
+      slide.style.background = postData.grad;
+    }
+    slide.innerHTML = `
+      <div class="post-fs-body">
+        <div class="post-fs-text">${postData.body}</div>
+        <div class="post-fs-user-row" style="cursor:pointer;" onclick="closeFeedFs(); setTimeout(()=>openUserProfile('${postData.userId}'),300);">
+          <div class="post-fs-avatar" style="background:rgba(255,255,255,0.2);">${postData.avatar}</div>
+          <div>
+            <div class="post-fs-username">${postData.name}</div>
+            <div class="post-fs-meta"><span style="color:${titleInfo.color};">${titleInfo.emoji} ${titleInfo.name} (${scoreDisp})</span> · ${postData.time || '今'}</div>
+          </div>
+        </div>
+        <div class="post-fs-actions">
+          <button class="post-fs-action-btn" onclick="toggleSearchFsLike('${postData.id}')">
+            <span id="searchfs-like-icon-${postData.id}">${likeIcon}</span>
+            <span id="searchfs-like-count-${postData.id}">${formatCount(postData.likes)}</span>
+          </button>
+          <button class="post-fs-action-btn" onclick="showToast('シェア機能は開発中です')">🔄 <span>${postData.shares || 0}</span></button>
+        </div>
+      </div>
+    `;
+    document.getElementById('feedFsOverlay').classList.add('open');
+  }
+
+  function toggleSearchFsLike(postId) {
+    const likeKey = 'search-' + postId;
+    feedLiked[likeKey] = !feedLiked[likeKey];
+    const icon = document.getElementById('searchfs-like-icon-' + postId);
+    const countEl = document.getElementById('searchfs-like-count-' + postId);
+    if (feedLiked[likeKey]) {
+      if (icon) icon.textContent = '❤️';
+    } else {
+      if (icon) icon.textContent = '🤍';
+    }
+    // Note: We don't have reference to the post object here for the search result,
+    // so we just update the UI. In a real app, we'd update the backend.
   }
 
   function toggleFeedFsLike(postId) {
@@ -5898,11 +7830,343 @@
     }
   }
 
+  // ===== TALK SCREEN TAB SWITCH =====
+  function switchTalkTab(tab) {
+    ['dm', 'contacts'].forEach(t => {
+      const content = document.getElementById('talkContent-' + t);
+      const segTab  = document.getElementById('talkSegTab-' + t);
+      if (content) content.classList.toggle('active', t === tab);
+      if (segTab)  segTab.classList.toggle('active', t === tab);
+    });
+  }
+
+  // ===== CONTACTS: Circle折りたたみ =====
+  function toggleContactsTier(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('open');
+  }
+
+  // ===== CONTACTS: グループ折りたたみ =====
+  function toggleContactsGroup(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('open');
+  }
+
   // ===== INIT =====
   buildHomeStories();
   buildHomeFeed();
   initSearchRecommended();
   // renderMyPosts() — post grid removed from profile screen
+
+  // ===== NEW MESSAGE: 状態管理 =====
+  // selectedMembers: id → { name, avatar } のMap（同一人物はどのセクションでも共通）
+  const nmSelected = new Map();
+  let dmBroadcastMode = false;
+
+  // 各IDに対応するデータ（avatar emoji）
+  const nmMemberData = {
+    'yu_tanaka':    { name: '田中 悠',   avatar: '🧑' },
+    'rina_s':       { name: '鈴木 里奈', avatar: '👩' },
+    'kenta_s':      { name: '佐藤 健太', avatar: '🧑' },
+    'daisuke_ito':  { name: '伊藤 大輔', avatar: '👨' },
+    'misaki_t':     { name: '高橋 美咲', avatar: '👱‍♀️' },
+    'ryo_k':        { name: '小林 亮',   avatar: '🧔' },
+    'aya_w':        { name: '渡辺 彩',   avatar: '🙍' },
+    'sarah_ai':     { name: 'Sarah Chen', avatar: '👩' },
+    'ayaka_y':      { name: '山田 彩香', avatar: '👩' },
+    'sho_n':        { name: '中村 翔',   avatar: '👨' },
+    'kenji_founder':{ name: 'Kenji Ito', avatar: '🎙' },
+    'masa_o':       { name: '岡田 雅也', avatar: '🧑' },
+    'yuki_f':       { name: '藤井 雪',   avatar: '👩' },
+    'tom_b':        { name: 'Tom Baker', avatar: '👨' },
+    'haruka_m':     { name: '松本 遥',   avatar: '👩' },
+    'jin_l':        { name: 'Jin Lee',   avatar: '👨' },
+    'nao_h':        { name: '林 奈緒',   avatar: '👩' },
+  };
+
+  function openNewMessage() {
+    // 状態リセット
+    nmSelected.clear();
+    nmRenderChips();
+    nmUpdateNextBtn();
+    // 全checkboxをリセット
+    document.querySelectorAll('.nm-member-row').forEach(r => r.classList.remove('checked'));
+    nmUpdateAllSelectBtns();
+    document.getElementById('nmSearchInput').value = '';
+    nmFilterMembers('');
+    document.getElementById('nmOverlay').classList.add('open');
+  }
+
+  // プリセットメンバーを選択状態で新規メッセージを開く
+  // members = [{id, name, avatar}, ...]
+  function openNewMsgPreset(members) {
+    // まず通常のopenNewMessageでリセット
+    openNewMessage();
+    // 指定メンバーをチェック状態にする
+    members.forEach(m => {
+      // nmMemberDataに存在しないIDはスキップ（連絡先タブ独自メンバーも対応）
+      const data = nmMemberData[m.id] || { name: m.name, avatar: m.avatar };
+      // nmMemberDataにない場合でも一時的に登録
+      if (!nmMemberData[m.id]) nmMemberData[m.id] = data;
+      nmSelected.set(m.id, data);
+      // 全セクションのこのIDのrowをchecked
+      document.querySelectorAll(`.nm-member-row[data-id="${m.id}"]`).forEach(r => r.classList.add('checked'));
+    });
+    nmRenderChips();
+    nmUpdateNextBtn();
+    nmUpdateAllSelectBtns();
+  }
+
+  // プリセットメンバーで直接スレッドを開く
+  // members = [{id, name, avatar}, ...]
+  function openDirectThread(members) {
+    // Reset
+    nmSelected.clear();
+    document.querySelectorAll('.nm-member-row').forEach(r => r.classList.remove('checked'));
+    // Add all members
+    members.forEach(m => {
+      const data = nmMemberData[m.id] || { name: m.name, avatar: m.avatar };
+      if (!nmMemberData[m.id]) nmMemberData[m.id] = data;
+      nmSelected.set(m.id, data);
+      document.querySelectorAll(`.nm-member-row[data-id="${m.id}"]`).forEach(r => r.classList.add('checked'));
+    });
+    nmRenderChips();
+    nmUpdateNextBtn();
+    nmUpdateAllSelectBtns();
+    // Skip member selection, open broadcast mode directly
+    openDmBroadcast();
+  }
+
+  function openDmBroadcast() {
+    const count = nmSelected.size;
+    if (count === 0) return;
+    dmBroadcastMode = true;
+    document.getElementById('dmHeaderNormal').style.display = 'none';
+    document.getElementById('dmHeaderBroadcast').style.display = 'flex';
+    document.getElementById('dmBroadcastLabel').textContent = count + '人に送信';
+    const container = document.getElementById('dmChatMessages');
+    container.innerHTML = '';
+    document.getElementById('dmChatInput').value = '';
+    document.getElementById('dmChatOverlay').classList.add('open');
+  }
+
+  function closeNewMessage() {
+    document.getElementById('nmOverlay').classList.remove('open');
+  }
+
+  function openMemberEditFromThread() {
+    // Close DM chat overlay
+    document.getElementById('dmChatOverlay').classList.remove('open');
+    // Open member selection with current members checked
+    document.getElementById('nmOverlay').classList.add('open');
+    // Make sure current nmSelected members are visually checked
+    document.querySelectorAll('.nm-member-row').forEach(r => r.classList.remove('checked'));
+    nmSelected.forEach((data, id) => {
+      document.querySelectorAll(`.nm-member-row[data-id="${id}"]`).forEach(r => r.classList.add('checked'));
+    });
+    nmRenderChips();
+    nmUpdateNextBtn();
+    nmUpdateAllSelectBtns();
+  }
+
+  // 連絡先タブの横断検索
+  function contactsFilterMembers(query) {
+    const q = query.trim().toLowerCase();
+    const resultsEl = document.getElementById('contactsSearchResults');
+    const mainEl = document.getElementById('contactsMainContent');
+
+    if (!q) {
+      resultsEl.classList.remove('active');
+      mainEl.classList.remove('search-active');
+      return;
+    }
+
+    mainEl.classList.add('search-active');
+    resultsEl.classList.add('active');
+
+    // 全メンバーデータ（連絡先タブのすべての人）
+    const allMembers = [
+      // Circle
+      {id:'yu_tanaka', name:'田中 悠', avatar:'🧑', label:'🔥 Core'},
+      {id:'rina_s', name:'鈴木 里奈', avatar:'👩', label:'🔥 Core'},
+      {id:'kenta_s', name:'佐藤 健太', avatar:'🧑', label:'💎 Orbit'},
+      {id:'daisuke_ito', name:'伊藤 大輔', avatar:'👨', label:'💎 Orbit'},
+      {id:'misaki_t', name:'高橋 美咲', avatar:'👱‍♀️', label:'💎 Orbit'},
+      {id:'ryo_k', name:'小林 亮', avatar:'🧔', label:'💎 Orbit'},
+      {id:'aya_w', name:'渡辺 彩', avatar:'🙍', label:'💎 Orbit'},
+      {id:'ayaka_y', name:'山田 彩香', avatar:'👩', label:'⭐ Halo'},
+      {id:'sho_n', name:'中村 花', avatar:'👩', label:'⭐ Halo'},
+      {id:'kato_sho', name:'加藤 翔', avatar:'👨', label:'⭐ Halo'},
+      {id:'matsuda_e', name:'松田 恵', avatar:'👩', label:'🌌 Galaxy'},
+      {id:'fujii_m', name:'藤井 誠', avatar:'🧑', label:'🌌 Galaxy'},
+      {id:'kinoshita_a', name:'木下 彩', avatar:'👩', label:'🌌 Galaxy'},
+      {id:'ishikawa_t', name:'石川 拓', avatar:'🧑', label:'🤝 Connect'},
+      {id:'shimizu_m', name:'清水 美穂', avatar:'👩', label:'🤝 Connect'},
+      {id:'noda_k', name:'野田 健一', avatar:'👨', label:'🤝 Connect'},
+      // グループ（重複しないよう IDでユニーク化は表示側で対処）
+      {id:'kenji_founder', name:'Kenji Ito', avatar:'🎙', label:'📈 投資仲間'},
+      {id:'sarah_ai', name:'Sarah Chen', avatar:'👩', label:'📈 投資仲間'},
+    ];
+
+    // ID でユニーク化（最初に見つかったラベルを使う）
+    const seen = new Set();
+    const unique = allMembers.filter(m => {
+      if (seen.has(m.id)) return false;
+      seen.add(m.id);
+      return true;
+    });
+
+    const hits = unique.filter(m => m.name.toLowerCase().includes(q));
+
+    if (hits.length === 0) {
+      resultsEl.innerHTML = '<div style="padding:24px 16px;text-align:center;color:var(--text-light);font-size:14px;">見つかりませんでした</div>';
+      return;
+    }
+
+    resultsEl.innerHTML = hits.map(m => `
+      <div class="contacts-member-row" onclick="openDmChat('${m.id}','${m.name}','${m.avatar}')" style="background:var(--bg);">
+        <div class="contacts-member-avatar">${m.avatar}</div>
+        <span class="contacts-member-name">${m.name}</span>
+        <span class="contacts-tier-badge-small" style="background:var(--primary-bg);color:var(--primary-dark);font-size:10px;">${m.label}</span>
+      </div>
+    `).join('');
+  }
+
+  function nmToggleMember(id, section) {
+    const row = document.querySelector(`.nm-member-row[data-id="${id}"][data-section="${section}"]`);
+    const isChecked = row && row.classList.contains('checked');
+
+    if (isChecked) {
+      // このsectionのrowだけuncheck
+      row.classList.remove('checked');
+      // 同じidが他sectionでもcheckedでなければselectedから削除
+      const otherChecked = document.querySelector(`.nm-member-row[data-id="${id}"].checked`);
+      if (!otherChecked) nmSelected.delete(id);
+    } else {
+      // check
+      if (row) row.classList.add('checked');
+      // 同じIDの全sectionのrowもchecked状態に同期
+      document.querySelectorAll(`.nm-member-row[data-id="${id}"]`).forEach(r => r.classList.add('checked'));
+      if (nmMemberData[id]) nmSelected.set(id, nmMemberData[id]);
+    }
+
+    nmRenderChips();
+    nmUpdateNextBtn();
+    nmUpdateAllSelectBtns();
+  }
+
+  function nmRenderChips() {
+    const scroll = document.getElementById('nmChipsScroll');
+    const empty = document.getElementById('nmChipsEmpty');
+    scroll.innerHTML = '';
+
+    if (nmSelected.size === 0) {
+      empty.style.display = '';
+      scroll.style.display = 'none';
+      return;
+    }
+
+    empty.style.display = 'none';
+    scroll.style.display = 'flex';
+
+    nmSelected.forEach((data, id) => {
+      const chip = document.createElement('div');
+      chip.className = 'nm-chip';
+      chip.innerHTML = `<span class="nm-chip-avatar">${data.avatar}</span><span class="nm-chip-name">${data.name}</span><span class="nm-chip-remove">✕</span>`;
+      chip.onclick = () => nmRemoveById(id);
+      scroll.appendChild(chip);
+    });
+  }
+
+  function nmRemoveById(id) {
+    nmSelected.delete(id);
+    // 全セクションのこのIDのrowをunchecked
+    document.querySelectorAll(`.nm-member-row[data-id="${id}"]`).forEach(r => r.classList.remove('checked'));
+    nmRenderChips();
+    nmUpdateNextBtn();
+    nmUpdateAllSelectBtns();
+  }
+
+  function nmUpdateNextBtn() {
+    const btn = document.getElementById('nmNextBtn');
+    const count = nmSelected.size;
+    btn.disabled = count === 0;
+    btn.textContent = count > 0 ? `次へ（${count}人選択中）` : '次へ';
+  }
+
+  function nmToggleSection(secId) {
+    const sec = document.getElementById('nmSec-' + secId);
+    if (sec) sec.classList.toggle('open');
+  }
+
+  function nmToggleSelectAll(secId) {
+    const list = document.getElementById('nmList-' + secId);
+    if (!list) return;
+    const rows = list.querySelectorAll('.nm-member-row:not(.hidden)');
+    const allChecked = Array.from(rows).every(r => r.classList.contains('checked'));
+
+    rows.forEach(row => {
+      const id = row.dataset.id;
+      if (allChecked) {
+        // 全解除
+        row.classList.remove('checked');
+        // 他のセクションに同じIDがcheckedでなければ削除
+        const otherChecked = document.querySelector(`.nm-member-row[data-id="${id}"].checked`);
+        if (!otherChecked) nmSelected.delete(id);
+      } else {
+        // 全選択
+        // 同じIDの全セクションをchecked
+        document.querySelectorAll(`.nm-member-row[data-id="${id}"]`).forEach(r => r.classList.add('checked'));
+        if (nmMemberData[id]) nmSelected.set(id, nmMemberData[id]);
+      }
+    });
+
+    nmRenderChips();
+    nmUpdateNextBtn();
+    nmUpdateAllSelectBtns();
+  }
+
+  function nmUpdateAllSelectBtns() {
+    ['core','orbit','halo','galaxy','connect','grp-sake','grp-toshi','grp-golf'].forEach(secId => {
+      const list = document.getElementById('nmList-' + secId);
+      const btn = document.getElementById('nmAllBtn-' + secId);
+      if (!list || !btn) return;
+      const rows = list.querySelectorAll('.nm-member-row:not(.hidden)');
+      if (rows.length === 0) return;
+      const allChecked = Array.from(rows).every(r => r.classList.contains('checked'));
+      btn.classList.toggle('all-selected', allChecked);
+      btn.textContent = allChecked ? '全解除' : '全選択';
+    });
+  }
+
+  function nmFilterMembers(query) {
+    const q = query.trim().toLowerCase();
+    document.querySelectorAll('.nm-member-row').forEach(row => {
+      const name = row.querySelector('.nm-member-name').textContent.toLowerCase();
+      row.classList.toggle('hidden', q !== '' && !name.includes(q));
+    });
+    nmUpdateAllSelectBtns();
+  }
+
+  function openNewMessageStep2() {
+    const count = nmSelected.size;
+    if (count === 0) return;
+
+    // Close member selection overlay
+    document.getElementById('nmOverlay').classList.remove('open');
+    openDmBroadcast();
+  }
+
+  function closeNewMessageStep2() {
+    document.getElementById('nm2Overlay').classList.remove('open');
+  }
+
+  function nmSendMessage() {
+    const count = nmSelected.size;
+    document.getElementById('nm2Overlay').classList.remove('open');
+    document.getElementById('nmOverlay').classList.remove('open');
+    showToast(`${count}人にメッセージを送信しました！`);
+  }
 </script>
 </body>
 </html>
