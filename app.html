@@ -4017,6 +4017,63 @@
       border-color: #000;
       color: #fff;
     }
+
+    /* ===== CIRCLE SETTINGS OVERLAY ===== */
+    .circle-settings-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 3000;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      max-width: 430px;
+      margin: 0 auto;
+    }
+    .circle-settings-overlay.open { display: flex; }
+    .circle-settings-sheet {
+      width: 100%;
+      background: var(--bg);
+      border-radius: 20px 20px 0 0;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .circle-settings-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 10px auto 0;
+    }
+    .circle-settings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .circle-settings-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .circle-settings-cancel {
+      background: none;
+      border: none;
+      font-size: 14px;
+      color: var(--text-sub);
+      cursor: pointer;
+      padding: 4px 0;
+      width: 60px;
+      text-align: left;
+    }
+    .circle-settings-body {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
   </style>
 </head>
 <body>
@@ -4238,7 +4295,7 @@
         </div>
       </div>
 
-      <div class="circle-settings-link" onclick="switchTab('circle')">
+      <div class="circle-settings-link" onclick="openCircleSettings()">
         <span>Your Circle Settings</span>
         <span>→</span>
       </div>
@@ -4395,7 +4452,7 @@
       <!-- Action Buttons（インスタ風） -->
       <div style="display:flex;gap:8px;padding:4px 16px 12px;">
         <button onclick="showToast('Edit Profile (coming soon)')" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Edit Profile</button>
-        <button onclick="switchTab('circle');closeSettingsMenu && closeSettingsMenu()" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Circle Settings</button>
+        <button onclick="openCircleSettings();closeSettingsMenu && closeSettingsMenu()" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Circle Settings</button>
         <button onclick="openGroupCreate()" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Group Settings</button>
       </div>
 
@@ -4627,7 +4684,7 @@
           <!-- ===== セクション1: あなたのCircle ===== -->
           <div class="contacts-section-header">
             <span class="contacts-section-title">Your Circle</span>
-            <button class="contacts-section-edit-btn" onclick="switchTab('circle')">＋</button>
+            <button class="contacts-section-edit-btn" onclick="openCircleSettings()">＋</button>
           </div>
 
           <!-- Core -->
@@ -5474,7 +5531,7 @@
     </div>
     <div style="padding:8px 0;">
       <div class="settings-menu-item" onclick="showToast('Share Profile (coming soon)');closeSettingsMenu();">🔗 Share Profile</div>
-      <div class="settings-menu-item" onclick="switchTab('circle');closeSettingsMenu();">⚙️ Circle Settings</div>
+      <div class="settings-menu-item" onclick="openCircleSettings();closeSettingsMenu();">⚙️ Circle Settings</div>
       <div class="settings-menu-item" onclick="showToast('Account (coming soon)');closeSettingsMenu();">👤 Account</div>
       <div class="settings-menu-item" onclick="showToast('Notifications (coming soon)');closeSettingsMenu();">🔔 Notifications</div>
       <div class="settings-menu-item" onclick="showToast('Privacy (coming soon)');closeSettingsMenu();">🔒 Privacy</div>
@@ -8487,6 +8544,177 @@
   <div class="footprint-list" id="footprintList"></div>
 </div>
 
+<!-- ===== CIRCLE SETTINGS OVERLAY ===== -->
+<div class="circle-settings-overlay" id="circleSettingsOverlay">
+  <div class="circle-settings-sheet">
+    <div class="circle-settings-handle"></div>
+    <div class="circle-settings-header">
+      <button class="circle-settings-cancel" onclick="closeCircleSettings()">Cancel</button>
+      <div class="circle-settings-title">Circle Settings</div>
+      <div style="width:60px;"></div>
+    </div>
+    <div class="circle-settings-body">
+      <div class="circle-screen-header">Your Circle</div>
+
+      <!-- Core -->
+      <div class="circle-section open" id="sec-inner">
+        <div class="circle-section-header" onclick="toggleSection('sec-inner')">
+          <div class="circle-section-title">
+            <span>🔥</span>
+            <span>Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="circle-capacity">2/10人</span>
+            <span class="circle-chevron">▾</span>
+          </div>
+        </div>
+        <div class="circle-section-body">
+          <div class="circle-members-scroll">
+            <div class="circle-member" onclick="showMemberAction('田中 悠', 'Core')">
+              <div class="circle-member-avatar avatar-inner">🧑</div>
+              <div class="circle-member-name">田中 悠</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('鈴木 里奈', 'Core')">
+              <div class="circle-member-avatar avatar-inner">👩</div>
+              <div class="circle-member-name">鈴木 里奈</div>
+            </div>
+            <div class="add-slot-wrap" onclick="openAddMemberSheet('inner')">
+              <div class="add-slot">＋</div>
+              <div class="add-slot-label">追加</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orbit -->
+      <div class="circle-section open" id="sec-trusted">
+        <div class="circle-section-header" onclick="toggleSection('sec-trusted')">
+          <div class="circle-section-title">
+            <span>💎</span>
+            <span>Orbit</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="circle-capacity">5/15人</span>
+            <span class="circle-chevron">▾</span>
+          </div>
+        </div>
+        <div class="circle-section-body">
+          <div class="circle-members-scroll">
+            <div class="circle-member" onclick="showMemberAction('佐藤 健太', 'Orbit')">
+              <div class="circle-member-avatar avatar-trusted">🧑</div>
+              <div class="circle-member-name">佐藤 健太</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('伊藤 大輔', 'Orbit')">
+              <div class="circle-member-avatar avatar-trusted">👨</div>
+              <div class="circle-member-name">伊藤 大輔</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('高橋 美咲', 'Orbit')">
+              <div class="circle-member-avatar avatar-trusted">👩</div>
+              <div class="circle-member-name">高橋 美咲</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('小林 亮', 'Orbit')">
+              <div class="circle-member-avatar avatar-trusted">🧔</div>
+              <div class="circle-member-name">小林 亮</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('渡辺 彩', 'Orbit')">
+              <div class="circle-member-avatar avatar-trusted">🙍</div>
+              <div class="circle-member-name">渡辺 彩</div>
+            </div>
+            <div class="add-slot-wrap" onclick="openAddMemberSheet('trusted')">
+              <div class="add-slot">＋</div>
+              <div class="add-slot-label">追加</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Halo -->
+      <div class="circle-section" id="sec-close">
+        <div class="circle-section-header" onclick="toggleSection('sec-close')">
+          <div class="circle-section-title">
+            <span>⭐</span>
+            <span>Halo</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="circle-capacity">12/50人</span>
+            <span class="circle-chevron">▾</span>
+          </div>
+        </div>
+        <div class="circle-section-body">
+          <div class="circle-members-scroll">
+            <div class="circle-member" onclick="showMemberAction('山田 彩香', 'Halo')">
+              <div class="circle-member-avatar avatar-close">👩</div>
+              <div class="circle-member-name">山田 彩香</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('中島 誠', 'Halo')">
+              <div class="circle-member-avatar avatar-close">🧑</div>
+              <div class="circle-member-name">中島 誠</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('岡田 真由', 'Halo')">
+              <div class="circle-member-avatar avatar-close">👩</div>
+              <div class="circle-member-name">岡田 真由</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('森 拓也', 'Halo')">
+              <div class="circle-member-avatar avatar-close">👨</div>
+              <div class="circle-member-name">森 拓也</div>
+            </div>
+            <div class="add-slot-wrap" onclick="openAddMemberSheet('close')">
+              <div class="add-slot">＋</div>
+              <div class="add-slot-label">追加</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Galaxy -->
+      <div class="circle-section" id="sec-connected">
+        <div class="circle-section-header" onclick="toggleSection('sec-connected')">
+          <div class="circle-section-title">
+            <span>🌌</span>
+            <span>Galaxy</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="circle-capacity">45/150人</span>
+            <span class="circle-chevron">▾</span>
+          </div>
+        </div>
+        <div class="circle-section-body">
+          <div class="circle-members-scroll">
+            <div class="circle-member" onclick="showMemberAction('中村 翔', 'Galaxy')">
+              <div class="circle-member-avatar avatar-connected">👨</div>
+              <div class="circle-member-name">中村 翔</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('松本 葵', 'Galaxy')">
+              <div class="circle-member-avatar avatar-connected">👩</div>
+              <div class="circle-member-name">松本 葵</div>
+            </div>
+            <div class="circle-member" onclick="showMemberAction('藤田 悠斗', 'Galaxy')">
+              <div class="circle-member-avatar avatar-connected">🧑</div>
+              <div class="circle-member-name">藤田 悠斗</div>
+            </div>
+            <div style="font-size:12px;color:var(--text-sub);display:flex;align-items:center;min-width:60px;">他42人...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cosmos -->
+      <div class="circle-section" id="sec-ambient" style="margin-bottom:100px;">
+        <div class="circle-section-header" onclick="toggleSection('sec-ambient')">
+          <div class="circle-section-title">
+            <span>👥</span>
+            <span>Cosmos</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="circle-capacity">280/500人</span>
+            <span class="circle-chevron">▾</span>
+          </div>
+        </div>
+        <div class="ambient-count">Connect済み（上位階層未配置）: 280人 / Connect上限 500人</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ===== GROUP CREATE OVERLAY ===== -->
 <div class="group-create-overlay" id="groupCreateOverlay">
   <div class="group-create-sheet">
@@ -8535,6 +8763,14 @@ function openGroupCreate() {
 
 function closeGroupCreate() {
   document.getElementById('groupCreateOverlay').classList.remove('open');
+}
+
+// ===== CIRCLE SETTINGS =====
+function openCircleSettings() {
+  document.getElementById('circleSettingsOverlay').classList.add('open');
+}
+function closeCircleSettings() {
+  document.getElementById('circleSettingsOverlay').classList.remove('open');
 }
 
 function renderGroupCreateMembers() {
