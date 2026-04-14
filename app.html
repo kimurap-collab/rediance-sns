@@ -7029,7 +7029,7 @@
     document.getElementById('addMemberSearchInput').value = '';
     const t = circleTiers[tier];
     const remaining = t.max - getTierCount(tier);
-    document.getElementById('addMemberTitle').textContent = `${t.emoji} ${t.label}に追加（残り${remaining}枠）`;
+    document.getElementById('addMemberTitle').textContent = `Add to ${t.label} (${remaining} slots left)`;
     renderAddMemberSheet();
     document.getElementById('addMemberOverlay').classList.add('show');
   }
@@ -7046,28 +7046,19 @@
     if (!tier) return;
     const allNames = getAllCircleMemberNames();
     const t = circleTiers[tier];
-    document.getElementById('addMemberTitle').textContent = `${t.emoji} ${t.label}に追加（残り${t.max - getTierCount(tier)}枠）`;
+    document.getElementById('addMemberTitle').textContent = `Add to ${t.label} (${t.max - getTierCount(tier)} slots left)`;
+    // Hide Suggested section
+    const recContainer = document.getElementById('addMemberRecommended');
+    recContainer.style.display = 'none';
+    recContainer.parentElement.querySelector('.add-member-section-title').style.display = 'none';
     const q = sheetSearchQuery;
+    // Exclude members already in the target tier
+    const currentTierNames = new Set(circleMembers[tier] || []);
     const available = allFollowers.filter(f => {
+      if (currentTierNames.has(f.name)) return false;
       if (q && !f.name.toLowerCase().includes(q) && !f.id.toLowerCase().includes(q)) return false;
       return true;
     });
-    const recContainer = document.getElementById('addMemberRecommended');
-    recContainer.innerHTML = '';
-    const recItems = available.filter(f => f.recommended && !allNames.has(f.name));
-    if (recItems.length === 0) {
-      recContainer.parentElement.querySelector('.add-member-section-title').style.display = 'none';
-      recContainer.style.display = 'none';
-    } else {
-      recContainer.parentElement.querySelector('.add-member-section-title').style.display = '';
-      recContainer.style.display = '';
-      recItems.forEach(f => {
-        const item = document.createElement('div');
-        item.className = 'add-member-rec-item';
-        item.innerHTML = `<div class="add-member-rec-avatar" onclick="addMemberFromSheet('${f.id}', true)">${f.avatar}</div><div class="add-member-rec-name">${f.name.split(' ')[0]}</div>`;
-        recContainer.appendChild(item);
-      });
-    }
     const listEl = document.getElementById('addMemberList');
     listEl.innerHTML = '';
     available.forEach(f => {
@@ -7084,7 +7075,8 @@
       const rightEl = isInAnyCircle
         ? `<div class="add-member-already-label">${inTierLabel}</div>`
         : `<button class="add-btn" id="add-btn-${f.id}" onclick="addMemberFromSheet('${f.id}', false)">＋</button>`;
-      row.innerHTML = `<div class="add-member-row-avatar">${f.avatar}</div><div class="add-member-row-info"><div class="add-member-row-name">${f.name}</div><div class="add-member-row-handle">@${f.id}</div></div>${rightEl}`;
+      const tierTag = inTierLabel ? `<span style="font-size:11px;color:var(--text-light);margin-left:4px;">${inTierLabel}</span>` : '';
+      row.innerHTML = `<div class="add-member-row-avatar">${f.avatar}</div><div class="add-member-row-info"><div class="add-member-row-name">${f.name}${tierTag}</div><div class="add-member-row-handle">@${f.id}</div></div>${rightEl}`;
       listEl.appendChild(row);
     });
   }
@@ -7092,11 +7084,11 @@
     const tier = currentSheetTier;
     if (!tier) return;
     const t = circleTiers[tier];
-    if (getTierCount(tier) >= t.max) { showToast(`${t.label}は満員です`); return; }
+    if (getTierCount(tier) >= t.max) { showToast(`${t.label} is full`); return; }
     const follower = allFollowers.find(f => f.id === followerId);
     if (!follower) return;
     const allNames = getAllCircleMemberNames();
-    if (allNames.has(follower.name)) { showToast(`${follower.name}はすでにCircleに入っています`); return; }
+    if (allNames.has(follower.name)) { showToast(`${follower.name} is already in your Circle`); return; }
     if (!fromRec) {
       const btn = document.getElementById('add-btn-' + followerId);
       if (btn) { btn.textContent = '✓'; btn.classList.add('adding'); btn.disabled = true; }
@@ -7107,10 +7099,10 @@
       updateCapacityLabel(tier);
       const newRemaining = t.max - getTierCount(tier);
       if (newRemaining <= 0) {
-        showToast(`${follower.name}を${t.label}に追加しました。枠がいっぱいになりました！`);
+        showToast(`${follower.name} added to ${t.label}. Now full!`);
         closeAddMemberSheet();
       } else {
-        showToast(`${follower.name}を${t.label}に追加しました`);
+        showToast(`${follower.name} added to ${t.label}`);
         renderAddMemberSheet();
       }
     }, 400);
