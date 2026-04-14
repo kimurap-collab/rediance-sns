@@ -8517,7 +8517,7 @@
 
 <script>
 // ===== GROUP CREATE =====
-const circleMembers = [
+const groupCircleMembers = [
   {id:'yu_tanaka', name:'田中 悠', avatar:'🧑', tier:'🔥 Core'},
   {id:'rina_s', name:'鈴木 里奈', avatar:'👩', tier:'🔥 Core'},
   {id:'kenta_s', name:'佐藤 健太', avatar:'🧑', tier:'⚡ Trusted'},
@@ -8545,7 +8545,7 @@ function closeGroupCreate() {
 
 function renderGroupCreateMembers() {
   const container = document.getElementById('groupCreateMembers');
-  container.innerHTML = circleMembers.map(m => `
+  container.innerHTML = groupCircleMembers.map(m => `
     <div class="group-create-member-row${groupSelectedMembers.has(m.id) ? ' selected' : ''}" onclick="toggleGroupMember('${m.id}')">
       <div class="group-create-member-avatar">${m.avatar}</div>
       <div class="group-create-member-info">
