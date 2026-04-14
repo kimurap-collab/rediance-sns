@@ -4100,7 +4100,7 @@
 
       <!-- IDENTITY SECTION -->
       <div class="identity-section">
-        <div class="identity-section-title">✨ アイデンティティ</div>
+        <div class="identity-section-title">✨ Identity</div>
 
         <!-- AI・テック -->
         <div class="identity-category open" id="my-identity-ai">
@@ -4263,7 +4263,7 @@
       <!-- アイデンティティタブ -->
       <div id="myTabContent-identity">
         <div class="identity-section" style="margin-top:12px;">
-          <div class="identity-section-title">✨ アイデンティティ</div>
+          <div class="identity-section-title">✨ Identity</div>
 
           <div class="identity-category open" id="my-identity-ai">
             <div class="identity-cat-header" onclick="toggleIdentitySection('my-identity-ai')">
@@ -4352,7 +4352,7 @@
     <div class="screen" id="screen-talk">
       <!-- ヘッダー -->
       <div class="talk-screen-header">
-        <div class="talk-screen-title">トーク</div>
+        <div class="talk-screen-title">Talk</div>
         <div style="display:flex;gap:8px;">
           <button class="icon-btn" onclick="openNewMessage()" title="新規メッセージ" style="font-size:16px;">✏️</button>
         </div>
@@ -4482,7 +4482,7 @@
 
           <!-- ===== セクション1: あなたのCircle ===== -->
           <div class="contacts-section-header">
-            <span class="contacts-section-title">あなたのCircle</span>
+            <span class="contacts-section-title">Your Circle</span>
           </div>
 
           <!-- Core -->
@@ -4494,8 +4494,8 @@
                 <span class="contacts-tier-count">2人</span>
               </div>
               <div style="display:flex;align-items:center;gap:6px;">
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'},{id:'rina_s',name:'鈴木 里奈',avatar:'👩'}])">全員に送信</button>
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'},{id:'rina_s',name:'鈴木 里奈',avatar:'👩'}])">編集して送信</button>
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'},{id:'rina_s',name:'鈴木 里奈',avatar:'👩'}])">Send to All</button>
+                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'},{id:'rina_s',name:'鈴木 里奈',avatar:'👩'}])">Edit & Send</button>
                 <span class="contacts-tier-chevron">▾</span>
               </div>
             </div>
@@ -4657,7 +4657,7 @@
 
           <!-- ===== セクション2: グループ ===== -->
           <div class="contacts-section-header" style="margin-top:4px;">
-            <span class="contacts-section-title">グループ</span>
+            <span class="contacts-section-title">Groups</span>
             <button class="contacts-section-edit-btn" onclick="var n=prompt('新しいグループ名を入力');if(n)showToast(n+'を作成しました！');">＋</button>
           </div>
 
@@ -4773,9 +4773,9 @@
       <div id="searchResults" style="padding:56px 0 8px 0;display:none;"></div>
       <!-- デフォルト：おすすめユーザー -->
       <div id="searchDefault">
-        <div style="padding:56px 16px 8px;font-size:13px;font-weight:700;color:var(--text-sub);">おすすめ投稿</div>
+        <div style="padding:56px 16px 8px;font-size:13px;font-weight:700;color:var(--text-sub);">Featured</div>
         <div id="searchRecommended" style="padding-top:0;"></div>
-        <div style="padding:16px 16px 8px;font-size:13px;font-weight:700;color:var(--text-sub);">トレンド</div>
+        <div style="padding:16px 16px 8px;font-size:13px;font-weight:700;color:var(--text-sub);">Trending</div>
         <div style="padding:0 16px;">
           <div class="search-trend-item" onclick="document.getElementById('searchInput').value='AIエージェント';handleSearch();">#AIエージェント</div>
           <div class="search-trend-item" onclick="document.getElementById('searchInput').value='スタートアップ';handleSearch();">#スタートアップ</div>
@@ -4791,7 +4791,7 @@
       <div class="header">
         <div class="header-logo">🔗 Circle設定</div>
       </div>
-      <div class="circle-screen-header">あなたのCircle</div>
+      <div class="circle-screen-header">Your Circle</div>
       <div class="circle-screen-sub">信頼の輪を育てよう。階層が高いほど影響力スコアへの貢献が大きくなります。</div>
 
       <!-- Core -->
@@ -4964,7 +4964,7 @@
       </div>
       <div id="upPokemonCard"></div>
       <div class="up-follow-row">
-        <button class="up-follow-btn" id="upFollowBtn" onclick="toggleFollow()">フォローする</button>
+        <button class="up-follow-btn" id="upFollowBtn" onclick="toggleFollow()">Follow</button>
       </div>
       <!-- タブ切り替え -->
       <div class="up-tab-bar">
@@ -4981,13 +4981,13 @@
   <div class="nm-overlay" id="nmOverlay">
     <div class="nm-header">
       <button class="nm-header-close" onclick="closeNewMessage()">✕</button>
-      <div class="nm-header-title">新規メッセージ</div>
+      <div class="nm-header-title">New Message</div>
       <div class="nm-header-spacer"></div>
     </div>
 
     <!-- 選択済みチップエリア -->
     <div class="nm-chips-area" id="nmChipsArea">
-      <div class="nm-chips-empty" id="nmChipsEmpty">送信先を選んでください</div>
+      <div class="nm-chips-empty" id="nmChipsEmpty">Select recipients</div>
       <div class="nm-chips-scroll" id="nmChipsScroll" style="display:none;"></div>
     </div>
 
@@ -5276,7 +5276,7 @@
 
     <!-- 次へボタン -->
     <div class="nm-footer">
-      <button class="nm-next-btn" id="nmNextBtn" disabled onclick="openNewMessageStep2()">次へ</button>
+      <button class="nm-next-btn" id="nmNextBtn" disabled onclick="openNewMessageStep2()">Next</button>
     </div>
   </div><!-- /nmOverlay -->
 
@@ -5284,18 +5284,18 @@
   <div class="nm2-overlay" id="nm2Overlay">
     <div class="nm2-header">
       <button class="nm2-back-btn" onclick="closeNewMessageStep2()">← 戻る</button>
-      <div class="nm2-header-title">メッセージ作成</div>
+      <div class="nm2-header-title">Compose</div>
       <div class="nm2-header-spacer"></div>
     </div>
 
     <div class="nm2-dest-area">
-      <div class="nm2-dest-label" id="nm2DestLabel">0人に送信</div>
+      <div class="nm2-dest-label" id="nm2DestLabel">Send to 0</div>
       <button class="nm2-edit-members-btn" onclick="openMemberEditFromThread()">メンバーを確認する</button>
     </div>
 
     <div class="nm2-body">
       <textarea class="nm2-textarea" id="nm2Textarea" placeholder="メッセージを入力..."></textarea>
-      <button class="nm2-send-btn" onclick="nmSendMessage()">送信</button>
+      <button class="nm2-send-btn" onclick="nmSendMessage()">Send</button>
     </div>
   </div><!-- /nm2Overlay -->
 
@@ -5303,19 +5303,19 @@
   <div class="tab-bar">
     <button class="tab-item active" onclick="switchTab('home')" id="tab-home">
       <span class="tab-icon">🏠</span>
-      <span class="tab-label">ホーム</span>
+      <span class="tab-label">Home</span>
     </button>
     <button class="tab-item" onclick="switchTab('talk')" id="tab-talk">
       <span class="tab-icon">💬</span>
-      <span class="tab-label">トーク</span>
+      <span class="tab-label">Talk</span>
     </button>
     <button class="tab-item" onclick="switchTab('search')" id="tab-search">
       <span class="tab-icon">🔍</span>
-      <span class="tab-label">検索</span>
+      <span class="tab-label">Search</span>
     </button>
     <button class="tab-item" onclick="switchTab('my')" id="tab-my">
       <span class="tab-icon">👤</span>
-      <span class="tab-label">マイ</span>
+      <span class="tab-label">Me</span>
     </button>
   </div>
 </div>
@@ -5346,7 +5346,7 @@
       <div class="settings-menu-item" onclick="showToast('QRコード（開発中）');closeSettingsMenu();">📱 QRコード</div>
     </div>
     <div style="border-top:1px solid var(--border);padding:8px 0;">
-      <div class="settings-menu-item" onclick="showToast('保存済み（開発中）');closeSettingsMenu();">🔖 保存済み</div>
+      <div class="settings-menu-item" onclick="showToast('保存済み（開発中）');closeSettingsMenu();">🔖 Saved (coming soon)</div>
       <div class="settings-menu-item" onclick="showToast('お気に入り（開発中）');closeSettingsMenu();">⭐ お気に入り</div>
     </div>
     <div style="border-top:1px solid var(--border);padding:8px 0;">
@@ -5367,7 +5367,7 @@
     <div class="stat-info-name" id="statInfoName">Trust</div>
     <div class="stat-info-jp" id="statInfoJp">信頼度</div>
     <div class="stat-info-desc" id="statInfoDesc"></div>
-    <button class="stat-info-close" onclick="closeStatInfo()">閉じる</button>
+    <button class="stat-info-close" onclick="closeStatInfo()">Close</button>
   </div>
 </div>
 
@@ -5392,9 +5392,9 @@
       </div>
     </div>
     <div class="add-member-body">
-      <div class="add-member-section-title">✨ おすすめ</div>
+      <div class="add-member-section-title">✨ Suggested</div>
       <div class="add-member-recommended" id="addMemberRecommended"></div>
-      <div class="add-member-section-title">👥 すべてのフォロワー</div>
+      <div class="add-member-section-title">👥 All Followers</div>
       <div class="add-member-list" id="addMemberList"></div>
     </div>
   </div>
@@ -5477,12 +5477,12 @@
   <!-- Step 1: Select recipients -->
   <div id="msgStep1">
     <div class="msg-header">
-      <button class="msg-header-btn" onclick="closeMessageOverlay()">キャンセル</button>
+      <button class="msg-header-btn" onclick="closeMessageOverlay()">Cancel</button>
       <div class="msg-header-title">💬 メッセージ送信</div>
       <div style="width:60px;"></div>
     </div>
     <div class="msg-body">
-      <div class="msg-section-title">📋 Circle階層から選ぶ</div>
+      <div class="msg-section-title">📋 Browse by Circle</div>
       <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Core" data-count="10">
         <div class="msg-option-left">🔥 Core <span class="msg-option-count">（10人）</span></div>
         <div class="msg-check"></div>
@@ -5504,7 +5504,7 @@
         <div class="msg-check"></div>
       </div>
 
-      <div class="msg-section-title">📁 グループから選ぶ</div>
+      <div class="msg-section-title">📁 Browse by Group</div>
       <div class="msg-option" onclick="toggleMsgOption(this)" data-name="酒好き" data-count="8">
         <div class="msg-option-left">🍺 酒好き <span class="msg-option-count">（8人）</span></div>
         <div class="msg-check"></div>
@@ -5522,7 +5522,7 @@
         <div></div>
       </div>
 
-      <button class="msg-next-btn" id="msgNextBtn" disabled onclick="msgGoStep2()">次へ</button>
+      <button class="msg-next-btn" id="msgNextBtn" disabled onclick="msgGoStep2()">Next</button>
     </div>
   </div>
 
@@ -5545,17 +5545,17 @@
 <!-- EVENT OVERLAY -->
 <div class="msg-overlay" id="eventOverlay">
   <div class="msg-header">
-    <button class="msg-header-btn" onclick="closeEventOverlay()">キャンセル</button>
-    <div class="msg-header-title">🎉 イベント作成</div>
+    <button class="msg-header-btn" onclick="closeEventOverlay()">Cancel</button>
+    <div class="msg-header-title">🎉 Create Event</div>
     <div style="width:60px;"></div>
   </div>
   <div class="msg-body">
-    <div class="msg-section-title">イベント情報</div>
+    <div class="msg-section-title">Event Details</div>
     <input type="text" class="msg-textarea" style="min-height:auto;padding:10px 12px;margin-bottom:8px;" placeholder="イベント名（例：今日の飲み会）" id="eventName">
     <input type="text" class="msg-textarea" style="min-height:auto;padding:10px 12px;margin-bottom:8px;" placeholder="日時（例：4/10 19:00）" id="eventDate">
     <input type="text" class="msg-textarea" style="min-height:auto;padding:10px 12px;margin-bottom:8px;" placeholder="場所（例：渋谷 居酒屋〇〇）" id="eventPlace">
 
-    <div class="msg-section-title">📋 招待先を選ぶ</div>
+    <div class="msg-section-title">📋 Select Invitees</div>
     <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Core" data-count="10">
       <div class="msg-option-left">🔥 Core <span class="msg-option-count">（10人）</span></div>
       <div class="msg-check"></div>
@@ -6427,7 +6427,7 @@
       </div>
       <div class="action-sheet-item" onclick="showToast('${name}をメッセージ（開発中）');closeActionSheet()">
         <span class="action-icon">✉️</span>
-        <span>メッセージを送る</span>
+        <span>Message</span>
       </div>
       <div class="action-sheet-item" onclick="showToast('${name}の階層を変更しました');closeActionSheet()">
         <span class="action-icon">🔄</span>
@@ -6505,7 +6505,7 @@
       followBtn.textContent = 'フォロー中 ▾';
       followBtn.classList.add('following');
     } else {
-      followBtn.textContent = 'フォローする';
+      followBtn.textContent = 'Follow';
       followBtn.classList.remove('following');
     }
 
@@ -6516,7 +6516,7 @@
 
     if (hasIdentity) {
       identityHtml = `<div class="identity-section" style="margin-top:16px;">
-        <div class="identity-section-title">✨ アイデンティティ</div>`;
+        <div class="identity-section-title">✨ Identity</div>`;
       user.identity.forEach((cat, ci) => {
         const catId = 'up-identity-' + userId + '-' + ci;
         identityHtml += `
@@ -6573,11 +6573,11 @@
     followState[currentProfileUserId] = !followState[currentProfileUserId];
     const btn = document.getElementById('upFollowBtn');
     if (followState[currentProfileUserId]) {
-      btn.textContent = 'フォロー中 ▾';
+      btn.textContent = 'Following ▾';
       btn.classList.add('following');
       showToast(userProfiles[currentProfileUserId].name + 'をフォローしました');
     } else {
-      btn.textContent = 'フォローする';
+      btn.textContent = 'Follow';
       btn.classList.remove('following');
       showToast('フォローを解除しました');
     }
@@ -8043,7 +8043,7 @@
     dmBroadcastMode = true;
     document.getElementById('dmHeaderNormal').style.display = 'none';
     document.getElementById('dmHeaderBroadcast').style.display = 'flex';
-    document.getElementById('dmBroadcastLabel').textContent = count + '人に送信';
+    document.getElementById('dmBroadcastLabel').textContent = 'Send to ' + count;
     const container = document.getElementById('dmChatMessages');
     container.innerHTML = '';
     document.getElementById('dmChatInput').value = '';
@@ -8191,7 +8191,7 @@
     const btn = document.getElementById('nmNextBtn');
     const count = nmSelected.size;
     btn.disabled = count === 0;
-    btn.textContent = count > 0 ? `次へ（${count}人選択中）` : '次へ';
+    btn.textContent = count > 0 ? `Next (${count} selected)` : 'Next';
   }
 
   function nmToggleSection(secId) {
