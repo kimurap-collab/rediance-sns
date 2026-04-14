@@ -3872,6 +3872,151 @@
       color: var(--text-sub);
       margin-top: 2px;
     }
+
+    /* ===== GROUP CREATE OVERLAY ===== */
+    .group-create-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 3000;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      max-width: 430px;
+      margin: 0 auto;
+    }
+    .group-create-overlay.open { display: flex; }
+    .group-create-sheet {
+      width: 100%;
+      background: var(--bg);
+      border-radius: 20px 20px 0 0;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .group-create-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 10px auto 0;
+    }
+    .group-create-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .group-create-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .group-create-cancel {
+      background: none;
+      border: none;
+      font-size: 14px;
+      color: var(--text-sub);
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .group-create-done {
+      background: #000;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 50px;
+      padding: 6px 16px;
+      cursor: pointer;
+      opacity: 0.4;
+      transition: opacity 0.15s;
+    }
+    .group-create-done:not([disabled]) { opacity: 1; }
+    .group-create-body {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 40px;
+    }
+    .group-create-name-section {
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .group-create-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-light);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .group-create-input {
+      width: 100%;
+      border: none;
+      border-bottom: 2px solid var(--border);
+      padding: 8px 0;
+      font-size: 18px;
+      font-weight: 600;
+      background: none;
+      outline: none;
+      color: var(--text-main);
+      letter-spacing: -0.2px;
+    }
+    .group-create-input:focus { border-bottom-color: #000; }
+    .group-create-member-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .group-create-member-row:active { background: var(--surface); }
+    .group-create-member-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .group-create-member-info {
+      flex: 1;
+    }
+    .group-create-member-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      letter-spacing: -0.2px;
+    }
+    .group-create-member-tier {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 1px;
+    }
+    .group-create-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: transparent;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .group-create-member-row.selected .group-create-check {
+      background: #000;
+      border-color: #000;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -4251,7 +4396,7 @@
       <div style="display:flex;gap:8px;padding:4px 16px 12px;">
         <button onclick="showToast('Edit Profile (coming soon)')" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Edit Profile</button>
         <button onclick="switchTab('circle');closeSettingsMenu && closeSettingsMenu()" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Circle Settings</button>
-        <button onclick="showToast('Group Settings (coming soon)')" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Group Settings</button>
+        <button onclick="openGroupCreate()" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Group Settings</button>
       </div>
 
       <!-- タブ切り替え -->
@@ -4263,7 +4408,6 @@
       <!-- アイデンティティタブ -->
       <div id="myTabContent-identity">
         <div class="identity-section" style="margin-top:12px;">
-          <div class="identity-section-title">✨ Identity</div>
 
           <div class="identity-category open" id="my-identity-ai">
             <div class="identity-cat-header" onclick="toggleIdentitySection('my-identity-ai')">
@@ -4483,6 +4627,7 @@
           <!-- ===== セクション1: あなたのCircle ===== -->
           <div class="contacts-section-header">
             <span class="contacts-section-title">Your Circle</span>
+            <button class="contacts-section-edit-btn" onclick="switchTab('circle')">＋</button>
           </div>
 
           <!-- Core -->
@@ -4658,7 +4803,7 @@
           <!-- ===== セクション2: グループ ===== -->
           <div class="contacts-section-header" style="margin-top:4px;">
             <span class="contacts-section-title">Groups</span>
-            <button class="contacts-section-edit-btn" onclick="var n=prompt('新しいグループ名を入力');if(n)showToast(n+'を作成しました！');">＋</button>
+            <button class="contacts-section-edit-btn" onclick="openGroupCreate()">＋</button>
           </div>
 
           <!-- 酒好き -->
@@ -8347,6 +8492,98 @@
   </div>
   <div class="footprint-list" id="footprintList"></div>
 </div>
+
+<!-- ===== GROUP CREATE OVERLAY ===== -->
+<div class="group-create-overlay" id="groupCreateOverlay">
+  <div class="group-create-sheet">
+    <div class="group-create-handle"></div>
+    <div class="group-create-header">
+      <button class="group-create-cancel" onclick="closeGroupCreate()">Cancel</button>
+      <div class="group-create-title">New Group</div>
+      <button class="group-create-done" id="groupCreateDoneBtn" onclick="submitGroupCreate()" disabled>Create</button>
+    </div>
+    <div class="group-create-body">
+      <!-- Group name input -->
+      <div class="group-create-name-section">
+        <div class="group-create-label">GROUP NAME</div>
+        <input type="text" class="group-create-input" id="groupNameInput" placeholder="e.g. Weekend Trip, Work Crew..." oninput="onGroupNameInput(this.value)" maxlength="30">
+      </div>
+      <!-- Member selection -->
+      <div class="group-create-label" style="padding:0 16px;margin-bottom:8px;">ADD MEMBERS FROM YOUR CIRCLE</div>
+      <div class="group-create-members" id="groupCreateMembers"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== GROUP CREATE =====
+const circleMembers = [
+  {id:'yu_tanaka', name:'田中 悠', avatar:'🧑', tier:'🔥 Core'},
+  {id:'rina_s', name:'鈴木 里奈', avatar:'👩', tier:'🔥 Core'},
+  {id:'kenta_s', name:'佐藤 健太', avatar:'🧑', tier:'⚡ Trusted'},
+  {id:'daisuke_ito', name:'伊藤 大輔', avatar:'👨', tier:'⚡ Trusted'},
+  {id:'misaki_t', name:'高橋 美咲', avatar:'👱‍♀️', tier:'⚡ Trusted'},
+  {id:'ryo_k', name:'小林 亮', avatar:'🧔', tier:'⚡ Trusted'},
+  {id:'aya_w', name:'渡辺 彩', avatar:'🙍', tier:'⚡ Trusted'},
+  {id:'ayaka_y', name:'山田 彩香', avatar:'👩', tier:'🌟 Close'},
+  {id:'sho_n', name:'中村 花', avatar:'👩', tier:'🌟 Close'},
+  {id:'kato_sho', name:'加藤 翔', avatar:'👨', tier:'🌟 Close'},
+];
+let groupSelectedMembers = new Set();
+
+function openGroupCreate() {
+  groupSelectedMembers = new Set();
+  document.getElementById('groupNameInput').value = '';
+  document.getElementById('groupCreateDoneBtn').disabled = true;
+  renderGroupCreateMembers();
+  document.getElementById('groupCreateOverlay').classList.add('open');
+}
+
+function closeGroupCreate() {
+  document.getElementById('groupCreateOverlay').classList.remove('open');
+}
+
+function renderGroupCreateMembers() {
+  const container = document.getElementById('groupCreateMembers');
+  container.innerHTML = circleMembers.map(m => `
+    <div class="group-create-member-row${groupSelectedMembers.has(m.id) ? ' selected' : ''}" onclick="toggleGroupMember('${m.id}')">
+      <div class="group-create-member-avatar">${m.avatar}</div>
+      <div class="group-create-member-info">
+        <div class="group-create-member-name">${m.name}</div>
+        <div class="group-create-member-tier">${m.tier}</div>
+      </div>
+      <div class="group-create-check">${groupSelectedMembers.has(m.id) ? '✓' : ''}</div>
+    </div>
+  `).join('');
+}
+
+function toggleGroupMember(id) {
+  if (groupSelectedMembers.has(id)) {
+    groupSelectedMembers.delete(id);
+  } else {
+    groupSelectedMembers.add(id);
+  }
+  updateGroupCreateDoneBtn();
+  renderGroupCreateMembers();
+}
+
+function onGroupNameInput(val) {
+  updateGroupCreateDoneBtn();
+}
+
+function updateGroupCreateDoneBtn() {
+  const name = document.getElementById('groupNameInput').value.trim();
+  const btn = document.getElementById('groupCreateDoneBtn');
+  btn.disabled = !(name.length > 0 && groupSelectedMembers.size > 0);
+}
+
+function submitGroupCreate() {
+  const name = document.getElementById('groupNameInput').value.trim();
+  if (!name || groupSelectedMembers.size === 0) return;
+  showToast(`"${name}" group created with ${groupSelectedMembers.size} members!`);
+  closeGroupCreate();
+}
+</script>
 
 </body>
 </html>
