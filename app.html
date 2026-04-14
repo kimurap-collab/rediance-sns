@@ -7053,30 +7053,27 @@
     recContainer.parentElement.querySelector('.add-member-section-title').style.display = 'none';
     const q = sheetSearchQuery;
     // Exclude members already in the target tier
-    const currentTierNames = new Set(circleMembers[tier] || []);
+    const currentTierSet = new Set(circleMembers[tier] || []);
+    // Build map: name → tier label for people in other tiers
+    const memberTierMap = {};
+    for (const [k, arr] of Object.entries(circleMembers)) {
+      if (k === tier) continue;
+      arr.forEach(name => { memberTierMap[name] = circleTiers[k].emoji + ' ' + circleTiers[k].label; });
+    }
     const available = allFollowers.filter(f => {
-      if (currentTierNames.has(f.name)) return false;
+      if (currentTierSet.has(f.name)) return false;
       if (q && !f.name.toLowerCase().includes(q) && !f.id.toLowerCase().includes(q)) return false;
       return true;
     });
     const listEl = document.getElementById('addMemberList');
     listEl.innerHTML = '';
     available.forEach(f => {
-      const isInAnyCircle = allNames.has(f.name);
+      const existingTier = memberTierMap[f.name] || '';
       const row = document.createElement('div');
-      row.className = 'add-member-row' + (isInAnyCircle ? ' already' : '');
+      row.className = 'add-member-row';
       row.id = 'add-row-' + f.id;
-      let inTierLabel = '';
-      if (isInAnyCircle) {
-        for (const [k, arr] of Object.entries(circleMembers)) {
-          if (arr.includes(f.name)) { inTierLabel = circleTiers[k].emoji + ' ' + circleTiers[k].label; break; }
-        }
-      }
-      const rightEl = isInAnyCircle
-        ? `<div class="add-member-already-label">${inTierLabel}</div>`
-        : `<button class="add-btn" id="add-btn-${f.id}" onclick="addMemberFromSheet('${f.id}', false)">＋</button>`;
-      const tierTag = inTierLabel ? `<span style="font-size:11px;color:var(--text-light);margin-left:4px;">${inTierLabel}</span>` : '';
-      row.innerHTML = `<div class="add-member-row-avatar">${f.avatar}</div><div class="add-member-row-info"><div class="add-member-row-name">${f.name}${tierTag}</div><div class="add-member-row-handle">@${f.id}</div></div>${rightEl}`;
+      const tierTag = existingTier ? `<span style="font-size:11px;color:var(--text-light);background:var(--surface);padding:2px 6px;border-radius:8px;margin-left:6px;">${existingTier}</span>` : '';
+      row.innerHTML = `<div class="add-member-row-avatar">${f.avatar}</div><div class="add-member-row-info"><div class="add-member-row-name">${f.name}${tierTag}</div><div class="add-member-row-handle">@${f.id}</div></div><button class="add-btn" id="add-btn-${f.id}" onclick="addMemberFromSheet('${f.id}', false)">＋</button>`;
       listEl.appendChild(row);
     });
   }
