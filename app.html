@@ -3989,7 +3989,7 @@
                   <button class="identity-cat-btn" onclick="selectIdentityCat(this)">💼 経営</button>
                   <button class="identity-cat-btn" onclick="selectIdentityCat(this)">🤖 AI・テック</button>
                   <button class="identity-cat-btn" onclick="selectIdentityCat(this)">📈 投資</button>
-                  <button onclick="showToast('カテゴリ作成（開発中）')" style="font-size:11px;font-weight:600;color:var(--primary-light);background:none;border:1.5px dashed rgba(167,139,250,0.6);border-radius:16px;padding:3px 10px;cursor:pointer;">＋ 新しいカテゴリ</button>
+                  <button onclick="showToast('New Category (coming soon)')" style="font-size:11px;font-weight:600;color:var(--primary-light);background:none;border:1.5px dashed rgba(167,139,250,0.6);border-radius:16px;padding:3px 10px;cursor:pointer;">+ New Category</button>
                 </div>
               </div>
             </div>
@@ -4094,7 +4094,7 @@
       </div>
 
       <div class="circle-settings-link" onclick="switchTab('circle')">
-        <span>⚙️ あなたのCircle設定</span>
+        <span>Your Circle Settings</span>
         <span>→</span>
       </div>
 
@@ -4249,15 +4249,15 @@
 
       <!-- Action Buttons（インスタ風） -->
       <div style="display:flex;gap:8px;padding:4px 16px 12px;">
-        <button onclick="showToast('プロフィール編集（開発中）')" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">プロフィールを編集</button>
-        <button onclick="showToast('プロフィールをシェアしました')" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">プロフィールをシェア</button>
-        <button onclick="switchTab('circle')" style="padding:8px 12px;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">⚙️</button>
+        <button onclick="showToast('Edit Profile (coming soon)')" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Edit Profile</button>
+        <button onclick="switchTab('circle');closeSettingsMenu && closeSettingsMenu()" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Circle Settings</button>
+        <button onclick="showToast('Group Settings (coming soon)')" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Group Settings</button>
       </div>
 
       <!-- タブ切り替え -->
       <div class="my-profile-tab-bar">
-        <button class="my-profile-tab active" id="myTab-identity" onclick="switchMyTab('identity')">アイデンティティ</button>
-        <button class="my-profile-tab" id="myTab-posts" onclick="switchMyTab('posts')">投稿</button>
+        <button class="my-profile-tab active" id="myTab-identity" onclick="switchMyTab('identity')">Identity</button>
+        <button class="my-profile-tab" id="myTab-posts" onclick="switchMyTab('posts')">Posts</button>
       </div>
 
       <!-- アイデンティティタブ -->
@@ -4968,8 +4968,8 @@
       </div>
       <!-- タブ切り替え -->
       <div class="up-tab-bar">
-        <button class="up-tab active" id="upTabIdentity" onclick="switchUpTab('identity')">アイデンティティ</button>
-        <button class="up-tab" id="upTabPosts" onclick="switchUpTab('posts')">投稿</button>
+        <button class="up-tab active" id="upTabIdentity" onclick="switchUpTab('identity')">Identity</button>
+        <button class="up-tab" id="upTabPosts" onclick="switchUpTab('posts')">Posts</button>
       </div>
       <div id="upIdentitySection"></div>
       <div id="upPostsGrid" class="post-grid" style="display:none;"></div>
@@ -5334,24 +5334,25 @@
       </div>
     </div>
     <div style="padding:8px 0;">
-      <div class="settings-menu-item" onclick="switchTab('circle');closeSettingsMenu();">⚙️ Circle設定</div>
-      <div class="settings-menu-item" onclick="showToast('アカウント設定（開発中）');closeSettingsMenu();">👤 アカウント</div>
-      <div class="settings-menu-item" onclick="showToast('通知設定（開発中）');closeSettingsMenu();">🔔 通知</div>
-      <div class="settings-menu-item" onclick="showToast('プライバシー設定（開発中）');closeSettingsMenu();">🔒 プライバシー</div>
-      <div class="settings-menu-item" onclick="showToast('セキュリティ（開発中）');closeSettingsMenu();">🛡️ セキュリティ</div>
+      <div class="settings-menu-item" onclick="showToast('Share Profile (coming soon)');closeSettingsMenu();">🔗 Share Profile</div>
+      <div class="settings-menu-item" onclick="switchTab('circle');closeSettingsMenu();">⚙️ Circle Settings</div>
+      <div class="settings-menu-item" onclick="showToast('Account (coming soon)');closeSettingsMenu();">👤 Account</div>
+      <div class="settings-menu-item" onclick="showToast('Notifications (coming soon)');closeSettingsMenu();">🔔 Notifications</div>
+      <div class="settings-menu-item" onclick="showToast('Privacy (coming soon)');closeSettingsMenu();">🔒 Privacy</div>
+      <div class="settings-menu-item" onclick="showToast('Security (coming soon)');closeSettingsMenu();">🛡️ Security</div>
     </div>
     <div style="border-top:1px solid var(--border);padding:8px 0;">
-      <div class="settings-menu-item" onclick="showToast('アーカイブ（開発中）');closeSettingsMenu();">📦 アーカイブ</div>
-      <div class="settings-menu-item" onclick="showToast('アクティビティ（開発中）');closeSettingsMenu();">📊 アクティビティ</div>
-      <div class="settings-menu-item" onclick="showToast('QRコード（開発中）');closeSettingsMenu();">📱 QRコード</div>
+      <div class="settings-menu-item" onclick="showToast('Archive (coming soon)');closeSettingsMenu();">📦 Archive</div>
+      <div class="settings-menu-item" onclick="showToast('Activity (coming soon)');closeSettingsMenu();">📊 Activity</div>
+      <div class="settings-menu-item" onclick="showToast('QR Code (coming soon)');closeSettingsMenu();">📱 QR Code</div>
     </div>
     <div style="border-top:1px solid var(--border);padding:8px 0;">
-      <div class="settings-menu-item" onclick="showToast('保存済み（開発中）');closeSettingsMenu();">🔖 Saved (coming soon)</div>
-      <div class="settings-menu-item" onclick="showToast('お気に入り（開発中）');closeSettingsMenu();">⭐ お気に入り</div>
+      <div class="settings-menu-item" onclick="showToast('Saved (coming soon)');closeSettingsMenu();">🔖 Saved (coming soon)</div>
+      <div class="settings-menu-item" onclick="showToast('Favorites (coming soon)');closeSettingsMenu();">⭐ Favorites</div>
     </div>
     <div style="border-top:1px solid var(--border);padding:8px 0;">
-      <div class="settings-menu-item" onclick="showToast('ヘルプ（開発中）');closeSettingsMenu();">❓ ヘルプ</div>
-      <div class="settings-menu-item" style="color:#EF4444;" onclick="showToast('ログアウト（開発中）');closeSettingsMenu();">🚪 ログアウト</div>
+      <div class="settings-menu-item" onclick="showToast('Help (coming soon)');closeSettingsMenu();">❓ Help</div>
+      <div class="settings-menu-item" style="color:#EF4444;" onclick="showToast('Log Out (coming soon)');closeSettingsMenu();">🚪 Log Out</div>
     </div>
     <button onclick="closeSettingsMenu()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-sub);">✕</button>
   </div>
@@ -5375,7 +5376,7 @@
 <div class="action-sheet-overlay" id="actionSheet" onclick="closeActionSheet()">
   <div class="action-sheet" onclick="event.stopPropagation()">
     <div class="action-sheet-handle"></div>
-    <div class="action-sheet-title" id="actionSheetTitle">メンバー操作</div>
+    <div class="action-sheet-title" id="actionSheetTitle">Member Actions</div>
     <div id="actionSheetBody"></div>
   </div>
 </div>
@@ -6154,7 +6155,7 @@
         <span id="stories-like-icon">${isLiked ? '❤️' : '🤍'}</span>
         <span id="stories-like-count">${formatCount(story.likes)}</span>
       </button>
-      <button class="stories-action-btn" onclick="showToast('シェア機能は開発中です')">
+      <button class="stories-action-btn" onclick="showToast('Share (coming soon)')">
         🔄 <span>${formatCount(story.shares)}</span>
       </button>
     `;
@@ -6184,7 +6185,7 @@
         const replyBtn = document.createElement('button');
         replyBtn.className = 'stories-reply-btn';
         replyBtn.innerHTML = '💬 返事ストーリーを作る';
-        replyBtn.onclick = () => showToast('この機能は開発中です');
+        replyBtn.onclick = () => showToast('Coming soon');
         tagsRow.appendChild(replyBtn);
       }
     }
@@ -6423,7 +6424,7 @@
     document.getElementById('actionSheetBody').innerHTML = `
       <div class="action-sheet-item" onclick="showToast('${name}のプロフィールを開きます');closeActionSheet()">
         <span class="action-icon">👤</span>
-        <span>プロフィールを見る</span>
+        <span>View Profile</span>
       </div>
       <div class="action-sheet-item" onclick="showToast('${name}をメッセージ（開発中）');closeActionSheet()">
         <span class="action-icon">✉️</span>
@@ -6708,7 +6709,7 @@
             <span id="like-icon-${likeKey}">${likeIcon}</span>
             <span id="like-count-${likeKey}">${formatCount(post.likes||0)}</span>
           </button>
-          <button class="post-fs-action-btn" onclick="showToast('シェア機能は開発中です')">🔄 <span>${post.shares||0}</span></button>
+          <button class="post-fs-action-btn" onclick="showToast('Share (coming soon)')">🔄 <span>${post.shares||0}</span></button>
           ${footprintBtn}
         </div>
       </div>
