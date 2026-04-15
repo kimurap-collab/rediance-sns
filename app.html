@@ -190,6 +190,7 @@
       border: none;
       background: none;
       transition: all 0.15s;
+      color: rgba(255,255,255,0.5);
     }
     .tab-icon {
       font-size: 22px;
@@ -201,6 +202,7 @@
       color: rgba(255,255,255,0.5);
       transition: color 0.15s;
     }
+    .tab-item.active { color: #ffffff; }
     .tab-item.active .tab-label { color: #ffffff; }
     .tab-item.active .tab-icon { transform: scale(1.1); }
 
@@ -254,7 +256,9 @@
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
     }
-    .home-stories-row::-webkit-scrollbar { display: none; }
+    .home-stories-row::-webkit-scrollbar { height: 3px; }
+    .home-stories-row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 2px; }
+    .home-stories-row::-webkit-scrollbar-track { background: transparent; }
     .home-story-item {
       display: flex;
       flex-direction: column;
@@ -1575,12 +1579,86 @@
       font-size: 15px;
       font-weight: 800;
       letter-spacing: 0.3px;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.7);
-      background: rgba(0,0,0,0.42);
-      padding: 6px 12px;
-      border-radius: 10px;
-      backdrop-filter: blur(4px);
-      color: rgba(255,255,255,0.98);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+      padding: 5px 14px;
+      border-radius: 50px;
+      color: #ffffff;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    /* ===== RANK BADGE ANIMATIONS ===== */
+    @property --badge-angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+    @keyframes shimmer-slow {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    @keyframes gold-breathe {
+      0%, 100% { filter: brightness(1) saturate(1); }
+      50%       { filter: brightness(1.2) saturate(1.3); }
+    }
+    @keyframes crimson-glow {
+      0%, 100% { box-shadow: 0 0 4px 1px rgba(220,38,38,0.35); }
+      50%       { box-shadow: 0 0 10px 3px rgba(251,191,36,0.45); }
+    }
+    @keyframes badge-spin {
+      to { --badge-angle: 360deg; }
+    }
+    @keyframes rainbow-drift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* COMMON — static */
+    .rank-badge-human  { background: linear-gradient(135deg, #6B7280, #9CA3AF); }
+    .rank-badge-leader { background: linear-gradient(135deg, #166534, #4ADE80); }
+    .rank-badge-icon   { background: linear-gradient(135deg, #0D9488, #5EEAD4); }
+    .rank-badge-rising { background: linear-gradient(135deg, #1D4ED8, #60A5FA); }
+
+    /* STAR — 品のある遅いシマー（5秒） */
+    .rank-badge-star {
+      background: linear-gradient(90deg, #1E40AF 0%, #60A5FA 38%, #dbeafe 50%, #BAE6FD 62%, #1E40AF 100%);
+      background-size: 200% auto;
+      animation: shimmer-slow 5s ease-in-out infinite;
+    }
+
+    /* NOVA — ゆっくり息をするゴールド（4秒） */
+    .rank-badge-nova {
+      background: linear-gradient(135deg, #92400E, #D97706, #FDE68A);
+      animation: gold-breathe 4s ease-in-out infinite;
+    }
+
+    /* SUPERNOVA — 対角シマー＋静かなグロー（6秒） */
+    .rank-badge-supernova {
+      background: linear-gradient(135deg, #7F1D1D 0%, #DC2626 40%, #FBBF24 50%, #DC2626 60%, #7F1D1D 100%);
+      background-size: 250% auto;
+      animation: shimmer-slow 6s ease-in-out infinite, crimson-glow 3s ease-in-out infinite;
+    }
+
+    /* GRAVITY — conic回転でゆっくり惑星のように回る（6秒） */
+    .rank-badge-gravity {
+      background: conic-gradient(from var(--badge-angle), #4C1D95, #7C3AED, #C084FC, #FCD34D, #7C3AED, #4C1D95);
+      animation: badge-spin 6s linear infinite;
+    }
+
+    /* SINGULARITY — 斜めの光がゆっくり1往復（4秒） */
+    .rank-badge-singularity {
+      background: linear-gradient(105deg, #1E293B 0%, #475569 30%, #E2E8F0 48%, #f8fafc 52%, #475569 70%, #1E293B 100%);
+      background-size: 200% auto;
+      animation: shimmer-slow 4s ease-in-out infinite;
+    }
+
+    /* UNIVERSE — ゆっくり流れる虹（7秒） */
+    .rank-badge-universe {
+      background: linear-gradient(135deg, #FF0080, #FF8C00, #FFD700, #00FF80, #00BFFF, #8000FF, #FF0080);
+      background-size: 300% 300%;
+      animation: rainbow-drift 7s ease infinite;
     }
     .pokemon-card-tier-badge .pokemon-card-tier-rs {
       font-size: 12px;
@@ -2040,59 +2118,82 @@
     .post-fs-action-btn:active { opacity: 0.6; }
 
     /* ===== CIRCLE SCREEN ===== */
+    #screen-circle {
+      background: #0a0005;
+    }
     .circle-screen-header {
-      padding: 20px 16px 0;
+      padding: 20px 16px 8px;
       font-size: 20px;
       font-weight: 800;
-      color: var(--text-main);
+      color: rgba(255,255,255,0.9);
     }
     .circle-screen-sub {
       padding: 4px 16px 16px;
       font-size: 13px;
-      color: var(--text-sub);
+      color: rgba(255,255,255,0.45);
     }
 
     .circle-section {
-      margin: 0 16px 12px;
-      border-radius: var(--radius-md);
-      border: 1.5px solid var(--border);
+      margin: 0;
+      border-radius: 36px 36px 0 0;
+      border: none;
       overflow: hidden;
+      position: relative;
     }
+    #sec-inner    { background: rgba(255,80,0,0.06); }
+    #sec-trusted  { background: rgba(245,158,11,0.05); }
+    #sec-close    { background: rgba(14,165,233,0.05); }
+    #sec-connected{ background: rgba(30,58,95,0.08); }
     .circle-section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 16px;
+      padding: 22px 16px 14px;
       cursor: pointer;
-      background: var(--bg);
-      transition: background 0.15s;
+      background: transparent;
+      transition: opacity 0.15s;
       user-select: none;
     }
-    .circle-section-header:active { background: var(--surface); }
+    .circle-section-header:active { background: rgba(255,255,255,0.05); }
     .circle-section-title {
       display: flex;
       align-items: center;
       gap: 8px;
       font-size: 14px;
       font-weight: 700;
-      color: var(--text-main);
+      color: rgba(255,255,255,0.9);
     }
+    /* ===== TIER BADGES ===== */
+    .tier-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.3px;
+    }
+    .tier-badge-core    { background: linear-gradient(135deg, #FF4500, #FF8C00); }
+    .tier-badge-orbit   { background: linear-gradient(135deg, #3B82F6, #7C3AED); }
+    .tier-badge-halo    { background: linear-gradient(135deg, #F59E0B, #10B981); }
+    .tier-badge-galaxy  { background: linear-gradient(135deg, #020408 0%, #1E3A5F 35%, #7C3AED 70%, #EC4899 100%); }
+
     .circle-capacity {
       font-size: 12px;
       font-weight: 600;
-      color: var(--text-sub);
+      color: rgba(255,255,255,0.55);
     }
     .circle-chevron {
       font-size: 12px;
-      color: var(--text-light);
+      color: rgba(255,255,255,0.45);
       transition: transform 0.2s;
     }
     .circle-section.open .circle-chevron { transform: rotate(180deg); }
 
     .circle-section-body {
       display: none;
-      border-top: 1px solid var(--border);
-      background: var(--surface);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background: transparent;
       padding: 14px 16px;
     }
     .circle-section.open .circle-section-body { display: block; }
@@ -2130,7 +2231,7 @@
     .circle-member-name {
       font-size: 10px;
       font-weight: 600;
-      color: var(--text-sub);
+      color: rgba(255,255,255,0.75);
       text-align: center;
       max-width: 60px;
       overflow: hidden;
@@ -2142,17 +2243,17 @@
       min-width: 60px;
       height: 50px;
       border-radius: 50%;
-      border: 2px dashed var(--primary-light);
+      border: 2px dashed rgba(255,255,255,0.3);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 20px;
-      color: var(--primary-light);
+      color: rgba(255,255,255,0.5);
       cursor: pointer;
-      background: var(--primary-bg);
+      background: rgba(255,255,255,0.06);
       transition: all 0.15s;
     }
-    .add-slot:active { background: var(--primary-bg); border-color: var(--primary); }
+    .add-slot:active { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.6); }
     .add-slot-wrap {
       display: flex;
       flex-direction: column;
@@ -2163,7 +2264,7 @@
     .add-slot-label {
       font-size: 10px;
       font-weight: 600;
-      color: var(--primary-light);
+      color: rgba(255,255,255,0.45);
       text-align: center;
     }
 
@@ -4034,7 +4135,7 @@
     .circle-settings-overlay.open { display: flex; }
     .circle-settings-sheet {
       width: 100%;
-      background: var(--bg);
+      background: #1a0800;
       border-radius: 20px 20px 0 0;
       max-height: 90vh;
       display: flex;
@@ -4043,7 +4144,7 @@
     .circle-settings-handle {
       width: 36px;
       height: 4px;
-      background: var(--border);
+      background: rgba(255,255,255,0.2);
       border-radius: 2px;
       margin: 10px auto 0;
     }
@@ -4052,19 +4153,20 @@
       align-items: center;
       justify-content: space-between;
       padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
       flex-shrink: 0;
     }
     .circle-settings-title {
       font-size: 16px;
       font-weight: 700;
       letter-spacing: -0.3px;
+      color: rgba(255,255,255,0.9);
     }
     .circle-settings-cancel {
       background: none;
       border: none;
       font-size: 14px;
-      color: var(--text-sub);
+      color: rgba(255,255,255,0.5);
       cursor: pointer;
       padding: 4px 0;
       width: 60px;
@@ -4074,6 +4176,21 @@
       flex: 1;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+      background:
+        radial-gradient(ellipse 240% 200% at 50% 0%,
+          rgba(255,80,0,0.40)   0%,
+          rgba(255,80,0,0.14)   12%,
+          transparent           13%,
+          rgba(245,158,11,0.26) 14%,
+          rgba(245,158,11,0.09) 28%,
+          transparent           29%,
+          rgba(14,165,233,0.20) 30%,
+          rgba(14,165,233,0.06) 48%,
+          transparent           49%,
+          rgba(30,58,95,0.25)   50%,
+          rgba(2,6,23,0.55)    100%
+        ),
+        #0a0005;
     }
   </style>
 </head>
@@ -4262,7 +4379,7 @@
       <!-- POKEMON CARD PROFILE -->
       <div class="pokemon-profile-card" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=450&fit=crop&crop=faces&facepad=3');">
         <div class="pokemon-card-topbar">
-          <div class="pokemon-card-tier-badge" style="color:#FCD34D;">
+          <div class="pokemon-card-tier-badge rank-badge-star">
             ⭐ Star
             <span class="pokemon-card-tier-rs">(50.9K)</span>
           </div>
@@ -4416,7 +4533,7 @@
       <!-- POKEMON CARD — full photo style -->
       <div class="pokemon-profile-card" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=450&fit=crop&crop=faces&facepad=3');">
         <div class="pokemon-card-topbar">
-          <div class="pokemon-card-tier-badge" style="color:#FCD34D;">
+          <div class="pokemon-card-tier-badge rank-badge-star">
             ⭐ Star
             <span class="pokemon-card-tier-rs">(50.9K)</span>
           </div>
@@ -5504,7 +5621,7 @@
     <button class="tab-item" onclick="switchTab('talk')" id="tab-talk">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>
     </button>
-    <button class="tab-post" onclick="openPostModal()">
+    <button class="tab-post" onclick="switchTab('post')">
       <div class="tab-post-btn">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
       </div>
@@ -6022,6 +6139,48 @@
         { text: "TED Talk confirmed 🎙\n\nTheme: 'A world where trust comes before money'\n\nDetails next week. Stay tuned.", time: '2 weeks ago', likes: 2341, shares: 512, tags: ['rina_s', 'yu_tanaka'], grad: 'linear-gradient(135deg, #0f0c29, #2D1B69)' },
       ]
     },
+    {
+      id: 'alex_gravity',
+      name: 'Alex Nakamura',
+      avatar: '🧑‍🚀',
+      handle: '@alex_gravity',
+      score: 1240000,
+      hasNew: true,
+      isRadiance: true,
+      stories: [
+        { text: "When you operate at this scale, trust becomes infrastructure.\n\nNot a metric. Not a score. Infrastructure.\n\nWe're building the internet's missing layer.", time: '45m ago', likes: 8420, shares: 2130, tags: ['taisho_k'], grad: 'linear-gradient(135deg, #4C1D95, #7C3AED)' },
+        { text: "1M followers means nothing if they don't act.\n\nThe question I ask every week: how many people changed their behavior because of something I said?\n\nThat's the real number.", time: '3 days ago', likes: 12300, shares: 3400, tags: [], grad: 'linear-gradient(135deg, #2D1B69, #7C3AED, #C084FC)' },
+        { text: "Turned down a $40M acquisition today.\n\nBecause the acquirer wanted our users. We wanted to protect them.\n\nNot every deal is worth taking.", time: '1 week ago', likes: 24100, shares: 5800, tags: ['kenji_founder'], grad: 'linear-gradient(135deg, #1a0030, #4C1D95)' },
+      ]
+    },
+    {
+      id: 'nova_singularity',
+      name: 'Yuki Arai',
+      avatar: '🌐',
+      handle: '@yuki_singularity',
+      score: 2800000,
+      hasNew: true,
+      isRadiance: true,
+      stories: [
+        { text: "I've advised 3 governments, 2 central banks, and one UN committee this year.\n\nAll on the same topic: what happens when AI knows your citizens better than you do.\n\nThe answer is uncomfortable.", time: '20m ago', likes: 31200, shares: 8900, tags: [], grad: 'linear-gradient(135deg, #1E293B, #475569, #94A3B8)' },
+        { text: "The difference between a 1M and 2M following? The conversation changes.\n\nPeople stop asking for your opinion. They start telling you theirs — hoping you'll amplify it.\n\nChoose carefully.", time: '5 days ago', likes: 44000, shares: 11200, tags: ['alex_gravity'], grad: 'linear-gradient(135deg, #0f172a, #1E293B, #CBD5E1)' },
+        { text: "My daughter asked me what I do for work.\n\n\"I try to make sure the internet is run by people, not by algorithms.\"\n\nShe said: \"but you are an algorithm, you have a score.\"\n\nShe's not wrong.", time: '2 weeks ago', likes: 67000, shares: 15000, tags: [], grad: 'linear-gradient(135deg, #020617, #334155, #E2E8F0)' },
+      ]
+    },
+    {
+      id: 'universe_zero',
+      name: 'ZERO',
+      avatar: '♾️',
+      handle: '@zero',
+      score: 8100000,
+      hasNew: true,
+      isRadiance: true,
+      stories: [
+        { text: "The platform is the message.\n\nWe were told social media connects people.\nIt connected us to versions of ourselves we perform for each other.\n\nHYPERAY was built to end that.", time: '5m ago', likes: 142000, shares: 48000, tags: ['taisho_k', 'yuki_singularity'], grad: 'linear-gradient(135deg, #FF0080, #FF8C00, #FFD700, #00FF80, #00BFFF, #8000FF)' },
+        { text: "I don't post often.\n\nWhen I do, it's because something needs to be said that no algorithm would ever surface.\n\nPay attention.", time: '1 month ago', likes: 230000, shares: 72000, tags: [], grad: 'linear-gradient(135deg, #000000, #7C3AED, #FF0080)' },
+        { text: "Status:\n\n8.1M RS. Universe tier.\n\nNone of it matters unless the people closest to you trust you with their truth.\n\nStart there.", time: '3 months ago', likes: 310000, shares: 89000, tags: [], grad: 'linear-gradient(135deg, #0a0a0a, #1a0030, #FF8C00)' },
+      ]
+    },
   ];
 
   // ===== STORIES SEEN STATE =====
@@ -6225,6 +6384,60 @@
         { id: 'u9-1', body: 'デザインとエンジニアリングの境界線がどんどん薄くなってる。\nAIが補完してくれるから、X字型スキルが求められる時代に。', time: '1時間前', likes: 29, shares: 5, grad: 'linear-gradient(135deg, #134E4A, #0D9488)' },
         { id: 'u9-2', body: 'Figmaで全部デザインしてたらいつの間にかコード生成もできるようになってた。', time: '3日前', likes: 43, shares: 8, grad: 'linear-gradient(135deg, #0F766E, #14B8A6)' },
         { id: 'u9-3', body: '「センスがない」と思ってた人がAI活用でものすごいアウトプット出してる。', time: '1週間前', likes: 67, shares: 14, grad: 'linear-gradient(135deg, #064E3B, #047857)' },
+      ],
+    },
+    'alex_gravity': {
+      id: 'alex_gravity',
+      name: 'Alex Nakamura',
+      handle: '@alex_gravity',
+      avatarEmoji: '🧑‍🚀',
+      avatarClass: 'avatar-radiance',
+      profilePhoto: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&h=450&fit=crop&crop=faces&facepad=3',
+      bio: 'Founder @ TrustOS / Prev: Palantir, a16z\nBuilding the trust layer of the internet. 1.2M RS.',
+      location: 'Tokyo / NYC',
+      joinDate: '2023年4月から利用',
+      score: 1240000,
+      stats: { trust: 580000, prestige: 410000, insights: 250000, stature: 3200000 },
+      posts: [
+        { id: 'ag-1', body: "When you operate at this scale, trust becomes infrastructure.\nNot a metric. Not a score. Infrastructure.", time: '45m ago', likes: 8420, shares: 2130, grad: 'linear-gradient(135deg, #4C1D95, #7C3AED)' },
+        { id: 'ag-2', body: "1M followers means nothing if they don't act.\nThe question I ask every week: how many people changed their behavior?", time: '3 days ago', likes: 12300, shares: 3400, grad: 'linear-gradient(135deg, #2D1B69, #7C3AED, #C084FC)' },
+        { id: 'ag-3', body: "Turned down a $40M acquisition today.\nBecause the acquirer wanted our users. We wanted to protect them.", time: '1 week ago', likes: 24100, shares: 5800, grad: 'linear-gradient(135deg, #1a0030, #4C1D95)' },
+      ],
+    },
+    'nova_singularity': {
+      id: 'nova_singularity',
+      name: 'Yuki Arai',
+      handle: '@yuki_singularity',
+      avatarEmoji: '🌐',
+      avatarClass: 'avatar-radiance',
+      profilePhoto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=450&fit=crop&crop=faces&facepad=3',
+      bio: 'Digital Policy Advisor / UN, EU, IMF\nOn a mission to make digital trust a human right. 2.8M RS.',
+      location: 'Geneva / Singapore',
+      joinDate: '2023年1月から利用',
+      score: 2800000,
+      stats: { trust: 1200000, prestige: 980000, insights: 620000, stature: 7400000 },
+      posts: [
+        { id: 'ys-1', body: "I've advised 3 governments, 2 central banks, and one UN committee this year.\nAll on the same topic: what happens when AI knows your citizens better than you do.", time: '20m ago', likes: 31200, shares: 8900, grad: 'linear-gradient(135deg, #1E293B, #475569, #94A3B8)' },
+        { id: 'ys-2', body: "The difference between 1M and 2M following? The conversation changes.\nPeople stop asking your opinion. They start hoping you'll amplify theirs.", time: '5 days ago', likes: 44000, shares: 11200, grad: 'linear-gradient(135deg, #0f172a, #1E293B, #CBD5E1)' },
+        { id: 'ys-3', body: "My daughter asked what I do.\n\"I try to make sure the internet is run by people, not algorithms.\"\nShe said: \"but you are an algorithm, you have a score.\"\nShe's not wrong.", time: '2 weeks ago', likes: 67000, shares: 15000, grad: 'linear-gradient(135deg, #020617, #334155, #E2E8F0)' },
+      ],
+    },
+    'universe_zero': {
+      id: 'universe_zero',
+      name: 'ZERO',
+      handle: '@zero',
+      avatarEmoji: '♾️',
+      avatarClass: 'avatar-radiance',
+      bannerGradient: 'linear-gradient(135deg, #FF0080, #FF8C00, #FFD700, #00FF80, #00BFFF, #8000FF)',
+      bio: 'Unknown. 8.1M RS.\nThe platform is the message.',
+      location: '—',
+      joinDate: '2022年から利用',
+      score: 8100000,
+      stats: { trust: 3800000, prestige: 2900000, insights: 1400000, stature: 22000000 },
+      posts: [
+        { id: 'z-1', body: "The platform is the message.\n\nWe were told social media connects people.\nIt connected us to versions of ourselves we perform for each other.\n\nHYPERAY was built to end that.", time: '5m ago', likes: 142000, shares: 48000, grad: 'linear-gradient(135deg, #FF0080, #FF8C00, #FFD700, #00FF80, #00BFFF, #8000FF)' },
+        { id: 'z-2', body: "I don't post often.\n\nWhen I do, it's because something needs to be said that no algorithm would ever surface.\n\nPay attention.", time: '1 month ago', likes: 230000, shares: 72000, grad: 'linear-gradient(135deg, #000000, #7C3AED, #FF0080)' },
+        { id: 'z-3', body: "Status:\n\n8.1M RS. Universe tier.\n\nNone of it matters unless the people closest to you trust you with their truth.\n\nStart there.", time: '3 months ago', likes: 310000, shares: 89000, grad: 'linear-gradient(135deg, #0a0a0a, #1a0030, #FF8C00)' },
       ],
     },
     'taisho_k': {
@@ -6611,8 +6824,7 @@
 
   // ===== CIRCLE TOGGLE =====
   function toggleSection(id) {
-    const sec = document.getElementById(id);
-    sec.classList.toggle('open');
+    document.querySelectorAll('#' + id).forEach(sec => sec.classList.toggle('open'));
   }
 
   // ===== ACTION SHEET =====
@@ -6656,7 +6868,7 @@
     return `
       <div class="up-pokemon-card" style="${bgStyle}">
         <div class="pokemon-card-topbar">
-          <div class="pokemon-card-tier-badge" style="color:${titleInfo.color};">
+          <div class="pokemon-card-tier-badge rank-badge-${titleInfo.cls}">
             ${titleInfo.emoji} ${titleInfo.name}
             <span class="pokemon-card-tier-rs">(${scoreDisplay})</span>
           </div>
@@ -6991,7 +7203,10 @@
     { id: 'sakura_n', name: '中島 さくら', avatar: '👧',  recommended: false },
     { id: 'kenji_y',  name: '山口 健二',   avatar: '👴',  recommended: false },
     { id: 'emi_t',    name: '田村 恵美',   avatar: '👩',  recommended: false },
-    { id: 'sota_a',   name: '青木 壮太',   avatar: '👱',  recommended: false },
+    { id: 'sota_a',        name: '青木 壮太',      avatar: '👱',    recommended: false },
+    { id: 'alex_gravity',  name: 'Alex Nakamura',  avatar: '🧑‍🚀', recommended: true  },
+    { id: 'nova_singularity', name: 'Yuki Arai',   avatar: '🌐',    recommended: true  },
+    { id: 'universe_zero', name: 'ZERO',            avatar: '♾️',    recommended: true  },
   ];
   let currentSheetTier = null;
   let sheetSearchQuery = '';
@@ -7057,10 +7272,11 @@
     // Exclude members already in the target tier
     const currentTierSet = new Set(circleMembers[tier] || []);
     // Build map: name → tier label for people in other tiers
+    const tierBadgeClass = { inner: 'tier-badge-core', trusted: 'tier-badge-orbit', close: 'tier-badge-halo', connected: 'tier-badge-galaxy' };
     const memberTierMap = {};
     for (const [k, arr] of Object.entries(circleMembers)) {
       if (k === tier) continue;
-      arr.forEach(name => { memberTierMap[name] = circleTiers[k].emoji + ' ' + circleTiers[k].label; });
+      arr.forEach(name => { memberTierMap[name] = { emoji: circleTiers[k].emoji, label: circleTiers[k].label, cls: tierBadgeClass[k] || '' }; });
     }
     const available = allFollowers.filter(f => {
       if (currentTierSet.has(f.name)) return false;
@@ -7070,11 +7286,11 @@
     const listEl = document.getElementById('addMemberList');
     listEl.innerHTML = '';
     available.forEach(f => {
-      const existingTier = memberTierMap[f.name] || '';
+      const existingTier = memberTierMap[f.name] || null;
       const row = document.createElement('div');
       row.className = 'add-member-row';
       row.id = 'add-row-' + f.id;
-      const tierTag = existingTier ? `<span style="font-size:11px;color:var(--text-light);background:var(--surface);padding:2px 6px;border-radius:8px;margin-left:6px;">${existingTier}</span>` : '';
+      const tierTag = existingTier ? `<span class="tier-badge ${existingTier.cls}" style="font-size:10px;padding:1px 8px;margin-left:6px;">${existingTier.emoji} ${existingTier.label}</span>` : '';
       row.innerHTML = `<div class="add-member-row-avatar">${f.avatar}</div><div class="add-member-row-info"><div class="add-member-row-name">${f.name}${tierTag}</div><div class="add-member-row-handle">@${f.id}</div></div><button class="add-btn" id="add-btn-${f.id}" onclick="addMemberFromSheet('${f.id}', false)">＋</button>`;
       listEl.appendChild(row);
     });
@@ -7922,6 +8138,48 @@
       likes: 34,
       shares: 5,
       isSun: false,
+    },
+    {
+      id: 'f9',
+      userId: 'alex_gravity',
+      name: 'Alex Nakamura',
+      avatar: '🧑‍🚀',
+      avatarClass: 'avatar-radiance',
+      score: 1240000,
+      time: '45分前',
+      body: "When you operate at this scale, trust becomes infrastructure.\n\nNot a metric. Not a score. Infrastructure.\n\nWe're building the internet's missing layer.",
+      grad: 'linear-gradient(135deg, #2D1B69, #7C3AED, #C084FC)',
+      likes: 8420,
+      shares: 2130,
+      isSun: true,
+    },
+    {
+      id: 'f10',
+      userId: 'nova_singularity',
+      name: 'Yuki Arai',
+      avatar: '🌐',
+      avatarClass: 'avatar-radiance',
+      score: 2800000,
+      time: '20分前',
+      body: "I've advised 3 governments, 2 central banks, and one UN committee this year.\n\nAll on the same topic: what happens when AI knows your citizens better than you do.\n\nThe answer is uncomfortable.",
+      grad: 'linear-gradient(135deg, #0f172a, #1E293B, #94A3B8)',
+      likes: 31200,
+      shares: 8900,
+      isSun: true,
+    },
+    {
+      id: 'f11',
+      userId: 'universe_zero',
+      name: 'ZERO',
+      avatar: '♾️',
+      avatarClass: 'avatar-radiance',
+      score: 8100000,
+      time: '5分前',
+      body: "The platform is the message.\n\nWe were told social media connects people.\nIt connected us to versions of ourselves we perform for each other.\n\nHYPERAY was built to end that.",
+      grad: 'linear-gradient(135deg, #FF0080, #FF8C00, #FFD700, #00FF80, #00BFFF, #8000FF)',
+      likes: 142000,
+      shares: 48000,
+      isSun: true,
     },
   ];
 
