@@ -6,7 +6,7 @@
   <title>HYPERAY — App</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Serif+JP:wght@400;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=M+PLUS+1p:wght@700&family=Zen+Kaku+Gothic+New:wght@300&family=Noto+Serif+JP&family=Shippori+Mincho&family=Yusei+Magic&family=Klee+One&family=Kaisei+Decol&family=Stick&family=Reggae+One&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #1E3A5F;
@@ -3396,70 +3396,35 @@
     .add-btn.added { background: var(--primary); color: white; border-color: var(--primary); }
     .add-btn.adding { background: var(--primary); color: white; border-color: var(--primary); }
 
-    /* ===== POST COMPOSER (Instagram Stories-style) ===== */
+    /* ===== POST COMPOSER (簡易版) ===== */
     #screen-post {
       overflow: hidden;
       background: #000;
     }
-    .composer-screen {
+
+    /* コンポーザー全体ラッパー */
+    .cmp-wrap {
       position: absolute;
       inset: 0;
-      background: #000;
-      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #0a0010;
     }
 
-    /* --- Stories Editor: fullscreen canvas --- */
-    .stories-editor {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-    }
-
-    /* Fullscreen background layer */
-    .stories-bg-canvas {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, #7C3AED, #A78BFA);
-      z-index: 0;
-    }
-    .stories-bg-canvas img,
-    .stories-bg-canvas video {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: none;
-    }
-    .stories-bg-canvas img.active,
-    .stories-bg-canvas video.active { display: block; }
-
-    /* Text layers container — fullscreen */
-    #storiesTextLayers {
-      position: absolute;
-      inset: 0;
-      z-index: 10;
-    }
-
-    /* ===== TOP TOOLBAR (floating) ===== */
-    .stories-header {
+    /* ヘッダー */
+    .cmp-header {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
-      z-index: 40;
+      z-index: 50;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px 16px;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, transparent 100%);
+      padding: 12px 16px;
+      background: transparent;
     }
-    .stories-header-center {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-    .stories-close-btn {
+    .cmp-close-btn {
       width: 36px;
       height: 36px;
       border-radius: 50%;
@@ -3472,30 +3437,10 @@
       justify-content: center;
       cursor: pointer;
       backdrop-filter: blur(4px);
-      flex-shrink: 0;
     }
-    .stories-close-btn:active { opacity: 0.7; }
-
-    .stories-tool-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: none;
-      background: rgba(255,255,255,0.18);
-      color: #fff;
-      font-size: 15px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      backdrop-filter: blur(4px);
-      flex-shrink: 0;
-    }
-    .stories-tool-btn:active { background: rgba(255,255,255,0.35); }
-
-    .stories-post-btn {
-      padding: 8px 18px;
+    .cmp-close-btn:active { opacity: 0.7; }
+    .cmp-post-btn {
+      padding: 8px 20px;
       border-radius: 20px;
       border: none;
       background: #2563EB;
@@ -3504,267 +3449,707 @@
       font-weight: 700;
       cursor: pointer;
       transition: opacity 0.15s, transform 0.15s;
-      backdrop-filter: blur(4px);
     }
-    .stories-post-btn:active { transform: scale(0.95); opacity: 0.85; }
+    .cmp-post-btn:active { transform: scale(0.95); opacity: 0.85; }
 
-    /* ===== LEFT SIDE: vertical size slider (floating) ===== */
-    .stories-size-slider-wrap {
+    /* プレビューキャンバス（9:16） */
+    .cmp-canvas {
       position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 40;
-      display: flex;
-      flex-direction: column;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+    }
+
+    /* 背景レイヤー */
+    .cmp-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(135deg, #020408 0%, #1E3A5F 35%, #7C3AED 70%, #EC4899 100%);
+    }
+    .cmp-bg-photo-wrap {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    .cmp-bg-photo-img {
+      position: absolute;
+      transform-origin: center center;
+      max-width: none;
+    }
+
+    /* フォトフィルターオーバーレイ */
+    .cmp-photo-filter {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* URL バッジ（アイコンバー上に固定表示） */
+    .cmp-url-badge-area {
+      display: none;
+      padding: 6px 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .cmp-url-badge-area.visible { display: flex; align-items: center; justify-content: center; }
+    .cmp-url-badge-pill {
+      display: inline-flex;
       align-items: center;
       gap: 6px;
-    }
-    .stories-size-slider-arrow {
-      color: rgba(255,255,255,0.8);
+      padding: 6px 12px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 18px;
       font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      max-width: 280px;
+    }
+    .cmp-url-badge-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .cmp-url-badge-close {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 0;
       line-height: 1;
-      user-select: none;
-    }
-    .stories-size-slider-track {
-      width: 3px;
-      height: 140px;
-      background: rgba(255,255,255,0.25);
-      border-radius: 2px;
-      position: relative;
-      cursor: pointer;
-    }
-    .stories-size-slider-fill {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: #fff;
-      border-radius: 2px;
-      transition: height 0.1s;
-    }
-    .stories-size-slider-thumb {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 14px;
-      height: 14px;
-      background: #fff;
-      border-radius: 50%;
-      box-shadow: 0 0 4px rgba(0,0,0,0.4);
-      cursor: grab;
-    }
-    .stories-size-slider {
-      position: absolute;
-      inset: -8px;
-      opacity: 0;
-      width: calc(100% + 16px);
-      height: calc(100% + 16px);
-      cursor: pointer;
-      -webkit-appearance: slider-vertical;
-      appearance: slider-vertical;
-      writing-mode: bt-lr;
-      margin: 0;
+      flex-shrink: 0;
     }
 
-    /* ===== BOTTOM AREA (floating) ===== */
-    .stories-bottom-overlay {
+    /* ゴミ箱ゾーン（写真ドラッグ時表示） */
+    .cmp-trash-zone {
+      position: absolute;
+      bottom: 170px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.8);
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      z-index: 100;
+      pointer-events: none;
+      transition: transform 0.15s, background 0.15s, border-color 0.15s;
+    }
+    .cmp-trash-zone.visible { display: flex; }
+    .cmp-trash-zone.hover {
+      background: rgba(220,38,38,0.85);
+      border-color: #fff;
+      transform: translateX(-50%) scale(1.15);
+    }
+
+    /* テキスト（センター固定） */
+    .cmp-text-layer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 4;
+      width: 88%;
+      text-align: center;
+      pointer-events: none;
+    }
+    .cmp-text-input {
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+      resize: none;
+      text-align: center;
+      color: #fff;
+      font-size: 32px;
+      font-weight: 700;
+      font-family: 'Noto Sans JP', sans-serif;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+      line-height: 1.5;
+      padding: 0;
+      pointer-events: auto;
+    }
+    .cmp-text-input::placeholder { color: rgba(255,255,255,0.5); }
+
+    /* ボトムコントロールエリア */
+    .cmp-controls {
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
       z-index: 40;
-      padding: 12px 14px 16px;
-      background: linear-gradient(to top, rgba(0,0,0,0.60) 0%, transparent 100%);
+      background: transparent;
     }
 
-    /* Color palette row */
-    .stories-color-palette {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
-    }
-    .stories-color-dot {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.3);
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: transform 0.15s, border-color 0.15s;
-    }
-    .stories-color-dot.active {
-      border-color: #fff;
-      transform: scale(1.3);
-    }
-    .stories-color-dot:active { opacity: 0.75; }
-
-    /* BG selector row */
-    .stories-bg-row {
+    /* ===== アイコン行（常時表示 48px） ===== */
+    .cmp-icon-bar {
       display: flex;
       align-items: center;
-      gap: 10px;
+      height: 48px;
+      padding: 0 10px;
+      gap: 4px;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
-    .stories-bg-type-btns {
-      display: flex;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-    .stories-bg-type-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
+    .cmp-icon-btn {
+      flex: 1;
+      height: 40px;
       border: none;
-      background: rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.7);
-      font-size: 17px;
+      background: none;
+      color: rgba(255,255,255,0.75);
+      font-size: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.15s;
-      backdrop-filter: blur(4px);
+      border-radius: 10px;
+      transition: background 0.15s, color 0.15s;
+      position: relative;
     }
-    .stories-bg-type-btn.active {
-      background: rgba(255,255,255,0.30);
+    .cmp-icon-btn.active {
+      background: rgba(255,255,255,0.18);
       color: #fff;
     }
-    .stories-bg-type-btn:active { opacity: 0.7; }
+    .cmp-icon-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .cmp-icon-btn:active { opacity: 0.6; }
+    .cmp-icon-btn.disabled {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .cmp-icon-post-btn {
+      flex: none;
+      width: 64px;
+      height: 34px;
+      border: none;
+      background: #2563EB;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 17px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.15s;
+      margin-left: 4px;
+    }
+    .cmp-icon-post-btn:active { transform: scale(0.95); opacity: 0.85; }
 
-    .stories-grad-palette {
-      flex: 1;
+    /* アイコンラベル（小文字） */
+    .cmp-icon-btn span {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1;
+      display: block;
+    }
+    .cmp-icon-btn .icon-glyph {
+      font-size: 16px;
+      line-height: 1;
+    }
+    .cmp-icon-btn svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      stroke: #fff;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .cmp-icon-btn { color: #fff; }
+
+    /* ===== 展開パネル（アイコン行の上に出る） ===== */
+    .cmp-tool-panel {
+      display: none;
+      padding: 8px 14px 6px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .cmp-tool-panel.open { display: block; }
+
+    /* フォント選択 */
+    .cmp-font-row {
       display: flex;
       gap: 8px;
       overflow-x: auto;
       scrollbar-width: none;
-      align-items: center;
+      padding-bottom: 2px;
     }
-    .stories-grad-palette::-webkit-scrollbar { display: none; }
-    .stories-grad-dot {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
+    .cmp-font-row::-webkit-scrollbar { display: none; }
+    .cmp-font-chip {
       flex-shrink: 0;
+      padding: 5px 12px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.85);
+      font-size: 12px;
       cursor: pointer;
-      border: 2.5px solid rgba(255,255,255,0.2);
-      transition: transform 0.15s, border-color 0.15s;
-    }
-    .stories-grad-dot.active {
-      border-color: #fff;
-      transform: scale(1.18);
-    }
-    .stories-grad-dot:active { opacity: 0.75; }
-
-    /* Add text + font btn row (shown as floating pill at top center when text selected) */
-    .stories-add-text-btn {
-      padding: 6px 14px;
-      border-radius: 18px;
-      border: 1.5px solid rgba(255,255,255,0.5);
-      background: rgba(255,255,255,0.15);
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      backdrop-filter: blur(4px);
+      transition: all 0.15s;
       white-space: nowrap;
     }
-    .stories-add-text-btn:active { background: rgba(255,255,255,0.3); }
-
-    .stories-font-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(255,255,255,0.5);
-      background: rgba(255,255,255,0.15);
+    .cmp-font-chip.active {
+      border-color: #fff;
+      background: rgba(255,255,255,0.25);
       color: #fff;
-      font-size: 14px;
-      font-weight: 700;
+    }
+    .cmp-font-chip:active { opacity: 0.7; }
+
+    /* 文字色 */
+    .cmp-color-row {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      justify-content: center;
+    }
+    .cmp-color-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: none;
       cursor: pointer;
-      backdrop-filter: blur(4px);
+      flex-shrink: 0;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .cmp-color-dot.active { box-shadow: 0 0 0 2px #fff; transform: scale(1.3); }
+    .cmp-color-more-btn {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: none;
+      background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
+      cursor: pointer;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .cmp-color-more-btn input[type="color"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* フィルター */
+    .cmp-filter-row {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .cmp-filter-row::-webkit-scrollbar { display: none; }
+    .cmp-filter-chip {
+      flex-shrink: 0;
+      padding: 5px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.8);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .cmp-filter-chip.active {
+      border-color: #fff;
+      background: rgba(255,255,255,0.25);
+      color: #fff;
+    }
+    .cmp-filter-chip:active { opacity: 0.7; }
+
+    /* 背景パネル内 */
+    .cmp-bg-row {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+    }
+    .cmp-bg-type-btns {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+    .cmp-bg-type-btn {
+      padding: 4px 10px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .cmp-bg-type-btn.active { background: rgba(255,255,255,0.30); color: #fff; border-color: #fff; }
+    .cmp-bg-type-btn:active { opacity: 0.7; }
+
+    /* グラデパレット（Instagram風タップ式） */
+    .cmp-grad-cycle-wrap {
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .stories-font-btn:active { background: rgba(255,255,255,0.3); }
-
-    /* Identity row */
-    .stories-identity-row {
-      margin-top: 10px;
+    .cmp-grad-cycle-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(255,255,255,0.6);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.1s;
+      box-shadow: 0 0 0 2px rgba(0,0,0,0.3);
     }
-    .stories-identity-label {
+    .cmp-grad-cycle-btn:active { transform: scale(0.93); }
+    .cmp-grad-expand-palette {
+      display: none;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      padding: 8px 0 2px;
+    }
+    .cmp-grad-expand-palette.open { display: flex; }
+    .cmp-grad-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      cursor: pointer;
+      border: 2px solid rgba(255,255,255,0.2);
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .cmp-grad-dot.active { border-color: #fff; transform: scale(1.18); }
+    .cmp-grad-dot:active { opacity: 0.75; }
+
+    /* GIF プレースホルダー */
+    .cmp-gif-placeholder {
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.5);
+      font-size: 12px;
+      display: none;
+    }
+
+    /* 座布団パネル */
+    .cmp-textbg-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+      align-items: center;
+    }
+    .cmp-textbg-row::-webkit-scrollbar { display: none; }
+    .cmp-textbg-chip {
+      flex-shrink: 0;
+      padding: 5px 12px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.85);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .cmp-textbg-chip.active {
+      border-color: #fff;
+      background: rgba(255,255,255,0.25);
+      color: #fff;
+    }
+    .cmp-textbg-chip:active { opacity: 0.7; }
+    .cmp-textbg-chip.none-chip { background: transparent; }
+    .cmp-textbg-chip.white-chip { background: rgba(255,255,255,0.92); color: #111; border-color: rgba(255,255,255,0.9); }
+    .cmp-textbg-chip.black-chip { background: rgba(0,0,0,0.85); color: #fff; border-color: rgba(255,255,255,0.4); }
+    .cmp-textbg-chip.frost-chip { background: rgba(255,255,255,0.18); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #fff; border-color: rgba(255,255,255,0.5); }
+
+    /* 座布団背景スタイル */
+    .cmp-text-layer.bg-none { background: transparent; padding: 0; }
+    .cmp-text-layer.bg-white {
+      background: rgba(255,255,255,0.92);
+      padding: 8px 22px;
+      border-radius: 14px;
+      display: inline-block;
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+    .cmp-text-layer.bg-black {
+      background: rgba(0,0,0,0.85);
+      padding: 8px 22px;
+      border-radius: 14px;
+      display: inline-block;
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+    .cmp-text-layer.bg-frost {
+      background: rgba(255,255,255,0.15);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      padding: 8px 22px;
+      border-radius: 14px;
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+      display: inline-block;
+    }
+
+    /* (cmp-identity-row removed — moved to publish modal) */
+
+    /* hidden file input */
+    #cmpPhotoInput { display: none; }
+
+    /* URLモーダル */
+    .cmp-url-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 4500;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .cmp-url-modal-overlay.open { display: flex; }
+    .cmp-url-modal {
+      width: 100%;
+      max-width: 430px;
+      background: var(--bg);
+      border-radius: 20px 20px 0 0;
+      padding: 20px 20px 36px;
+    }
+    .cmp-url-modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .cmp-url-input, .cmp-url-title-input {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
+      margin-bottom: 10px;
+      font-family: inherit;
+      color: var(--text-main);
+    }
+    .cmp-url-input:focus, .cmp-url-title-input:focus { border-color: var(--primary); }
+    .cmp-url-design-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+    }
+    .cmp-url-design-chip {
+      flex-shrink: 0;
+      padding: 5px 12px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: var(--text-main);
+    }
+    .cmp-url-design-chip.active { border-color: var(--primary); background: var(--primary-bg); color: var(--primary); }
+    .cmp-url-modal-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .cmp-url-modal-cancel {
+      flex: 1;
+      padding: 12px 0;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-main);
+    }
+    .cmp-url-modal-apply {
+      flex: 2;
+      padding: 12px 0;
+      border-radius: 50px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ===== PUBLISH MODAL ===== */
+    .cmp-publish-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: 5000;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .cmp-publish-overlay.open { display: flex; }
+    .cmp-publish-modal {
+      width: 100%;
+      max-width: 430px;
+      background: #100018;
+      border-radius: 24px 24px 0 0;
+      padding: 20px 20px 40px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+    .cmp-publish-handle {
+      width: 36px;
+      height: 4px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+      margin: 0 auto 16px;
+    }
+    .cmp-publish-summary {
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      margin-bottom: 18px;
+      min-height: 20px;
+    }
+    .cmp-publish-summary strong {
+      color: #fff;
+      font-size: 14px;
+    }
+    .cmp-publish-section {
+      margin-bottom: 16px;
+    }
+    .cmp-publish-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .cmp-publish-check-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .cmp-publish-check-label {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      padding: 8px 10px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 10px;
       cursor: pointer;
-      padding: 7px 10px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: var(--radius-md);
-      backdrop-filter: blur(4px);
+      transition: background 0.15s;
     }
-    .stories-identity-label input {
-      width: 15px;
-      height: 15px;
+    .cmp-publish-check-label:active { background: rgba(255,255,255,0.12); }
+    .cmp-publish-check-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
       accent-color: var(--primary);
       cursor: pointer;
       flex-shrink: 0;
     }
-    .stories-identity-label span {
-      font-size: 12px;
+    .cmp-publish-check-label span {
+      font-size: 13px;
       font-weight: 600;
       color: rgba(255,255,255,0.85);
+      flex: 1;
     }
-    .stories-identity-cats {
-      display: none;
-      margin-top: 6px;
-      padding: 8px 10px;
-      background: rgba(0,0,0,0.35);
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: var(--radius-md);
-      backdrop-filter: blur(4px);
-    }
-    .stories-identity-cats.open { display: block; }
-    .stories-identity-cats-label {
-      font-size: 10px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 6px;
-    }
-    .stories-identity-cats-row {
+    .cmp-publish-groups-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 5px;
+      gap: 6px;
     }
-
-    /* Text layer styles */
-    .stories-text-layer {
-      position: absolute;
-      cursor: move;
-      max-width: 85%;
-      white-space: pre-wrap;
-      word-break: break-word;
+    .cmp-publish-group-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: rgba(255,255,255,0.07);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.8);
+      cursor: pointer;
+      transition: all 0.15s;
       user-select: none;
-      z-index: 50;
-      touch-action: none;
     }
-    .stories-text-layer.selected {
-      outline: 1px dashed rgba(255,255,255,0.6);
-      outline-offset: 4px;
+    .cmp-publish-group-pill.selected {
+      background: rgba(124,58,237,0.35);
+      border-color: var(--primary);
+      color: #fff;
     }
-    .stories-text-layer.editing {
-      outline: 1.5px solid var(--primary-light);
-      outline-offset: 4px;
-      background: rgba(0,0,0,0.25);
-      border-radius: 4px;
-      padding: 2px 4px;
+    .cmp-publish-group-pill:active { opacity: 0.75; }
+    .cmp-publish-new-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: none;
+      border: 1.5px dashed rgba(167,139,250,0.5);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary-light);
+      cursor: pointer;
     }
-
-    /* hidden file inputs */
-    #storiesPhotoInput, #storiesVideoInput {
-      display: none;
+    .cmp-publish-identity-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
     }
+    .cmp-publish-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .cmp-publish-cancel {
+      flex: 1;
+      padding: 13px 0;
+      border-radius: 50px;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      background: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: rgba(255,255,255,0.7);
+    }
+    .cmp-publish-confirm {
+      flex: 2;
+      padding: 13px 0;
+      border-radius: 50px;
+      border: none;
+      background: #2563EB;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .cmp-publish-confirm:active { transform: scale(0.97); opacity: 0.88; }
 
     /* ===== IDENTITY CATEGORY BUTTON ===== */
     .identity-cat-btn {
@@ -3785,13 +4170,13 @@
     }
     .identity-cat-btn:active { opacity: 0.7; }
 
-    /* composer内のidentity-cat-btn は暗い背景に合わせる */
-    .stories-identity-cats-row .identity-cat-btn {
+    /* cmp-publish-modal内のidentity-cat-btn は暗い背景に合わせる */
+    .cmp-publish-modal .identity-cat-btn {
       color: rgba(255,255,255,0.85);
       background: rgba(255,255,255,0.1);
       border-color: rgba(255,255,255,0.25);
     }
-    .stories-identity-cats-row .identity-cat-btn.selected {
+    .cmp-publish-modal .identity-cat-btn.selected {
       background: var(--primary);
       color: #fff;
       border-color: var(--primary);
@@ -4226,95 +4611,208 @@
     </div>
 
 
-    <!-- ===== POST COMPOSER SCREEN (Instagram Stories-style) ===== -->
+    <!-- ===== POST COMPOSER SCREEN (簡易版) ===== -->
     <div class="screen" id="screen-post">
-      <div class="composer-screen" id="composerScreen">
-        <div class="stories-editor" id="storiesEditor">
+      <div class="cmp-wrap" id="cmpWrap">
 
-          <!-- Hidden file inputs -->
-          <input type="file" id="storiesPhotoInput" accept="image/*" onchange="storiesLoadPhoto(event)">
-          <input type="file" id="storiesVideoInput" accept="video/*" onchange="storiesLoadVideo(event)">
+        <!-- hidden file input -->
+        <input type="file" id="cmpPhotoInput" accept="image/*" onchange="cmpLoadPhoto(event)">
 
-          <!-- Fullscreen background canvas -->
-          <div class="stories-bg-canvas" id="storiesBgCanvas">
-            <img id="storiesPreviewImg" src="" alt="">
-            <video id="storiesPreviewVid" src="" loop muted playsinline></video>
-          </div>
-
-          <!-- Text layers container (fullscreen) -->
-          <div id="storiesTextLayers"></div>
-
-          <!-- Floating top toolbar -->
-          <div class="stories-header">
-            <button class="stories-close-btn" onclick="storiesClose()">✕</button>
-            <div class="stories-header-center">
-              <button class="stories-add-text-btn" onclick="storiesAddText()">＋Aa</button>
-              <button class="stories-tool-btn stories-font-btn" id="storiesFontBtn" onclick="storiesCycleFont()" title="フォント切替">Aa</button>
+        <!-- キャンバス -->
+        <div class="cmp-canvas" id="cmpCanvas">
+          <!-- 背景 -->
+          <div class="cmp-bg" id="cmpBg">
+            <div class="cmp-bg-photo-wrap" id="cmpPhotoWrap" style="display:none;">
+              <img class="cmp-bg-photo-img" id="cmpPhotoImg" src="" alt="" draggable="false">
             </div>
-            <button class="stories-post-btn" onclick="storiesPost()">投稿</button>
           </div>
-
-          <!-- Left side: vertical size slider -->
-          <div class="stories-size-slider-wrap" id="storiesSizeSliderWrap">
-            <div class="stories-size-slider-arrow">▲</div>
-            <div class="stories-size-slider-track" id="storiesSizeTrack">
-              <div class="stories-size-slider-fill" id="storiesSizeFill" style="height:35%;"></div>
-              <div class="stories-size-slider-thumb" id="storiesSizeThumb" style="bottom:35%;"></div>
-              <input type="range" id="storiesSizeSlider" class="stories-size-slider" min="14" max="48" value="24" oninput="storiesSliderSize(this.value)">
-            </div>
-            <div class="stories-size-slider-arrow">▼</div>
+          <!-- 写真フィルター -->
+          <div class="cmp-photo-filter" id="cmpPhotoFilter"></div>
+          <!-- ゴミ箱（写真ドラッグ時のみ表示） -->
+          <div class="cmp-trash-zone" id="cmpTrashZone">🗑️</div>
+          <!-- テキスト -->
+          <div class="cmp-text-layer" id="cmpTextLayer">
+            <textarea class="cmp-text-input" id="cmpTextInput" placeholder="タップして入力..." rows="1" oninput="cmpAutoResize(this)"></textarea>
           </div>
+        </div>
 
-          <!-- Floating bottom overlay -->
-          <div class="stories-bottom-overlay">
-            <!-- Color palette -->
-            <div class="stories-color-palette" id="storiesColorPalette">
-              <div class="stories-color-dot active" style="background:#ffffff;" data-color="#ffffff" onclick="storiesSetColor(this)"></div>
-              <div class="stories-color-dot" style="background:#111111;" data-color="#111111" onclick="storiesSetColor(this)"></div>
-              <div class="stories-color-dot" style="background:#EF4444;" data-color="#EF4444" onclick="storiesSetColor(this)"></div>
-              <div class="stories-color-dot" style="background:#3B82F6;" data-color="#3B82F6" onclick="storiesSetColor(this)"></div>
-              <div class="stories-color-dot" style="background:#FBBF24;" data-color="#FBBF24" onclick="storiesSetColor(this)"></div>
-              <div class="stories-color-dot" style="background:#F472B6;" data-color="#F472B6" onclick="storiesSetColor(this)"></div>
-            </div>
+        <!-- ヘッダー -->
+        <div class="cmp-header">
+          <button class="cmp-close-btn" onclick="cmpClose()">✕</button>
+        </div>
 
-            <!-- BG type buttons + gradient palette -->
-            <div class="stories-bg-row">
-              <div class="stories-bg-type-btns">
-                <button class="stories-bg-type-btn active" id="bgTypeGrad" onclick="storiesBgType('grad')" title="グラデ">🎨</button>
-                <button class="stories-bg-type-btn" id="bgTypePhoto" onclick="storiesBgType('photo')" title="写真">📷</button>
-                <button class="stories-bg-type-btn" id="bgTypeVideo" onclick="storiesBgType('video')" title="動画">🎬</button>
+        <!-- ボトムコントロール -->
+        <div class="cmp-controls">
+
+          <!-- 背景パネル -->
+          <div class="cmp-tool-panel" id="cmpPanelBg">
+            <div class="cmp-bg-row">
+              <div class="cmp-bg-type-btns">
+                <button class="cmp-bg-type-btn active" id="cmpBgGradBtn" onclick="cmpBgType('grad')">🎨 グラデ</button>
+                <button class="cmp-bg-type-btn" id="cmpBgPhotoBtn" onclick="cmpBgType('photo')">📷 写真</button>
+                <button class="cmp-bg-type-btn" id="cmpBgGifBtn" onclick="cmpBgType('gif')">GIF</button>
               </div>
-              <div class="stories-grad-palette" id="storiesGradPalette">
-                <div class="stories-grad-dot active" style="background:linear-gradient(135deg,#7C3AED,#60A5FA);" data-grad="linear-gradient(135deg,#7C3AED,#60A5FA)" onclick="storiesSetGrad(this)"></div>
-                <div class="stories-grad-dot" style="background:linear-gradient(135deg,#F97316,#EC4899);" data-grad="linear-gradient(135deg,#F97316,#EC4899)" onclick="storiesSetGrad(this)"></div>
-                <div class="stories-grad-dot" style="background:linear-gradient(135deg,#10B981,#06B6D4);" data-grad="linear-gradient(135deg,#10B981,#06B6D4)" onclick="storiesSetGrad(this)"></div>
-                <div class="stories-grad-dot" style="background:linear-gradient(135deg,#1E3A8A,#7C3AED);" data-grad="linear-gradient(135deg,#1E3A8A,#7C3AED)" onclick="storiesSetGrad(this)"></div>
-                <div class="stories-grad-dot" style="background:linear-gradient(135deg,#EC4899,#EF4444);" data-grad="linear-gradient(135deg,#EC4899,#EF4444)" onclick="storiesSetGrad(this)"></div>
-                <div class="stories-grad-dot" style="background:linear-gradient(135deg,#111827,#374151);" data-grad="linear-gradient(135deg,#111827,#374151)" onclick="storiesSetGrad(this)"></div>
-                <div class="stories-grad-dot" style="background:linear-gradient(135deg,#FBBF24,#F97316);" data-grad="linear-gradient(135deg,#FBBF24,#F97316)" onclick="storiesSetGrad(this)"></div>
-                <div class="stories-grad-dot" style="background:linear-gradient(135deg,#0EA5E9,#6366F1);" data-grad="linear-gradient(135deg,#0EA5E9,#6366F1)" onclick="storiesSetGrad(this)"></div>
-              </div>
-            </div>
-
-            <!-- Identity row -->
-            <div class="stories-identity-row">
-              <label class="stories-identity-label">
-                <input type="checkbox" id="storiesIdentityCheck" onchange="storiesToggleIdentity()">
-                <span>✨ アイデンティティに残す</span>
-              </label>
-              <div class="stories-identity-cats" id="storiesIdentityCats">
-                <div class="stories-identity-cats-label">カテゴリを選ぶ</div>
-                <div class="stories-identity-cats-row">
-                  <button class="identity-cat-btn" onclick="selectIdentityCat(this)">🇸🇬 シンガポール</button>
-                  <button class="identity-cat-btn" onclick="selectIdentityCat(this)">💼 経営</button>
-                  <button class="identity-cat-btn" onclick="selectIdentityCat(this)">🤖 AI・テック</button>
-                  <button class="identity-cat-btn" onclick="selectIdentityCat(this)">📈 投資</button>
-                  <button onclick="showToast('New Category (coming soon)')" style="font-size:11px;font-weight:600;color:var(--primary-light);background:none;border:1.5px dashed rgba(167,139,250,0.6);border-radius:16px;padding:3px 10px;cursor:pointer;">+ New Category</button>
+              <!-- Instagram風タップ式グラデ選択 -->
+              <div id="cmpGradPalette">
+                <div class="cmp-grad-cycle-wrap">
+                  <div class="cmp-grad-cycle-btn" id="cmpGradCycleBtn" onclick="cmpCycleGrad()" style="background:linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);"></div>
+                </div>
+                <div class="cmp-grad-expand-palette" id="cmpGradExpandPalette">
+                  <div class="cmp-grad-dot active" style="background:linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);" data-grad="linear-gradient(135deg,#020408 0%,#1E3A5F 35%,#7C3AED 70%,#EC4899 100%)" onclick="cmpSelectGradFromPalette(this, 0)"></div>
+                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FFD700,#FF8C42,#EC4899,#9333EA);" data-grad="linear-gradient(135deg,#FFD700 0%,#FF8C42 35%,#EC4899 70%,#9333EA 100%)" onclick="cmpSelectGradFromPalette(this, 1)"></div>
+                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#6EE7B7,#22D3EE,#3B82F6,#8B5CF6);" data-grad="linear-gradient(135deg,#6EE7B7 0%,#22D3EE 35%,#3B82F6 70%,#8B5CF6 100%)" onclick="cmpSelectGradFromPalette(this, 2)"></div>
+                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#F9A8D4,#E879F9,#A855F7,#6366F1);" data-grad="linear-gradient(135deg,#F9A8D4 0%,#E879F9 35%,#A855F7 70%,#6366F1 100%)" onclick="cmpSelectGradFromPalette(this, 3)"></div>
+                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FDE047,#BEF264,#22C55E,#059669);" data-grad="linear-gradient(135deg,#FDE047 0%,#BEF264 35%,#22C55E 70%,#059669 100%)" onclick="cmpSelectGradFromPalette(this, 4)"></div>
+                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FF006E,#8338EC,#3A86FF,#00D4FF);" data-grad="linear-gradient(135deg,#FF006E 0%,#8338EC 35%,#3A86FF 70%,#00D4FF 100%)" onclick="cmpSelectGradFromPalette(this, 5)"></div>
+                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FFE066,#FFA93D,#FF5733,#E11D48);" data-grad="linear-gradient(135deg,#FFE066 0%,#FFA93D 35%,#FF5733 70%,#E11D48 100%)" onclick="cmpSelectGradFromPalette(this, 6)"></div>
+                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FFB3D9,#FF66B3,#EC4899,#A855F7);" data-grad="linear-gradient(135deg,#FFB3D9 0%,#FF66B3 35%,#EC4899 70%,#A855F7 100%)" onclick="cmpSelectGradFromPalette(this, 7)"></div>
+                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#A7F3D0,#6EE7B7,#14B8A6,#0891B2);" data-grad="linear-gradient(135deg,#A7F3D0 0%,#6EE7B7 35%,#14B8A6 70%,#0891B2 100%)" onclick="cmpSelectGradFromPalette(this, 8)"></div>
+                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#3D2817,#B8860B,#FFD700,#FFFFFF);" data-grad="linear-gradient(135deg,#3D2817 0%,#B8860B 35%,#FFD700 70%,#FFFFFF 100%)" onclick="cmpSelectGradFromPalette(this, 9)"></div>
                 </div>
               </div>
+              <div class="cmp-gif-placeholder" id="cmpGifPlaceholder">🚧 GIF開発中</div>
             </div>
           </div>
 
+          <!-- フォントパネル -->
+          <div class="cmp-tool-panel" id="cmpPanelFont">
+            <div class="cmp-font-row" id="cmpFontRow">
+              <div class="cmp-font-chip active" data-font="'Noto Sans JP', sans-serif" data-weight="700" onclick="cmpSetFont(this)">ゴシック</div>
+              <div class="cmp-font-chip" data-font="'M PLUS 1p', sans-serif" data-weight="700" onclick="cmpSetFont(this)">太ゴシック</div>
+              <div class="cmp-font-chip" data-font="'Zen Kaku Gothic New', sans-serif" data-weight="300" onclick="cmpSetFont(this)">細ゴシック</div>
+              <div class="cmp-font-chip" data-font="'Noto Serif JP', serif" data-weight="400" onclick="cmpSetFont(this)">明朝</div>
+              <div class="cmp-font-chip" data-font="'Shippori Mincho', serif" data-weight="400" onclick="cmpSetFont(this)">エレガント</div>
+              <div class="cmp-font-chip" data-font="'Yusei Magic', cursive" data-weight="400" onclick="cmpSetFont(this)">手書き</div>
+              <div class="cmp-font-chip" data-font="'Klee One', cursive" data-weight="400" onclick="cmpSetFont(this)">学校風</div>
+              <div class="cmp-font-chip" data-font="'Kaisei Decol', serif" data-weight="400" onclick="cmpSetFont(this)">ポップ明朝</div>
+              <div class="cmp-font-chip" data-font="'Stick', sans-serif" data-weight="400" onclick="cmpSetFont(this)">ポップ</div>
+              <div class="cmp-font-chip" data-font="'Reggae One', cursive" data-weight="400" onclick="cmpSetFont(this)">極太</div>
+            </div>
+            <div class="cmp-color-row" style="margin-top:8px;">
+              <div class="cmp-color-dot active" style="background:#ffffff;" data-color="#ffffff" onclick="cmpSetColor(this)"></div>
+              <div class="cmp-color-dot" style="background:#111111;" data-color="#111111" onclick="cmpSetColor(this)"></div>
+              <div class="cmp-color-dot" style="background:#EF4444;" data-color="#EF4444" onclick="cmpSetColor(this)"></div>
+              <div class="cmp-color-dot" style="background:#3B82F6;" data-color="#3B82F6" onclick="cmpSetColor(this)"></div>
+              <div class="cmp-color-dot" style="background:#F59E0B;" data-color="#F59E0B" onclick="cmpSetColor(this)"></div>
+              <div class="cmp-color-dot" style="background:#10B981;" data-color="#10B981" onclick="cmpSetColor(this)"></div>
+              <div class="cmp-color-dot" style="background:#EC4899;" data-color="#EC4899" onclick="cmpSetColor(this)"></div>
+              <div class="cmp-color-more-btn" title="その他の色">
+                <input type="color" id="cmpColorPicker" value="#ffffff" oninput="cmpSetColorFromPicker(this.value)">
+              </div>
+            </div>
+            <div class="cmp-textbg-row" style="margin-top:8px; justify-content:center;">
+              <div class="cmp-textbg-chip none-chip active" onclick="cmpSetTextBg('none')">なし</div>
+              <div class="cmp-textbg-chip white-chip" onclick="cmpSetTextBg('white')">Aa</div>
+              <div class="cmp-textbg-chip black-chip" onclick="cmpSetTextBg('black')">Aa</div>
+              <div class="cmp-textbg-chip frost-chip" onclick="cmpSetTextBg('frost')">Aa</div>
+            </div>
+          </div>
+
+          <!-- フィルターパネル -->
+          <div class="cmp-tool-panel" id="cmpPanelFilter">
+            <div class="cmp-filter-row" id="cmpFilterRow">
+              <div class="cmp-filter-chip active" data-filter="" onclick="cmpSetFilter(this)">なし</div>
+              <div class="cmp-filter-chip" data-filter="grayscale(100%)" onclick="cmpSetFilter(this)">白黒</div>
+              <div class="cmp-filter-chip" data-filter="sepia(100%)" onclick="cmpSetFilter(this)">セピア</div>
+              <div class="cmp-filter-chip" data-filter="contrast(150%)" onclick="cmpSetFilter(this)">高コントラスト</div>
+              <div class="cmp-filter-chip" data-filter="saturate(180%)" onclick="cmpSetFilter(this)">彩度アップ</div>
+              <div class="cmp-filter-chip" data-filter="blur(2px)" onclick="cmpSetFilter(this)">ぼかし</div>
+              <div class="cmp-filter-chip" data-filter="sepia(50%) contrast(110%) saturate(80%)" onclick="cmpSetFilter(this)">ビンテージ</div>
+            </div>
+          </div>
+
+          <!-- URL バッジ（アイコンバー上） -->
+          <div class="cmp-url-badge-area" id="cmpUrlBadgeArea">
+            <div class="cmp-url-badge-pill">
+              <span class="cmp-url-badge-text" id="cmpUrlBadgeText"></span>
+              <button class="cmp-url-badge-close" onclick="cmpRemoveUrl()">✕</button>
+            </div>
+          </div>
+
+          <!-- アイコン行（常時表示） -->
+          <div class="cmp-icon-bar">
+            <button class="cmp-icon-btn" id="cmpIconBg" onclick="cmpToggleToolPanel('bg')" title="背景"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="9" r="1.5" fill="#fff" stroke="none"/><path d="M21 15l-5-5L5 21"/></svg></button>
+            <button class="cmp-icon-btn" id="cmpIconFont" onclick="cmpToggleToolPanel('font')" title="文字"><span class="icon-glyph">Aa</span></button>
+            <button class="cmp-icon-btn" id="cmpIconFilter" onclick="cmpToggleToolPanel('filter')" title="フィルター"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18 16l.9 2.4 2.1.6-2.1.6-.9 2.4-.9-2.4-2.1-.6 2.1-.6z"/></svg></button>
+            <button class="cmp-icon-btn" id="cmpIconUrl" onclick="cmpOpenUrlModal()" title="URL"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+            <button class="cmp-icon-post-btn" onclick="cmpPost()">投稿</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- URLカードモーダル -->
+    <div class="cmp-url-modal-overlay" id="cmpUrlModalOverlay">
+      <div class="cmp-url-modal">
+        <div class="cmp-url-modal-title">🔗 URLバッジ追加</div>
+        <input class="cmp-url-input" id="cmpUrlInputField" type="url" placeholder="https://...">
+        <input class="cmp-url-title-input" id="cmpUrlTitleField" type="text" placeholder="タイトル（省略可）">
+        <div class="cmp-url-modal-actions">
+          <button class="cmp-url-modal-cancel" onclick="cmpCloseUrlModal()">キャンセル</button>
+          <button class="cmp-url-modal-apply" onclick="cmpApplyUrl()">追加</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 投稿確認モーダル -->
+    <div class="cmp-publish-overlay" id="cmpPublishOverlay">
+      <div class="cmp-publish-modal" id="cmpPublishModal">
+        <div class="cmp-publish-handle"></div>
+        <div class="cmp-publish-summary" id="cmpPublishSummary"><strong>公開</strong></div>
+
+        <!-- 階級 -->
+        <div class="cmp-publish-section">
+          <div class="cmp-publish-section-title">階級</div>
+          <div class="cmp-publish-check-row">
+            <label class="cmp-publish-check-label">
+              <input type="checkbox" id="cmpTierCore" checked onchange="cmpUpdatePublishSummary()">
+              <span>CORE</span>
+              <span class="tier-badge tier-badge-core" style="padding:2px 8px;border-radius:50px;font-size:10px;font-weight:700;color:#fff;">CORE</span>
+            </label>
+            <label class="cmp-publish-check-label">
+              <input type="checkbox" id="cmpTierOrbit" checked onchange="cmpUpdatePublishSummary()">
+              <span>ORBIT</span>
+              <span class="tier-badge tier-badge-orbit" style="padding:2px 8px;border-radius:50px;font-size:10px;font-weight:700;color:#fff;">ORBIT</span>
+            </label>
+            <label class="cmp-publish-check-label">
+              <input type="checkbox" id="cmpTierHalo" checked onchange="cmpUpdatePublishSummary()">
+              <span>HALO</span>
+              <span class="tier-badge tier-badge-halo" style="padding:2px 8px;border-radius:50px;font-size:10px;font-weight:700;color:#fff;">HALO</span>
+            </label>
+            <label class="cmp-publish-check-label">
+              <input type="checkbox" id="cmpTierGalaxy" checked onchange="cmpUpdatePublishSummary()">
+              <span>GALAXY</span>
+              <span class="tier-badge tier-badge-galaxy" style="padding:2px 8px;border-radius:50px;font-size:10px;font-weight:700;color:#fff;">GALAXY</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- グループ -->
+        <div class="cmp-publish-section">
+          <div class="cmp-publish-section-title">グループ</div>
+          <div class="cmp-publish-groups-row">
+            <div class="cmp-publish-group-pill" data-group="酒好き" onclick="cmpToggleGroup(this)">🍺 酒好き</div>
+            <div class="cmp-publish-group-pill" data-group="投資仲間" onclick="cmpToggleGroup(this)">📈 投資仲間</div>
+            <div class="cmp-publish-group-pill" data-group="ゴルフ部" onclick="cmpToggleGroup(this)">⛳ ゴルフ部</div>
+            <button class="cmp-publish-new-group" onclick="showToast('Coming soon')">+ 新しいグループ</button>
+          </div>
+        </div>
+
+        <!-- アイデンティティ -->
+        <div class="cmp-publish-section">
+          <div class="cmp-publish-section-title">アイデンティティ</div>
+          <div class="cmp-publish-identity-row">
+            <button class="identity-cat-btn" onclick="cmpToggleIdentityPub(this)">🇸🇬 シンガポール</button>
+            <button class="identity-cat-btn" onclick="cmpToggleIdentityPub(this)">💼 経営</button>
+            <button class="identity-cat-btn" onclick="cmpToggleIdentityPub(this)">🤖 AI・テック</button>
+            <button class="identity-cat-btn" onclick="cmpToggleIdentityPub(this)">📈 投資</button>
+          </div>
+        </div>
+
+        <div class="cmp-publish-actions">
+          <button class="cmp-publish-cancel" onclick="cmpClosePublishModal()">キャンセル</button>
+          <button class="cmp-publish-confirm" onclick="cmpConfirmPost()">投稿</button>
         </div>
       </div>
     </div>
@@ -5254,12 +5752,12 @@
         </div>
       </div>
 
-      <!-- Cosmos -->
+      <!-- Connect -->
       <div class="circle-section" id="sec-ambient" style="margin-bottom:100px;">
         <div class="circle-section-header" onclick="toggleSection('sec-ambient')">
           <div class="circle-section-title">
-            <span>👥</span>
-            <span>Cosmos</span>
+            <span>🤝</span>
+            <span>Connect</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
             <span class="circle-capacity">280/500人</span>
@@ -5815,8 +6313,8 @@
         <div class="msg-option-left">🌌 Galaxy <span class="msg-option-count">（150人）</span></div>
         <div class="msg-check"></div>
       </div>
-      <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Cosmos" data-count="280">
-        <div class="msg-option-left">👥 Cosmos <span class="msg-option-count">（280人）</span></div>
+      <div class="msg-option" onclick="toggleMsgOption(this)" data-name="Connect" data-count="280">
+        <div class="msg-option-left">🤝 Connect <span class="msg-option-count">（280人）</span></div>
         <div class="msg-check"></div>
       </div>
 
@@ -6729,9 +7227,9 @@
     document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
     const tabEl = document.getElementById('tab-' + tab);
     if (tabEl) tabEl.classList.add('active');
-    // コンポーザーを開いたら最初のレイヤーを自動追加
-    if (tab === 'post' && storiesTextLayers.length === 0) {
-      storiesAddTextInitial();
+    // コンポーザーを開いたらテキスト入力にフォーカス
+    if (tab === 'post') {
+      setTimeout(() => { const t = document.getElementById('cmpTextInput'); if (t) t.focus(); }, 100);
     }
   }
 
@@ -7357,404 +7855,646 @@
     if (el) el.classList.toggle('open');
   }
 
-  // ===== STORIES EDITOR (Instagram Stories-style) =====
-  const STORIES_FONTS = [
-    { label: 'Aa',  family: "'Noto Sans JP', sans-serif",  weight: '700' },
-    { label: '明',  family: "'Noto Serif JP', serif",      weight: '700' },
-    { label: '手',  family: "'Kosugi Maru', cursive",      weight: '400' },
-    { label: 'POP', family: "'Noto Sans JP', sans-serif",  weight: '900' },
+  // ===== POST COMPOSER (簡易版) =====
+  const CMP_HYPERAY_GRAD = 'linear-gradient(135deg,#020408 0%,#1E3A5F 35%,#7C3AED 70%,#EC4899 100%)';
+  // HYPERAYテーマカラー: #020408 → #1E3A5F → #7C3AED → #EC4899
+
+  // 10グラデーション（順番保持）
+  const CMP_GRADS = [
+    'linear-gradient(135deg,#020408 0%,#1E3A5F 35%,#7C3AED 70%,#EC4899 100%)',
+    'linear-gradient(135deg,#FFD700 0%,#FF8C42 35%,#EC4899 70%,#9333EA 100%)',
+    'linear-gradient(135deg,#6EE7B7 0%,#22D3EE 35%,#3B82F6 70%,#8B5CF6 100%)',
+    'linear-gradient(135deg,#F9A8D4 0%,#E879F9 35%,#A855F7 70%,#6366F1 100%)',
+    'linear-gradient(135deg,#FDE047 0%,#BEF264 35%,#22C55E 70%,#059669 100%)',
+    'linear-gradient(135deg,#FF006E 0%,#8338EC 35%,#3A86FF 70%,#00D4FF 100%)',
+    'linear-gradient(135deg,#FFE066 0%,#FFA93D 35%,#FF5733 70%,#E11D48 100%)',
+    'linear-gradient(135deg,#FFB3D9 0%,#FF66B3 35%,#EC4899 70%,#A855F7 100%)',
+    'linear-gradient(135deg,#A7F3D0 0%,#6EE7B7 35%,#14B8A6 70%,#0891B2 100%)',
+    'linear-gradient(135deg,#3D2817 0%,#B8860B 35%,#FFD700 70%,#FFFFFF 100%)',
   ];
-  let storiesFontIdx   = 0;
-  let storiesColorVal  = '#ffffff';
-  let storiesCurrentGrad = 'linear-gradient(135deg,#7C3AED,#60A5FA)';
-  let storiesBgMode    = 'grad';  // 'grad' | 'photo' | 'video'
-  let storiesTextLayers = []; // Array of {id, text, fontSize, color, fontIdx, x, y}
-  let selectedTextLayerId = null;
-  let draggingTextLayerId = null;
-  let dragOffsetX = 0;
-  let dragOffsetY = 0;
-  let currentFontSize = 24;
+  let cmpCurrentGradIndex = 0;
 
-  // ---- slider UI sync ----
-  function storiesUpdateSliderUI(value) {
-    const min = 14, max = 48;
-    const pct = (value - min) / (max - min) * 100;
-    const fill = document.getElementById('storiesSizeFill');
-    const thumb = document.getElementById('storiesSizeThumb');
-    if (fill) fill.style.height = pct + '%';
-    if (thumb) thumb.style.bottom = pct + '%';
+  let cmpBgMode      = 'grad';   // 'grad' | 'photo' | 'gif'
+  let cmpCurrentGrad = CMP_HYPERAY_GRAD;
+  let cmpTextColor   = '#ffffff';
+  let cmpFontFamily  = "'Noto Sans JP', sans-serif";
+  let cmpFontWeight  = '700';
+  let cmpPhotoEl     = null;     // 写真操作用
+  let cmpPhotoScale  = 1;
+  let cmpPhotoRotate = 0;
+  let cmpPhotoTransX = 0;
+  let cmpPhotoTransY = 0;
+  let cmpUrlData     = null;     // {url, title}
+  let cmpGradExpandOpen = false;
+  let cmpGradLongPressTimer = null;
+
+  // サイト名マップ
+  const CMP_SITE_MAP = {
+    'youtube.com': 'YouTube', 'youtu.be': 'YouTube',
+    'twitter.com': 'X', 'x.com': 'X',
+    'instagram.com': 'Instagram', 'tiktok.com': 'TikTok',
+    'github.com': 'GitHub', 'note.com': 'note',
+    'zenn.dev': 'Zenn',
+  };
+
+  function cmpGetSiteName(url) {
+    try {
+      const host = new URL(url).hostname.replace('www.', '');
+      if (CMP_SITE_MAP[host]) return CMP_SITE_MAP[host];
+      return host.split('.')[0].charAt(0).toUpperCase() + host.split('.')[0].slice(1);
+    } catch { return url; }
   }
 
-  function storiesApplyTextStyle() {
-    const f = STORIES_FONTS[storiesFontIdx];
-    document.getElementById('storiesFontBtn').textContent = f.label;
-    storiesUpdateSliderUI(currentFontSize);
+  // テキストのauto-resize
+  function cmpAutoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+    cmpUpdateFontSize();
   }
 
-  // ---- add text ----
-  function storiesAddText() {
-    const layerId = 'text-' + Date.now();
-    const editor = document.getElementById('storiesEditor');
-    const ew = editor ? editor.offsetWidth : 390;
-    const eh = editor ? editor.offsetHeight : 700;
-    const layer = {
-      id: layerId,
-      text: '新しいテキスト',
-      fontSize: currentFontSize,
-      color: storiesColorVal,
-      fontIdx: storiesFontIdx,
-      x: Math.round(ew * 0.1),
-      y: Math.round(eh * 0.35) + storiesTextLayers.length * 55
-    };
-    storiesTextLayers.push(layer);
-    selectedTextLayerId = layerId;
-    storiesRenderTextLayers();
-    // すぐ編集状態にする
-    setTimeout(() => storiesStartTextEdit(layerId), 50);
-  }
-
-  function storiesAddTextInitial() {
-    const layerId = 'text-' + Date.now();
-    const editor = document.getElementById('storiesEditor');
-    const ew = editor ? editor.offsetWidth : 390;
-    const eh = editor ? editor.offsetHeight : 700;
-    const layer = {
-      id: layerId,
-      text: 'タップして編集',
-      fontSize: currentFontSize,
-      color: storiesColorVal,
-      fontIdx: storiesFontIdx,
-      x: Math.round(ew * 0.1),
-      y: Math.round(eh * 0.38)
-    };
-    storiesTextLayers.push(layer);
-    selectedTextLayerId = layerId;
-    storiesRenderTextLayers();
-  }
-
-  // ---- render ----
-  function storiesRenderTextLayers() {
-    const container = document.getElementById('storiesTextLayers');
-    if (!container) return;
-    container.innerHTML = '';
-    storiesTextLayers.forEach(layer => {
-      const el = document.createElement('div');
-      el.className = 'stories-text-layer';
-      if (layer.id === selectedTextLayerId) el.classList.add('selected');
-      const font = STORIES_FONTS[layer.fontIdx];
-      el.style.cssText = `
-        left: ${layer.x}px;
-        top: ${layer.y}px;
-        font-size: ${layer.fontSize}px;
-        color: ${layer.color};
-        font-family: ${font.family};
-        font-weight: ${font.weight};
-        text-shadow: ${layer.color === '#111111' ? '0 1px 6px rgba(255,255,255,0.5)' : '0 1px 8px rgba(0,0,0,0.7)'};
-        padding: 4px 6px;
-      `;
-      el.textContent = layer.text;
-      el.dataset.layerId = layer.id;
-
-      // シングルタップ → 選択 + 即編集
-      let didDrag = false;
-      el.addEventListener('pointerdown', (e) => {
-        // 編集中（contentEditable）はドラッグしない
-        if (el.contentEditable === 'true') return;
-        e.preventDefault();
-        didDrag = false;
-        storiesStartTextDrag(e, layer.id);
-      });
-      el.addEventListener('pointermove', (e) => {
-        if (draggingTextLayerId === layer.id) didDrag = true;
-      });
-      el.addEventListener('pointerup', (e) => {
-        // ドラッグ終了を先に処理してリスナーを解除
-        storiesEndTextDrag(e);
-        if (!didDrag) {
-          e.stopPropagation();
-          selectedTextLayerId = layer.id;
-          storiesRenderTextLayers();
-          setTimeout(() => storiesStartTextEdit(layer.id), 20);
-        }
-      });
-
-      // 長押し → 削除
-      let longPressTimer = null;
-      el.addEventListener('touchstart', () => {
-        longPressTimer = setTimeout(() => {
-          if (confirm('このテキストを削除しますか？')) {
-            storiesTextLayers = storiesTextLayers.filter(l => l.id !== layer.id);
-            if (selectedTextLayerId === layer.id) selectedTextLayerId = null;
-            storiesRenderTextLayers();
-          }
-        }, 600);
-      }, { passive: true });
-      el.addEventListener('touchend', () => clearTimeout(longPressTimer));
-      el.addEventListener('touchmove', () => clearTimeout(longPressTimer));
-
-      // マウス右クリック削除
-      el.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        if (confirm('このテキストを削除しますか？')) {
-          storiesTextLayers = storiesTextLayers.filter(l => l.id !== layer.id);
-          if (selectedTextLayerId === layer.id) selectedTextLayerId = null;
-          storiesRenderTextLayers();
-        }
-      });
-
-      container.appendChild(el);
-    });
-
-    // テキスト外タップ → deselect
-    container.onclick = (e) => {
-      if (e.target === container) {
-        selectedTextLayerId = null;
-        storiesRenderTextLayers();
-      }
-    };
-  }
-
-  // ---- drag ----
-  function storiesStartTextDrag(e, layerId) {
-    const layer = storiesTextLayers.find(l => l.id === layerId);
-    if (!layer) return;
-    draggingTextLayerId = layerId;
-    const editor = document.getElementById('storiesEditor');
-    const rect = editor.getBoundingClientRect();
-
-    let clientX = e.clientX, clientY = e.clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    }
-    dragOffsetX = clientX - rect.left - layer.x;
-    dragOffsetY = clientY - rect.top - layer.y;
-
-    document.addEventListener('pointermove', storiesOnTextDrag);
-    document.addEventListener('pointerup', storiesEndTextDrag);
-  }
-
-  function storiesOnTextDrag(e) {
-    if (!draggingTextLayerId) return;
-    const layer = storiesTextLayers.find(l => l.id === draggingTextLayerId);
-    if (!layer) return;
-    const editor = document.getElementById('storiesEditor');
-    const rect = editor.getBoundingClientRect();
-    let x = e.clientX - rect.left - dragOffsetX;
-    let y = e.clientY - rect.top - dragOffsetY;
-    x = Math.max(0, Math.min(x, rect.width - 50));
-    y = Math.max(0, Math.min(y, rect.height - 30));
-    layer.x = x;
-    layer.y = y;
-    // DOM直接更新（rerenderより軽量）
-    const el = document.querySelector(`.stories-text-layer[data-layer-id="${layer.id}"]`);
-    if (el) { el.style.left = x + 'px'; el.style.top = y + 'px'; }
-  }
-
-  function storiesEndTextDrag(e) {
-    draggingTextLayerId = null;
-    document.removeEventListener('pointermove', storiesOnTextDrag);
-    document.removeEventListener('pointerup', storiesEndTextDrag);
-  }
-
-  // ---- edit ----
-  function storiesStartTextEdit(layerId) {
-    const layer = storiesTextLayers.find(l => l.id === layerId);
-    if (!layer) return;
-    const el = document.querySelector(`.stories-text-layer[data-layer-id="${layerId}"]`);
+  // 文字数に応じてフォントサイズを動的調整
+  function cmpUpdateFontSize() {
+    const el = document.getElementById('cmpTextInput');
     if (!el) return;
-    if (el.contentEditable === 'true') return; // 既に編集中
-
-    el.classList.add('editing');
-    el.classList.remove('selected');
-    el.contentEditable = 'true';
-    el.focus();
-
-    // テキスト全選択
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    const sel = window.getSelection();
-    if (sel) { sel.removeAllRanges(); sel.addRange(range); }
-
-    const onBlur = () => {
-      el.contentEditable = 'false';
-      el.classList.remove('editing');
-      layer.text = el.textContent;
-      el.removeEventListener('blur', onBlur);
-      storiesRenderTextLayers();
-    };
-    el.addEventListener('blur', onBlur);
+    const len = el.value.length;
+    const size = Math.max(14, 42 - Math.floor(len * 0.25));
+    el.style.fontSize = size + 'px';
   }
 
-  // ---- size slider ----
-  function storiesSliderSize(value) {
-    const newSize = parseInt(value);
-    currentFontSize = newSize;
-    storiesUpdateSliderUI(newSize);
-    if (selectedTextLayerId) {
-      const layer = storiesTextLayers.find(l => l.id === selectedTextLayerId);
-      if (layer) {
-        layer.fontSize = newSize;
-        const el = document.querySelector(`.stories-text-layer[data-layer-id="${layer.id}"]`);
-        if (el) el.style.fontSize = newSize + 'px';
-      }
-    }
+  // フォント設定
+  function cmpSetFont(chip) {
+    document.querySelectorAll('.cmp-font-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    cmpFontFamily = chip.dataset.font;
+    cmpFontWeight = chip.dataset.weight;
+    const el = document.getElementById('cmpTextInput');
+    if (el) { el.style.fontFamily = cmpFontFamily; el.style.fontWeight = cmpFontWeight; }
   }
 
-  // ---- font cycle ----
-  function storiesCycleFont() {
-    if (selectedTextLayerId) {
-      const layer = storiesTextLayers.find(l => l.id === selectedTextLayerId);
-      if (layer) {
-        layer.fontIdx = (layer.fontIdx + 1) % STORIES_FONTS.length;
-        storiesFontIdx = layer.fontIdx;
-        storiesRenderTextLayers();
-      }
-    } else {
-      storiesFontIdx = (storiesFontIdx + 1) % STORIES_FONTS.length;
-    }
-    storiesApplyTextStyle();
-  }
-
-  // ---- color ----
-  function storiesSetColor(dot) {
-    const color = dot.dataset.color;
-    storiesColorVal = color;
-    if (selectedTextLayerId) {
-      const layer = storiesTextLayers.find(l => l.id === selectedTextLayerId);
-      if (layer) {
-        layer.color = color;
-        storiesRenderTextLayers();
-      }
-    }
-    document.querySelectorAll('.stories-color-dot').forEach(d => d.classList.remove('active'));
+  // 文字色設定
+  function cmpSetColor(dot) {
+    document.querySelectorAll('.cmp-color-dot').forEach(d => d.classList.remove('active'));
     dot.classList.add('active');
+    cmpTextColor = dot.dataset.color;
+    const el = document.getElementById('cmpTextInput');
+    if (el) el.style.color = cmpTextColor;
   }
 
-  // ---- background ----
-  function storiesBgType(type) {
-    storiesBgMode = type;
-    ['grad','photo','video'].forEach(t => {
-      const btn = document.getElementById('bgType' + t.charAt(0).toUpperCase() + t.slice(1));
+  function cmpSetColorFromPicker(color) {
+    cmpTextColor = color;
+    document.querySelectorAll('.cmp-color-dot').forEach(d => d.classList.remove('active'));
+    const el = document.getElementById('cmpTextInput');
+    if (el) el.style.color = cmpTextColor;
+  }
+
+  // フィルター設定
+  function cmpSetFilter(chip) {
+    document.querySelectorAll('.cmp-filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    const filterVal = chip.dataset.filter;
+    const filterEl = document.getElementById('cmpPhotoFilter');
+    if (filterEl) filterEl.style.backdropFilter = filterVal ? `none` : '';
+    // フィルターは写真imgに適用
+    const img = document.getElementById('cmpPhotoImg');
+    if (img) img.style.filter = filterVal;
+  }
+
+  // ツールパネル開閉（1つだけ展開）
+  const CMP_PANELS = ['bg', 'font', 'filter'];
+  let cmpActivePanel = null;
+
+  function cmpToggleToolPanel(name) {
+    const filterIcon = document.getElementById('cmpIconFilter');
+    if (name === 'filter' && cmpBgMode !== 'photo') {
+      showToast('写真モード時のみ使用できます');
+      return;
+    }
+    if (cmpActivePanel === name) {
+      // 同じアイコンで閉じる
+      document.getElementById('cmpPanel' + name.charAt(0).toUpperCase() + name.slice(1)).classList.remove('open');
+      document.getElementById('cmpIcon' + name.charAt(0).toUpperCase() + name.slice(1)).classList.remove('active');
+      cmpActivePanel = null;
+    } else {
+      // 他を全部閉じる
+      CMP_PANELS.forEach(p => {
+        document.getElementById('cmpPanel' + p.charAt(0).toUpperCase() + p.slice(1)).classList.remove('open');
+        document.getElementById('cmpIcon' + p.charAt(0).toUpperCase() + p.slice(1)).classList.remove('active');
+      });
+      // 選択したパネルを開く
+      document.getElementById('cmpPanel' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('open');
+      document.getElementById('cmpIcon' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+      cmpActivePanel = name;
+    }
+  }
+
+  // 座布団背景設定
+  let cmpTextBgType = 'none';
+  function cmpSetTextBg(type) {
+    cmpTextBgType = type;
+    const layer = document.getElementById('cmpTextLayer');
+    if (layer) {
+      layer.classList.remove('bg-none', 'bg-white', 'bg-black', 'bg-frost');
+      if (type !== 'none') layer.classList.add('bg-' + type);
+    }
+    document.querySelectorAll('.cmp-textbg-chip').forEach(c => c.classList.remove('active'));
+    const map = { none: 0, white: 1, black: 2, frost: 3 };
+    const chips = document.querySelectorAll('.cmp-textbg-chip');
+    if (chips[map[type]]) chips[map[type]].classList.add('active');
+  }
+
+  // 背景タイプ切替
+  function cmpBgType(type) {
+    cmpBgMode = type;
+    ['grad','photo','gif'].forEach(t => {
+      const btn = document.getElementById('cmpBg' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn');
       if (btn) btn.classList.toggle('active', t === type);
     });
-    const gradPalette = document.getElementById('storiesGradPalette');
-    if (gradPalette) gradPalette.style.display = type === 'grad' ? 'flex' : 'none';
+    const gradPal = document.getElementById('cmpGradPalette');
+    const gifPh   = document.getElementById('cmpGifPlaceholder');
+    const photoWrap = document.getElementById('cmpPhotoWrap');
+    const filterIcon = document.getElementById('cmpIconFilter');
 
-    if (type === 'photo') document.getElementById('storiesPhotoInput').click();
-    else if (type === 'video') document.getElementById('storiesVideoInput').click();
+    if (type === 'grad') {
+      if (gradPal) gradPal.style.display = 'block';
+      if (gifPh)   gifPh.style.display   = 'none';
+      if (photoWrap) photoWrap.style.display = 'none';
+      if (filterIcon) filterIcon.classList.add('disabled');
+      document.getElementById('cmpBg').style.background = cmpCurrentGrad;
+    } else if (type === 'photo') {
+      if (gradPal) gradPal.style.display = 'none';
+      if (gifPh)   gifPh.style.display   = 'none';
+      if (filterIcon) filterIcon.classList.remove('disabled');
+      document.getElementById('cmpPhotoInput').click();
+    } else if (type === 'gif') {
+      if (gradPal) gradPal.style.display = 'none';
+      if (gifPh)   gifPh.style.display   = 'flex';
+      if (filterIcon) filterIcon.classList.add('disabled');
+      showToast('GIF機能は開発中です');
+    }
   }
 
-  function storiesSetGrad(dot) {
-    storiesCurrentGrad = dot.dataset.grad;
-    document.querySelectorAll('.stories-grad-dot').forEach(d => d.classList.remove('active'));
-    dot.classList.add('active');
-    document.getElementById('storiesPreviewImg').classList.remove('active');
-    document.getElementById('storiesPreviewVid').classList.remove('active');
-    document.getElementById('storiesBgCanvas').style.background = storiesCurrentGrad;
+  // グラデ設定（内部共通）
+  function cmpApplyGradIndex(idx) {
+    cmpCurrentGradIndex = idx;
+    cmpCurrentGrad = CMP_GRADS[idx];
+    document.getElementById('cmpBg').style.background = cmpCurrentGrad;
+    // cycle button の見た目を更新
+    const cycleBtn = document.getElementById('cmpGradCycleBtn');
+    if (cycleBtn) cycleBtn.style.background = cmpCurrentGrad;
+    // palette ドット active 更新
+    document.querySelectorAll('.cmp-grad-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+    const photoWrap = document.getElementById('cmpPhotoWrap');
+    if (photoWrap) photoWrap.style.display = 'none';
+    cmpBgMode = 'grad';
   }
 
-  function storiesLoadPhoto(event) {
+  // タップ→次のグラデへ cycle
+  function cmpCycleGrad() {
+    const palette = document.getElementById('cmpGradExpandPalette');
+    if (cmpGradExpandOpen) {
+      // パレットが開いていたらタップで閉じる
+      palette.classList.remove('open');
+      cmpGradExpandOpen = false;
+      return;
+    }
+    const nextIdx = (cmpCurrentGradIndex + 1) % CMP_GRADS.length;
+    cmpApplyGradIndex(nextIdx);
+  }
+
+  // ロングプレスでパレット展開（cycle button に登録）
+  function cmpInitGradLongPress() {
+    const btn = document.getElementById('cmpGradCycleBtn');
+    if (!btn) return;
+    btn.addEventListener('touchstart', () => {
+      cmpGradLongPressTimer = setTimeout(() => {
+        const palette = document.getElementById('cmpGradExpandPalette');
+        if (palette) { palette.classList.add('open'); cmpGradExpandOpen = true; }
+      }, 500);
+    }, { passive: true });
+    btn.addEventListener('touchend', () => { clearTimeout(cmpGradLongPressTimer); }, { passive: true });
+    btn.addEventListener('touchcancel', () => { clearTimeout(cmpGradLongPressTimer); }, { passive: true });
+    // マウス対応（デスクトップテスト用）
+    btn.addEventListener('mousedown', () => {
+      cmpGradLongPressTimer = setTimeout(() => {
+        const palette = document.getElementById('cmpGradExpandPalette');
+        if (palette) { palette.classList.add('open'); cmpGradExpandOpen = true; }
+      }, 500);
+    });
+    btn.addEventListener('mouseup', () => { clearTimeout(cmpGradLongPressTimer); });
+  }
+
+  // パレットからグラデ選択
+  function cmpSelectGradFromPalette(dot, idx) {
+    cmpApplyGradIndex(idx);
+    const palette = document.getElementById('cmpGradExpandPalette');
+    if (palette) { palette.classList.remove('open'); cmpGradExpandOpen = false; }
+  }
+
+  // 後方互換（cmpSetGradが他から呼ばれる場合）
+  function cmpSetGrad(dot) {
+    const idx = parseInt(dot.dataset.idx || '0', 10);
+    cmpApplyGradIndex(idx);
+  }
+
+  // 写真読み込み
+  function cmpLoadPhoto(event) {
     const file = event.target.files[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
-    const img = document.getElementById('storiesPreviewImg');
-    const vid = document.getElementById('storiesPreviewVid');
+    const img = document.getElementById('cmpPhotoImg');
+    const photoWrap = document.getElementById('cmpPhotoWrap');
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.objectFit = 'contain';
+    img.style.filter = '';
+    photoWrap.style.display = 'block';
+    cmpBgMode = 'photo';
+    cmpPhotoRotate = 0;
+    cmpPhotoTransX = 0;
+    cmpPhotoTransY = 0;
+    // 読み込み完了後に初期スケールを「cover相当」に
+    img.onload = () => {
+      const imgAR = img.naturalWidth / img.naturalHeight;
+      const wrapAR = photoWrap.clientWidth / photoWrap.clientHeight;
+      cmpPhotoScale = imgAR > wrapAR ? (imgAR / wrapAR) : (wrapAR / imgAR);
+      cmpApplyPhotoTransform();
+    };
     img.src = url;
-    img.classList.add('active');
-    vid.classList.remove('active');
-    document.getElementById('storiesBgCanvas').style.background = '#000';
+    const filterIcon = document.getElementById('cmpIconFilter');
+    if (filterIcon) filterIcon.classList.remove('disabled');
     event.target.value = '';
+    // タッチ操作を登録
+    cmpInitPhotoTouch(img);
   }
 
-  function storiesLoadVideo(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    const img = document.getElementById('storiesPreviewImg');
-    const vid = document.getElementById('storiesPreviewVid');
-    vid.src = url;
-    vid.classList.add('active');
-    vid.play();
-    img.classList.remove('active');
-    document.getElementById('storiesBgCanvas').style.background = '#000';
-    event.target.value = '';
+  // 写真のタッチ操作（ピンチズーム・回転・ドラッグ）
+  let cmpPhotoTouchInited = false;
+  function cmpInitPhotoTouch() {
+    if (cmpPhotoTouchInited) return;
+    cmpPhotoTouchInited = true;
+    const wrap = document.getElementById('cmpPhotoWrap');
+    const trash = document.getElementById('cmpTrashZone');
+    let lastDist = null, lastAngle = null, lastX = null, lastY = null;
+
+    function showTrash() { trash.classList.add('visible'); }
+    function hideTrash() { trash.classList.remove('visible', 'hover'); }
+    function updateTrashHover(x, y) {
+      const r = trash.getBoundingClientRect();
+      const over = x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+      trash.classList.toggle('hover', over);
+    }
+
+    wrap.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        lastX = e.touches[0].clientX;
+        lastY = e.touches[0].clientY;
+        showTrash();
+      } else if (e.touches.length === 2) {
+        lastDist = cmpTouchDist(e.touches);
+        lastAngle = cmpTouchAngle(e.touches);
+      }
+    }, { passive: true });
+
+    wrap.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      if (e.touches.length === 1 && lastX !== null) {
+        cmpPhotoTransX += e.touches[0].clientX - lastX;
+        cmpPhotoTransY += e.touches[0].clientY - lastY;
+        lastX = e.touches[0].clientX;
+        lastY = e.touches[0].clientY;
+        updateTrashHover(e.touches[0].clientX, e.touches[0].clientY);
+      } else if (e.touches.length === 2) {
+        const dist = cmpTouchDist(e.touches);
+        const angle = cmpTouchAngle(e.touches);
+        if (lastDist) cmpPhotoScale = Math.max(0.3, Math.min(5, cmpPhotoScale * (dist / lastDist)));
+        if (lastAngle !== null) cmpPhotoRotate += angle - lastAngle;
+        lastDist = dist;
+        lastAngle = angle;
+      }
+      cmpApplyPhotoTransform();
+    }, { passive: false });
+
+    wrap.addEventListener('touchend', () => {
+      if (trash.classList.contains('hover')) cmpRemovePhoto();
+      hideTrash();
+      lastDist = null; lastAngle = null; lastX = null; lastY = null;
+    }, { passive: true });
+
+    // マウス対応（デスクトップ）
+    let isDragging = false;
+    wrap.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      showTrash();
+      e.preventDefault();
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      cmpPhotoTransX += e.clientX - lastX;
+      cmpPhotoTransY += e.clientY - lastY;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      updateTrashHover(e.clientX, e.clientY);
+      cmpApplyPhotoTransform();
+    });
+    window.addEventListener('mouseup', () => {
+      if (!isDragging) return;
+      isDragging = false;
+      if (trash.classList.contains('hover')) cmpRemovePhoto();
+      hideTrash();
+      lastX = null; lastY = null;
+    });
+
+    // ホイールで拡大縮小
+    wrap.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? 1.05 : 0.95;
+      cmpPhotoScale = Math.max(0.3, Math.min(5, cmpPhotoScale * factor));
+      cmpApplyPhotoTransform();
+    }, { passive: false });
   }
 
-  // ---- identity ----
-  function storiesToggleIdentity() {
-    const checked = document.getElementById('storiesIdentityCheck').checked;
-    document.getElementById('storiesIdentityCats').classList.toggle('open', checked);
+  function cmpRemovePhoto() {
+    const img = document.getElementById('cmpPhotoImg');
+    const photoWrap = document.getElementById('cmpPhotoWrap');
+    img.src = '';
+    photoWrap.style.display = 'none';
+    cmpPhotoScale = 1;
+    cmpPhotoRotate = 0;
+    cmpPhotoTransX = 0;
+    cmpPhotoTransY = 0;
+    cmpBgMode = 'grad';
+    document.getElementById('cmpBgGradBtn').classList.add('active');
+    document.getElementById('cmpBgPhotoBtn').classList.remove('active');
+    document.getElementById('cmpBgGifBtn').classList.remove('active');
+    const gradPal = document.getElementById('cmpGradPalette');
+    if (gradPal) gradPal.style.display = 'block';
+    const filterIcon = document.getElementById('cmpIconFilter');
+    if (filterIcon) filterIcon.classList.add('disabled');
+    document.getElementById('cmpBg').style.background = cmpCurrentGrad;
+    showToast('🗑️ 写真を削除しました');
   }
 
-  // ---- post ----
-  function storiesPost() {
-    const textContent = storiesTextLayers.length > 0
-      ? storiesTextLayers.map(l => l.text).join('\n')
-      : '(画像投稿)';
+  function cmpTouchDist(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx*dx + dy*dy);
+  }
+  function cmpTouchAngle(touches) {
+    return Math.atan2(
+      touches[1].clientY - touches[0].clientY,
+      touches[1].clientX - touches[0].clientX
+    ) * 180 / Math.PI;
+  }
+  function cmpApplyPhotoTransform() {
+    const img = document.getElementById('cmpPhotoImg');
+    if (img) img.style.transform = `translate(${cmpPhotoTransX}px, ${cmpPhotoTransY}px) scale(${cmpPhotoScale}) rotate(${cmpPhotoRotate}deg)`;
+  }
+
+  // URL バッジ
+  function cmpOpenUrlModal() {
+    document.getElementById('cmpUrlModalOverlay').classList.add('open');
+  }
+  function cmpCloseUrlModal() {
+    document.getElementById('cmpUrlModalOverlay').classList.remove('open');
+  }
+  function cmpApplyUrl() {
+    const url = document.getElementById('cmpUrlInputField').value.trim();
+    if (!url) { showToast('URLを入力してください'); return; }
+    const title = document.getElementById('cmpUrlTitleField').value.trim();
+    const siteName = cmpGetSiteName(url);
+    const label = title ? `🔗 ${title}` : `🔗 ${siteName}`;
+
+    cmpUrlData = { url, title, label };
+
+    // バッジ表示
+    const badgeArea = document.getElementById('cmpUrlBadgeArea');
+    const badgeText = document.getElementById('cmpUrlBadgeText');
+    if (badgeArea && badgeText) {
+      badgeText.textContent = label;
+      badgeArea.classList.add('visible');
+    }
+    cmpCloseUrlModal();
+    // 入力フィールドをリセット
+    document.getElementById('cmpUrlInputField').value = '';
+    document.getElementById('cmpUrlTitleField').value = '';
+  }
+  function cmpRemoveUrl() {
+    cmpUrlData = null;
+    const badgeArea = document.getElementById('cmpUrlBadgeArea');
+    if (badgeArea) badgeArea.classList.remove('visible');
+  }
+
+  // 投稿ボタン → publishモーダルを開く
+  function cmpPost() {
+    const textEl = document.getElementById('cmpTextInput');
+    const textContent = textEl ? textEl.value.trim() : '';
+    if (!textContent && cmpBgMode !== 'photo') {
+      showToast('テキストを入力してください');
+      return;
+    }
+    // パネルを全て閉じてからモーダルを開く
+    CMP_PANELS.forEach(p => {
+      const panel = document.getElementById('cmpPanel' + p.charAt(0).toUpperCase() + p.slice(1));
+      if (panel) panel.classList.remove('open');
+      const icon = document.getElementById('cmpIcon' + p.charAt(0).toUpperCase() + p.slice(1));
+      if (icon) icon.classList.remove('active');
+    });
+    cmpActivePanel = null;
+    cmpUpdatePublishSummary();
+    document.getElementById('cmpPublishOverlay').classList.add('open');
+  }
+
+  // publishモーダルを閉じる
+  function cmpClosePublishModal() {
+    document.getElementById('cmpPublishOverlay').classList.remove('open');
+  }
+
+  // グループ選択トグル
+  function cmpToggleGroup(pill) {
+    pill.classList.toggle('selected');
+    cmpUpdatePublishSummary();
+  }
+
+  // アイデンティティ選択トグル（publishモーダル内）
+  function cmpToggleIdentityPub(btn) {
+    btn.classList.toggle('selected');
+    cmpUpdatePublishSummary();
+  }
+
+  // サマリーラベルを更新
+  function cmpUpdatePublishSummary() {
+    const core   = document.getElementById('cmpTierCore')   && document.getElementById('cmpTierCore').checked;
+    const orbit  = document.getElementById('cmpTierOrbit')  && document.getElementById('cmpTierOrbit').checked;
+    const halo   = document.getElementById('cmpTierHalo')   && document.getElementById('cmpTierHalo').checked;
+    const galaxy = document.getElementById('cmpTierGalaxy') && document.getElementById('cmpTierGalaxy').checked;
+
+    const selectedGroups = [...document.querySelectorAll('.cmp-publish-group-pill.selected')]
+      .map(p => p.dataset.group);
+    const selectedIdentity = [...document.querySelectorAll('.cmp-publish-identity-row .identity-cat-btn.selected')]
+      .map(b => b.textContent.trim());
+
+    let summaryText = '';
+
+    if (selectedGroups.length > 0) {
+      summaryText = selectedGroups.join('、') + 'に共有';
+    } else {
+      const allChecked = core && orbit && halo && galaxy;
+      const noneChecked = !core && !orbit && !halo && !galaxy;
+      if (allChecked) {
+        summaryText = '公開';
+      } else if (noneChecked) {
+        summaryText = '受信者なし（未選択）';
+      } else {
+        const tiers = [];
+        if (core)   tiers.push('CORE');
+        if (orbit)  tiers.push('ORBIT');
+        if (halo)   tiers.push('HALO');
+        if (galaxy) tiers.push('GALAXY');
+        summaryText = tiers.join('、') + '限定';
+      }
+    }
+
+    if (selectedIdentity.length > 0) {
+      summaryText += ' 📌 ' + selectedIdentity.join('・');
+    }
+
+    const summaryEl = document.getElementById('cmpPublishSummary');
+    if (summaryEl) summaryEl.innerHTML = `<strong>${summaryText}</strong>`;
+  }
+
+  // 実際の投稿処理（publishモーダルの「投稿」ボタン）
+  function cmpConfirmPost() {
+    const textEl = document.getElementById('cmpTextInput');
+    const textContent = textEl ? textEl.value.trim() : '';
+
     const userData = storiesData.find(u => u.id === 'taisho_k');
     if (userData) {
       userData.stories.unshift({
-        text: textContent,
+        text: textContent || '(画像投稿)',
         time: 'たった今',
         likes: 0,
         shares: 0,
         tags: [],
-        grad: storiesCurrentGrad,
-        textLayers: storiesTextLayers.length > 0 ? JSON.parse(JSON.stringify(storiesTextLayers)) : null
+        grad: cmpBgMode === 'grad' ? cmpCurrentGrad : 'linear-gradient(135deg,#020408,#1E3A5F)',
+        textLayers: null,
+        urlData: cmpUrlData || null,
       });
       userData.hasNew = true;
       storiesSeen['taisho_k'] = false;
     }
+    cmpClosePublishModal();
     showToast('投稿しました！');
     setTimeout(() => {
-      storiesResetEditor();
+      cmpReset();
       switchTab('home');
       buildHomeStories();
     }, 800);
   }
 
-  function storiesClose() {
-    storiesResetEditor();
+  // クローズ
+  function cmpClose() {
+    cmpClosePublishModal();
+    cmpReset();
     switchTab('home');
   }
 
-  function storiesResetEditor() {
-    storiesTextLayers = [];
-    selectedTextLayerId = null;
-    storiesFontIdx  = 0;
-    storiesColorVal = '#ffffff';
-    currentFontSize = 24;
-    const container = document.getElementById('storiesTextLayers');
-    if (container) container.innerHTML = '';
-    storiesCurrentGrad = 'linear-gradient(135deg,#7C3AED,#60A5FA)';
-    storiesBgMode = 'grad';
-    const canvas = document.getElementById('storiesBgCanvas');
-    if (canvas) canvas.style.background = storiesCurrentGrad;
-    document.getElementById('storiesPreviewImg').classList.remove('active');
-    const vid = document.getElementById('storiesPreviewVid');
-    vid.classList.remove('active');
-    vid.src = '';
-    storiesBgType('grad');
-    document.querySelectorAll('.stories-grad-dot').forEach((d, i) => d.classList.toggle('active', i === 0));
-    document.querySelectorAll('.stories-color-dot').forEach((d, i) => d.classList.toggle('active', i === 0));
-    document.getElementById('storiesIdentityCheck').checked = false;
-    document.getElementById('storiesIdentityCats').classList.remove('open');
-    document.querySelectorAll('.identity-cat-btn').forEach(b => b.classList.remove('selected'));
-    storiesApplyTextStyle();
-    storiesUpdateSliderUI(24);
-    const slider = document.getElementById('storiesSizeSlider');
-    if (slider) slider.value = 24;
+  // リセット
+  function cmpReset() {
+    cmpBgMode = 'grad';
+    cmpCurrentGrad = CMP_HYPERAY_GRAD;
+    cmpCurrentGradIndex = 0;
+    cmpTextColor = '#ffffff';
+    cmpFontFamily = "'Noto Sans JP', sans-serif";
+    cmpFontWeight = '700';
+    cmpPhotoScale = 1; cmpPhotoRotate = 0; cmpPhotoTransX = 0; cmpPhotoTransY = 0;
+    cmpUrlData = null;
+    cmpGradExpandOpen = false;
+    cmpTextBgType = 'none';
+    cmpActivePanel = null;
+
+    const bg = document.getElementById('cmpBg');
+    if (bg) bg.style.background = cmpCurrentGrad;
+    const photoWrap = document.getElementById('cmpPhotoWrap');
+    if (photoWrap) photoWrap.style.display = 'none';
+    const img = document.getElementById('cmpPhotoImg');
+    if (img) { img.src = ''; img.style.filter = ''; }
+    const textEl = document.getElementById('cmpTextInput');
+    if (textEl) {
+      textEl.value = '';
+      textEl.style.color = '#ffffff';
+      textEl.style.fontFamily = cmpFontFamily;
+      textEl.style.fontWeight = cmpFontWeight;
+      textEl.style.fontSize = '32px';
+      textEl.style.height = 'auto';
+    }
+    // 座布団リセット
+    const textLayer = document.getElementById('cmpTextLayer');
+    if (textLayer) textLayer.classList.remove('bg-none', 'bg-white', 'bg-black', 'bg-frost');
+    document.querySelectorAll('.cmp-textbg-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
+
+    // URL バッジクリア
+    cmpRemoveUrl();
+
+    // publishモーダルのチェックをリセット
+    ['cmpTierCore','cmpTierOrbit','cmpTierHalo','cmpTierGalaxy'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.checked = true;
+    });
+    document.querySelectorAll('.cmp-publish-group-pill').forEach(p => p.classList.remove('selected'));
+    document.querySelectorAll('.cmp-publish-identity-row .identity-cat-btn').forEach(b => b.classList.remove('selected'));
+
+    document.querySelectorAll('.cmp-grad-dot').forEach((d, i) => d.classList.toggle('active', i === 0));
+    // cycle button を初期グラデに戻す
+    const cycleBtn = document.getElementById('cmpGradCycleBtn');
+    if (cycleBtn) cycleBtn.style.background = CMP_GRADS[0];
+    // expandパレットを閉じる
+    const expandPal = document.getElementById('cmpGradExpandPalette');
+    if (expandPal) expandPal.classList.remove('open');
+
+    document.querySelectorAll('.cmp-color-dot').forEach((d, i) => d.classList.toggle('active', i === 0));
+    document.querySelectorAll('.cmp-font-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
+    document.querySelectorAll('.cmp-filter-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
+
+    // パネル全閉じ
+    CMP_PANELS.forEach(p => {
+      const panel = document.getElementById('cmpPanel' + p.charAt(0).toUpperCase() + p.slice(1));
+      if (panel) panel.classList.remove('open');
+      const icon = document.getElementById('cmpIcon' + p.charAt(0).toUpperCase() + p.slice(1));
+      if (icon) icon.classList.remove('active');
+    });
+
+    const gradPal = document.getElementById('cmpGradPalette');
+    if (gradPal) gradPal.style.display = 'block';
+    const gifPh = document.getElementById('cmpGifPlaceholder');
+    if (gifPh) gifPh.style.display = 'none';
+    ['grad','photo','gif'].forEach(t => {
+      const btn = document.getElementById('cmpBg' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn');
+      if (btn) btn.classList.toggle('active', t === 'grad');
+    });
+    // フィルターアイコンをグレーアウト（初期はグラデモード）
+    const filterIcon = document.getElementById('cmpIconFilter');
+    if (filterIcon) filterIcon.classList.add('disabled');
   }
 
-  // init on first load
+  // init
   document.addEventListener('DOMContentLoaded', () => {
-    storiesApplyTextStyle();
-    document.getElementById('storiesGradPalette').style.display = 'flex';
-    storiesUpdateSliderUI(24);
+    const textEl = document.getElementById('cmpTextInput');
+    if (textEl) {
+      textEl.style.color = cmpTextColor;
+      textEl.style.fontFamily = cmpFontFamily;
+      textEl.style.fontWeight = cmpFontWeight;
+    }
+    // フィルターアイコンは初期グレーアウト（グラデモードなので）
+    const filterIcon = document.getElementById('cmpIconFilter');
+    if (filterIcon) filterIcon.classList.add('disabled');
+    // グラデ長押し登録
+    cmpInitGradLongPress();
   });
 
-  // ===== STAR MAP =====
+  // (旧Stories Editorコードは削除済み)
+
+    // ===== STAR MAP =====
   // Fixed positions (x%, y%) within the star-map-container (430px wide)
   // Center = 50%, 48%
   const starMapPositions = {
@@ -8946,12 +9686,12 @@
         </div>
       </div>
 
-      <!-- Cosmos -->
+      <!-- Connect -->
       <div class="circle-section" id="sec-ambient" style="margin-bottom:100px;">
         <div class="circle-section-header" onclick="toggleSection('sec-ambient')">
           <div class="circle-section-title">
-            <span>👥</span>
-            <span>Cosmos</span>
+            <span>🤝</span>
+            <span>Connect</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
             <span class="circle-capacity">280/500人</span>
