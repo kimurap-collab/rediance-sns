@@ -4003,7 +4003,7 @@
     .cmp-publish-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.65);
+      background: rgba(0,0,0,0.55);
       z-index: 5000;
       display: none;
       align-items: flex-end;
@@ -4013,28 +4013,30 @@
     .cmp-publish-modal {
       width: 100%;
       max-width: 430px;
-      background: #100018;
+      background: var(--bg);
       border-radius: 24px 24px 0 0;
       padding: 20px 20px 40px;
-      border-top: 1px solid rgba(255,255,255,0.15);
+      border-top: 1px solid var(--border);
+      max-height: 90vh;
+      overflow-y: auto;
     }
     .cmp-publish-handle {
       width: 36px;
       height: 4px;
-      background: rgba(255,255,255,0.2);
+      background: var(--border);
       border-radius: 2px;
       margin: 0 auto 16px;
     }
     .cmp-publish-summary {
       font-size: 13px;
       font-weight: 700;
-      color: rgba(255,255,255,0.7);
+      color: var(--text-sub);
       text-align: center;
       margin-bottom: 18px;
       min-height: 20px;
     }
     .cmp-publish-summary strong {
-      color: #fff;
+      color: var(--text-main);
       font-size: 14px;
     }
     .cmp-publish-section {
@@ -4043,78 +4045,212 @@
     .cmp-publish-section-title {
       font-size: 11px;
       font-weight: 700;
-      color: rgba(255,255,255,0.45);
+      color: var(--text-light);
       letter-spacing: 0.8px;
       text-transform: uppercase;
       margin-bottom: 8px;
     }
+
+    /* ===== 公開範囲ラジオ ===== */
+    .cmp-publish-scope-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .cmp-publish-scope-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--surface);
+      border-radius: 12px;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: all 0.15s;
+    }
+    .cmp-publish-scope-option.active {
+      background: var(--primary-bg);
+      border-color: var(--primary);
+    }
+    .cmp-publish-scope-option input[type="radio"] {
+      accent-color: var(--primary);
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .cmp-publish-scope-label-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .cmp-publish-scope-label-main {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .cmp-publish-scope-label-desc {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    /* ===== 限定公開エリア ===== */
+    .cmp-publish-limited-area {
+      display: none;
+      flex-direction: column;
+      gap: 0;
+    }
+    .cmp-publish-limited-area.open { display: flex; }
+
+    /* フォロワー行 */
+    .cmp-publish-follower-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--surface);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .cmp-publish-follower-row input[type="checkbox"] {
+      accent-color: var(--primary);
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    .cmp-publish-follower-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* アコーディオン行 */
+    .cmp-publish-accordion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+    .cmp-publish-accordion-row {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .cmp-publish-accordion-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--surface);
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.12s;
+    }
+    .cmp-publish-accordion-header:active { background: var(--border); }
+    .cmp-publish-accordion-header input[type="checkbox"] {
+      accent-color: var(--primary);
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .cmp-publish-accordion-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      flex: 1;
+    }
+    .cmp-publish-accordion-meta {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-right: 4px;
+    }
+    .cmp-publish-accordion-chevron {
+      font-size: 11px;
+      color: var(--text-light);
+      transition: transform 0.2s;
+    }
+    .cmp-publish-accordion-row.open .cmp-publish-accordion-chevron {
+      transform: rotate(90deg);
+    }
+    .cmp-publish-accordion-body {
+      display: none;
+      flex-direction: column;
+      gap: 0;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+    }
+    .cmp-publish-accordion-row.open .cmp-publish-accordion-body { display: flex; }
+    .cmp-publish-member-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px 8px 20px;
+      border-bottom: 1px solid var(--border);
+      transition: opacity 0.15s;
+    }
+    .cmp-publish-member-row:last-of-type { border-bottom: none; }
+    .cmp-publish-member-row.disabled {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+    .cmp-publish-member-row input[type="checkbox"] {
+      accent-color: var(--primary);
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+    .cmp-publish-member-avatar {
+      font-size: 16px;
+    }
+    .cmp-publish-member-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      flex: 1;
+    }
+    .cmp-publish-add-member-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px 8px 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary-light);
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+    }
+    .cmp-publish-new-group-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 14px;
+      background: none;
+      border: 1.5px dashed var(--primary-light);
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary-light);
+      cursor: pointer;
+      width: 100%;
+      margin-top: 4px;
+    }
+
     .cmp-publish-check-row {
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
-    .cmp-publish-check-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .cmp-publish-check-label:active { background: rgba(255,255,255,0.12); }
-    .cmp-publish-check-label input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-      accent-color: var(--primary);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .cmp-publish-check-label span {
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.85);
-      flex: 1;
-    }
     .cmp-publish-groups-row {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-    }
-    .cmp-publish-group-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 14px;
-      background: rgba(255,255,255,0.07);
-      border: 1.5px solid rgba(255,255,255,0.18);
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.8);
-      cursor: pointer;
-      transition: all 0.15s;
-      user-select: none;
-    }
-    .cmp-publish-group-pill.selected {
-      background: rgba(124,58,237,0.35);
-      border-color: var(--primary);
-      color: #fff;
-    }
-    .cmp-publish-group-pill:active { opacity: 0.75; }
-    .cmp-publish-new-group {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 14px;
-      background: none;
-      border: 1.5px dashed rgba(167,139,250,0.5);
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--primary-light);
-      cursor: pointer;
     }
     .cmp-publish-identity-row {
       display: flex;
@@ -4130,19 +4266,19 @@
       flex: 1;
       padding: 13px 0;
       border-radius: 50px;
-      border: 1.5px solid rgba(255,255,255,0.2);
+      border: 1.5px solid var(--border);
       background: none;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      color: rgba(255,255,255,0.7);
+      color: var(--text-sub);
     }
     .cmp-publish-confirm {
       flex: 2;
       padding: 13px 0;
       border-radius: 50px;
       border: none;
-      background: #2563EB;
+      background: var(--primary);
       color: #fff;
       font-size: 14px;
       font-weight: 700;
@@ -4170,16 +4306,83 @@
     }
     .identity-cat-btn:active { opacity: 0.7; }
 
-    /* cmp-publish-modal内のidentity-cat-btn は暗い背景に合わせる */
-    .cmp-publish-modal .identity-cat-btn {
-      color: rgba(255,255,255,0.85);
-      background: rgba(255,255,255,0.1);
-      border-color: rgba(255,255,255,0.25);
+    /* ===== 新規アイデンティティ作成ダイアログ ===== */
+    .cmp-identity-create-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 6000;
+      display: none;
+      align-items: center;
+      justify-content: center;
     }
-    .cmp-publish-modal .identity-cat-btn.selected {
+    .cmp-identity-create-overlay.open { display: flex; }
+    .cmp-identity-create-dialog {
+      background: var(--bg);
+      border-radius: 20px;
+      padding: 24px 20px 20px;
+      width: calc(100% - 48px);
+      max-width: 320px;
+      box-shadow: var(--shadow-lg);
+    }
+    .cmp-identity-create-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .cmp-identity-create-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .cmp-identity-emoji-input {
+      width: 52px;
+      height: 40px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      text-align: center;
+      font-size: 20px;
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .cmp-identity-name-input {
+      flex: 1;
+      height: 40px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 0 12px;
+      font-size: 14px;
+      background: var(--surface);
+      color: var(--text-main);
+    }
+    .cmp-identity-create-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .cmp-identity-create-cancel {
+      flex: 1;
+      padding: 10px 0;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-sub);
+    }
+    .cmp-identity-create-confirm {
+      flex: 2;
+      padding: 10px 0;
+      border-radius: 50px;
+      border: none;
       background: var(--primary);
       color: #fff;
-      border-color: var(--primary);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
     }
 
     /* ===== IDENTITY SECTION (profile) ===== */
@@ -4365,7 +4568,7 @@
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.5);
-      z-index: 3000;
+      z-index: 5500;
       display: none;
       align-items: flex-end;
       justify-content: center;
@@ -4510,7 +4713,7 @@
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.5);
-      z-index: 3000;
+      z-index: 5500;
       display: none;
       align-items: flex-end;
       justify-content: center;
@@ -4761,58 +4964,81 @@
         <div class="cmp-publish-handle"></div>
         <div class="cmp-publish-summary" id="cmpPublishSummary"><strong>公開</strong></div>
 
-        <!-- 階級 -->
-        <div class="cmp-publish-section">
-          <div class="cmp-publish-section-title">階級</div>
-          <div class="cmp-publish-check-row">
-            <label class="cmp-publish-check-label">
-              <input type="checkbox" id="cmpTierCore" checked onchange="cmpUpdatePublishSummary()">
-              <span>CORE</span>
-              <span class="tier-badge tier-badge-core" style="padding:2px 8px;border-radius:50px;font-size:10px;font-weight:700;color:#fff;">CORE</span>
-            </label>
-            <label class="cmp-publish-check-label">
-              <input type="checkbox" id="cmpTierOrbit" checked onchange="cmpUpdatePublishSummary()">
-              <span>ORBIT</span>
-              <span class="tier-badge tier-badge-orbit" style="padding:2px 8px;border-radius:50px;font-size:10px;font-weight:700;color:#fff;">ORBIT</span>
-            </label>
-            <label class="cmp-publish-check-label">
-              <input type="checkbox" id="cmpTierHalo" checked onchange="cmpUpdatePublishSummary()">
-              <span>HALO</span>
-              <span class="tier-badge tier-badge-halo" style="padding:2px 8px;border-radius:50px;font-size:10px;font-weight:700;color:#fff;">HALO</span>
-            </label>
-            <label class="cmp-publish-check-label">
-              <input type="checkbox" id="cmpTierGalaxy" checked onchange="cmpUpdatePublishSummary()">
-              <span>GALAXY</span>
-              <span class="tier-badge tier-badge-galaxy" style="padding:2px 8px;border-radius:50px;font-size:10px;font-weight:700;color:#fff;">GALAXY</span>
-            </label>
-          </div>
+        <!-- （１）公開範囲ラジオ -->
+        <div class="cmp-publish-scope-row">
+          <label class="cmp-publish-scope-option active" id="cmpScopePublicOpt" onclick="cmpSetScope('public')">
+            <input type="radio" name="cmpScope" id="cmpScopePublic" value="public" checked>
+            <div class="cmp-publish-scope-label-wrap">
+              <span class="cmp-publish-scope-label-main">一般公開</span>
+              <span class="cmp-publish-scope-label-desc">フォロワーや光が届く範囲全員</span>
+            </div>
+          </label>
+          <label class="cmp-publish-scope-option" id="cmpScopeLimitedOpt" onclick="cmpSetScope('limited')">
+            <input type="radio" name="cmpScope" id="cmpScopeLimited" value="limited">
+            <div class="cmp-publish-scope-label-wrap">
+              <span class="cmp-publish-scope-label-main">限定公開</span>
+              <span class="cmp-publish-scope-label-desc">チェックを外した相手には届かない</span>
+            </div>
+          </label>
         </div>
 
-        <!-- グループ -->
-        <div class="cmp-publish-section">
-          <div class="cmp-publish-section-title">グループ</div>
-          <div class="cmp-publish-groups-row">
-            <div class="cmp-publish-group-pill" data-group="酒好き" onclick="cmpToggleGroup(this)">🍺 酒好き</div>
-            <div class="cmp-publish-group-pill" data-group="投資仲間" onclick="cmpToggleGroup(this)">📈 投資仲間</div>
-            <div class="cmp-publish-group-pill" data-group="ゴルフ部" onclick="cmpToggleGroup(this)">⛳ ゴルフ部</div>
-            <button class="cmp-publish-new-group" onclick="showToast('Coming soon')">+ 新しいグループ</button>
+        <!-- （２）限定公開エリア -->
+        <div class="cmp-publish-limited-area" id="cmpLimitedArea">
+
+          <!-- フォロワー -->
+          <div class="cmp-publish-follower-row" onclick="cmpToggleFollowerCheck(event)">
+            <input type="checkbox" id="cmpFollowerCheck" checked onclick="event.stopPropagation(); cmpUpdatePublishSummary()">
+            <span class="cmp-publish-follower-label">フォロワー</span>
+          </div>
+
+          <!-- 階級 -->
+          <div class="cmp-publish-section">
+            <div class="cmp-publish-section-title">階級</div>
+            <div class="cmp-publish-accordion-list" id="cmpTierAccordionList">
+              <!-- JS で生成 -->
+            </div>
+          </div>
+
+          <!-- グループ -->
+          <div class="cmp-publish-section">
+            <div class="cmp-publish-section-title">グループ</div>
+            <div class="cmp-publish-accordion-list" id="cmpGroupAccordionList">
+              <!-- JS で生成 -->
+            </div>
+            <button class="cmp-publish-new-group-btn" onclick="openGroupCreate()">＋ 新しいグループ</button>
           </div>
         </div>
 
         <!-- アイデンティティ -->
         <div class="cmp-publish-section">
           <div class="cmp-publish-section-title">アイデンティティ</div>
-          <div class="cmp-publish-identity-row">
+          <div class="cmp-publish-identity-row" id="cmpIdentityRow">
             <button class="identity-cat-btn" onclick="cmpToggleIdentityPub(this)">🇸🇬 シンガポール</button>
             <button class="identity-cat-btn" onclick="cmpToggleIdentityPub(this)">💼 経営</button>
             <button class="identity-cat-btn" onclick="cmpToggleIdentityPub(this)">🤖 AI・テック</button>
             <button class="identity-cat-btn" onclick="cmpToggleIdentityPub(this)">📈 投資</button>
+            <button class="identity-cat-btn" id="cmpIdentityAddBtn" style="border-style:dashed;color:var(--primary-light);border-color:var(--primary-light);" onclick="cmpOpenIdentityCreate()">＋ 新規作成</button>
           </div>
         </div>
 
         <div class="cmp-publish-actions">
           <button class="cmp-publish-cancel" onclick="cmpClosePublishModal()">キャンセル</button>
           <button class="cmp-publish-confirm" onclick="cmpConfirmPost()">投稿</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- アイデンティティ新規作成ダイアログ -->
+    <div class="cmp-identity-create-overlay" id="cmpIdentityCreateOverlay">
+      <div class="cmp-identity-create-dialog">
+        <div class="cmp-identity-create-title">アイデンティティを追加</div>
+        <div class="cmp-identity-create-row">
+          <input class="cmp-identity-emoji-input" id="cmpIdentityEmojiInput" type="text" placeholder="🎯" maxlength="2">
+          <input class="cmp-identity-name-input" id="cmpIdentityNameInput" type="text" placeholder="名前を入力..." maxlength="20">
+        </div>
+        <div class="cmp-identity-create-actions">
+          <button class="cmp-identity-create-cancel" onclick="cmpCloseIdentityCreate()">キャンセル</button>
+          <button class="cmp-identity-create-confirm" onclick="cmpConfirmIdentityCreate()">追加</button>
         </div>
       </div>
     </div>
@@ -8287,6 +8513,191 @@
   }
 
   // 投稿ボタン → publishモーダルを開く
+  // ===== モックメンバーデータ =====
+  const cmpTierMembers = {
+    core:   [{id:'yu_tanaka', name:'田中 悠', avatar:'🧑'}, {id:'rina_s', name:'鈴木 里奈', avatar:'👩'}],
+    orbit:  [{id:'kenta_s', name:'佐藤 健太', avatar:'🧑'}, {id:'daisuke_ito', name:'伊藤 大輔', avatar:'👨'}, {id:'misaki_t', name:'高橋 美咲', avatar:'👱‍♀️'}, {id:'ryo_k', name:'小林 亮', avatar:'🧔'}, {id:'aya_w', name:'渡辺 彩', avatar:'🙍'}],
+    halo:   [{id:'ayaka_y', name:'山田 彩香', avatar:'👩'}, {id:'sho_n', name:'中村 花', avatar:'👩'}, {id:'kato_sho', name:'加藤 翔', avatar:'👨'}, {id:'m_nakajima', name:'中島 誠', avatar:'🧑'}],
+    galaxy: [{id:'n_sho', name:'中村 翔', avatar:'👨'}, {id:'m_aoi', name:'松本 葵', avatar:'👩'}, {id:'f_yuto', name:'藤田 悠斗', avatar:'🧑'}],
+  };
+  const cmpGroupMembers = {
+    '酒好き':   [{id:'yu_tanaka', name:'田中 悠', avatar:'🧑'}, {id:'kenta_s', name:'佐藤 健太', avatar:'🧑'}, {id:'daisuke_ito', name:'伊藤 大輔', avatar:'👨'}],
+    '投資仲間': [{id:'rina_s', name:'鈴木 里奈', avatar:'👩'}, {id:'misaki_t', name:'高橋 美咲', avatar:'👱‍♀️'}],
+    'ゴルフ部': [{id:'ryo_k', name:'小林 亮', avatar:'🧔'}, {id:'m_nakajima', name:'中島 誠', avatar:'🧑'}],
+  };
+  const cmpTierEmoji = { core:'🔥', orbit:'⚡', halo:'🌟', galaxy:'🌌' };
+  const cmpGroupEmoji = { '酒好き':'🍺', '投資仲間':'📈', 'ゴルフ部':'⛳' };
+
+  // カスタムアイデンティティ保持用
+  window.cmpCustomIdentities = window.cmpCustomIdentities || [];
+
+  // ===== 限定公開アコーディオン生成 =====
+  function cmpBuildLimitedArea() {
+    // 階級
+    const tierList = document.getElementById('cmpTierAccordionList');
+    if (tierList && tierList.childElementCount === 0) {
+      const tiers = [
+        { key:'core',   label:'CORE' },
+        { key:'orbit',  label:'ORBIT' },
+        { key:'halo',   label:'HALO' },
+        { key:'galaxy', label:'GALAXY' },
+      ];
+      tierList.innerHTML = tiers.map(t => {
+        const members = cmpTierMembers[t.key];
+        const memberRows = members.map(m => `
+          <div class="cmp-publish-member-row" data-member-id="${m.id}" data-parent="tier-${t.key}">
+            <input type="checkbox" checked onclick="event.stopPropagation(); cmpOnMemberCheck(this, 'tier-${t.key}')">
+            <span class="cmp-publish-member-avatar">${m.avatar}</span>
+            <span class="cmp-publish-member-name">${m.name}</span>
+          </div>`).join('');
+        return `
+          <div class="cmp-publish-accordion-row" id="cmpTierAccordion-${t.key}">
+            <div class="cmp-publish-accordion-header" onclick="cmpToggleAccordion('cmpTierAccordion-${t.key}', event)">
+              <input type="checkbox" checked onclick="event.stopPropagation(); cmpOnGroupCheck(this, 'tier-${t.key}')" id="cmpTierCheck-${t.key}">
+              <span class="cmp-publish-accordion-name">${cmpTierEmoji[t.key]} ${t.label}</span>
+              <span class="cmp-publish-accordion-meta">${members.length}名</span>
+              <span class="cmp-publish-accordion-chevron">▸</span>
+            </div>
+            <div class="cmp-publish-accordion-body">
+              ${memberRows}
+              <button class="cmp-publish-add-member-btn" onclick="openCircleSettings()">＋ メンバー追加</button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // グループ
+    const groupList = document.getElementById('cmpGroupAccordionList');
+    if (groupList && groupList.childElementCount === 0) {
+      const groups = Object.keys(cmpGroupMembers);
+      groupList.innerHTML = groups.map(g => {
+        const members = cmpGroupMembers[g];
+        const memberRows = members.map(m => `
+          <div class="cmp-publish-member-row" data-member-id="${m.id}" data-parent="group-${g}">
+            <input type="checkbox" checked onclick="event.stopPropagation(); cmpOnMemberCheck(this, 'group-${g}')">
+            <span class="cmp-publish-member-avatar">${m.avatar}</span>
+            <span class="cmp-publish-member-name">${m.name}</span>
+          </div>`).join('');
+        const safeKey = g.replace(/[^a-zA-Z0-9]/g, '_');
+        return `
+          <div class="cmp-publish-accordion-row" id="cmpGroupAccordion-${safeKey}">
+            <div class="cmp-publish-accordion-header" onclick="cmpToggleAccordion('cmpGroupAccordion-${safeKey}', event)">
+              <input type="checkbox" checked onclick="event.stopPropagation(); cmpOnGroupCheck(this, 'group-${g}')" id="cmpGroupCheck-${safeKey}">
+              <span class="cmp-publish-accordion-name">${cmpGroupEmoji[g] || '👥'} ${g}</span>
+              <span class="cmp-publish-accordion-meta">${members.length}名</span>
+              <span class="cmp-publish-accordion-chevron">▸</span>
+            </div>
+            <div class="cmp-publish-accordion-body">
+              ${memberRows}
+              <button class="cmp-publish-add-member-btn" onclick="openCircleSettings()">＋ メンバー追加</button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+  }
+
+  // ===== アコーディオン展開 =====
+  function cmpToggleAccordion(id, event) {
+    // チェックボックスをタップした時は展開しない
+    if (event && event.target && event.target.type === 'checkbox') return;
+    const row = document.getElementById(id);
+    if (row) row.classList.toggle('open');
+  }
+
+  // ===== 階級/グループ全体チェック =====
+  function cmpOnGroupCheck(checkbox, parentKey) {
+    const isChecked = checkbox.checked;
+    const memberRows = document.querySelectorAll(`[data-parent="${parentKey}"]`);
+    memberRows.forEach(row => {
+      const cb = row.querySelector('input[type="checkbox"]');
+      if (cb) cb.checked = isChecked;
+      row.classList.toggle('disabled', !isChecked);
+    });
+    cmpUpdatePublishSummary();
+  }
+
+  // ===== メンバー個別チェック =====
+  function cmpOnMemberCheck(checkbox, parentKey) {
+    // 親のチェック状態を確認して、全員チェック外れたら親もOFF
+    const memberRows = document.querySelectorAll(`[data-parent="${parentKey}"]`);
+    const allUnchecked = [...memberRows].every(row => {
+      const cb = row.querySelector('input[type="checkbox"]');
+      return cb && !cb.checked;
+    });
+    // 親チェックボックスを探す
+    const parentCb = document.getElementById(parentKey.replace('tier-', 'cmpTierCheck-').replace('group-', 'cmpGroupCheck-').replace(/[^a-zA-Z0-9_-]/g, '_'));
+    // IDが複雑なので querySelector で探す
+    const allHeaders = document.querySelectorAll('.cmp-publish-accordion-header input[type="checkbox"]');
+    allHeaders.forEach(hcb => {
+      if (hcb.id) {
+        const safeParentKey = parentKey.replace('tier-', 'cmpTierCheck-').replace('group-', 'cmpGroupCheck-');
+        const safeId = hcb.id;
+        // 簡易マッチ: idに親キーのコアが含まれているか
+        const coreKey = parentKey.split('-').slice(1).join('-');
+        if (safeId.includes(coreKey)) {
+          if (allUnchecked) hcb.checked = false;
+        }
+      }
+    });
+    cmpUpdatePublishSummary();
+  }
+
+  // ===== フォロワーチェック行 =====
+  function cmpToggleFollowerCheck(event) {
+    if (event && event.target && event.target.type === 'checkbox') return;
+    const cb = document.getElementById('cmpFollowerCheck');
+    if (cb) { cb.checked = !cb.checked; cmpUpdatePublishSummary(); }
+  }
+
+  // ===== 公開範囲セット =====
+  function cmpSetScope(scope) {
+    const publicOpt  = document.getElementById('cmpScopePublicOpt');
+    const limitedOpt = document.getElementById('cmpScopeLimitedOpt');
+    const limitedArea = document.getElementById('cmpLimitedArea');
+    const publicRadio  = document.getElementById('cmpScopePublic');
+    const limitedRadio = document.getElementById('cmpScopeLimited');
+    if (scope === 'public') {
+      publicOpt.classList.add('active');
+      limitedOpt.classList.remove('active');
+      limitedArea.classList.remove('open');
+      if (publicRadio) publicRadio.checked = true;
+    } else {
+      limitedOpt.classList.add('active');
+      publicOpt.classList.remove('active');
+      limitedArea.classList.add('open');
+      if (limitedRadio) limitedRadio.checked = true;
+      cmpBuildLimitedArea();
+    }
+    cmpUpdatePublishSummary();
+  }
+
+  // ===== アイデンティティ新規作成 =====
+  function cmpOpenIdentityCreate() {
+    document.getElementById('cmpIdentityEmojiInput').value = '';
+    document.getElementById('cmpIdentityNameInput').value = '';
+    document.getElementById('cmpIdentityCreateOverlay').classList.add('open');
+  }
+  function cmpCloseIdentityCreate() {
+    document.getElementById('cmpIdentityCreateOverlay').classList.remove('open');
+  }
+  function cmpConfirmIdentityCreate() {
+    const emoji = document.getElementById('cmpIdentityEmojiInput').value.trim() || '🏷';
+    const name  = document.getElementById('cmpIdentityNameInput').value.trim();
+    if (!name) { showToast('名前を入力してください'); return; }
+    const label = emoji + ' ' + name;
+    window.cmpCustomIdentities.push(label);
+    // ピルを挿入（＋ 新規作成ボタンの前に）
+    const row = document.getElementById('cmpIdentityRow');
+    const addBtn = document.getElementById('cmpIdentityAddBtn');
+    const newBtn = document.createElement('button');
+    newBtn.className = 'identity-cat-btn selected';
+    newBtn.textContent = label;
+    newBtn.onclick = function() { cmpToggleIdentityPub(this); };
+    row.insertBefore(newBtn, addBtn);
+    cmpCloseIdentityCreate();
+    cmpUpdatePublishSummary();
+  }
+
   function cmpPost() {
     const textEl = document.getElementById('cmpTextInput');
     const textContent = textEl ? textEl.value.trim() : '';
@@ -8311,12 +8722,6 @@
     document.getElementById('cmpPublishOverlay').classList.remove('open');
   }
 
-  // グループ選択トグル
-  function cmpToggleGroup(pill) {
-    pill.classList.toggle('selected');
-    cmpUpdatePublishSummary();
-  }
-
   // アイデンティティ選択トグル（publishモーダル内）
   function cmpToggleIdentityPub(btn) {
     btn.classList.toggle('selected');
@@ -8325,34 +8730,49 @@
 
   // サマリーラベルを更新
   function cmpUpdatePublishSummary() {
-    const core   = document.getElementById('cmpTierCore')   && document.getElementById('cmpTierCore').checked;
-    const orbit  = document.getElementById('cmpTierOrbit')  && document.getElementById('cmpTierOrbit').checked;
-    const halo   = document.getElementById('cmpTierHalo')   && document.getElementById('cmpTierHalo').checked;
-    const galaxy = document.getElementById('cmpTierGalaxy') && document.getElementById('cmpTierGalaxy').checked;
+    const isPublic = document.getElementById('cmpScopePublic') && document.getElementById('cmpScopePublic').checked;
 
-    const selectedGroups = [...document.querySelectorAll('.cmp-publish-group-pill.selected')]
-      .map(p => p.dataset.group);
-    const selectedIdentity = [...document.querySelectorAll('.cmp-publish-identity-row .identity-cat-btn.selected')]
+    const selectedIdentity = [...document.querySelectorAll('#cmpIdentityRow .identity-cat-btn.selected')]
+      .filter(b => b.id !== 'cmpIdentityAddBtn')
       .map(b => b.textContent.trim());
 
     let summaryText = '';
 
-    if (selectedGroups.length > 0) {
-      summaryText = selectedGroups.join('、') + 'に共有';
+    if (isPublic) {
+      summaryText = '公開';
     } else {
-      const allChecked = core && orbit && halo && galaxy;
-      const noneChecked = !core && !orbit && !halo && !galaxy;
-      if (allChecked) {
-        summaryText = '公開';
-      } else if (noneChecked) {
-        summaryText = '受信者なし（未選択）';
+      // 限定公開時
+      const follower = document.getElementById('cmpFollowerCheck') && document.getElementById('cmpFollowerCheck').checked;
+
+      // チェック済み階級を収集
+      const tierKeys = ['core','orbit','halo','galaxy'];
+      const checkedTiers = tierKeys.filter(k => {
+        const cb = document.getElementById('cmpTierCheck-' + k);
+        return cb && cb.checked;
+      });
+      // チェック済みグループを収集
+      const groupKeys = Object.keys(cmpGroupMembers);
+      const checkedGroups = groupKeys.filter(g => {
+        const safeKey = g.replace(/[^a-zA-Z0-9]/g, '_');
+        const cb = document.getElementById('cmpGroupCheck-' + safeKey);
+        return cb && cb.checked;
+      });
+
+      const allTiers = checkedTiers.length === tierKeys.length;
+      const allGroups = checkedGroups.length === groupKeys.length;
+
+      if (follower && allTiers && allGroups) {
+        summaryText = '公開（実質全員）';
       } else {
-        const tiers = [];
-        if (core)   tiers.push('CORE');
-        if (orbit)  tiers.push('ORBIT');
-        if (halo)   tiers.push('HALO');
-        if (galaxy) tiers.push('GALAXY');
-        summaryText = tiers.join('、') + '限定';
+        const parts = [];
+        if (!follower) parts.push('フォロワー除く');
+        checkedTiers.forEach(k => parts.push(k.toUpperCase()));
+        checkedGroups.forEach(g => parts.push(g));
+        if (parts.length === 0) {
+          summaryText = '受信者なし';
+        } else {
+          summaryText = '限定（' + parts.join('、') + ' のみ）';
+        }
       }
     }
 
@@ -8437,12 +8857,20 @@
     // URL バッジクリア
     cmpRemoveUrl();
 
-    // publishモーダルのチェックをリセット
-    ['cmpTierCore','cmpTierOrbit','cmpTierHalo','cmpTierGalaxy'].forEach(id => {
-      const el = document.getElementById(id); if (el) el.checked = true;
+    // publishモーダルをリセット
+    // アコーディオンを再生成できるようにクリア
+    const tierAccList = document.getElementById('cmpTierAccordionList');
+    if (tierAccList) tierAccList.innerHTML = '';
+    const groupAccList = document.getElementById('cmpGroupAccordionList');
+    if (groupAccList) groupAccList.innerHTML = '';
+    cmpSetScope('public');
+    // フォロワーチェックをONに戻す
+    const followerCb = document.getElementById('cmpFollowerCheck');
+    if (followerCb) followerCb.checked = true;
+    // アイデンティティ選択を解除（カスタムも保持）
+    document.querySelectorAll('#cmpIdentityRow .identity-cat-btn').forEach(b => {
+      if (b.id !== 'cmpIdentityAddBtn') b.classList.remove('selected');
     });
-    document.querySelectorAll('.cmp-publish-group-pill').forEach(p => p.classList.remove('selected'));
-    document.querySelectorAll('.cmp-publish-identity-row .identity-cat-btn').forEach(b => b.classList.remove('selected'));
 
     document.querySelectorAll('.cmp-grad-dot').forEach((d, i) => d.classList.toggle('active', i === 0));
     // cycle button を初期グラデに戻す
