@@ -178,6 +178,8 @@
       z-index: 100;
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
+    /* composer 表示中はグローバルフッターを隠して編集画面を広く取る */
+    .phone:has(#screen-post.active) .tab-bar { display: none; }
     .tab-item {
       flex: 1;
       display: flex;
@@ -3527,6 +3529,27 @@
     }
 
     /* ゴミ箱ゾーン（写真ドラッグ時表示） */
+    .cmp-filter-name-toast {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 10px 22px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 24px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 40;
+    }
+    .cmp-filter-name-toast.visible { opacity: 1; }
     .cmp-trash-zone {
       position: absolute;
       bottom: 170px;
@@ -3594,98 +3617,25 @@
     }
 
     /* ===== アイコン行（常時表示 48px） ===== */
-    .cmp-icon-bar {
-      display: flex;
-      align-items: center;
-      height: 48px;
-      padding: 0 10px;
-      gap: 4px;
-      background: rgba(0,0,0,0.45);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-    .cmp-icon-btn {
-      flex: 1;
-      height: 40px;
-      border: none;
-      background: none;
-      color: rgba(255,255,255,0.75);
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      border-radius: 10px;
-      transition: background 0.15s, color 0.15s;
-      position: relative;
-    }
-    .cmp-icon-btn.active {
-      background: rgba(255,255,255,0.18);
-      color: #fff;
-    }
-    .cmp-icon-btn.active::after {
-      content: '';
-      position: absolute;
-      bottom: 4px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: #fff;
-    }
-    .cmp-icon-btn:active { opacity: 0.6; }
-    .cmp-icon-btn.disabled {
-      opacity: 0.3;
-      pointer-events: none;
-    }
-    .cmp-icon-post-btn {
-      flex: none;
-      width: 64px;
-      height: 34px;
-      border: none;
-      background: #2563EB;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-      border-radius: 17px;
-      cursor: pointer;
-      transition: opacity 0.15s, transform 0.15s;
-      margin-left: 4px;
-    }
-    .cmp-icon-post-btn:active { transform: scale(0.95); opacity: 0.85; }
+    /* 旧 .cmp-icon-bar / .cmp-icon-btn / .cmp-icon-post-btn は右下フローティングへ統合済み */
 
-    /* アイコンラベル（小文字） */
-    .cmp-icon-btn span {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0;
-      line-height: 1;
-      display: block;
-    }
-    .cmp-icon-btn .icon-glyph {
-      font-size: 16px;
-      line-height: 1;
-    }
-    .cmp-icon-btn svg {
-      width: 22px;
-      height: 22px;
-      display: block;
-      stroke: #fff;
-      stroke-width: 2;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-    .cmp-icon-btn { color: #fff; }
-
-    /* ===== 展開パネル（アイコン行の上に出る） ===== */
+    /* ===== 展開パネル（下から出る） ===== */
     .cmp-tool-panel {
       display: none;
-      padding: 8px 14px 6px;
-      border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 14px 16px 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background: rgba(10,0,16,0.72);
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      animation: cmpPanelSlideUp 0.18s ease;
     }
     .cmp-tool-panel.open { display: block; }
+    @keyframes cmpPanelSlideUp {
+      from { transform: translateY(12px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+    /* パネル展開中は右下の浮遊ボタンを邪魔にならない位置へ退避 */
+    .cmp-float-controls.panel-open { opacity: 0; pointer-events: none; transition: opacity 0.15s; }
 
     /* フォント選択 */
     .cmp-font-row {
@@ -3698,22 +3648,27 @@
     .cmp-font-row::-webkit-scrollbar { display: none; }
     .cmp-font-chip {
       flex-shrink: 0;
-      padding: 5px 12px;
+      padding: 6px 13px;
       border-radius: 14px;
-      border: 1.5px solid rgba(255,255,255,0.25);
-      background: rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.85);
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(18,18,24,0.85);
+      backdrop-filter: blur(10px) saturate(1.4);
+      -webkit-backdrop-filter: blur(10px) saturate(1.4);
+      color: #f3f3f5;
       font-size: 12px;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.15s;
       white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.22);
     }
     .cmp-font-chip.active {
-      border-color: #fff;
-      background: rgba(255,255,255,0.25);
-      color: #fff;
+      border-color: rgba(255,255,255,0.9);
+      background: #ffffff;
+      color: #0a0010;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
-    .cmp-font-chip:active { opacity: 0.7; }
+    .cmp-font-chip:active { opacity: 0.85; }
 
     /* 文字色 */
     .cmp-color-row {
@@ -3762,19 +3717,22 @@
     .cmp-filter-row::-webkit-scrollbar { display: none; }
     .cmp-filter-chip {
       flex-shrink: 0;
-      padding: 5px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.25);
-      background: rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.8);
+      padding: 6px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #fff;
       font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.15s;
     }
     .cmp-filter-chip.active {
+      background: #fff;
+      color: #111;
       border-color: #fff;
-      background: rgba(255,255,255,0.25);
-      color: #fff;
     }
     .cmp-filter-chip:active { opacity: 0.7; }
 
@@ -3844,49 +3802,87 @@
     /* フローティングコントロール（右下） */
     .cmp-float-controls {
       position: absolute;
-      bottom: 96px;
+      bottom: 24px;
       right: 14px;
       z-index: 50;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
-    .cmp-float-grad-btn {
-      width: 31px;
-      height: 31px;
+    /* 右下フローティング：統一ベーススタイル（溶けないデザイン） */
+    .cmp-float-btn {
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(18,18,24,0.62);
+      backdrop-filter: blur(14px) saturate(1.5);
+      -webkit-backdrop-filter: blur(14px) saturate(1.5);
+      color: #fff;
       cursor: pointer;
       flex-shrink: 0;
-      transition: transform 0.15s;
-      background: linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);
-    }
-    .cmp-float-grad-btn:active { transform: scale(0.9); }
-    .cmp-float-photo-btn {
-      width: 31px;
-      height: 31px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(255,255,255,0.5);
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.15s;
+      transition: transform 0.15s, background 0.15s, border-color 0.15s;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.08);
+      padding: 0;
     }
-    .cmp-float-photo-btn:active { transform: scale(0.9); }
-    .cmp-float-photo-btn svg {
-      width: 16px;
-      height: 16px;
-      stroke: #fff;
+    .cmp-float-btn:active { transform: scale(0.9); }
+    .cmp-float-btn.active {
+      background: rgba(255,255,255,0.92);
+      border-color: rgba(255,255,255,0.9);
+      color: #111;
+    }
+    .cmp-float-btn svg {
+      width: 17px;
+      height: 17px;
+      stroke: currentColor;
       fill: none;
       stroke-width: 1.8;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
+    .cmp-float-btn.filled-icon svg { fill: currentColor; stroke: none; }
+    .cmp-float-btn .icon-glyph {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    /* グラデ切替ボタン：内側にグラデ円、外はガラスリング */
+    .cmp-float-grad-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.28);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s;
+      background: linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.15);
+      padding: 0;
+    }
+    .cmp-float-grad-btn:active { transform: scale(0.9); }
+    /* 投稿ボタン：右下のアクセント。他と距離を取る */
+    .cmp-float-post-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #ffffff 0%, #f1f2f6 100%);
+      color: #0a0010;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-top: 14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.8);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .cmp-float-post-btn:active { transform: scale(0.94); }
 
     /* フローティング上のパレットポップアップ */
     .cmp-float-palette {
@@ -3917,29 +3913,54 @@
       align-items: center;
     }
     .cmp-textbg-row::-webkit-scrollbar { display: none; }
-    .cmp-textbg-chip {
-      flex-shrink: 0;
-      padding: 5px 12px;
-      border-radius: 14px;
-      border: 1.5px solid rgba(255,255,255,0.25);
-      background: rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.85);
-      font-size: 12px;
+    /* 座布団サイクルボタン（4状態を連打で切替） */
+    .cmp-textbg-cycle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px 5px 5px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(18,18,24,0.82);
+      backdrop-filter: blur(10px) saturate(1.4);
+      -webkit-backdrop-filter: blur(10px) saturate(1.4);
+      color: #f3f3f5;
+      font-size: 11px;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.15s;
       white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.22);
+      transition: transform 0.15s;
     }
-    .cmp-textbg-chip.active {
-      border-color: #fff;
-      background: rgba(255,255,255,0.25);
+    .cmp-textbg-cycle:active { transform: scale(0.96); }
+    .cmp-textbg-cycle-preview {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: transparent;
       color: #fff;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
-    .cmp-textbg-chip:active { opacity: 0.7; }
-    .cmp-textbg-chip.none-chip { background: transparent; }
-    .cmp-textbg-chip.white-chip { background: rgba(255,255,255,0.92); color: #111; border-color: rgba(255,255,255,0.9); }
-    .cmp-textbg-chip.black-chip { background: rgba(0,0,0,0.85); color: #fff; border-color: rgba(255,255,255,0.4); }
-    .cmp-textbg-chip.frost-chip { background: rgba(255,255,255,0.18); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #fff; border-color: rgba(255,255,255,0.5); }
+    .cmp-textbg-cycle[data-state="white"] .cmp-textbg-cycle-preview {
+      background: #ffffff; color: #111; border-color: rgba(255,255,255,0.9);
+    }
+    .cmp-textbg-cycle[data-state="black"] .cmp-textbg-cycle-preview {
+      background: #111; color: #fff; border-color: rgba(255,255,255,0.4);
+    }
+    .cmp-textbg-cycle[data-state="frost"] .cmp-textbg-cycle-preview {
+      background: rgba(255,255,255,0.22);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #fff;
+      border-color: rgba(255,255,255,0.55);
+    }
 
     /* 座布団背景スタイル */
     .cmp-text-layer.bg-none { background: transparent; padding: 0; }
@@ -4889,6 +4910,8 @@
           <div class="cmp-photo-filter" id="cmpPhotoFilter"></div>
           <!-- ゴミ箱（写真ドラッグ時のみ表示） -->
           <div class="cmp-trash-zone" id="cmpTrashZone">🗑️</div>
+          <!-- フィルター名チラ見せ -->
+          <div class="cmp-filter-name-toast" id="cmpFilterNameToast"></div>
           <!-- テキスト -->
           <div class="cmp-text-layer" id="cmpTextLayer">
             <textarea class="cmp-text-input" id="cmpTextInput" placeholder="タップして入力..." rows="1" oninput="cmpAutoResize(this)"></textarea>
@@ -4908,9 +4931,19 @@
               <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#3D2817,#B8860B,#FFD700,#FFFFFF);" data-grad="linear-gradient(135deg,#3D2817 0%,#B8860B 35%,#FFD700 70%,#FFFFFF 100%)" onclick="cmpSelectGradFromPalette(this, 9)"></div>
             </div>
             <button class="cmp-float-grad-btn" id="cmpGradCycleBtn" style="background:linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);"></button>
-            <button class="cmp-float-photo-btn" onclick="document.getElementById('cmpPhotoInput').click()">
+            <button class="cmp-float-btn" onclick="document.getElementById('cmpPhotoInput').click()" title="写真">
               <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
             </button>
+            <button class="cmp-float-btn filled-icon" onclick="cmpCycleFilter(1)" title="フィルター">
+              <svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18 16l.9 2.4 2.1.6-2.1.6-.9 2.4-.9-2.4-2.1-.6 2.1-.6z"/></svg>
+            </button>
+            <button class="cmp-float-btn" id="cmpIconFont" onclick="cmpToggleToolPanel('font')" title="文字">
+              <span class="icon-glyph">Aa</span>
+            </button>
+            <button class="cmp-float-btn" id="cmpIconUrl" onclick="cmpOpenUrlModal()" title="URL">
+              <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </button>
+            <button class="cmp-float-post-btn" onclick="cmpPost()">投稿</button>
           </div>
         </div>
 
@@ -4949,40 +4982,19 @@
               </div>
             </div>
             <div class="cmp-textbg-row" style="margin-top:8px; justify-content:center;">
-              <div class="cmp-textbg-chip none-chip active" onclick="cmpSetTextBg('none')">なし</div>
-              <div class="cmp-textbg-chip white-chip" onclick="cmpSetTextBg('white')">Aa</div>
-              <div class="cmp-textbg-chip black-chip" onclick="cmpSetTextBg('black')">Aa</div>
-              <div class="cmp-textbg-chip frost-chip" onclick="cmpSetTextBg('frost')">Aa</div>
+              <button class="cmp-textbg-cycle" id="cmpTextBgCycle" data-state="none" onclick="cmpCycleTextBg()" title="座布団">
+                <span class="cmp-textbg-cycle-preview" id="cmpTextBgCyclePreview">Aa</span>
+                <span class="cmp-textbg-cycle-label" id="cmpTextBgCycleLabel">座布団なし</span>
+              </button>
             </div>
           </div>
 
-          <!-- フィルターパネル -->
-          <div class="cmp-tool-panel" id="cmpPanelFilter">
-            <div class="cmp-filter-row" id="cmpFilterRow">
-              <div class="cmp-filter-chip active" data-filter="" onclick="cmpSetFilter(this)">なし</div>
-              <div class="cmp-filter-chip" data-filter="grayscale(100%)" onclick="cmpSetFilter(this)">白黒</div>
-              <div class="cmp-filter-chip" data-filter="sepia(100%)" onclick="cmpSetFilter(this)">セピア</div>
-              <div class="cmp-filter-chip" data-filter="contrast(150%)" onclick="cmpSetFilter(this)">高コントラスト</div>
-              <div class="cmp-filter-chip" data-filter="saturate(180%)" onclick="cmpSetFilter(this)">彩度アップ</div>
-              <div class="cmp-filter-chip" data-filter="blur(2px)" onclick="cmpSetFilter(this)">ぼかし</div>
-              <div class="cmp-filter-chip" data-filter="sepia(50%) contrast(110%) saturate(80%)" onclick="cmpSetFilter(this)">ビンテージ</div>
-            </div>
-          </div>
-
-          <!-- URL バッジ（アイコンバー上） -->
+          <!-- URL バッジ -->
           <div class="cmp-url-badge-area" id="cmpUrlBadgeArea">
             <div class="cmp-url-badge-pill">
               <span class="cmp-url-badge-text" id="cmpUrlBadgeText"></span>
               <button class="cmp-url-badge-close" onclick="cmpRemoveUrl()">✕</button>
             </div>
-          </div>
-
-          <!-- アイコン行（常時表示） -->
-          <div class="cmp-icon-bar">
-            <button class="cmp-icon-btn" id="cmpIconFont" onclick="cmpToggleToolPanel('font')" title="文字"><span class="icon-glyph">Aa</span></button>
-            <button class="cmp-icon-btn" id="cmpIconFilter" onclick="cmpToggleToolPanel('filter')" title="フィルター"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18 16l.9 2.4 2.1.6-2.1.6-.9 2.4-.9-2.4-2.1-.6 2.1-.6z"/></svg></button>
-            <button class="cmp-icon-btn" id="cmpIconUrl" onclick="cmpOpenUrlModal()" title="URL"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
-            <button class="cmp-icon-post-btn" onclick="cmpPost()">投稿</button>
           </div>
 
         </div>
@@ -8217,48 +8229,84 @@
     if (el) el.style.color = cmpTextColor;
   }
 
-  // フィルター設定
-  function cmpSetFilter(chip) {
-    document.querySelectorAll('.cmp-filter-chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    const filterVal = chip.dataset.filter;
-    const filterEl = document.getElementById('cmpPhotoFilter');
-    if (filterEl) filterEl.style.backdropFilter = filterVal ? `none` : '';
-    // フィルターは写真imgに適用
+  // フィルター定義（インスタ風スワイプで循環）
+  const cmpFilters = [
+    { filter: '',                                       name: 'オリジナル' },
+    { filter: 'grayscale(100%)',                        name: '白黒' },
+    { filter: 'sepia(100%)',                            name: 'セピア' },
+    { filter: 'contrast(150%)',                         name: '高コントラスト' },
+    { filter: 'saturate(180%)',                         name: '彩度アップ' },
+    { filter: 'blur(2px)',                              name: 'ぼかし' },
+    { filter: 'sepia(50%) contrast(110%) saturate(80%)', name: 'ビンテージ' },
+  ];
+  let cmpCurrentFilterIdx = 0;
+  let cmpFilterToastTimer = null;
+
+  function cmpApplyFilterByIndex(idx, showName) {
+    cmpCurrentFilterIdx = (idx + cmpFilters.length) % cmpFilters.length;
+    const f = cmpFilters[cmpCurrentFilterIdx];
+    // 背景コンテナに適用：グラデ・写真両方に効く（テキストは外側なので無影響）
+    const bg = document.getElementById('cmpBg');
+    if (bg) bg.style.filter = f.filter;
+    // 写真単体のimg filterはリセット（二重掛け防止）
     const img = document.getElementById('cmpPhotoImg');
-    if (img) img.style.filter = filterVal;
+    if (img) img.style.filter = '';
+    // チップ状態も同期
+    document.querySelectorAll('.cmp-filter-chip').forEach((c, i) => c.classList.toggle('active', i === cmpCurrentFilterIdx));
+    if (showName) {
+      const toast = document.getElementById('cmpFilterNameToast');
+      if (toast) {
+        toast.textContent = f.name;
+        toast.classList.add('visible');
+        if (cmpFilterToastTimer) clearTimeout(cmpFilterToastTimer);
+        cmpFilterToastTimer = setTimeout(() => toast.classList.remove('visible'), 800);
+      }
+    }
+  }
+
+  function cmpCycleFilter(direction) {
+    cmpApplyFilterByIndex(cmpCurrentFilterIdx + direction, true);
+  }
+
+  // フィルター設定（チップクリック）
+  function cmpSetFilter(chip) {
+    const idx = [...document.querySelectorAll('.cmp-filter-chip')].indexOf(chip);
+    cmpApplyFilterByIndex(idx >= 0 ? idx : 0, true);
   }
 
   // ツールパネル開閉（1つだけ展開）
-  const CMP_PANELS = ['font', 'filter'];
+  const CMP_PANELS = ['font'];
   let cmpActivePanel = null;
 
   function cmpToggleToolPanel(name) {
-    const filterIcon = document.getElementById('cmpIconFilter');
-    if (name === 'filter' && cmpBgMode !== 'photo') {
-      showToast('写真モード時のみ使用できます');
-      return;
-    }
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    const floatCtrls = document.querySelector('.cmp-float-controls');
     if (cmpActivePanel === name) {
-      // 同じアイコンで閉じる
-      document.getElementById('cmpPanel' + name.charAt(0).toUpperCase() + name.slice(1)).classList.remove('open');
-      document.getElementById('cmpIcon' + name.charAt(0).toUpperCase() + name.slice(1)).classList.remove('active');
+      document.getElementById('cmpPanel' + cap(name)).classList.remove('open');
+      document.getElementById('cmpIcon' + cap(name)).classList.remove('active');
       cmpActivePanel = null;
+      if (floatCtrls) floatCtrls.classList.remove('panel-open');
     } else {
-      // 他を全部閉じる
       CMP_PANELS.forEach(p => {
-        document.getElementById('cmpPanel' + p.charAt(0).toUpperCase() + p.slice(1)).classList.remove('open');
-        document.getElementById('cmpIcon' + p.charAt(0).toUpperCase() + p.slice(1)).classList.remove('active');
+        document.getElementById('cmpPanel' + cap(p)).classList.remove('open');
+        const iconEl = document.getElementById('cmpIcon' + cap(p));
+        if (iconEl) iconEl.classList.remove('active');
       });
-      // 選択したパネルを開く
-      document.getElementById('cmpPanel' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('open');
-      document.getElementById('cmpIcon' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+      document.getElementById('cmpPanel' + cap(name)).classList.add('open');
+      document.getElementById('cmpIcon' + cap(name)).classList.add('active');
       cmpActivePanel = name;
+      if (floatCtrls) floatCtrls.classList.add('panel-open');
     }
   }
 
   // 座布団背景設定
   let cmpTextBgType = 'none';
+  const CMP_TEXTBG_STATES = [
+    { key: 'none',  label: '座布団なし' },
+    { key: 'white', label: '白' },
+    { key: 'black', label: '黒' },
+    { key: 'frost', label: 'すりガラス' },
+  ];
   function cmpSetTextBg(type) {
     cmpTextBgType = type;
     const layer = document.getElementById('cmpTextLayer');
@@ -8266,10 +8314,18 @@
       layer.classList.remove('bg-none', 'bg-white', 'bg-black', 'bg-frost');
       if (type !== 'none') layer.classList.add('bg-' + type);
     }
-    document.querySelectorAll('.cmp-textbg-chip').forEach(c => c.classList.remove('active'));
-    const map = { none: 0, white: 1, black: 2, frost: 3 };
-    const chips = document.querySelectorAll('.cmp-textbg-chip');
-    if (chips[map[type]]) chips[map[type]].classList.add('active');
+    const btn = document.getElementById('cmpTextBgCycle');
+    const label = document.getElementById('cmpTextBgCycleLabel');
+    if (btn) btn.dataset.state = type;
+    if (label) {
+      const state = CMP_TEXTBG_STATES.find(s => s.key === type);
+      label.textContent = state ? state.label : '座布団なし';
+    }
+  }
+  function cmpCycleTextBg() {
+    const idx = CMP_TEXTBG_STATES.findIndex(s => s.key === cmpTextBgType);
+    const next = CMP_TEXTBG_STATES[(idx + 1) % CMP_TEXTBG_STATES.length];
+    cmpSetTextBg(next.key);
   }
 
   // グラデ設定（内部共通）
@@ -8348,7 +8404,24 @@
       if (cmpGradExpandOpen && !e.target.closest('.cmp-float-controls')) {
         cmpCloseFloatPalette();
       }
+      // ツールパネル（Aa など）もパネル外タップで閉じる
+      if (cmpActivePanel && !e.target.closest('.cmp-tool-panel') && !e.target.closest('.cmp-float-controls')) {
+        cmpCloseActivePanel();
+      }
     });
+  }
+
+  // 現在開いているツールパネルを閉じる
+  function cmpCloseActivePanel() {
+    if (!cmpActivePanel) return;
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    const panel = document.getElementById('cmpPanel' + cap(cmpActivePanel));
+    const icon = document.getElementById('cmpIcon' + cap(cmpActivePanel));
+    if (panel) panel.classList.remove('open');
+    if (icon) icon.classList.remove('active');
+    cmpActivePanel = null;
+    const floatCtrls = document.querySelector('.cmp-float-controls');
+    if (floatCtrls) floatCtrls.classList.remove('panel-open');
   }
 
   // パレットからグラデ選択
@@ -8387,8 +8460,6 @@
       cmpApplyPhotoTransform();
     };
     img.src = url;
-    const filterIcon = document.getElementById('cmpIconFilter');
-    if (filterIcon) filterIcon.classList.remove('disabled');
     event.target.value = '';
     // タッチ操作を登録
     cmpInitPhotoTouch(img);
@@ -8402,6 +8473,10 @@
     const wrap = document.getElementById('cmpPhotoWrap');
     const trash = document.getElementById('cmpTrashZone');
     let lastDist = null, lastAngle = null, lastX = null, lastY = null;
+    // スワイプ検出用（ジェスチャー開始時の情報）
+    let startX = null, startY = null, startTransX = 0, startTransY = 0, multiTouchUsed = false;
+    const SWIPE_THRESHOLD = 60; // 水平60px以上で横スワイプ判定
+    const SWIPE_RATIO = 1.5;    // 水平 > 垂直 × 1.5
 
     function showTrash() { trash.classList.add('visible'); }
     function hideTrash() { trash.classList.remove('visible', 'hover'); }
@@ -8411,14 +8486,36 @@
       trash.classList.toggle('hover', over);
     }
 
+    // 横スワイプ判定＆フィルター切替（true返したらパンを巻き戻す）
+    function handleSwipeIfAny(endX, endY) {
+      if (startX === null || multiTouchUsed) return false;
+      const dx = endX - startX;
+      const dy = endY - startY;
+      if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * SWIPE_RATIO) {
+        cmpCycleFilter(dx < 0 ? 1 : -1); // 左スワイプ=次、右スワイプ=前
+        // スワイプ中に起きたパンを巻き戻す
+        cmpPhotoTransX = startTransX;
+        cmpPhotoTransY = startTransY;
+        cmpApplyPhotoTransform();
+        return true;
+      }
+      return false;
+    }
+
     wrap.addEventListener('touchstart', (e) => {
       if (e.touches.length === 1) {
         lastX = e.touches[0].clientX;
         lastY = e.touches[0].clientY;
+        startX = lastX;
+        startY = lastY;
+        startTransX = cmpPhotoTransX;
+        startTransY = cmpPhotoTransY;
+        multiTouchUsed = false;
         showTrash();
       } else if (e.touches.length === 2) {
         lastDist = cmpTouchDist(e.touches);
         lastAngle = cmpTouchAngle(e.touches);
+        multiTouchUsed = true; // ピンチ中はスワイプ判定しない
       }
     }, { passive: true });
 
@@ -8441,10 +8538,13 @@
       cmpApplyPhotoTransform();
     }, { passive: false });
 
-    wrap.addEventListener('touchend', () => {
-      if (trash.classList.contains('hover')) cmpRemovePhoto();
+    wrap.addEventListener('touchend', (e) => {
+      const onTrash = trash.classList.contains('hover');
+      if (onTrash) { cmpRemovePhoto(); }
+      else if (lastX !== null) { handleSwipeIfAny(lastX, lastY); }
       hideTrash();
       lastDist = null; lastAngle = null; lastX = null; lastY = null;
+      startX = null; startY = null;
     }, { passive: true });
 
     // マウス対応（デスクトップ）
@@ -8453,6 +8553,11 @@
       isDragging = true;
       lastX = e.clientX;
       lastY = e.clientY;
+      startX = lastX;
+      startY = lastY;
+      startTransX = cmpPhotoTransX;
+      startTransY = cmpPhotoTransY;
+      multiTouchUsed = false;
       showTrash();
       e.preventDefault();
     });
@@ -8465,12 +8570,15 @@
       updateTrashHover(e.clientX, e.clientY);
       cmpApplyPhotoTransform();
     });
-    window.addEventListener('mouseup', () => {
+    window.addEventListener('mouseup', (e) => {
       if (!isDragging) return;
       isDragging = false;
-      if (trash.classList.contains('hover')) cmpRemovePhoto();
+      const onTrash = trash.classList.contains('hover');
+      if (onTrash) { cmpRemovePhoto(); }
+      else { handleSwipeIfAny(e.clientX, e.clientY); }
       hideTrash();
       lastX = null; lastY = null;
+      startX = null; startY = null;
     });
 
     // ホイールで拡大縮小
@@ -8492,8 +8600,6 @@
     cmpPhotoTransX = 0;
     cmpPhotoTransY = 0;
     cmpBgMode = 'grad';
-    const filterIcon = document.getElementById('cmpIconFilter');
-    if (filterIcon) filterIcon.classList.add('disabled');
     document.getElementById('cmpBg').style.background = cmpCurrentGrad;
     showToast('🗑️ 写真を削除しました');
   }
@@ -8886,9 +8992,16 @@
       textEl.style.height = 'auto';
     }
     // 座布団リセット
-    const textLayer = document.getElementById('cmpTextLayer');
-    if (textLayer) textLayer.classList.remove('bg-none', 'bg-white', 'bg-black', 'bg-frost');
-    document.querySelectorAll('.cmp-textbg-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
+    cmpSetTextBg('none');
+    // パネル・フロート状態リセット
+    const floatCtrls = document.querySelector('.cmp-float-controls');
+    if (floatCtrls) floatCtrls.classList.remove('panel-open');
+    CMP_PANELS.forEach(p => {
+      const panel = document.getElementById('cmpPanel' + p.charAt(0).toUpperCase() + p.slice(1));
+      if (panel) panel.classList.remove('open');
+      const icon = document.getElementById('cmpIcon' + p.charAt(0).toUpperCase() + p.slice(1));
+      if (icon) icon.classList.remove('active');
+    });
 
     // URL バッジクリア
     cmpRemoveUrl();
@@ -8926,10 +9039,6 @@
       const icon = document.getElementById('cmpIcon' + p.charAt(0).toUpperCase() + p.slice(1));
       if (icon) icon.classList.remove('active');
     });
-
-    // フィルターアイコンをグレーアウト（初期はグラデモード）
-    const filterIcon = document.getElementById('cmpIconFilter');
-    if (filterIcon) filterIcon.classList.add('disabled');
   }
 
   // init
@@ -8940,9 +9049,6 @@
       textEl.style.fontFamily = cmpFontFamily;
       textEl.style.fontWeight = cmpFontWeight;
     }
-    // フィルターアイコンは初期グレーアウト（グラデモードなので）
-    const filterIcon = document.getElementById('cmpIconFilter');
-    if (filterIcon) filterIcon.classList.add('disabled');
     // グラデ長押し登録
     cmpInitGradLongPress();
   });

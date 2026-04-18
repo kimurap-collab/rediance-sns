@@ -218,3 +218,22 @@ What makes Figma distinctive beyond the variable font is its circle-and-pill geo
 3. Dashed focus outlines, not solid
 4. Letter-spacing is always negative on body, always positive on mono labels
 5. Pill (50px) for buttons/tabs, circle (50%) for icon buttons
+
+---
+
+## 10. Composer — モック実装の本実装向けノート
+
+### スワイプフィルター切替
+- **モック挙動**：写真上で左右スワイプ（水平距離 >60px かつ 水平/垂直比 >1.5）でフィルター循環
+- **名前表示**：切替時に中央に0.8秒チラ見せ（`.cmp-filter-name-toast`）
+- **検出した時はパンを巻き戻し**（ジェスチャー開始時のtranslate座標に戻す）
+
+### 本実装時の注意（スワイプとパンの競合解決）
+- モックは閾値ベースで簡易判定しているだけ。本実装では以下を検討：
+  - **案A：速度で判定**（velocity閾値。速い横スワイプ=フィルター、遅いドラッグ=パン）
+  - **案B：状態で判定**（写真が初期位置=スケール1・未移動のときのみスワイプ=フィルター。ズーム/移動中は単指ドラッグ=パン）
+  - **案C：ハイブリッド**（案B＋`cmpPhotoScale` が初期値近辺のときだけ横スワイプ判定）
+- インスタは案B的な挙動。自然な切り替え感を重視するなら案B推奨
+
+### フィルター一覧（7種）
+オリジナル / 白黒 / セピア / 高コントラスト / 彩度アップ / ぼかし / ビンテージ
