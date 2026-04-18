@@ -3841,15 +3841,71 @@
     .cmp-grad-dot.active { border-color: #fff; transform: scale(1.18); }
     .cmp-grad-dot:active { opacity: 0.75; }
 
-    /* GIF プレースホルダー */
-    .cmp-gif-placeholder {
-      flex: 1;
+    /* フローティングコントロール（右下） */
+    .cmp-float-controls {
+      position: absolute;
+      bottom: 96px;
+      right: 14px;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .cmp-float-grad-btn {
+      width: 31px;
+      height: 31px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.6);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s;
+      background: linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);
+    }
+    .cmp-float-grad-btn:active { transform: scale(0.9); }
+    .cmp-float-photo-btn {
+      width: 31px;
+      height: 31px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      cursor: pointer;
+      display: flex;
       align-items: center;
       justify-content: center;
-      color: rgba(255,255,255,0.5);
-      font-size: 12px;
-      display: none;
+      transition: transform 0.15s;
     }
+    .cmp-float-photo-btn:active { transform: scale(0.9); }
+    .cmp-float-photo-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: #fff;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* フローティング上のパレットポップアップ */
+    .cmp-float-palette {
+      position: absolute;
+      bottom: 54px;
+      right: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 8px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.15);
+      z-index: 60;
+    }
+    .cmp-float-palette.open { display: flex; }
 
     /* 座布団パネル */
     .cmp-textbg-row {
@@ -4837,6 +4893,25 @@
           <div class="cmp-text-layer" id="cmpTextLayer">
             <textarea class="cmp-text-input" id="cmpTextInput" placeholder="タップして入力..." rows="1" oninput="cmpAutoResize(this)"></textarea>
           </div>
+          <!-- 右下フローティングコントロール -->
+          <div class="cmp-float-controls">
+            <div class="cmp-float-palette" id="cmpFloatPalette">
+              <div class="cmp-grad-dot active" style="background:linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);" data-grad="linear-gradient(135deg,#020408 0%,#1E3A5F 35%,#7C3AED 70%,#EC4899 100%)" onclick="cmpSelectGradFromPalette(this, 0)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FFD700,#FF8C42,#EC4899,#9333EA);" data-grad="linear-gradient(135deg,#FFD700 0%,#FF8C42 35%,#EC4899 70%,#9333EA 100%)" onclick="cmpSelectGradFromPalette(this, 1)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#6EE7B7,#22D3EE,#3B82F6,#8B5CF6);" data-grad="linear-gradient(135deg,#6EE7B7 0%,#22D3EE 35%,#3B82F6 70%,#8B5CF6 100%)" onclick="cmpSelectGradFromPalette(this, 2)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#F9A8D4,#E879F9,#A855F7,#6366F1);" data-grad="linear-gradient(135deg,#F9A8D4 0%,#E879F9 35%,#A855F7 70%,#6366F1 100%)" onclick="cmpSelectGradFromPalette(this, 3)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FDE047,#BEF264,#22C55E,#059669);" data-grad="linear-gradient(135deg,#FDE047 0%,#BEF264 35%,#22C55E 70%,#059669 100%)" onclick="cmpSelectGradFromPalette(this, 4)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FF006E,#8338EC,#3A86FF,#00D4FF);" data-grad="linear-gradient(135deg,#FF006E 0%,#8338EC 35%,#3A86FF 70%,#00D4FF 100%)" onclick="cmpSelectGradFromPalette(this, 5)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FFE066,#FFA93D,#FF5733,#E11D48);" data-grad="linear-gradient(135deg,#FFE066 0%,#FFA93D 35%,#FF5733 70%,#E11D48 100%)" onclick="cmpSelectGradFromPalette(this, 6)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FFB3D9,#FF66B3,#EC4899,#A855F7);" data-grad="linear-gradient(135deg,#FFB3D9 0%,#FF66B3 35%,#EC4899 70%,#A855F7 100%)" onclick="cmpSelectGradFromPalette(this, 7)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#A7F3D0,#6EE7B7,#14B8A6,#0891B2);" data-grad="linear-gradient(135deg,#A7F3D0 0%,#6EE7B7 35%,#14B8A6 70%,#0891B2 100%)" onclick="cmpSelectGradFromPalette(this, 8)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#3D2817,#B8860B,#FFD700,#FFFFFF);" data-grad="linear-gradient(135deg,#3D2817 0%,#B8860B 35%,#FFD700 70%,#FFFFFF 100%)" onclick="cmpSelectGradFromPalette(this, 9)"></div>
+            </div>
+            <button class="cmp-float-grad-btn" id="cmpGradCycleBtn" style="background:linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);"></button>
+            <button class="cmp-float-photo-btn" onclick="document.getElementById('cmpPhotoInput').click()">
+              <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </button>
+          </div>
         </div>
 
         <!-- ヘッダー -->
@@ -4846,36 +4921,6 @@
 
         <!-- ボトムコントロール -->
         <div class="cmp-controls">
-
-          <!-- 背景パネル -->
-          <div class="cmp-tool-panel" id="cmpPanelBg">
-            <div class="cmp-bg-row">
-              <div class="cmp-bg-type-btns">
-                <button class="cmp-bg-type-btn active" id="cmpBgGradBtn" onclick="cmpBgType('grad')">🎨 グラデ</button>
-                <button class="cmp-bg-type-btn" id="cmpBgPhotoBtn" onclick="cmpBgType('photo')">📷 写真</button>
-                <button class="cmp-bg-type-btn" id="cmpBgGifBtn" onclick="cmpBgType('gif')">GIF</button>
-              </div>
-              <!-- Instagram風タップ式グラデ選択 -->
-              <div id="cmpGradPalette">
-                <div class="cmp-grad-cycle-wrap">
-                  <div class="cmp-grad-cycle-btn" id="cmpGradCycleBtn" onclick="cmpCycleGrad()" style="background:linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);"></div>
-                </div>
-                <div class="cmp-grad-expand-palette" id="cmpGradExpandPalette">
-                  <div class="cmp-grad-dot active" style="background:linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);" data-grad="linear-gradient(135deg,#020408 0%,#1E3A5F 35%,#7C3AED 70%,#EC4899 100%)" onclick="cmpSelectGradFromPalette(this, 0)"></div>
-                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FFD700,#FF8C42,#EC4899,#9333EA);" data-grad="linear-gradient(135deg,#FFD700 0%,#FF8C42 35%,#EC4899 70%,#9333EA 100%)" onclick="cmpSelectGradFromPalette(this, 1)"></div>
-                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#6EE7B7,#22D3EE,#3B82F6,#8B5CF6);" data-grad="linear-gradient(135deg,#6EE7B7 0%,#22D3EE 35%,#3B82F6 70%,#8B5CF6 100%)" onclick="cmpSelectGradFromPalette(this, 2)"></div>
-                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#F9A8D4,#E879F9,#A855F7,#6366F1);" data-grad="linear-gradient(135deg,#F9A8D4 0%,#E879F9 35%,#A855F7 70%,#6366F1 100%)" onclick="cmpSelectGradFromPalette(this, 3)"></div>
-                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FDE047,#BEF264,#22C55E,#059669);" data-grad="linear-gradient(135deg,#FDE047 0%,#BEF264 35%,#22C55E 70%,#059669 100%)" onclick="cmpSelectGradFromPalette(this, 4)"></div>
-                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FF006E,#8338EC,#3A86FF,#00D4FF);" data-grad="linear-gradient(135deg,#FF006E 0%,#8338EC 35%,#3A86FF 70%,#00D4FF 100%)" onclick="cmpSelectGradFromPalette(this, 5)"></div>
-                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FFE066,#FFA93D,#FF5733,#E11D48);" data-grad="linear-gradient(135deg,#FFE066 0%,#FFA93D 35%,#FF5733 70%,#E11D48 100%)" onclick="cmpSelectGradFromPalette(this, 6)"></div>
-                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FFB3D9,#FF66B3,#EC4899,#A855F7);" data-grad="linear-gradient(135deg,#FFB3D9 0%,#FF66B3 35%,#EC4899 70%,#A855F7 100%)" onclick="cmpSelectGradFromPalette(this, 7)"></div>
-                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#A7F3D0,#6EE7B7,#14B8A6,#0891B2);" data-grad="linear-gradient(135deg,#A7F3D0 0%,#6EE7B7 35%,#14B8A6 70%,#0891B2 100%)" onclick="cmpSelectGradFromPalette(this, 8)"></div>
-                  <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#3D2817,#B8860B,#FFD700,#FFFFFF);" data-grad="linear-gradient(135deg,#3D2817 0%,#B8860B 35%,#FFD700 70%,#FFFFFF 100%)" onclick="cmpSelectGradFromPalette(this, 9)"></div>
-                </div>
-              </div>
-              <div class="cmp-gif-placeholder" id="cmpGifPlaceholder">🚧 GIF開発中</div>
-            </div>
-          </div>
 
           <!-- フォントパネル -->
           <div class="cmp-tool-panel" id="cmpPanelFont">
@@ -4934,7 +4979,6 @@
 
           <!-- アイコン行（常時表示） -->
           <div class="cmp-icon-bar">
-            <button class="cmp-icon-btn" id="cmpIconBg" onclick="cmpToggleToolPanel('bg')" title="背景"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="9" r="1.5" fill="#fff" stroke="none"/><path d="M21 15l-5-5L5 21"/></svg></button>
             <button class="cmp-icon-btn" id="cmpIconFont" onclick="cmpToggleToolPanel('font')" title="文字"><span class="icon-glyph">Aa</span></button>
             <button class="cmp-icon-btn" id="cmpIconFilter" onclick="cmpToggleToolPanel('filter')" title="フィルター"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18 16l.9 2.4 2.1.6-2.1.6-.9 2.4-.9-2.4-2.1-.6 2.1-.6z"/></svg></button>
             <button class="cmp-icon-btn" id="cmpIconUrl" onclick="cmpOpenUrlModal()" title="URL"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
@@ -8186,7 +8230,7 @@
   }
 
   // ツールパネル開閉（1つだけ展開）
-  const CMP_PANELS = ['bg', 'font', 'filter'];
+  const CMP_PANELS = ['font', 'filter'];
   let cmpActivePanel = null;
 
   function cmpToggleToolPanel(name) {
@@ -8228,37 +8272,6 @@
     if (chips[map[type]]) chips[map[type]].classList.add('active');
   }
 
-  // 背景タイプ切替
-  function cmpBgType(type) {
-    cmpBgMode = type;
-    ['grad','photo','gif'].forEach(t => {
-      const btn = document.getElementById('cmpBg' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn');
-      if (btn) btn.classList.toggle('active', t === type);
-    });
-    const gradPal = document.getElementById('cmpGradPalette');
-    const gifPh   = document.getElementById('cmpGifPlaceholder');
-    const photoWrap = document.getElementById('cmpPhotoWrap');
-    const filterIcon = document.getElementById('cmpIconFilter');
-
-    if (type === 'grad') {
-      if (gradPal) gradPal.style.display = 'block';
-      if (gifPh)   gifPh.style.display   = 'none';
-      if (photoWrap) photoWrap.style.display = 'none';
-      if (filterIcon) filterIcon.classList.add('disabled');
-      document.getElementById('cmpBg').style.background = cmpCurrentGrad;
-    } else if (type === 'photo') {
-      if (gradPal) gradPal.style.display = 'none';
-      if (gifPh)   gifPh.style.display   = 'none';
-      if (filterIcon) filterIcon.classList.remove('disabled');
-      document.getElementById('cmpPhotoInput').click();
-    } else if (type === 'gif') {
-      if (gradPal) gradPal.style.display = 'none';
-      if (gifPh)   gifPh.style.display   = 'flex';
-      if (filterIcon) filterIcon.classList.add('disabled');
-      showToast('GIF機能は開発中です');
-    }
-  }
-
   // グラデ設定（内部共通）
   function cmpApplyGradIndex(idx) {
     cmpCurrentGradIndex = idx;
@@ -8276,44 +8289,72 @@
 
   // タップ→次のグラデへ cycle
   function cmpCycleGrad() {
-    const palette = document.getElementById('cmpGradExpandPalette');
     if (cmpGradExpandOpen) {
-      // パレットが開いていたらタップで閉じる
-      palette.classList.remove('open');
-      cmpGradExpandOpen = false;
+      cmpCloseFloatPalette();
       return;
     }
     const nextIdx = (cmpCurrentGradIndex + 1) % CMP_GRADS.length;
     cmpApplyGradIndex(nextIdx);
   }
 
-  // ロングプレスでパレット展開（cycle button に登録）
+  function cmpCloseFloatPalette() {
+    const palette = document.getElementById('cmpFloatPalette');
+    if (palette) { palette.classList.remove('open'); }
+    cmpGradExpandOpen = false;
+  }
+
+  // ロングプレスでパレット展開（フローティングボタンに登録）
   function cmpInitGradLongPress() {
     const btn = document.getElementById('cmpGradCycleBtn');
     if (!btn) return;
+    let longPressed = false;
+
+    const openPalette = () => {
+      const palette = document.getElementById('cmpFloatPalette');
+      if (palette) { palette.classList.add('open'); cmpGradExpandOpen = true; }
+      longPressed = true;
+    };
+
+    let touchActive = false;
     btn.addEventListener('touchstart', () => {
-      cmpGradLongPressTimer = setTimeout(() => {
-        const palette = document.getElementById('cmpGradExpandPalette');
-        if (palette) { palette.classList.add('open'); cmpGradExpandOpen = true; }
-      }, 500);
+      touchActive = true;
+      longPressed = false;
+      cmpGradLongPressTimer = setTimeout(openPalette, 500);
     }, { passive: true });
-    btn.addEventListener('touchend', () => { clearTimeout(cmpGradLongPressTimer); }, { passive: true });
-    btn.addEventListener('touchcancel', () => { clearTimeout(cmpGradLongPressTimer); }, { passive: true });
+    btn.addEventListener('touchend', () => {
+      clearTimeout(cmpGradLongPressTimer);
+      if (!longPressed) cmpCycleGrad();
+      setTimeout(() => { touchActive = false; }, 300);
+    }, { passive: true });
+    btn.addEventListener('touchcancel', () => {
+      clearTimeout(cmpGradLongPressTimer);
+      touchActive = false;
+    }, { passive: true });
+
     // マウス対応（デスクトップテスト用）
     btn.addEventListener('mousedown', () => {
-      cmpGradLongPressTimer = setTimeout(() => {
-        const palette = document.getElementById('cmpGradExpandPalette');
-        if (palette) { palette.classList.add('open'); cmpGradExpandOpen = true; }
-      }, 500);
+      if (touchActive) return;
+      longPressed = false;
+      cmpGradLongPressTimer = setTimeout(openPalette, 500);
     });
-    btn.addEventListener('mouseup', () => { clearTimeout(cmpGradLongPressTimer); });
+    btn.addEventListener('mouseup', () => {
+      if (touchActive) return;
+      clearTimeout(cmpGradLongPressTimer);
+      if (!longPressed) cmpCycleGrad();
+    });
+
+    // 外側タップで閉じる
+    document.addEventListener('click', (e) => {
+      if (cmpGradExpandOpen && !e.target.closest('.cmp-float-controls')) {
+        cmpCloseFloatPalette();
+      }
+    });
   }
 
   // パレットからグラデ選択
   function cmpSelectGradFromPalette(dot, idx) {
     cmpApplyGradIndex(idx);
-    const palette = document.getElementById('cmpGradExpandPalette');
-    if (palette) { palette.classList.remove('open'); cmpGradExpandOpen = false; }
+    cmpCloseFloatPalette();
   }
 
   // 後方互換（cmpSetGradが他から呼ばれる場合）
@@ -8451,11 +8492,6 @@
     cmpPhotoTransX = 0;
     cmpPhotoTransY = 0;
     cmpBgMode = 'grad';
-    document.getElementById('cmpBgGradBtn').classList.add('active');
-    document.getElementById('cmpBgPhotoBtn').classList.remove('active');
-    document.getElementById('cmpBgGifBtn').classList.remove('active');
-    const gradPal = document.getElementById('cmpGradPalette');
-    if (gradPal) gradPal.style.display = 'block';
     const filterIcon = document.getElementById('cmpIconFilter');
     if (filterIcon) filterIcon.classList.add('disabled');
     document.getElementById('cmpBg').style.background = cmpCurrentGrad;
@@ -8877,8 +8913,7 @@
     const cycleBtn = document.getElementById('cmpGradCycleBtn');
     if (cycleBtn) cycleBtn.style.background = CMP_GRADS[0];
     // expandパレットを閉じる
-    const expandPal = document.getElementById('cmpGradExpandPalette');
-    if (expandPal) expandPal.classList.remove('open');
+    cmpCloseFloatPalette();
 
     document.querySelectorAll('.cmp-color-dot').forEach((d, i) => d.classList.toggle('active', i === 0));
     document.querySelectorAll('.cmp-font-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
@@ -8892,14 +8927,6 @@
       if (icon) icon.classList.remove('active');
     });
 
-    const gradPal = document.getElementById('cmpGradPalette');
-    if (gradPal) gradPal.style.display = 'block';
-    const gifPh = document.getElementById('cmpGifPlaceholder');
-    if (gifPh) gifPh.style.display = 'none';
-    ['grad','photo','gif'].forEach(t => {
-      const btn = document.getElementById('cmpBg' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn');
-      if (btn) btn.classList.toggle('active', t === 'grad');
-    });
     // フィルターアイコンをグレーアウト（初期はグラデモード）
     const filterIcon = document.getElementById('cmpIconFilter');
     if (filterIcon) filterIcon.classList.add('disabled');
