@@ -2468,6 +2468,840 @@
     }
     .tg-send-btn:active { background: var(--primary); color: #fff; }
 
+    /* ===== EVENTS TAB (イベント) ===== */
+    .events-hub-wrap { padding: 16px 16px 100px; }
+    .events-create-btn {
+      width: 100%;
+      padding: 14px 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 6px 18px rgba(124, 58, 237, 0.35);
+      margin-bottom: 20px;
+    }
+    .events-create-btn:active { transform: scale(0.98); }
+    .events-create-icon {
+      font-size: 20px;
+      font-weight: 400;
+    }
+    .events-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-sub);
+      padding: 16px 4px 8px;
+      margin-top: 8px;
+    }
+    .events-empty {
+      padding: 24px 12px;
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 13px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 12px;
+      margin: 4px 0;
+    }
+    .events-row {
+      display: flex;
+      gap: 12px;
+      padding: 14px 12px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .events-row:active { background: rgba(255,255,255,0.08); }
+    .events-row-date {
+      min-width: 56px;
+      text-align: center;
+      padding: 8px 4px;
+      background: rgba(124,58,237,0.18);
+      border-radius: 8px;
+      align-self: flex-start;
+    }
+    .events-row-date-month {
+      font-size: 11px;
+      color: #C4B5FD;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .events-row-date-day {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+      margin-top: 2px;
+    }
+    .events-row-body { flex: 1; min-width: 0; }
+    .events-row-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .events-row-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .events-row-status {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 10px;
+      margin-top: 4px;
+      display: inline-block;
+    }
+    .events-row-status.going { background: rgba(34,197,94,0.22); color: #86EFAC; }
+    .events-row-status.maybe { background: rgba(234,179,8,0.22); color: #FDE68A; }
+    .events-row-status.skip  { background: rgba(239,68,68,0.22); color: #FCA5A5; }
+    .events-row-status.pending { background: rgba(255,255,255,0.1); color: var(--text-sub); }
+    .events-row-status.host { background: rgba(124,58,237,0.28); color: #DDD6FE; }
+
+    /* イベント作成画面 */
+    #screen-event-create { background: var(--bg); overflow-y: auto; }
+    .ev-create-header, .ev-detail-header {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .ev-back-btn {
+      width: 36px; height: 36px;
+      border: none; background: transparent;
+      color: var(--text); font-size: 22px; cursor: pointer;
+      border-radius: 50%;
+    }
+    .ev-back-btn:active { background: rgba(255,255,255,0.12); }
+    .ev-create-title, .ev-detail-title {
+      font-size: 16px; font-weight: 700;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .ev-create-body { padding: 16px 16px 100px; }
+    .ev-field {
+      display: flex; flex-direction: column;
+      margin-bottom: 14px;
+    }
+    .ev-field-label {
+      font-size: 12px; font-weight: 700;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+    }
+    .ev-field-row { display: flex; gap: 10px; }
+    .ev-input {
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .ev-input:focus { border-color: #A855F7; }
+    .ev-input-lg { font-size: 20px; font-weight: 700; padding: 14px 14px; }
+    .ev-textarea { resize: vertical; min-height: 70px; font-family: inherit; }
+    .ev-field-optional {
+      font-size: 11px; font-weight: 500;
+      color: var(--text-sub);
+      margin-left: 6px;
+    }
+
+    /* ヒーロー画像エディタ */
+    .ev-cover-editor {
+      margin-bottom: 18px;
+    }
+    .ev-cover-preview {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 16px;
+      background: linear-gradient(135deg,#1E3A5F 0%,#7C3AED 50%,#EC4899 100%);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .ev-cover-preview::after {
+      content: '🎨';
+      position: absolute;
+      bottom: 12px; right: 12px;
+      width: 36px; height: 36px;
+      background: rgba(0,0,0,0.45);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .ev-cover-palette {
+      display: flex; gap: 8px;
+      margin-top: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .ev-cover-palette::-webkit-scrollbar { display: none; }
+    .ev-cover-swatch {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .ev-cover-swatch.active {
+      border-color: #fff;
+      transform: scale(1.08);
+    }
+    .ev-cover-hint {
+      font-size: 11px; color: var(--text-sub);
+      text-align: center; margin-top: 6px;
+    }
+    .ev-cover-section-title {
+      font-size: 11px; font-weight: 700;
+      color: var(--text-sub);
+      margin-top: 14px; margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .ev-cover-swatch.photo {
+      background-size: cover;
+      background-position: center;
+      width: 60px;
+      aspect-ratio: 1;
+      height: auto;
+    }
+    .ev-cover-upload-btn {
+      display: block;
+      margin-top: 14px;
+      padding: 12px;
+      border: 1.5px dashed rgba(255,255,255,0.25);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      text-align: center;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .ev-cover-upload-btn:hover,
+    .ev-cover-upload-btn:active {
+      border-color: #A855F7;
+      background: rgba(168,85,247,0.1);
+    }
+    /* ページ背景エディタ */
+    .ev-bg-editor-block {
+      padding: 14px;
+      background: #14141F;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+    }
+    .ev-bg-editor-title {
+      font-size: 14px; font-weight: 800;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .ev-bg-editor-hint {
+      font-size: 11px; color: rgba(255,255,255,0.65);
+      margin-bottom: 10px;
+    }
+    .ev-bg-mini-preview {
+      width: 100%;
+      aspect-ratio: 16 / 7;
+      border-radius: 12px;
+      background: #0A0A0F;
+      padding: 18px 16px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .ev-bg-mini-title {
+      font-size: 16px; font-weight: 800;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+    .ev-bg-mini-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+    }
+    .ev-bg-swatch-none {
+      display: flex; align-items: center; justify-content: center;
+      background: #0A0A0F;
+      color: rgba(255,255,255,0.5);
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .ev-bg-swatch-pattern {
+      /* inline style の background が全部上書きする */
+      background-repeat: repeat;
+    }
+
+    /* 公開範囲トグル */
+    .ev-scope-toggle {
+      display: flex; gap: 8px;
+    }
+    .ev-scope-btn {
+      flex: 1;
+      padding: 14px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .ev-scope-btn.active {
+      border-color: #A855F7;
+      background: rgba(168,85,247,0.15);
+    }
+    .ev-scope-icon { font-size: 20px; margin-bottom: 4px; }
+    .ev-scope-label { font-size: 13px; font-weight: 700; }
+    .ev-scope-desc { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
+    .ev-scope-detail {
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(168,85,247,0.08);
+      border: 1px solid rgba(168,85,247,0.25);
+      border-radius: 12px;
+    }
+    .ev-scope-detail-title {
+      font-size: 12px; font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .ev-invite-targets {
+      display: flex; flex-direction: column; gap: 4px;
+      background: rgba(0,0,0,0.2);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 6px;
+    }
+    .ev-invite-target {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid transparent;
+    }
+    .ev-invite-target:active { background: rgba(255,255,255,0.08); }
+    .ev-invite-target.checked {
+      background: rgba(168,85,247,0.2);
+      border-color: #A855F7;
+    }
+    .ev-invite-check {
+      width: 22px; height: 22px;
+      border: 2px solid rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: #fff; font-weight: 800;
+      flex-shrink: 0;
+    }
+    .ev-invite-target.checked .ev-invite-check {
+      background: #A855F7; border-color: #A855F7;
+    }
+    .ev-invite-target-body { flex: 1; min-width: 0; }
+    .ev-invite-target-name { font-size: 14px; font-weight: 700; color: #fff; }
+    .ev-invite-target-meta { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+    .ev-invite-summary {
+      margin-top: 10px; padding: 10px 14px;
+      background: linear-gradient(135deg, rgba(168,85,247,0.35), rgba(236,72,153,0.25));
+      border: 1px solid rgba(168,85,247,0.5);
+      border-radius: 10px;
+      font-size: 13px; color: #fff; font-weight: 700;
+      text-align: center;
+    }
+    .ev-send-btn {
+      width: 100%;
+      padding: 14px 16px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+      color: #fff; font-size: 15px; font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 6px 16px rgba(124,58,237,0.35);
+    }
+    .ev-send-btn:active { transform: scale(0.98); }
+
+    /* イベント詳細画面（Luma-style） */
+    #screen-event-detail {
+      background: #0A0A0F;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    #screen-event-detail.active { display: flex; }
+    .ev-detail-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+    }
+    /* フルブリードのヒーロー画像 */
+    .ev-detail-cover {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .ev-detail-cover-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(10,10,15,0.7) 100%);
+    }
+    /* 戻るボタン（フロート） */
+    .ev-detail-floating-back {
+      position: absolute;
+      top: 14px; left: 14px;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 5;
+    }
+    /* スコープバッジ（左上・戻るボタン横） */
+    .ev-detail-scope-badge {
+      position: absolute; top: 19px; left: 62px;
+      padding: 5px 10px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff;
+      font-size: 11px; font-weight: 700;
+      border-radius: 20px;
+      z-index: 5;
+    }
+    /* 情報セクション */
+    .ev-detail-content {
+      padding: 20px 20px 20px;
+    }
+    .ev-detail-title-lg {
+      font-size: 28px; font-weight: 800; color: #fff;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.55), 0 0 40px rgba(0,0,0,0.3);
+    }
+    .ev-detail-host-line {
+      font-size: 14px; color: rgba(255,255,255,0.7);
+      margin-bottom: 22px;
+      display: flex; align-items: center; gap: 8px;
+      flex-wrap: wrap;
+    }
+    .ev-detail-host-label {
+      font-size: 11px; font-weight: 700;
+      color: rgba(255,255,255,0.9);
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .ev-detail-host-name {
+      text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    }
+    .ev-detail-host-name {
+      font-size: 14px; font-weight: 700;
+      color: #fff;
+    }
+    .ev-detail-infoblock {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 14px;
+      background: rgba(0,0,0,0.38);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      margin-bottom: 8px;
+    }
+    .ev-detail-infoblock-ico {
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.12);
+      border-radius: 10px;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .ev-detail-infoblock-main {
+      font-size: 15px; font-weight: 600; color: #fff;
+    }
+    .ev-detail-infoblock-sub {
+      font-size: 12px; color: rgba(255,255,255,0.55);
+      margin-top: 2px;
+    }
+    /* 参加者・詳細・主催者連絡セクション（ガラスカード化） */
+    .ev-detail-section-new {
+      margin-top: 12px;
+      padding: 16px;
+      background: rgba(0,0,0,0.38);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+    }
+    .ev-detail-section-heading {
+      font-size: 15px; font-weight: 700; color: #fff;
+      margin-bottom: 12px;
+    }
+    .ev-detail-attendees {
+      display: flex; align-items: center;
+      gap: -8px;
+    }
+    .ev-attendee-stack {
+      display: flex;
+    }
+    .ev-attendee-stack-item {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 2.5px solid #0A0A0F;
+      display: flex; align-items: center; justify-content: center;
+      background: #334155;
+      font-size: 18px;
+      margin-left: -10px;
+    }
+    .ev-attendee-stack-item:first-child { margin-left: 0; }
+    .ev-attendee-stack-item.plus {
+      background: rgba(255,255,255,0.12);
+      font-size: 11px; font-weight: 700;
+      color: #fff;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+    .ev-attendee-stack-item.plus .plus-num { font-size: 13px; }
+    .ev-attendee-stack-item.plus .plus-lbl { font-size: 8px; color: rgba(255,255,255,0.6); }
+    /* 詳細（説明） */
+    .ev-detail-message {
+      font-size: 15px; color: rgba(255,255,255,0.85);
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+    /* 主催者連絡履歴 */
+    .ev-history-new-item {
+      background: rgba(255,255,255,0.04);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    .ev-history-new-time {
+      font-size: 11px; color: rgba(255,255,255,0.45);
+      margin-bottom: 4px;
+    }
+    .ev-history-new-text {
+      font-size: 14px; color: rgba(255,255,255,0.9);
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+    /* 下部固定CTA */
+    .ev-detail-cta-bar {
+      flex-shrink: 0;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; gap: 8px;
+    }
+    .ev-cta-pill {
+      flex: 1;
+      padding: 14px 8px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      font-size: 14px; font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .ev-cta-pill:active { transform: scale(0.97); }
+    .ev-cta-pill.active.going { background: rgba(34,197,94,0.3); border-color: #22C55E; color: #86EFAC; }
+    .ev-cta-pill.active.maybe { background: rgba(234,179,8,0.3); border-color: #EAB308; color: #FDE68A; }
+    .ev-cta-pill.active.skip  { background: rgba(239,68,68,0.3); border-color: #EF4444; color: #FCA5A5; }
+    .ev-cta-pill.primary {
+      background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+      border-color: transparent;
+    }
+    /* その他メニューボタン（正方形・省スペース） */
+    .ev-cta-pill.more-btn {
+      flex: 0 0 auto;
+      width: 46px;
+      padding: 14px 0;
+      font-size: 20px;
+      letter-spacing: 1px;
+    }
+    /* RSVP ボタン（Partifulスタイル：行く主役） */
+    .ev-rsvp-primary {
+      flex: 2;
+      padding: 16px 12px;
+      border-radius: 14px;
+      border: 2px solid rgba(34,197,94,0.35);
+      background: rgba(34,197,94,0.1);
+      color: #86EFAC;
+      font-size: 15px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .ev-rsvp-primary .ev-rsvp-icon {
+      width: 22px; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(34,197,94,0.3);
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .ev-rsvp-primary.active {
+      background: linear-gradient(135deg, #16A34A 0%, #22C55E 100%);
+      border-color: #22C55E;
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(34,197,94,0.4);
+    }
+    .ev-rsvp-primary.active .ev-rsvp-icon {
+      background: #fff; color: #16A34A;
+    }
+    .ev-rsvp-secondary {
+      flex: 1;
+      padding: 12px 4px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.65);
+      font-size: 11px; font-weight: 700;
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .ev-rsvp-secondary .ev-rsvp-sub-ico {
+      font-size: 16px;
+      font-weight: 900;
+    }
+    .ev-rsvp-secondary.active.maybe {
+      background: rgba(234,179,8,0.18);
+      border-color: #EAB308;
+      color: #FDE68A;
+    }
+    .ev-rsvp-secondary.active.skip {
+      background: rgba(239,68,68,0.18);
+      border-color: #EF4444;
+      color: #FCA5A5;
+    }
+    .ev-rsvp-primary:active, .ev-rsvp-secondary:active {
+      transform: scale(0.97);
+    }
+    .ev-detail-section {
+      margin-top: 18px;
+    }
+    .ev-detail-section-title {
+      font-size: 13px; font-weight: 700; color: var(--text-sub);
+      margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .ev-attendee-group {
+      margin-bottom: 10px;
+    }
+    .ev-attendee-group-label {
+      font-size: 12px; font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .ev-attendee-chips {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .ev-attendee-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px 4px 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--text);
+    }
+    .ev-attendee-chip .avatar {
+      width: 20px; height: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 50%;
+    }
+    .ev-history-item {
+      background: rgba(255,255,255,0.04);
+      border-left: 3px solid #7C3AED;
+      padding: 10px 12px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 8px;
+    }
+    .ev-history-time { font-size: 11px; color: var(--text-sub); margin-bottom: 3px; }
+    .ev-history-text { font-size: 13px; color: var(--text); white-space: pre-wrap; }
+    .ev-answer-bar {
+      display: flex; gap: 8px;
+      padding: 14px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 12px;
+      margin-top: 18px;
+    }
+    .ev-answer-btn {
+      flex: 1;
+      padding: 10px 8px;
+      border-radius: 10px;
+      border: 1.5px solid transparent;
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      font-size: 13px; font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+    }
+    .ev-answer-btn:active { transform: scale(0.97); }
+    .ev-answer-btn.active.going { background: rgba(34,197,94,0.25); border-color: #22C55E; color: #86EFAC; }
+    .ev-answer-btn.active.maybe { background: rgba(234,179,8,0.25); border-color: #EAB308; color: #FDE68A; }
+    .ev-answer-btn.active.skip  { background: rgba(239,68,68,0.25); border-color: #EF4444; color: #FCA5A5; }
+    .ev-host-actions {
+      display: flex; gap: 8px;
+      margin-top: 18px;
+    }
+    .ev-host-btn {
+      flex: 1;
+      padding: 10px 8px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(124,58,237,0.5);
+      background: rgba(124,58,237,0.35);
+      color: #fff;
+      font-size: 13px; font-weight: 700;
+      cursor: pointer;
+    }
+    .ev-host-btn:active { transform: scale(0.97); }
+    .ev-host-btn.primary {
+      background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+      color: #fff; border-color: transparent;
+    }
+    .ev-dm-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+    }
+    /* 招待カード（フィード用・Luma風） */
+    .invite-card {
+      margin: 12px 12px;
+      background: #111216;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .invite-card-cover {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .invite-card-cover-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%);
+    }
+    .invite-card-label {
+      position: absolute;
+      top: 10px; left: 10px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.8px;
+      padding: 4px 8px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff;
+      border-radius: 6px;
+      z-index: 2;
+    }
+    .invite-card-cover-date {
+      position: absolute;
+      top: 10px; right: 10px;
+      padding: 4px 10px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff;
+      font-size: 11px; font-weight: 700;
+      border-radius: 20px;
+      z-index: 2;
+    }
+    .invite-card-body {
+      padding: 14px 16px 14px;
+    }
+    .invite-card-title {
+      font-size: 18px; font-weight: 800; color: #fff;
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+    .invite-card-host {
+      font-size: 12px; color: rgba(255,255,255,0.6);
+      margin-bottom: 10px;
+    }
+    .invite-card-meta {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; color: rgba(255,255,255,0.85);
+      margin-top: 4px;
+    }
+    .invite-card-meta .ico { width: 14px; opacity: 0.7; }
+    .invite-card-msg {
+      font-size: 13px; color: rgba(255,255,255,0.75);
+      margin-top: 10px;
+      line-height: 1.5;
+      overflow: hidden; display: -webkit-box;
+      -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    }
+    .invite-card-actions {
+      display: flex; gap: 6px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .invite-card-btn {
+      flex: 1;
+      padding: 10px 4px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.85);
+      font-size: 12px; font-weight: 700;
+      cursor: pointer;
+    }
+    .invite-card-btn.active.going { background: rgba(34,197,94,0.3); border-color: #22C55E; color: #86EFAC; }
+    .invite-card-btn.active.maybe { background: rgba(234,179,8,0.3); border-color: #EAB308; color: #FDE68A; }
+    .invite-card-btn.active.skip  { background: rgba(239,68,68,0.3); border-color: #EF4444; color: #FCA5A5; }
+    .invite-card-footer {
+      margin-top: 10px;
+      font-size: 11px; color: rgba(255,255,255,0.5);
+      display: flex; justify-content: space-between;
+    }
+
     /* ===== CONTACTS TAB (連絡先) ===== */
     .contacts-wrap { padding: 0 0 100px; }
 
@@ -3578,18 +4412,53 @@
     }
 
     /* テキスト（センター固定） */
+    /* ===== 複数テキストレイヤー ===== */
+    .cmp-text-layers {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+    .cmp-center-guides {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+    .cmp-center-guide {
+      position: absolute;
+      background: rgba(74, 168, 255, 0.85);
+      box-shadow: 0 0 6px rgba(74, 168, 255, 0.55);
+      opacity: 0;
+      transition: opacity 0.12s ease-out;
+    }
+    .cmp-center-guide.vert {
+      top: 0; bottom: 0;
+      left: 50%;
+      width: 1px;
+      transform: translateX(-0.5px);
+    }
+    .cmp-center-guide.horz {
+      left: 0; right: 0;
+      top: 50%;
+      height: 1px;
+      transform: translateY(-0.5px);
+    }
+    .cmp-center-guide.visible { opacity: 1; }
     .cmp-text-layer {
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 4;
-      width: 88%;
-      text-align: center;
-      pointer-events: none;
+      transform-origin: center center;
+      pointer-events: auto;
+      cursor: move;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      padding: 6px 10px;
+      max-width: 86%;
     }
-    .cmp-text-input {
-      width: 100%;
+    .cmp-text-layer .cmp-text-input {
       background: none;
       border: none;
       outline: none;
@@ -3600,11 +4469,93 @@
       font-weight: 700;
       font-family: 'Noto Sans JP', sans-serif;
       text-shadow: 0 2px 10px rgba(0,0,0,0.7);
-      line-height: 1.5;
+      line-height: 1.35;
       padding: 0;
-      pointer-events: auto;
+      pointer-events: none;
+      width: auto;
+      min-width: 120px;
+      max-width: 100%;
+      display: block;
+      overflow: hidden;
+      word-break: break-word;
+      white-space: pre-wrap;
     }
-    .cmp-text-input::placeholder { color: rgba(255,255,255,0.5); }
+    .cmp-text-layer .cmp-text-input::placeholder { color: rgba(255,255,255,0.45); }
+    .cmp-text-layer.editing { cursor: text; }
+    .cmp-text-layer.editing .cmp-text-input { pointer-events: auto; }
+    /* 選択枠＋ハンドル */
+    .cmp-text-layer.selected { z-index: 5; }
+    .cmp-text-layer.selected::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border: 1.5px dashed rgba(255,255,255,0.9);
+      border-radius: 10px;
+      pointer-events: none;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.25);
+    }
+    .cmp-layer-handle {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1.5px solid rgba(0,0,0,0.5);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+      cursor: pointer;
+      pointer-events: auto;
+      touch-action: none;
+      z-index: 2;
+    }
+    .cmp-layer-handle.corner.tl { top: -12px; left: -12px; cursor: nwse-resize; }
+    .cmp-layer-handle.corner.tr { top: -12px; right: -12px; cursor: nesw-resize; }
+    .cmp-layer-handle.corner.bl { bottom: -12px; left: -12px; cursor: nesw-resize; }
+    .cmp-layer-handle.corner.br { bottom: -12px; right: -12px; cursor: nwse-resize; }
+    .cmp-layer-handle.rotate {
+      top: -36px;
+      left: 50%;
+      transform: translateX(-50%);
+      cursor: grab;
+      background: #4aa8ff;
+      border-color: rgba(255,255,255,0.9);
+    }
+    .cmp-layer-handle.rotate::before {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      width: 1.5px;
+      height: 16px;
+      background: rgba(255,255,255,0.9);
+      transform: translateX(-50%);
+    }
+    /* 選択中以外はハンドル非表示 */
+    .cmp-text-layer:not(.selected) .cmp-layer-handle { display: none; }
+
+    /* 写真選択フレーム（imgと同じ位置・変形を受ける） */
+    .cmp-photo-frame {
+      position: absolute;
+      inset: 0;
+      display: none;
+      pointer-events: none;
+      z-index: 5;
+      transform-origin: center center;
+    }
+    .cmp-photo-frame.visible { display: block; }
+    .cmp-photo-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 1.5px dashed rgba(255,255,255,0.9);
+      border-radius: 4px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.3);
+    }
+    .cmp-photo-frame .cmp-layer-handle { pointer-events: none; }
+    .cmp-photo-frame .cmp-layer-handle.corner.tl { top: -8px; left: -8px; }
+    .cmp-photo-frame .cmp-layer-handle.corner.tr { top: -8px; right: -8px; }
+    .cmp-photo-frame .cmp-layer-handle.corner.bl { bottom: -8px; left: -8px; }
+    .cmp-photo-frame .cmp-layer-handle.corner.br { bottom: -8px; right: -8px; }
+    .cmp-photo-frame .cmp-layer-handle.rotate { top: -32px; }
 
     /* ボトムコントロールエリア */
     .cmp-controls {
@@ -3963,7 +4914,7 @@
     }
 
     /* 座布団背景スタイル */
-    .cmp-text-layer.bg-none { background: transparent; padding: 0; }
+    .cmp-text-layer.bg-none { background: transparent; }
     .cmp-text-layer.bg-white {
       background: rgba(255,255,255,0.92);
       padding: 8px 22px;
@@ -4904,6 +5855,14 @@
           <div class="cmp-bg" id="cmpBg">
             <div class="cmp-bg-photo-wrap" id="cmpPhotoWrap" style="display:none;">
               <img class="cmp-bg-photo-img" id="cmpPhotoImg" src="" alt="" draggable="false">
+              <!-- 写真選択フレーム（imgと同じtransformで追従） -->
+              <div class="cmp-photo-frame" id="cmpPhotoFrame">
+                <span class="cmp-layer-handle rotate" data-handle="rotate"></span>
+                <span class="cmp-layer-handle corner tl" data-handle="tl"></span>
+                <span class="cmp-layer-handle corner tr" data-handle="tr"></span>
+                <span class="cmp-layer-handle corner bl" data-handle="bl"></span>
+                <span class="cmp-layer-handle corner br" data-handle="br"></span>
+              </div>
             </div>
           </div>
           <!-- 写真フィルター -->
@@ -4912,33 +5871,36 @@
           <div class="cmp-trash-zone" id="cmpTrashZone">🗑️</div>
           <!-- フィルター名チラ見せ -->
           <div class="cmp-filter-name-toast" id="cmpFilterNameToast"></div>
-          <!-- テキスト -->
-          <div class="cmp-text-layer" id="cmpTextLayer">
-            <textarea class="cmp-text-input" id="cmpTextInput" placeholder="タップして入力..." rows="1" oninput="cmpAutoResize(this)"></textarea>
+          <!-- センターグリッドガイド（ドラッグ中のみ表示） -->
+          <div class="cmp-center-guides" id="cmpCenterGuides">
+            <div class="cmp-center-guide vert" id="cmpCenterGuideV"></div>
+            <div class="cmp-center-guide horz" id="cmpCenterGuideH"></div>
           </div>
+          <!-- テキスト複数レイヤー用コンテナ -->
+          <div class="cmp-text-layers" id="cmpTextLayers"></div>
           <!-- 右下フローティングコントロール -->
           <div class="cmp-float-controls">
             <div class="cmp-float-palette" id="cmpFloatPalette">
               <div class="cmp-grad-dot active" style="background:linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);" data-grad="linear-gradient(135deg,#020408 0%,#1E3A5F 35%,#7C3AED 70%,#EC4899 100%)" onclick="cmpSelectGradFromPalette(this, 0)"></div>
-              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FFD700,#FF8C42,#EC4899,#9333EA);" data-grad="linear-gradient(135deg,#FFD700 0%,#FF8C42 35%,#EC4899 70%,#9333EA 100%)" onclick="cmpSelectGradFromPalette(this, 1)"></div>
-              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#6EE7B7,#22D3EE,#3B82F6,#8B5CF6);" data-grad="linear-gradient(135deg,#6EE7B7 0%,#22D3EE 35%,#3B82F6 70%,#8B5CF6 100%)" onclick="cmpSelectGradFromPalette(this, 2)"></div>
-              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#F9A8D4,#E879F9,#A855F7,#6366F1);" data-grad="linear-gradient(135deg,#F9A8D4 0%,#E879F9 35%,#A855F7 70%,#6366F1 100%)" onclick="cmpSelectGradFromPalette(this, 3)"></div>
-              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FDE047,#BEF264,#22C55E,#059669);" data-grad="linear-gradient(135deg,#FDE047 0%,#BEF264 35%,#22C55E 70%,#059669 100%)" onclick="cmpSelectGradFromPalette(this, 4)"></div>
-              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FF006E,#8338EC,#3A86FF,#00D4FF);" data-grad="linear-gradient(135deg,#FF006E 0%,#8338EC 35%,#3A86FF 70%,#00D4FF 100%)" onclick="cmpSelectGradFromPalette(this, 5)"></div>
-              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FFE066,#FFA93D,#FF5733,#E11D48);" data-grad="linear-gradient(135deg,#FFE066 0%,#FFA93D 35%,#FF5733 70%,#E11D48 100%)" onclick="cmpSelectGradFromPalette(this, 6)"></div>
-              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FFB3D9,#FF66B3,#EC4899,#A855F7);" data-grad="linear-gradient(135deg,#FFB3D9 0%,#FF66B3 35%,#EC4899 70%,#A855F7 100%)" onclick="cmpSelectGradFromPalette(this, 7)"></div>
-              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#A7F3D0,#6EE7B7,#14B8A6,#0891B2);" data-grad="linear-gradient(135deg,#A7F3D0 0%,#6EE7B7 35%,#14B8A6 70%,#0891B2 100%)" onclick="cmpSelectGradFromPalette(this, 8)"></div>
-              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#3D2817,#B8860B,#FFD700,#FFFFFF);" data-grad="linear-gradient(135deg,#3D2817 0%,#B8860B 35%,#FFD700 70%,#FFFFFF 100%)" onclick="cmpSelectGradFromPalette(this, 9)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FF0080,#FF8C00,#FFE500);" data-grad="linear-gradient(135deg,#FF0080 0%,#FF8C00 50%,#FFE500 100%)" onclick="cmpSelectGradFromPalette(this, 1)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#00F5FF,#00B4FF,#7B2FF7,#F107A3);" data-grad="linear-gradient(135deg,#00F5FF 0%,#00B4FF 35%,#7B2FF7 70%,#F107A3 100%)" onclick="cmpSelectGradFromPalette(this, 2)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FAACA8,#DDD6F3);" data-grad="linear-gradient(135deg,#FAACA8 0%,#DDD6F3 100%)" onclick="cmpSelectGradFromPalette(this, 3)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#43E97B,#38F9D7);" data-grad="linear-gradient(135deg,#43E97B 0%,#38F9D7 100%)" onclick="cmpSelectGradFromPalette(this, 4)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FA709A,#FEE140);" data-grad="linear-gradient(135deg,#FA709A 0%,#FEE140 100%)" onclick="cmpSelectGradFromPalette(this, 5)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#4FACFE,#00F2FE);" data-grad="linear-gradient(135deg,#4FACFE 0%,#00F2FE 100%)" onclick="cmpSelectGradFromPalette(this, 6)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#F093FB,#F5576C);" data-grad="linear-gradient(135deg,#F093FB 0%,#F5576C 100%)" onclick="cmpSelectGradFromPalette(this, 7)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#F6D365,#FDA085);" data-grad="linear-gradient(135deg,#F6D365 0%,#FDA085 100%)" onclick="cmpSelectGradFromPalette(this, 8)"></div>
+              <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FF512F,#F09819,#FFD700);" data-grad="linear-gradient(135deg,#FF512F 0%,#F09819 50%,#FFD700 100%)" onclick="cmpSelectGradFromPalette(this, 9)"></div>
             </div>
             <button class="cmp-float-grad-btn" id="cmpGradCycleBtn" style="background:linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);"></button>
+            <button class="cmp-float-btn" id="cmpIconFont" onclick="cmpToggleToolPanel('font')" title="文字">
+              <span class="icon-glyph">Aa</span>
+            </button>
             <button class="cmp-float-btn" onclick="document.getElementById('cmpPhotoInput').click()" title="写真">
               <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
             </button>
             <button class="cmp-float-btn filled-icon" onclick="cmpCycleFilter(1)" title="フィルター">
               <svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18 16l.9 2.4 2.1.6-2.1.6-.9 2.4-.9-2.4-2.1-.6 2.1-.6z"/></svg>
-            </button>
-            <button class="cmp-float-btn" id="cmpIconFont" onclick="cmpToggleToolPanel('font')" title="文字">
-              <span class="icon-glyph">Aa</span>
             </button>
             <button class="cmp-float-btn" id="cmpIconUrl" onclick="cmpOpenUrlModal()" title="URL">
               <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
@@ -5457,10 +6419,11 @@
         </div>
       </div>
 
-      <!-- セグメントタブ（2タブ） -->
+      <!-- セグメントタブ（3タブ） -->
       <div class="talk-seg-bar">
-        <button class="talk-seg-tab active" id="talkSegTab-dm" onclick="switchTalkTab('dm')">💬 トーク</button>
-        <button class="talk-seg-tab" id="talkSegTab-contacts" onclick="switchTalkTab('contacts')">📒 連絡先</button>
+        <button class="talk-seg-tab active" id="talkSegTab-dm" onclick="switchTalkTab('dm')">Messages</button>
+        <button class="talk-seg-tab" id="talkSegTab-contacts" onclick="switchTalkTab('contacts')">Circle &amp; Groups</button>
+        <button class="talk-seg-tab" id="talkSegTab-events" onclick="switchTalkTab('events')">Events</button>
       </div>
 
       <!-- ===== タブ①：トーク一覧 ===== -->
@@ -5859,6 +6822,119 @@
 
         </div>
       </div>
+
+      <!-- ===== タブ③：イベント ===== -->
+      <div class="talk-tab-content" id="talkContent-events">
+        <div class="events-hub-wrap">
+          <button class="events-create-btn" onclick="openEventCreate()">
+            <span class="events-create-icon">＋</span>
+            <span>新しい招待を作る</span>
+          </button>
+          <div id="eventsHubList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== EVENT CREATE SCREEN ===== -->
+    <div class="screen" id="screen-event-create">
+      <div class="ev-create-header">
+        <button class="ev-back-btn" onclick="closeEventCreate()">←</button>
+        <div class="ev-create-title" id="evCreateScreenTitle">イベント作成</div>
+        <div style="width:36px;"></div>
+      </div>
+      <div class="ev-create-body">
+        <!-- ヒーロー画像エリア -->
+        <div class="ev-cover-editor">
+          <div class="ev-cover-preview" id="evCoverPreview"></div>
+          <div class="ev-cover-section-title">写真</div>
+          <div class="ev-cover-palette" id="evCoverPhotos"></div>
+          <div class="ev-cover-section-title">背景カラー</div>
+          <div class="ev-cover-palette" id="evCoverPalette"></div>
+          <label class="ev-cover-upload-btn">
+            <input type="file" accept="image/*" id="evCoverUploadInput" onchange="handleEvCoverUpload(event)" hidden>
+            <span>📷 自分の写真をアップロード</span>
+          </label>
+        </div>
+
+        <!-- ページ背景エディタ -->
+        <div class="ev-cover-editor ev-bg-editor-block">
+          <div class="ev-bg-editor-title">✨ ページ背景</div>
+          <div class="ev-bg-editor-hint">下のプレビューに即反映されます</div>
+          <div class="ev-bg-mini-preview" id="evBgMiniPreview">
+            <div class="ev-bg-mini-title">プレビュー</div>
+            <div class="ev-bg-mini-sub">イベントページの雰囲気</div>
+          </div>
+          <div class="ev-cover-section-title">グラデーション</div>
+          <div class="ev-cover-palette" id="evBgGradPalette"></div>
+          <div class="ev-cover-section-title">模様</div>
+          <div class="ev-cover-palette" id="evBgPatternPalette"></div>
+        </div>
+
+        <label class="ev-field">
+          <span class="ev-field-label">タイトル</span>
+          <input type="text" class="ev-input ev-input-lg" id="evCreateTitle" placeholder="例: Yogbo淡路島保養所 お泊り会">
+        </label>
+
+        <div class="ev-field">
+          <span class="ev-field-label">開始日時</span>
+          <div class="ev-field-row">
+            <input type="date" class="ev-input" id="evCreateDate" style="flex:1.3;">
+            <input type="time" class="ev-input" id="evCreateTime" style="flex:1;">
+          </div>
+        </div>
+
+        <div class="ev-field">
+          <span class="ev-field-label">終了日時 <span class="ev-field-optional">任意</span></span>
+          <div class="ev-field-row">
+            <input type="date" class="ev-input" id="evCreateEndDate" style="flex:1.3;">
+            <input type="time" class="ev-input" id="evCreateEndTime" style="flex:1;">
+          </div>
+        </div>
+
+        <label class="ev-field">
+          <span class="ev-field-label">場所</span>
+          <input type="text" class="ev-input" id="evCreatePlace" placeholder="例: 淡路島 Yogbo保養所">
+        </label>
+        <label class="ev-field">
+          <span class="ev-field-label">詳細 <span class="ev-field-optional">任意</span></span>
+          <textarea class="ev-input ev-textarea" id="evCreateMessage" placeholder="例: 飯と温泉とサウナあります。2日間のんびりしよう！" rows="4"></textarea>
+        </label>
+
+        <!-- 公開範囲 -->
+        <div class="ev-field">
+          <span class="ev-field-label">公開範囲</span>
+          <div class="ev-scope-toggle">
+            <button type="button" class="ev-scope-btn active" id="evScopeOpen" onclick="setEventScope('open')">
+              <div class="ev-scope-icon">🌐</div>
+              <div class="ev-scope-label">オープン</div>
+              <div class="ev-scope-desc">誰でも参加可能</div>
+            </button>
+            <button type="button" class="ev-scope-btn" id="evScopeClosed" onclick="setEventScope('closed')">
+              <div class="ev-scope-icon">🔒</div>
+              <div class="ev-scope-label">クローズド</div>
+              <div class="ev-scope-desc">指定した仲間のみ</div>
+            </button>
+          </div>
+          <div class="ev-scope-detail" id="evScopeDetail" style="display:none;">
+            <div class="ev-scope-detail-title">招待する相手を選択</div>
+            <div class="ev-invite-targets" id="evInviteTargets"></div>
+            <div class="ev-invite-summary" id="evInviteSummary">まだ選択されていません</div>
+          </div>
+        </div>
+
+        <label class="ev-field">
+          <span class="ev-field-label">回答締切 <span class="ev-field-optional">任意</span></span>
+          <input type="date" class="ev-input" id="evCreateDeadline">
+        </label>
+
+        <button class="ev-send-btn" id="evCreateSubmitBtn" onclick="submitEventCreate()">イベントを作成</button>
+      </div>
+    </div>
+
+    <!-- ===== EVENT DETAIL SCREEN ===== -->
+    <div class="screen" id="screen-event-detail">
+      <div class="ev-detail-body" id="evDetailBody"></div>
+      <div class="ev-detail-cta-bar" id="evDetailCtaBar"></div>
     </div>
 
     <!-- ===== SEARCH SCREEN ===== -->
@@ -7509,9 +8585,11 @@
     document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
     const tabEl = document.getElementById('tab-' + tab);
     if (tabEl) tabEl.classList.add('active');
-    // コンポーザーを開いたらテキスト入力にフォーカス
+    // コンポーザーを開いたら空レイヤーが無ければ作る（初回用）
     if (tab === 'post') {
-      setTimeout(() => { const t = document.getElementById('cmpTextInput'); if (t) t.focus(); }, 100);
+      setTimeout(() => {
+        if (cmpLayers.length === 0) cmpCreateTextLayer(false);
+      }, 50);
     }
   }
 
@@ -8144,15 +9222,15 @@
   // 10グラデーション（順番保持）
   const CMP_GRADS = [
     'linear-gradient(135deg,#020408 0%,#1E3A5F 35%,#7C3AED 70%,#EC4899 100%)',
-    'linear-gradient(135deg,#FFD700 0%,#FF8C42 35%,#EC4899 70%,#9333EA 100%)',
-    'linear-gradient(135deg,#6EE7B7 0%,#22D3EE 35%,#3B82F6 70%,#8B5CF6 100%)',
-    'linear-gradient(135deg,#F9A8D4 0%,#E879F9 35%,#A855F7 70%,#6366F1 100%)',
-    'linear-gradient(135deg,#FDE047 0%,#BEF264 35%,#22C55E 70%,#059669 100%)',
-    'linear-gradient(135deg,#FF006E 0%,#8338EC 35%,#3A86FF 70%,#00D4FF 100%)',
-    'linear-gradient(135deg,#FFE066 0%,#FFA93D 35%,#FF5733 70%,#E11D48 100%)',
-    'linear-gradient(135deg,#FFB3D9 0%,#FF66B3 35%,#EC4899 70%,#A855F7 100%)',
-    'linear-gradient(135deg,#A7F3D0 0%,#6EE7B7 35%,#14B8A6 70%,#0891B2 100%)',
-    'linear-gradient(135deg,#3D2817 0%,#B8860B 35%,#FFD700 70%,#FFFFFF 100%)',
+    'linear-gradient(135deg,#FF0080 0%,#FF8C00 50%,#FFE500 100%)',
+    'linear-gradient(135deg,#00F5FF 0%,#00B4FF 35%,#7B2FF7 70%,#F107A3 100%)',
+    'linear-gradient(135deg,#FAACA8 0%,#DDD6F3 100%)',
+    'linear-gradient(135deg,#43E97B 0%,#38F9D7 100%)',
+    'linear-gradient(135deg,#FA709A 0%,#FEE140 100%)',
+    'linear-gradient(135deg,#4FACFE 0%,#00F2FE 100%)',
+    'linear-gradient(135deg,#F093FB 0%,#F5576C 100%)',
+    'linear-gradient(135deg,#F6D365 0%,#FDA085 100%)',
+    'linear-gradient(135deg,#FF512F 0%,#F09819 50%,#FFD700 100%)',
   ];
   let cmpCurrentGradIndex = 0;
 
@@ -8187,46 +9265,316 @@
     } catch { return url; }
   }
 
-  // テキストのauto-resize
-  function cmpAutoResize(el) {
-    el.style.height = 'auto';
-    el.style.height = el.scrollHeight + 'px';
-    cmpUpdateFontSize();
+  // ===== 複数テキストレイヤーシステム =====
+  let cmpLayers = []; // [{id, text, fontFamily, fontWeight, color, bgType, x, y, scale, rotate, fontSize}]
+  let cmpSelectedLayerId = null;
+  let cmpLayerIdCounter = 0;
+  let cmpPhotoSelected = false;
+
+  function cmpGetSelectedLayer() {
+    return cmpLayers.find(l => l.id === cmpSelectedLayerId) || null;
   }
 
-  // 文字数に応じてフォントサイズを動的調整
-  function cmpUpdateFontSize() {
-    const el = document.getElementById('cmpTextInput');
+  function cmpApplyLayerTransform(el, layer) {
+    el.style.transform = `translate(calc(-50% + ${layer.x}px), calc(-50% + ${layer.y}px)) rotate(${layer.rotate}deg) scale(${layer.scale})`;
+  }
+
+  // センター±8pxスナップ。ガイドの表示もここで制御
+  const CMP_SNAP_THRESHOLD = 8;
+  function cmpApplySnap(x, y) {
+    const v = document.getElementById('cmpCenterGuideV');
+    const h = document.getElementById('cmpCenterGuideH');
+    let snapX = x, snapY = y;
+    let onV = false, onH = false;
+    if (Math.abs(x) <= CMP_SNAP_THRESHOLD) { snapX = 0; onV = true; }
+    if (Math.abs(y) <= CMP_SNAP_THRESHOLD) { snapY = 0; onH = true; }
+    if (v) v.classList.toggle('visible', onV);
+    if (h) h.classList.toggle('visible', onH);
+    return { x: snapX, y: snapY };
+  }
+  function cmpHideCenterGuides() {
+    const v = document.getElementById('cmpCenterGuideV');
+    const h = document.getElementById('cmpCenterGuideH');
+    if (v) v.classList.remove('visible');
+    if (h) h.classList.remove('visible');
+  }
+
+  function cmpCreateTextLayer(autoEdit = true) {
+    const id = 'tl-' + (++cmpLayerIdCounter);
+    const layer = {
+      id,
+      text: '',
+      fontFamily: cmpFontFamily,
+      fontWeight: cmpFontWeight,
+      color: cmpTextColor,
+      bgType: 'none',
+      x: 0, y: 0, scale: 1, rotate: 0,
+      fontSize: 32,
+    };
+    cmpLayers.push(layer);
+
+    const container = document.getElementById('cmpTextLayers');
+    const el = document.createElement('div');
+    el.className = 'cmp-text-layer bg-none';
+    el.dataset.id = id;
+
+    const ta = document.createElement('textarea');
+    ta.className = 'cmp-text-input';
+    ta.placeholder = 'タップして入力...';
+    ta.rows = 1;
+    ta.style.fontFamily = layer.fontFamily;
+    ta.style.fontWeight = layer.fontWeight;
+    ta.style.color = layer.color;
+    ta.style.fontSize = layer.fontSize + 'px';
+    ta.addEventListener('input', () => {
+      layer.text = ta.value;
+      cmpAutoResizeTextarea(ta, layer);
+    });
+    el.appendChild(ta);
+
+    ['rotate', 'tl', 'tr', 'bl', 'br'].forEach(type => {
+      const h = document.createElement('span');
+      h.className = 'cmp-layer-handle' + (type === 'rotate' ? ' rotate' : ' corner ' + type);
+      h.dataset.handle = type;
+      el.appendChild(h);
+    });
+
+    container.appendChild(el);
+    cmpApplyLayerTransform(el, layer);
+    cmpBindLayerInteractions(el, layer);
+    cmpSelectLayer(id);
+    if (autoEdit) cmpEnterEditMode();
+    return layer;
+  }
+
+  function cmpAutoResizeTextarea(ta, layer) {
+    ta.style.height = 'auto';
+    ta.style.height = ta.scrollHeight + 'px';
+    // 文字数に応じたサイズはユーザースケールと競合するので固定に。自由スケール=ハンドル
+  }
+
+  function cmpSelectLayer(id) {
+    cmpSelectedLayerId = id;
+    cmpPhotoSelected = false;
+    document.querySelectorAll('.cmp-text-layer').forEach(el => {
+      el.classList.toggle('selected', el.dataset.id === id);
+      if (el.dataset.id !== id) el.classList.remove('editing');
+    });
+    cmpUpdatePhotoFrame();
+    cmpSyncPanelToSelected();
+  }
+
+  function cmpDeselectAll() {
+    cmpSelectedLayerId = null;
+    cmpPhotoSelected = false;
+    document.querySelectorAll('.cmp-text-layer').forEach(el => {
+      el.classList.remove('selected', 'editing');
+      const ta = el.querySelector('.cmp-text-input');
+      if (ta) ta.blur();
+    });
+    cmpUpdatePhotoFrame();
+    // 空のレイヤーは削除（編集せず空のまま離脱）
+    cmpPruneEmptyLayers();
+  }
+
+  function cmpPruneEmptyLayers() {
+    const toRemove = cmpLayers.filter(l => !l.text || !l.text.trim());
+    toRemove.forEach(l => cmpRemoveLayer(l.id));
+  }
+
+  function cmpRemoveLayer(id) {
+    cmpLayers = cmpLayers.filter(l => l.id !== id);
+    const el = document.querySelector(`.cmp-text-layer[data-id="${id}"]`);
+    if (el) el.remove();
+    if (cmpSelectedLayerId === id) cmpSelectedLayerId = null;
+  }
+
+  function cmpEnterEditMode() {
+    const layer = cmpGetSelectedLayer();
+    if (!layer) return;
+    const el = document.querySelector(`.cmp-text-layer[data-id="${layer.id}"]`);
     if (!el) return;
-    const len = el.value.length;
-    const size = Math.max(14, 42 - Math.floor(len * 0.25));
-    el.style.fontSize = size + 'px';
+    el.classList.add('editing');
+    const ta = el.querySelector('.cmp-text-input');
+    if (ta) {
+      ta.focus();
+      setTimeout(() => {
+        ta.setSelectionRange(ta.value.length, ta.value.length);
+        cmpAutoResizeTextarea(ta, layer);
+      }, 0);
+    }
   }
 
-  // フォント設定
+  function cmpExitEditMode() {
+    const el = document.querySelector('.cmp-text-layer.editing');
+    if (!el) return;
+    el.classList.remove('editing');
+    const ta = el.querySelector('.cmp-text-input');
+    if (ta) ta.blur();
+  }
+
+  // フォント設定（選択中レイヤーへ）
   function cmpSetFont(chip) {
     document.querySelectorAll('.cmp-font-chip').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
     cmpFontFamily = chip.dataset.font;
     cmpFontWeight = chip.dataset.weight;
-    const el = document.getElementById('cmpTextInput');
+    const layer = cmpGetSelectedLayer();
+    if (!layer) return;
+    layer.fontFamily = cmpFontFamily;
+    layer.fontWeight = cmpFontWeight;
+    const el = document.querySelector(`.cmp-text-layer[data-id="${layer.id}"] .cmp-text-input`);
     if (el) { el.style.fontFamily = cmpFontFamily; el.style.fontWeight = cmpFontWeight; }
   }
 
-  // 文字色設定
   function cmpSetColor(dot) {
     document.querySelectorAll('.cmp-color-dot').forEach(d => d.classList.remove('active'));
     dot.classList.add('active');
     cmpTextColor = dot.dataset.color;
-    const el = document.getElementById('cmpTextInput');
+    const layer = cmpGetSelectedLayer();
+    if (!layer) return;
+    layer.color = cmpTextColor;
+    const el = document.querySelector(`.cmp-text-layer[data-id="${layer.id}"] .cmp-text-input`);
     if (el) el.style.color = cmpTextColor;
   }
 
   function cmpSetColorFromPicker(color) {
     cmpTextColor = color;
     document.querySelectorAll('.cmp-color-dot').forEach(d => d.classList.remove('active'));
-    const el = document.getElementById('cmpTextInput');
-    if (el) el.style.color = cmpTextColor;
+    const layer = cmpGetSelectedLayer();
+    if (!layer) return;
+    layer.color = color;
+    const el = document.querySelector(`.cmp-text-layer[data-id="${layer.id}"] .cmp-text-input`);
+    if (el) el.style.color = color;
+  }
+
+  // パネルを選択中レイヤーの状態に同期
+  function cmpSyncPanelToSelected() {
+    const layer = cmpGetSelectedLayer();
+    if (!layer) return;
+    // font
+    document.querySelectorAll('.cmp-font-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.font === layer.fontFamily && c.dataset.weight === layer.fontWeight);
+    });
+    // color
+    document.querySelectorAll('.cmp-color-dot').forEach(d => {
+      d.classList.toggle('active', d.dataset.color === layer.color);
+    });
+    // textbg
+    const btn = document.getElementById('cmpTextBgCycle');
+    const label = document.getElementById('cmpTextBgCycleLabel');
+    if (btn) btn.dataset.state = layer.bgType;
+    if (label) {
+      const state = CMP_TEXTBG_STATES.find(s => s.key === layer.bgType);
+      label.textContent = state ? state.label : '座布団なし';
+    }
+  }
+
+  // ドラッグ・拡大縮小・回転のバインド
+  function cmpBindLayerInteractions(el, layer) {
+    // タップで選択／編集
+    el.addEventListener('pointerdown', (e) => {
+      if (e.target.classList.contains('cmp-layer-handle')) return; // ハンドルは別処理
+      if (e.target.classList.contains('cmp-text-input') && el.classList.contains('editing')) return; // 編集中は干渉しない
+
+      const wasSelected = cmpSelectedLayerId === layer.id;
+      if (!wasSelected) {
+        cmpSelectLayer(layer.id);
+      } else if (!el.classList.contains('editing')) {
+        // 選択中に再タップ → 編集モード
+        cmpEnterEditMode();
+        return;
+      }
+
+      // 移動ドラッグ開始
+      const startX = e.clientX;
+      const startY = e.clientY;
+      const initX = layer.x;
+      const initY = layer.y;
+      const trashZone = document.getElementById('cmpTrashZone');
+      if (trashZone) trashZone.classList.add('visible');
+
+      const onMove = (ev) => {
+        const rawX = initX + (ev.clientX - startX);
+        const rawY = initY + (ev.clientY - startY);
+        const snapped = cmpApplySnap(rawX, rawY);
+        layer.x = snapped.x;
+        layer.y = snapped.y;
+        cmpApplyLayerTransform(el, layer);
+        cmpCheckTrashHover(ev.clientX, ev.clientY);
+      };
+      const onUp = (ev) => {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        if (trashZone) trashZone.classList.remove('visible', 'hover');
+        cmpHideCenterGuides();
+        // 🗑️にドロップしたら削除
+        if (cmpIsOverTrash(ev.clientX, ev.clientY)) {
+          cmpRemoveLayer(layer.id);
+        }
+      };
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+    });
+
+    // ハンドル（拡大縮小・回転）
+    el.querySelectorAll('.cmp-layer-handle').forEach(h => {
+      h.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        const type = h.dataset.handle;
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const startDX = e.clientX - cx;
+        const startDY = e.clientY - cy;
+        const startDist = Math.hypot(startDX, startDY);
+        const startAngle = Math.atan2(startDY, startDX);
+        const initScale = layer.scale;
+        const initRotate = layer.rotate;
+
+        const onMove = (ev) => {
+          const dx = ev.clientX - cx;
+          const dy = ev.clientY - cy;
+          if (type === 'rotate') {
+            const angle = Math.atan2(dy, dx);
+            layer.rotate = initRotate + (angle - startAngle) * 180 / Math.PI;
+          } else {
+            const dist = Math.hypot(dx, dy);
+            const ratio = dist / Math.max(startDist, 1);
+            layer.scale = Math.max(0.3, Math.min(5, initScale * ratio));
+          }
+          cmpApplyLayerTransform(el, layer);
+        };
+        const onUp = () => {
+          window.removeEventListener('pointermove', onMove);
+          window.removeEventListener('pointerup', onUp);
+        };
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onUp);
+      });
+    });
+  }
+
+  // 🗑️ ホバー判定
+  function cmpIsOverTrash(x, y) {
+    const trash = document.getElementById('cmpTrashZone');
+    if (!trash) return false;
+    const r = trash.getBoundingClientRect();
+    return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+  }
+  function cmpCheckTrashHover(x, y) {
+    const trash = document.getElementById('cmpTrashZone');
+    if (!trash) return;
+    trash.classList.toggle('hover', cmpIsOverTrash(x, y));
+  }
+
+  // 写真選択フレームの表示更新（imgと同じ transform で追従）
+  function cmpUpdatePhotoFrame() {
+    const frame = document.getElementById('cmpPhotoFrame');
+    if (!frame) return;
+    const visible = cmpPhotoSelected && cmpBgMode === 'photo';
+    frame.classList.toggle('visible', visible);
+    if (visible) cmpApplyPhotoTransform();
   }
 
   // フィルター定義（インスタ風スワイプで循環）
@@ -8286,17 +9634,27 @@
       document.getElementById('cmpIcon' + cap(name)).classList.remove('active');
       cmpActivePanel = null;
       if (floatCtrls) floatCtrls.classList.remove('panel-open');
-    } else {
-      CMP_PANELS.forEach(p => {
-        document.getElementById('cmpPanel' + cap(p)).classList.remove('open');
-        const iconEl = document.getElementById('cmpIcon' + cap(p));
-        if (iconEl) iconEl.classList.remove('active');
-      });
-      document.getElementById('cmpPanel' + cap(name)).classList.add('open');
-      document.getElementById('cmpIcon' + cap(name)).classList.add('active');
-      cmpActivePanel = name;
-      if (floatCtrls) floatCtrls.classList.add('panel-open');
+      return;
     }
+    // Aa 押下時：選択中の文字レイヤー無ければ新規作成
+    if (name === 'font') {
+      const sel = cmpGetSelectedLayer();
+      if (!sel) {
+        cmpCreateTextLayer();
+      } else {
+        cmpEnterEditMode();
+      }
+    }
+    CMP_PANELS.forEach(p => {
+      document.getElementById('cmpPanel' + cap(p)).classList.remove('open');
+      const iconEl = document.getElementById('cmpIcon' + cap(p));
+      if (iconEl) iconEl.classList.remove('active');
+    });
+    document.getElementById('cmpPanel' + cap(name)).classList.add('open');
+    document.getElementById('cmpIcon' + cap(name)).classList.add('active');
+    cmpActivePanel = name;
+    if (floatCtrls) floatCtrls.classList.add('panel-open');
+    cmpSyncPanelToSelected();
   }
 
   // 座布団背景設定
@@ -8309,10 +9667,14 @@
   ];
   function cmpSetTextBg(type) {
     cmpTextBgType = type;
-    const layer = document.getElementById('cmpTextLayer');
-    if (layer) {
-      layer.classList.remove('bg-none', 'bg-white', 'bg-black', 'bg-frost');
-      if (type !== 'none') layer.classList.add('bg-' + type);
+    const selLayer = cmpGetSelectedLayer();
+    if (selLayer) {
+      selLayer.bgType = type;
+      const el = document.querySelector(`.cmp-text-layer[data-id="${selLayer.id}"]`);
+      if (el) {
+        el.classList.remove('bg-none', 'bg-white', 'bg-black', 'bg-frost');
+        el.classList.add('bg-' + type);
+      }
     }
     const btn = document.getElementById('cmpTextBgCycle');
     const label = document.getElementById('cmpTextBgCycleLabel');
@@ -8323,7 +9685,8 @@
     }
   }
   function cmpCycleTextBg() {
-    const idx = CMP_TEXTBG_STATES.findIndex(s => s.key === cmpTextBgType);
+    const current = cmpGetSelectedLayer() ? cmpGetSelectedLayer().bgType : cmpTextBgType;
+    const idx = CMP_TEXTBG_STATES.findIndex(s => s.key === current);
     const next = CMP_TEXTBG_STATES[(idx + 1) % CMP_TEXTBG_STATES.length];
     cmpSetTextBg(next.key);
   }
@@ -8588,6 +9951,52 @@
       cmpPhotoScale = Math.max(0.3, Math.min(5, cmpPhotoScale * factor));
       cmpApplyPhotoTransform();
     }, { passive: false });
+
+    // 写真枠のハンドル（テキストレイヤーと同じく4隅スケール＋上回転）
+    const frame = document.getElementById('cmpPhotoFrame');
+    if (frame) {
+      frame.querySelectorAll('.cmp-layer-handle').forEach(h => {
+        // touch系が wrap の pinch/drag に食われるのを防ぐ
+        ['touchstart', 'touchmove', 'touchend'].forEach(ev =>
+          h.addEventListener(ev, e => e.stopPropagation(), { passive: false })
+        );
+        h.addEventListener('pointerdown', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (!cmpPhotoSelected) return;
+          const type = h.dataset.handle;
+          const rect = frame.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const startDX = e.clientX - cx;
+          const startDY = e.clientY - cy;
+          const startDist = Math.hypot(startDX, startDY);
+          const startAngle = Math.atan2(startDY, startDX);
+          const initScale = cmpPhotoScale;
+          const initRotate = cmpPhotoRotate;
+
+          const onMove = (ev) => {
+            const dx = ev.clientX - cx;
+            const dy = ev.clientY - cy;
+            if (type === 'rotate') {
+              const angle = Math.atan2(dy, dx);
+              cmpPhotoRotate = initRotate + (angle - startAngle) * 180 / Math.PI;
+            } else {
+              const dist = Math.hypot(dx, dy);
+              const ratio = dist / Math.max(startDist, 1);
+              cmpPhotoScale = Math.max(0.3, Math.min(5, initScale * ratio));
+            }
+            cmpApplyPhotoTransform();
+          };
+          const onUp = () => {
+            window.removeEventListener('pointermove', onMove);
+            window.removeEventListener('pointerup', onUp);
+          };
+          window.addEventListener('pointermove', onMove);
+          window.addEventListener('pointerup', onUp);
+        });
+      });
+    }
   }
 
   function cmpRemovePhoto() {
@@ -8617,7 +10026,10 @@
   }
   function cmpApplyPhotoTransform() {
     const img = document.getElementById('cmpPhotoImg');
-    if (img) img.style.transform = `translate(${cmpPhotoTransX}px, ${cmpPhotoTransY}px) scale(${cmpPhotoScale}) rotate(${cmpPhotoRotate}deg)`;
+    const frame = document.getElementById('cmpPhotoFrame');
+    const t = `translate(${cmpPhotoTransX}px, ${cmpPhotoTransY}px) scale(${cmpPhotoScale}) rotate(${cmpPhotoRotate}deg)`;
+    if (img) img.style.transform = t;
+    if (frame) frame.style.transform = t;
   }
 
   // URL バッジ
@@ -8841,9 +10253,9 @@
   }
 
   function cmpPost() {
-    const textEl = document.getElementById('cmpTextInput');
-    const textContent = textEl ? textEl.value.trim() : '';
-    if (!textContent && cmpBgMode !== 'photo') {
+    cmpPruneEmptyLayers();
+    const hasText = cmpLayers.some(l => l.text && l.text.trim());
+    if (!hasText && cmpBgMode !== 'photo') {
       showToast('テキストを入力してください');
       return;
     }
@@ -8928,8 +10340,16 @@
 
   // 実際の投稿処理（publishモーダルの「投稿」ボタン）
   function cmpConfirmPost() {
-    const textEl = document.getElementById('cmpTextInput');
-    const textContent = textEl ? textEl.value.trim() : '';
+    // 複数レイヤーの本文を結合（検索用・一覧のタイトルとして使用）
+    const textContent = cmpLayers
+      .map(l => (l.text || '').trim())
+      .filter(Boolean)
+      .join(' ');
+
+    // 配置情報付きレイヤースナップショット（フィード描画用の将来拡張）
+    const textLayersSnapshot = cmpLayers
+      .filter(l => l.text && l.text.trim())
+      .map(l => ({ ...l }));
 
     const userData = storiesData.find(u => u.id === 'taisho_k');
     if (userData) {
@@ -8940,7 +10360,7 @@
         shares: 0,
         tags: [],
         grad: cmpBgMode === 'grad' ? cmpCurrentGrad : 'linear-gradient(135deg,#020408,#1E3A5F)',
-        textLayers: null,
+        textLayers: textLayersSnapshot,
         urlData: cmpUrlData || null,
       });
       userData.hasNew = true;
@@ -8982,17 +10402,15 @@
     if (photoWrap) photoWrap.style.display = 'none';
     const img = document.getElementById('cmpPhotoImg');
     if (img) { img.src = ''; img.style.filter = ''; }
-    const textEl = document.getElementById('cmpTextInput');
-    if (textEl) {
-      textEl.value = '';
-      textEl.style.color = '#ffffff';
-      textEl.style.fontFamily = cmpFontFamily;
-      textEl.style.fontWeight = cmpFontWeight;
-      textEl.style.fontSize = '32px';
-      textEl.style.height = 'auto';
-    }
-    // 座布団リセット
-    cmpSetTextBg('none');
+    // 複数テキストレイヤーを全てクリア
+    const layersContainer = document.getElementById('cmpTextLayers');
+    if (layersContainer) layersContainer.innerHTML = '';
+    cmpLayers = [];
+    cmpSelectedLayerId = null;
+    cmpLayerIdCounter = 0;
+    cmpPhotoSelected = false;
+    const photoFrame = document.getElementById('cmpPhotoFrame');
+    if (photoFrame) photoFrame.classList.remove('visible');
     // パネル・フロート状態リセット
     const floatCtrls = document.querySelector('.cmp-float-controls');
     if (floatCtrls) floatCtrls.classList.remove('panel-open');
@@ -9039,18 +10457,45 @@
       const icon = document.getElementById('cmpIcon' + p.charAt(0).toUpperCase() + p.slice(1));
       if (icon) icon.classList.remove('active');
     });
+
+    // 空のテキスト枠をセンターに自動配置（編集モードには入らない）
+    if (document.getElementById('cmpTextLayers')) {
+      cmpCreateTextLayer(false);
+    }
   }
 
   // init
   document.addEventListener('DOMContentLoaded', () => {
-    const textEl = document.getElementById('cmpTextInput');
-    if (textEl) {
-      textEl.style.color = cmpTextColor;
-      textEl.style.fontFamily = cmpFontFamily;
-      textEl.style.fontWeight = cmpFontWeight;
-    }
     // グラデ長押し登録
     cmpInitGradLongPress();
+    // キャンバス空白タップで選択解除
+    const canvas = document.getElementById('cmpCanvas');
+    if (canvas) {
+      canvas.addEventListener('pointerdown', (e) => {
+        // レイヤー・ハンドル・写真・フロート・ツールパネルの内側は除外
+        if (
+          e.target.closest('.cmp-text-layer') ||
+          e.target.closest('.cmp-layer-handle') ||
+          e.target.closest('.cmp-bg-photo-wrap') ||
+          e.target.closest('.cmp-float-controls') ||
+          e.target.closest('.cmp-tool-panel') ||
+          e.target.closest('.cmp-photo-frame')
+        ) return;
+        cmpExitEditMode();
+        cmpDeselectAll();
+      });
+    }
+    // 写真タップで写真選択（touch gesture は既存のcmpInitPhotoTouchに委ねる）
+    const photoWrap = document.getElementById('cmpPhotoWrap');
+    if (photoWrap) {
+      photoWrap.addEventListener('pointerdown', () => {
+        if (cmpBgMode !== 'photo') return;
+        cmpSelectedLayerId = null;
+        document.querySelectorAll('.cmp-text-layer').forEach(el => el.classList.remove('selected', 'editing'));
+        cmpPhotoSelected = true;
+        cmpUpdatePhotoFrame();
+      });
+    }
   });
 
   // (旧Stories Editorコードは削除済み)
@@ -9490,6 +10935,54 @@
     const container = document.getElementById('homeFeed');
     if (!container) return;
     container.innerHTML = '';
+
+    // 招待カード：自分宛招待 or オープンイベント（自分以外が主催）を最上部に
+    if (typeof eventsData !== 'undefined') {
+      const myInvites = eventsData.filter(e =>
+        !e.closed &&
+        e.hostId !== EV_SELF_ID &&
+        (e.isPublic || e.invitees.includes(EV_SELF_ID))
+      );
+      myInvites.forEach(ev => {
+        const card = document.createElement('div');
+        card.className = 'invite-card';
+        card.onclick = () => openEventDetail(ev.id, 'home');
+        const myR = ev.responses[EV_SELF_ID];
+        const cls = (k) => myR === k ? `active ${k}` : '';
+        const weekdayArr = ['日','月','火','水','木','金','土'];
+        const d = new Date(ev.date);
+        const dateShort = `${d.getMonth()+1}/${d.getDate()}(${weekdayArr[d.getDay()]})`;
+        const goingCount = Object.values(ev.responses).filter(r => r === 'going').length;
+        const coverBg = ev.coverImage
+          ? `background-image: url(${ev.coverImage});`
+          : `background-image: ${EV_COVER_GRADIENTS[ev.coverGradient || 0]};`;
+        const labelText = ev.isPublic ? '📅 オープンイベント' : '📅 招待';
+        card.innerHTML = `
+          <div class="invite-card-cover" style="${coverBg}">
+            <div class="invite-card-label">${labelText}</div>
+            <div class="invite-card-cover-date">${dateShort} ${ev.time}</div>
+            <div class="invite-card-cover-overlay"></div>
+          </div>
+          <div class="invite-card-body">
+            <div class="invite-card-title">${escapeHtml(ev.title)}</div>
+            <div class="invite-card-host">主催: ${escapeHtml(ev.hostName)}</div>
+            <div class="invite-card-meta"><span class="ico">📍</span>${escapeHtml(ev.place)}</div>
+            ${ev.message ? `<div class="invite-card-msg">${escapeHtml(ev.message)}</div>` : ''}
+            <div class="invite-card-actions">
+              <button class="invite-card-btn ${cls('going')}" onclick="event.stopPropagation(); setInviteResponseFromFeed('${ev.id}','going')">✓ 行く</button>
+              <button class="invite-card-btn ${cls('maybe')}" onclick="event.stopPropagation(); setInviteResponseFromFeed('${ev.id}','maybe')">? 検討</button>
+              <button class="invite-card-btn ${cls('skip')}"  onclick="event.stopPropagation(); setInviteResponseFromFeed('${ev.id}','skip')">✗ 行けない</button>
+            </div>
+            <div class="invite-card-footer">
+              <span>✓ ${goingCount}人が参加予定</span>
+              ${ev.deadline ? `<span>締切 ${ev.deadline}</span>` : '<span></span>'}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
     feedPosts.forEach((post, idx) => {
       const titleInfo = getTitle(post.score);
       const isSun = post.isSun;
@@ -9679,12 +11172,13 @@
 
   // ===== TALK SCREEN TAB SWITCH =====
   function switchTalkTab(tab) {
-    ['dm', 'contacts'].forEach(t => {
+    ['dm', 'contacts', 'events'].forEach(t => {
       const content = document.getElementById('talkContent-' + t);
       const segTab  = document.getElementById('talkSegTab-' + t);
       if (content) content.classList.toggle('active', t === tab);
       if (segTab)  segTab.classList.toggle('active', t === tab);
     });
+    if (tab === 'events') buildEventsHub();
   }
 
   // ===== CONTACTS: Circle折りたたみ =====
@@ -10362,6 +11856,965 @@ function submitGroupCreate() {
   if (!name || groupSelectedMembers.size === 0) return;
   showToast(`"${name}" group created with ${groupSelectedMembers.size} members!`);
   closeGroupCreate();
+}
+
+// ============================================================
+// ===== EVENT (招待) 機能 =====
+// ============================================================
+
+// 階級定義（groupCircleMembersから逆引き）
+const EV_TIERS = [
+  { key: '🔥 Core',    label: '🔥 Core',    desc: '最も近しい仲間' },
+  { key: '⚡ Trusted', label: '⚡ Trusted', desc: '信頼できる仲間' },
+  { key: '🌟 Close',   label: '🌟 Close',   desc: 'よく会う仲間' },
+];
+// グループ定義（連絡先タブに登場するもの）
+const EV_GROUPS = [
+  { key: 'sake', label: '🍺 酒好き',    memberIds: ['yu_tanaka','kenta_s','daisuke_ito'] },
+  { key: 'toshi', label: '📈 投資仲間', memberIds: ['rina_s','kenji_founder','sarah_ai'] },
+];
+// 自分のID（主催者視点）
+const EV_SELF_ID = 'taisho_k';
+
+// ヒーロー画像プリセットグラデーション
+const EV_COVER_GRADIENTS = [
+  'linear-gradient(135deg,#1E3A5F 0%,#7C3AED 50%,#EC4899 100%)', // HYPERAY
+  'linear-gradient(135deg,#FF0080 0%,#FF8C00 50%,#FFE500 100%)', // Sunset
+  'linear-gradient(135deg,#00F5FF 0%,#7B2FF7 50%,#F107A3 100%)', // Neon
+  'linear-gradient(135deg,#43E97B 0%,#38F9D7 100%)',             // Mint
+  'linear-gradient(135deg,#4FACFE 0%,#00F2FE 100%)',             // Ocean
+  'linear-gradient(135deg,#F093FB 0%,#F5576C 100%)',             // Rose
+  'linear-gradient(135deg,#FA709A 0%,#FEE140 100%)',             // Peach
+  'linear-gradient(135deg,#0F172A 0%,#334155 100%)',             // Slate
+];
+
+// イベントページ背景グラデーション（ガラスカード前提で全体華やか）
+const EV_BG_GRADIENTS = [
+  '#0A0A0F',                                                                                    // 0: 無地ブラック
+  'linear-gradient(180deg, #E879F9 0%, #A855F7 40%, #6D28D9 80%, #4C1D95 100%)',                // 1: ネオン紫
+  'linear-gradient(180deg, #FB923C 0%, #EF4444 40%, #BE123C 80%, #7F1D1D 100%)',                // 2: サンセット
+  'linear-gradient(180deg, #22D3EE 0%, #3B82F6 40%, #1D4ED8 80%, #1E3A8A 100%)',                // 3: オーシャン
+  'linear-gradient(180deg, #34D399 0%, #10B981 40%, #047857 80%, #064E3B 100%)',                // 4: ミント
+  'radial-gradient(ellipse at 50% 25%, #F9A8D4 0%, #E879F9 30%, #9333EA 65%, #4C1D95 100%)',    // 5: スポット紫ピンク
+  'radial-gradient(ellipse at 50% 25%, #FDE68A 0%, #FB923C 30%, #EA580C 65%, #7C2D12 100%)',    // 6: スポットゴールド
+  'linear-gradient(180deg, #F9A8D4 0%, #EC4899 40%, #BE185D 80%, #831843 100%)',                // 7: ローズ
+];
+
+// パターン（SVG）10種 - 壁紙風の装飾柄
+// apply=本番適用用(透明背景・控えめな色)、swatch=パレット表示用(ベース色+明るい柄で視認性優先)
+// Pure CSS gradient patterns（Lea Verou's CSS3 Patterns Gallery・MITライセンスより移植）
+// apply: 透過パターンのみ → 下のgradientと重ねる / swatch: 独立した見本
+const EV_BG_PATTERNS = {
+  none: { label: 'なし', apply: null, swatch: null },
+  polkadot: {
+    label: 'ドット',
+    apply:  'radial-gradient(rgba(255,255,255,0.22) 15%, transparent 16%) 0 0 / 36px 36px, radial-gradient(rgba(255,255,255,0.22) 15%, transparent 16%) 18px 18px / 36px 36px',
+    swatch: 'radial-gradient(white 15%, transparent 16%) 0 0 / 10px 10px, radial-gradient(white 15%, transparent 16%) 5px 5px / 10px 10px, #001',
+  },
+  checker: {
+    label: 'チェッカー',
+    apply:  'linear-gradient(45deg, rgba(255,255,255,0.13) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.13) 75%) 0 0 / 40px 40px, linear-gradient(45deg, rgba(255,255,255,0.13) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.13) 75%) 20px 20px / 40px 40px',
+    swatch: 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%, transparent 75%, #1a1a1a 75%, #1a1a1a) 0 0 / 14px 14px, linear-gradient(45deg, #1a1a1a 25%, transparent 25%, transparent 75%, #1a1a1a 75%, #1a1a1a) 7px 7px / 14px 14px, #eee',
+  },
+  stripe: {
+    label: '斜めストライプ',
+    apply:  'repeating-linear-gradient(45deg, transparent, transparent 18px, rgba(255,255,255,0.18) 18px, rgba(255,255,255,0.18) 36px)',
+    swatch: 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.9) 4px, rgba(255,255,255,0.9) 8px) #1E3A8A',
+  },
+  waves: {
+    label: '波',
+    apply:  'radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,0.18) 21%, rgba(255,255,255,0.18) 34%, transparent 35%, transparent) 0 0 / 60px 80px, radial-gradient(circle at 0% 50%, transparent 20%, rgba(255,255,255,0.18) 21%, rgba(255,255,255,0.18) 34%, transparent 35%, transparent) 0 -40px / 60px 80px',
+    swatch: 'radial-gradient(circle at 100% 50%, transparent 20%, white 21%, white 34%, transparent 35%, transparent) 0 0 / 18px 24px, radial-gradient(circle at 0% 50%, transparent 20%, white 21%, white 34%, transparent 35%, transparent) 0 -12px / 18px 24px, slategray',
+  },
+  hearts: {
+    label: 'ハート',
+    apply:  'radial-gradient(circle closest-side at 60% 43%, rgba(255,255,255,0.25) 26%, transparent 27%) 0 0 / 80px 80px, radial-gradient(circle closest-side at 40% 43%, rgba(255,255,255,0.25) 26%, transparent 27%) 0 0 / 80px 80px, radial-gradient(circle closest-side at 42% 22%, rgba(255,255,255,0.3) 43%, transparent 45%) 0 0 / 80px 80px, radial-gradient(circle closest-side at 58% 22%, rgba(255,255,255,0.3) 43%, transparent 45%) 0 0 / 80px 80px, radial-gradient(circle closest-side at 50% 35%, rgba(255,255,255,0.3) 32%, transparent 33%) 0 0 / 80px 80px',
+    swatch: 'radial-gradient(circle closest-side at 60% 43%, #b03 26%, transparent 27%) 0 0 / 28px 28px, radial-gradient(circle closest-side at 40% 43%, #b03 26%, transparent 27%) 0 0 / 28px 28px, radial-gradient(circle closest-side at 42% 22%, #d35 43%, transparent 45%) 0 0 / 28px 28px, radial-gradient(circle closest-side at 58% 22%, #d35 43%, transparent 45%) 0 0 / 28px 28px, radial-gradient(circle closest-side at 50% 35%, #d35 32%, transparent 33%) 0 0 / 28px 28px, #fde2e7',
+  },
+  hstripe: {
+    label: '横ストライプ',
+    apply:  'linear-gradient(transparent 50%, rgba(255,255,255,0.14) 50%) 0 0 / 100% 28px',
+    swatch: 'linear-gradient(transparent 50%, rgba(255,255,255,0.9) 50%) 0 0 / 100% 10px, #7C3AED',
+  },
+  argyle: {
+    label: 'アーガイル',
+    apply:  'repeating-linear-gradient(120deg, rgba(255,255,255,0.12), rgba(255,255,255,0.12) 1px, transparent 1px, transparent 42px), repeating-linear-gradient(60deg, rgba(255,255,255,0.12), rgba(255,255,255,0.12) 1px, transparent 1px, transparent 42px), linear-gradient(60deg, rgba(255,255,255,0.08) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.08) 75%) 0 0 / 48px 84px, linear-gradient(120deg, rgba(255,255,255,0.08) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.08) 75%) 0 0 / 48px 84px',
+    swatch: 'repeating-linear-gradient(120deg, rgba(255,255,255,0.3), rgba(255,255,255,0.3) 1px, transparent 1px, transparent 14px), repeating-linear-gradient(60deg, rgba(255,255,255,0.3), rgba(255,255,255,0.3) 1px, transparent 1px, transparent 14px), linear-gradient(60deg, rgba(0,0,0,0.25) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.25) 75%) 0 0 / 16px 28px, linear-gradient(120deg, rgba(0,0,0,0.25) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.25) 75%) 0 0 / 16px 28px, #6d695c',
+  },
+  honeycomb: {
+    label: '蜂の巣',
+    apply:  'radial-gradient(circle farthest-side at 0% 50%, rgba(255,255,255,0.16) 23.5%, transparent 0) 21px 30px / 40px 60px, radial-gradient(circle farthest-side at 0% 50%, rgba(255,255,255,0.12) 24%, transparent 0) 19px 30px / 40px 60px, linear-gradient(rgba(255,255,255,0.16) 14%, transparent 0, transparent 85%, rgba(255,255,255,0.16) 0) 0 0 / 40px 60px, linear-gradient(150deg, rgba(255,255,255,0.16) 24%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 26%, transparent 0, transparent 74%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 76%, rgba(255,255,255,0.16) 0) 0 0 / 40px 60px, linear-gradient(30deg, rgba(255,255,255,0.16) 24%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 26%, transparent 0, transparent 74%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 76%, rgba(255,255,255,0.16) 0) 0 0 / 40px 60px',
+    swatch: 'radial-gradient(circle farthest-side at 0% 50%, #fb1 23.5%, transparent 0) 11px 15px / 20px 30px, radial-gradient(circle farthest-side at 0% 50%, #B71 24%, transparent 0) 9px 15px / 20px 30px, linear-gradient(#fb1 14%, transparent 0, transparent 85%, #fb1 0) 0 0 / 20px 30px, linear-gradient(150deg, #fb1 24%, #B71 0, #B71 26%, transparent 0, transparent 74%, #B71 0, #B71 76%, #fb1 0) 0 0 / 20px 30px, linear-gradient(30deg, #fb1 24%, #B71 0, #B71 26%, transparent 0, transparent 74%, #B71 0, #B71 76%, #fb1 0) 0 0 / 20px 30px, #fb1',
+  },
+  tartan: {
+    label: 'タータン',
+    apply:  'repeating-linear-gradient(transparent, transparent 24px, rgba(255,255,255,0.14) 24px, rgba(255,255,255,0.14) 26px, transparent 26px, transparent 30px, rgba(255,255,255,0.14) 30px, rgba(255,255,255,0.14) 32px, transparent 32px, transparent 56px, rgba(0,0,0,0.25) 56px, rgba(0,0,0,0.25) 82px, rgba(255,255,255,0.12) 82px, rgba(255,255,255,0.12) 84px, rgba(0,0,0,0.25) 84px, rgba(0,0,0,0.25) 110px), repeating-linear-gradient(90deg, transparent, transparent 24px, rgba(255,255,255,0.14) 24px, rgba(255,255,255,0.14) 26px, transparent 26px, transparent 30px, rgba(255,255,255,0.14) 30px, rgba(255,255,255,0.14) 32px, transparent 32px, transparent 56px, rgba(0,0,0,0.25) 56px, rgba(0,0,0,0.25) 82px, rgba(255,255,255,0.12) 82px, rgba(255,255,255,0.12) 84px, rgba(0,0,0,0.25) 84px, rgba(0,0,0,0.25) 110px)',
+    swatch: 'repeating-linear-gradient(transparent, transparent 6px, rgba(0,0,0,0.5) 6px, rgba(0,0,0,0.5) 8px, transparent 8px, transparent 14px, rgba(255,255,255,0.3) 14px, rgba(255,255,255,0.3) 16px), repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0,0,0,0.5) 6px, rgba(0,0,0,0.5) 8px, transparent 8px, transparent 14px, rgba(255,255,255,0.3) 14px, rgba(255,255,255,0.3) 16px), hsl(2, 57%, 40%)',
+  },
+  seigaiha: {
+    label: '青海波（和）',
+    apply:  'radial-gradient(circle at 100% 150%, rgba(255,255,255,0.16) 24%, transparent 24%, transparent 28%, rgba(255,255,255,0.16) 28%, rgba(255,255,255,0.16) 36%, transparent 36%, transparent 40%, transparent) 0 0 / 60px 30px, radial-gradient(circle at 0 150%, rgba(255,255,255,0.16) 24%, transparent 24%, transparent 28%, rgba(255,255,255,0.16) 28%, rgba(255,255,255,0.16) 36%, transparent 36%, transparent 40%, transparent) 0 0 / 60px 30px, radial-gradient(circle at 50% 100%, transparent 10%, rgba(255,255,255,0.16) 10%, rgba(255,255,255,0.16) 23%, transparent 23%, transparent 30%, rgba(255,255,255,0.16) 30%, rgba(255,255,255,0.16) 43%, transparent 43%, transparent 50%, rgba(255,255,255,0.16) 50%, rgba(255,255,255,0.16) 63%, transparent 63%, transparent 71%, transparent) 0 0 / 60px 30px',
+    swatch: 'radial-gradient(circle at 100% 150%, silver 24%, white 24%, white 28%, silver 28%, silver 36%, white 36%, white 40%, transparent 40%, transparent) 0 0 / 20px 10px, radial-gradient(circle at 0 150%, silver 24%, white 24%, white 28%, silver 28%, silver 36%, white 36%, white 40%, transparent 40%, transparent) 0 0 / 20px 10px, radial-gradient(circle at 50% 100%, white 10%, silver 10%, silver 23%, white 23%, white 30%, silver 30%, silver 43%, white 43%, white 50%, silver 50%, silver 63%, white 63%, white 71%, transparent 71%, transparent) 0 0 / 20px 10px, silver',
+  },
+};
+function applyEventPageBg(el, gradIdx, patternKey) {
+  if (!el) return;
+  const grad = EV_BG_GRADIENTS[gradIdx || 0] || '#0A0A0F';
+  const pat = EV_BG_PATTERNS[patternKey]?.apply;
+  const gradIsImage = grad.startsWith('linear') || grad.startsWith('radial');
+  if (gradIsImage) {
+    el.style.background = pat ? `${pat}, ${grad}` : grad;
+    el.style.backgroundColor = '#0A0A0F';
+  } else {
+    el.style.backgroundImage = pat || 'none';
+    el.style.backgroundColor = grad;
+  }
+  el.style.backgroundAttachment = 'local';
+}
+
+// ヒーロー画像プリセット写真（Unsplash）
+const EV_COVER_PHOTOS = [
+  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&q=80', // party lights
+  'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80', // dinner
+  'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80', // beach
+  'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80', // concert night
+  'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800&q=80', // mountains
+  'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=800&q=80', // bbq
+];
+
+// イベントデータ（主催＋招待両方が混在）
+let eventsData = [
+  {
+    id: 'ev-demo-1',
+    title: 'Yogbo淡路島保養所 お泊り会',
+    date: '2026-05-15',
+    time: '18:00',
+    endDate: '2026-05-17',
+    endTime: '12:00',
+    place: '淡路島 Yogbo保養所',
+    message: '飯と温泉とサウナあります。2日間のんびりしよう！\n普段忙しい仲間で集まって、島で思いっきりリフレッシュしよう。',
+    deadline: '2026-05-10',
+    coverGradient: 0,
+    coverImage: null,
+    bgGradient: 5,
+    bgPattern: 'seigaiha',
+    isPublic: false,
+    hostId: EV_SELF_ID,
+    hostName: '大将',
+    hostAvatar: '🧔',
+    hostScore: 50879,
+    invitees: ['yu_tanaka','rina_s','kenta_s','daisuke_ito','misaki_t'],
+    responses: {
+      'yu_tanaka': 'going',
+      'rina_s': 'going',
+      'kenta_s': 'maybe',
+      'daisuke_ito': 'skip',
+    },
+    history: [
+      { time: '2026-04-15 10:30', text: '集合場所はJR明石駅南口、13:00集合でお願いします' },
+      { time: '2026-04-17 21:00', text: '持ち物：タオル、水着（希望者）' },
+    ],
+    closed: false,
+    createdAt: '2026-04-10',
+  },
+  {
+    id: 'ev-demo-2',
+    title: 'あんちゃんの誕生日会',
+    date: '2026-04-25',
+    time: '19:00',
+    endDate: null,
+    endTime: null,
+    place: '渋谷 焼肉 吉祥',
+    message: '30歳の節目、ぜひ来てください',
+    deadline: null,
+    coverGradient: 2,
+    coverImage: null,
+    bgGradient: 2,
+    bgPattern: 'hearts',
+    isPublic: true,
+    hostId: 'yu_tanaka',
+    hostName: '田中 悠',
+    hostAvatar: '🧑',
+    hostScore: 32100,
+    invitees: [EV_SELF_ID,'rina_s','kenta_s','misaki_t'],
+    responses: {
+      'rina_s': 'going',
+      'kenta_s': 'going',
+    },
+    history: [],
+    closed: false,
+    createdAt: '2026-04-05',
+  },
+];
+
+// ===== ハブ描画 =====
+function buildEventsHub() {
+  const list = document.getElementById('eventsHubList');
+  if (!list) return;
+
+  const today = new Date().toISOString().slice(0, 10);
+
+  const upcoming = eventsData.filter(e => e.date >= today && !e.closed);
+  const hosted   = eventsData.filter(e => e.hostId === EV_SELF_ID);
+  const invited  = eventsData.filter(e => e.hostId !== EV_SELF_ID && e.invitees.includes(EV_SELF_ID));
+
+  let html = '';
+
+  html += '<div class="events-section-title">🗓️ これから</div>';
+  if (upcoming.length === 0) {
+    html += '<div class="events-empty">これから予定のイベントはありません</div>';
+  } else {
+    upcoming.forEach(ev => { html += renderEventRow(ev); });
+  }
+
+  html += '<div class="events-section-title">📤 主催したもの</div>';
+  if (hosted.length === 0) {
+    html += '<div class="events-empty">まだ主催したイベントはありません</div>';
+  } else {
+    hosted.forEach(ev => { html += renderEventRow(ev); });
+  }
+
+  html += '<div class="events-section-title">📥 招待されたもの</div>';
+  if (invited.length === 0) {
+    html += '<div class="events-empty">まだ招待はありません</div>';
+  } else {
+    invited.forEach(ev => { html += renderEventRow(ev); });
+  }
+
+  list.innerHTML = html;
+}
+
+function renderEventRow(ev) {
+  const d = new Date(ev.date);
+  const month = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][d.getMonth()];
+  const day = d.getDate();
+
+  let statusHtml = '';
+  if (ev.hostId === EV_SELF_ID) {
+    statusHtml = `<div class="events-row-status host">主催</div>`;
+  } else {
+    const r = ev.responses[EV_SELF_ID];
+    const map = {
+      going: { cls: 'going', label: '✓ 行く' },
+      maybe: { cls: 'maybe', label: '? 検討中' },
+      skip:  { cls: 'skip',  label: '✗ 行けない' },
+    };
+    const st = map[r] || { cls: 'pending', label: '未回答' };
+    statusHtml = `<div class="events-row-status ${st.cls}">${st.label}</div>`;
+  }
+
+  return `
+    <div class="events-row" onclick="openEventDetail('${ev.id}')">
+      <div class="events-row-date">
+        <div class="events-row-date-month">${month}</div>
+        <div class="events-row-date-day">${day}</div>
+      </div>
+      <div class="events-row-body">
+        <div class="events-row-title">${escapeHtml(ev.title)}</div>
+        <div class="events-row-meta">${ev.time} · ${escapeHtml(ev.place)}</div>
+        ${statusHtml}
+      </div>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+
+// ===== 作成画面 =====
+let evInviteSelectedTiers = new Set();
+let evInviteSelectedGroups = new Set();
+let evCreateScope = 'open';     // 'open' | 'closed'
+let evCreateCoverIdx = 0;
+let evCreateCoverImage = null;  // データURL or Unsplash URL
+let evCreateBgGradient = 1;     // デフォルト：ディープ紫
+let evCreateBgPattern = 'none'; // デフォルト：模様なし
+let evEditingEventId = null;    // 編集モード時のみイベントIDが入る（null=新規作成）
+
+function updateEventCreateUI(isEditMode) {
+  const titleEl = document.getElementById('evCreateScreenTitle');
+  const btnEl   = document.getElementById('evCreateSubmitBtn');
+  if (titleEl) titleEl.textContent = isEditMode ? 'イベント編集' : 'イベント作成';
+  if (btnEl)   btnEl.textContent   = isEditMode ? '変更を保存' : 'イベントを作成';
+}
+
+function openEventCreate() {
+  evEditingEventId = null;
+  // 入力初期化
+  document.getElementById('evCreateTitle').value = '';
+  document.getElementById('evCreateDate').value = '';
+  document.getElementById('evCreateTime').value = '';
+  document.getElementById('evCreateEndDate').value = '';
+  document.getElementById('evCreateEndTime').value = '';
+  document.getElementById('evCreatePlace').value = '';
+  document.getElementById('evCreateMessage').value = '';
+  document.getElementById('evCreateDeadline').value = '';
+  const fileInput = document.getElementById('evCoverUploadInput');
+  if (fileInput) fileInput.value = '';
+  evInviteSelectedTiers = new Set();
+  evInviteSelectedGroups = new Set();
+  evCreateScope = 'open';
+  evCreateCoverIdx = 0;
+  evCreateCoverImage = null;
+  evCreateBgGradient = 1;
+  evCreateBgPattern = 'none';
+  renderEventInviteTargets();
+  renderEvCoverEditor();
+  renderEvBgEditor();
+  setEventScope('open');
+  updateEventCreateUI(false);
+
+  // 画面切替
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-event-create').classList.add('active');
+}
+
+function openEventEdit(eventId) {
+  const ev = eventsData.find(e => e.id === eventId);
+  if (!ev) { showToast('イベントが見つかりません'); return; }
+  if (ev.hostId !== EV_SELF_ID) { showToast('編集権限がありません'); return; }
+  evEditingEventId = eventId;
+
+  // 既存値をロード
+  document.getElementById('evCreateTitle').value = ev.title || '';
+  document.getElementById('evCreateDate').value = ev.date || '';
+  document.getElementById('evCreateTime').value = ev.time || '';
+  document.getElementById('evCreateEndDate').value = ev.endDate || '';
+  document.getElementById('evCreateEndTime').value = ev.endTime || '';
+  document.getElementById('evCreatePlace').value = ev.place || '';
+  document.getElementById('evCreateMessage').value = ev.message || '';
+  document.getElementById('evCreateDeadline').value = ev.deadline || '';
+  const fileInput = document.getElementById('evCoverUploadInput');
+  if (fileInput) fileInput.value = '';
+
+  // 招待者の再選択UIは今回スコープ外。保存時に空なら旧inviteesを維持する
+  evInviteSelectedTiers = new Set();
+  evInviteSelectedGroups = new Set();
+
+  evCreateScope = ev.isPublic ? 'open' : 'closed';
+  evCreateCoverIdx = ev.coverGradient || 0;
+  evCreateCoverImage = ev.coverImage || null;
+  evCreateBgGradient = ev.bgGradient || 0;
+  evCreateBgPattern = ev.bgPattern || 'none';
+  renderEventInviteTargets();
+  renderEvCoverEditor();
+  renderEvBgEditor();
+  setEventScope(evCreateScope);
+  updateEventCreateUI(true);
+
+  // 画面切替
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-event-create').classList.add('active');
+}
+
+function deleteEventFromDetail(eventId) {
+  const ev = eventsData.find(e => e.id === eventId);
+  if (!ev) return;
+  if (ev.hostId !== EV_SELF_ID) { showToast('削除権限がありません'); return; }
+  if (!confirm('このイベントを削除しますか？\nこの操作は取り消せません。')) return;
+  const idx = eventsData.findIndex(e => e.id === eventId);
+  if (idx === -1) return;
+  eventsData.splice(idx, 1);
+  showToast('イベントを削除しました');
+  closeEventDetail();
+}
+
+// 主催者メニュー（⋯ボタンから表示するaction sheet）
+function openHostActionSheet(eventId) {
+  const ev = eventsData.find(e => e.id === eventId);
+  if (!ev || ev.hostId !== EV_SELF_ID) return;
+  document.getElementById('actionSheetTitle').textContent = 'イベント主催者メニュー';
+  const body = document.getElementById('actionSheetBody');
+  const items = [];
+  if (ev.closed) {
+    items.push(`<div class="action-sheet-item" onclick="reopenEventFromSheet('${eventId}')">
+      <span class="action-icon">🔓</span><span>受付を再開する</span></div>`);
+  } else {
+    items.push(`<div class="action-sheet-item" onclick="closeEventFromSheet()">
+      <span class="action-icon">🔒</span><span>受付を締める</span></div>`);
+  }
+  items.push(`<div class="action-sheet-item danger" onclick="deleteEventFromSheet('${eventId}')">
+    <span class="action-icon">🗑</span><span>イベントを削除</span></div>`);
+  items.push(`<div class="action-sheet-item" onclick="closeActionSheet()" style="justify-content:center;">
+    <span>キャンセル</span></div>`);
+  body.innerHTML = items.join('');
+  document.getElementById('actionSheet').classList.add('show');
+}
+function closeEventFromSheet() {
+  closeActionSheet();
+  setTimeout(() => closeEventForEveryone(), 150);
+}
+function reopenEventFromSheet(eventId) {
+  closeActionSheet();
+  setTimeout(() => {
+    const ev = eventsData.find(e => e.id === eventId);
+    if (!ev || ev.hostId !== EV_SELF_ID) return;
+    if (!confirm('このイベントの受付を再開しますか？')) return;
+    ev.closed = false;
+    showToast('受付を再開しました');
+    renderEventDetail(ev);
+  }, 150);
+}
+function deleteEventFromSheet(eventId) {
+  closeActionSheet();
+  setTimeout(() => deleteEventFromDetail(eventId), 150);
+}
+
+function renderEvCoverEditor() {
+  const preview = document.getElementById('evCoverPreview');
+  const palette = document.getElementById('evCoverPalette');
+  const photos  = document.getElementById('evCoverPhotos');
+  if (!preview || !palette || !photos) return;
+
+  // プレビュー：写真優先、なければグラデ
+  if (evCreateCoverImage) {
+    preview.style.background = '#000';
+    preview.style.backgroundImage = `url(${evCreateCoverImage})`;
+    preview.style.backgroundSize = 'cover';
+    preview.style.backgroundPosition = 'center';
+  } else {
+    preview.style.background = EV_COVER_GRADIENTS[evCreateCoverIdx];
+    preview.style.backgroundImage = '';
+  }
+
+  // グラデパレット
+  palette.innerHTML = EV_COVER_GRADIENTS.map((g, i) => `
+    <div class="ev-cover-swatch ${(!evCreateCoverImage && i === evCreateCoverIdx) ? 'active' : ''}"
+         style="background:${g};"
+         onclick="selectEvCoverGradient(${i})"></div>
+  `).join('');
+
+  // 写真プリセット
+  photos.innerHTML = EV_COVER_PHOTOS.map((url, i) => `
+    <div class="ev-cover-swatch photo ${evCreateCoverImage === url ? 'active' : ''}"
+         style="background-image: url(${url});"
+         onclick="selectEvCoverPhoto('${url}')"></div>
+  `).join('');
+}
+
+function selectEvCoverGradient(idx) {
+  evCreateCoverIdx = idx;
+  evCreateCoverImage = null;
+  renderEvCoverEditor();
+}
+
+function selectEvCoverPhoto(url) {
+  evCreateCoverImage = url;
+  renderEvCoverEditor();
+}
+
+function renderEvBgEditor() {
+  const preview = document.getElementById('evBgMiniPreview');
+  const gradPal = document.getElementById('evBgGradPalette');
+  const patPal  = document.getElementById('evBgPatternPalette');
+  if (!preview || !gradPal || !patPal) return;
+
+  // ミニプレビュー反映
+  applyEventPageBg(preview, evCreateBgGradient, evCreateBgPattern);
+
+  // グラデパレット
+  gradPal.innerHTML = EV_BG_GRADIENTS.map((g, i) => {
+    const bg = g.startsWith('linear') || g.startsWith('radial') ? g : g;
+    return `
+      <div class="ev-cover-swatch ${i === evCreateBgGradient ? 'active' : ''}"
+           style="background:${bg};"
+           onclick="selectEvBgGradient(${i})"></div>
+    `;
+  }).join('');
+
+  // パターンパレット（Pure CSSグラデーション・フル彩色で視認性確保）
+  patPal.innerHTML = Object.keys(EV_BG_PATTERNS).map(key => {
+    const p = EV_BG_PATTERNS[key];
+    const active = key === evCreateBgPattern ? 'active' : '';
+    if (!p.apply) {
+      return `<div class="ev-cover-swatch ev-bg-swatch-none ${active}"
+                   onclick="selectEvBgPattern('${key}')">⊘</div>`;
+    }
+    return `<div class="ev-cover-swatch ev-bg-swatch-pattern ${active}"
+                 style="background: ${p.swatch};"
+                 onclick="selectEvBgPattern('${key}')" title="${p.label}"></div>`;
+  }).join('');
+}
+
+function selectEvBgGradient(idx) {
+  evCreateBgGradient = idx;
+  renderEvBgEditor();
+}
+function selectEvBgPattern(key) {
+  evCreateBgPattern = key;
+  renderEvBgEditor();
+}
+
+function handleEvCoverUpload(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    showToast('画像ファイルを選んでください');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    evCreateCoverImage = e.target.result;
+    renderEvCoverEditor();
+    showToast('写真をカバーに設定しました');
+  };
+  reader.readAsDataURL(file);
+}
+
+function setEventScope(scope) {
+  evCreateScope = scope;
+  const openBtn = document.getElementById('evScopeOpen');
+  const closedBtn = document.getElementById('evScopeClosed');
+  const detail = document.getElementById('evScopeDetail');
+  if (openBtn) openBtn.classList.toggle('active', scope === 'open');
+  if (closedBtn) closedBtn.classList.toggle('active', scope === 'closed');
+  if (detail) detail.style.display = (scope === 'closed') ? 'block' : 'none';
+}
+
+function closeEventCreate() {
+  // 編集モードから閉じる場合、元の詳細画面に戻す
+  const editingId = evEditingEventId;
+  evEditingEventId = null;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  if (editingId) {
+    openEventDetail(editingId);
+  } else {
+    document.getElementById('screen-talk').classList.add('active');
+  }
+}
+
+function renderEventInviteTargets() {
+  const container = document.getElementById('evInviteTargets');
+  let html = '';
+
+  // 階級セクション
+  EV_TIERS.forEach(tier => {
+    const count = groupCircleMembers.filter(m => m.tier === tier.key).length;
+    const checked = evInviteSelectedTiers.has(tier.key);
+    html += `
+      <div class="ev-invite-target ${checked ? 'checked' : ''}" onclick="toggleEvInviteTier('${tier.key}')">
+        <div class="ev-invite-check">${checked ? '✓' : ''}</div>
+        <div class="ev-invite-target-body">
+          <div class="ev-invite-target-name">${tier.label}</div>
+          <div class="ev-invite-target-meta">${tier.desc} · ${count}人</div>
+        </div>
+      </div>
+    `;
+  });
+
+  // グループセクション
+  EV_GROUPS.forEach(g => {
+    const checked = evInviteSelectedGroups.has(g.key);
+    html += `
+      <div class="ev-invite-target ${checked ? 'checked' : ''}" onclick="toggleEvInviteGroup('${g.key}')">
+        <div class="ev-invite-check">${checked ? '✓' : ''}</div>
+        <div class="ev-invite-target-body">
+          <div class="ev-invite-target-name">${g.label}</div>
+          <div class="ev-invite-target-meta">グループ · ${g.memberIds.length}人</div>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  updateEvInviteSummary();
+}
+
+function toggleEvInviteTier(key) {
+  if (evInviteSelectedTiers.has(key)) evInviteSelectedTiers.delete(key);
+  else evInviteSelectedTiers.add(key);
+  renderEventInviteTargets();
+}
+
+function toggleEvInviteGroup(key) {
+  if (evInviteSelectedGroups.has(key)) evInviteSelectedGroups.delete(key);
+  else evInviteSelectedGroups.add(key);
+  renderEventInviteTargets();
+}
+
+function resolveEvInviteeIds() {
+  const ids = new Set();
+  // 階級から
+  evInviteSelectedTiers.forEach(tier => {
+    groupCircleMembers.forEach(m => {
+      if (m.tier === tier) ids.add(m.id);
+    });
+  });
+  // グループから
+  evInviteSelectedGroups.forEach(key => {
+    const g = EV_GROUPS.find(x => x.key === key);
+    if (g) g.memberIds.forEach(id => ids.add(id));
+  });
+  // 自分は除外
+  ids.delete(EV_SELF_ID);
+  return [...ids];
+}
+
+function updateEvInviteSummary() {
+  const ids = resolveEvInviteeIds();
+  const el = document.getElementById('evInviteSummary');
+  if (!el) return;
+  if (ids.length === 0) {
+    el.textContent = 'まだ選択されていません';
+  } else {
+    el.textContent = `合計 ${ids.length}人（重複排除済み）`;
+  }
+}
+
+function submitEventCreate() {
+  const title = document.getElementById('evCreateTitle').value.trim();
+  const date  = document.getElementById('evCreateDate').value;
+  const time  = document.getElementById('evCreateTime').value;
+  const endDate = document.getElementById('evCreateEndDate').value || null;
+  const endTime = document.getElementById('evCreateEndTime').value || null;
+  const place = document.getElementById('evCreatePlace').value.trim();
+  const message  = document.getElementById('evCreateMessage').value.trim();
+  const deadline = document.getElementById('evCreateDeadline').value || null;
+
+  if (!title) { showToast('タイトルを入力してください'); return; }
+  if (!date)  { showToast('開始日付を選択してください'); return; }
+  if (!time)  { showToast('開始時刻を選択してください'); return; }
+  if (!place) { showToast('場所を入力してください'); return; }
+
+  const isPublic = (evCreateScope === 'open');
+  let invitees = [];
+  if (!isPublic) {
+    invitees = resolveEvInviteeIds();
+    if (invitees.length === 0) {
+      // 編集モードで旧inviteesがある場合はそれを維持
+      if (evEditingEventId) {
+        const oldEv = eventsData.find(e => e.id === evEditingEventId);
+        if (oldEv && Array.isArray(oldEv.invitees) && oldEv.invitees.length > 0) {
+          invitees = oldEv.invitees;
+        } else {
+          showToast('招待する相手を選んでください'); return;
+        }
+      } else {
+        showToast('招待する相手を選んでください'); return;
+      }
+    }
+  }
+
+  // 編集モード：既存イベントを上書き更新
+  if (evEditingEventId) {
+    const idx = eventsData.findIndex(e => e.id === evEditingEventId);
+    if (idx === -1) { showToast('イベントが見つかりません'); return; }
+    const old = eventsData[idx];
+    eventsData[idx] = {
+      ...old,
+      title, date, time, endDate, endTime,
+      place, message, deadline,
+      coverGradient: evCreateCoverIdx,
+      coverImage: evCreateCoverImage,
+      bgGradient: evCreateBgGradient,
+      bgPattern: evCreateBgPattern,
+      isPublic,
+      invitees: isPublic ? [] : invitees,
+    };
+    const updatedId = evEditingEventId;
+    evEditingEventId = null;
+    showToast('イベントを更新しました');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    setTimeout(() => openEventDetail(updatedId), 50);
+    return;
+  }
+
+  const newEvent = {
+    id: 'ev-' + Date.now(),
+    title, date, time,
+    endDate, endTime,
+    place, message,
+    deadline,
+    coverGradient: evCreateCoverIdx,
+    coverImage: evCreateCoverImage,
+    bgGradient: evCreateBgGradient,
+    bgPattern: evCreateBgPattern,
+    isPublic,
+    hostId: EV_SELF_ID,
+    hostName: '大将',
+    hostAvatar: '🧔',
+    hostScore: 50879,
+    invitees,
+    responses: {},
+    history: [],
+    closed: false,
+    createdAt: new Date().toISOString().slice(0, 10),
+  };
+
+  eventsData.unshift(newEvent);
+  if (isPublic) {
+    showToast('イベントを作成し、タイムラインに流しました！');
+  } else {
+    showToast(`${invitees.length}人に招待を送りました！`);
+  }
+
+  // 詳細画面へ遷移
+  closeEventCreate();
+  switchTalkTab('events');
+  setTimeout(() => openEventDetail(newEvent.id), 100);
+}
+
+// ===== 詳細画面 =====
+let evDetailCurrentId = null;
+let evDetailReturnTo = 'talk'; // 'talk' | 'home'
+
+function openEventDetail(eventId, returnTo = 'talk') {
+  const ev = eventsData.find(e => e.id === eventId);
+  if (!ev) return;
+  evDetailCurrentId = eventId;
+  evDetailReturnTo = returnTo;
+  renderEventDetail(ev);
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-event-detail').classList.add('active');
+}
+
+function closeEventDetail() {
+  evDetailCurrentId = null;
+  const returnTo = evDetailReturnTo === 'home' ? 'home' : 'talk';
+  evDetailReturnTo = 'talk';
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + returnTo).classList.add('active');
+  if (returnTo === 'home') {
+    buildHomeFeed();
+  } else {
+    switchTalkTab('events');
+  }
+}
+
+// フィード上の招待カードからの即時回答
+function setInviteResponseFromFeed(eventId, status) {
+  const ev = eventsData.find(e => e.id === eventId);
+  if (!ev || ev.closed) { showToast('受付終了しています'); return; }
+  ev.responses[EV_SELF_ID] = status;
+  const msg = { going: '「行く」で回答しました', maybe: '「検討中」で回答しました', skip: '「行けない」で回答しました' };
+  showToast(msg[status]);
+  buildHomeFeed();
+}
+
+function renderEventDetail(ev) {
+  const isHost = ev.hostId === EV_SELF_ID;
+  const myResponse = ev.responses[EV_SELF_ID];
+
+  // ページ背景を適用
+  const screenEl = document.getElementById('screen-event-detail');
+  applyEventPageBg(screenEl, ev.bgGradient, ev.bgPattern);
+
+  // 「行く」人を抽出
+  const goingIds = Object.keys(ev.responses).filter(id => ev.responses[id] === 'going');
+  const goingCount = goingIds.length;
+
+  // 日時整形
+  const weekday = ['日','月','火','水','木','金','土'];
+  const fmtDate = (dateStr, timeStr) => {
+    const d = new Date(dateStr);
+    const mon = d.getMonth() + 1;
+    const day = d.getDate();
+    const wd = weekday[d.getDay()];
+    return `${mon}月${day}日(${wd}) ${timeStr || ''}`.trim();
+  };
+  let dateStr = fmtDate(ev.date, ev.time);
+  if (ev.endDate && ev.endDate !== ev.date) {
+    dateStr += ` 〜 ${fmtDate(ev.endDate, ev.endTime)}`;
+  } else if (ev.endTime && !ev.endDate) {
+    dateStr += ` 〜 ${ev.endTime}`;
+  }
+
+  // カバー
+  const coverBg = ev.coverImage
+    ? `background-image: url(${ev.coverImage});`
+    : `background-image: ${EV_COVER_GRADIENTS[ev.coverGradient || 0]};`;
+
+  // スコープバッジ
+  const scopeBadge = ev.isPublic
+    ? '<div class="ev-detail-scope-badge">🌐 オープン</div>'
+    : '<div class="ev-detail-scope-badge">🔒 クローズド</div>';
+
+  // ホストランクバッジ（プロフィールと統一）
+  const titleInfo = getTitle(ev.hostScore || 0);
+  const hostBadge = `<span class="pokemon-card-tier-badge rank-badge-${titleInfo.cls}" style="font-size:11px;padding:3px 10px;">${titleInfo.emoji} ${titleInfo.name}</span>`;
+
+  let html = `
+    <div class="ev-detail-cover" style="${coverBg}">
+      <button class="ev-detail-floating-back" onclick="closeEventDetail()">←</button>
+      ${scopeBadge}
+      <div class="ev-detail-cover-overlay"></div>
+    </div>
+
+    <div class="ev-detail-content">
+      <div class="ev-detail-title-lg">${escapeHtml(ev.title)}</div>
+      <div class="ev-detail-host-line">
+        <span class="ev-detail-host-label">主催</span>
+        <span class="ev-detail-host-name">${escapeHtml(ev.hostName)}</span>
+        ${hostBadge}
+      </div>
+
+      <div class="ev-detail-infoblock">
+        <div class="ev-detail-infoblock-ico">📅</div>
+        <div>
+          <div class="ev-detail-infoblock-main">${dateStr}</div>
+          ${ev.deadline ? `<div class="ev-detail-infoblock-sub">回答締切: ${ev.deadline}</div>` : ''}
+        </div>
+      </div>
+
+      <div class="ev-detail-infoblock">
+        <div class="ev-detail-infoblock-ico">📍</div>
+        <div>
+          <div class="ev-detail-infoblock-main">${escapeHtml(ev.place)}</div>
+        </div>
+      </div>
+
+      ${ev.closed ? `
+      <div class="ev-detail-infoblock">
+        <div class="ev-detail-infoblock-ico" style="background:rgba(239,68,68,0.2);">✗</div>
+        <div>
+          <div class="ev-detail-infoblock-main" style="color:#FCA5A5;">受付終了</div>
+        </div>
+      </div>` : ''}
+
+      <div class="ev-detail-section-new">
+        <div class="ev-detail-section-heading">参加者</div>
+        ${renderAttendeeStack(goingIds, goingCount)}
+      </div>
+
+      ${ev.message ? `
+      <div class="ev-detail-section-new">
+        <div class="ev-detail-section-heading">詳細</div>
+        <div class="ev-detail-message">${escapeHtml(ev.message)}</div>
+      </div>` : ''}
+
+      ${(ev.history.length > 0 || isHost) ? `
+      <div class="ev-detail-section-new">
+        <div class="ev-detail-section-heading">主催者からの連絡</div>
+        ${ev.history.length === 0
+          ? `<div class="events-empty" style="padding:12px 0;">まだ連絡はありません</div>`
+          : ev.history.map(h => `
+              <div class="ev-history-new-item">
+                <div class="ev-history-new-time">${escapeHtml(h.time)}</div>
+                <div class="ev-history-new-text">${escapeHtml(h.text)}</div>
+              </div>
+            `).join('')
+        }
+      </div>` : ''}
+    </div>
+  `;
+
+  document.getElementById('evDetailBody').innerHTML = html;
+
+  // 下部固定CTAバー
+  const ctaBar = document.getElementById('evDetailCtaBar');
+  if (isHost) {
+    // 主催者メニュー：左=編集（同格プライマリ）、中=追加連絡 or 受付終了表示、右=⋯（締める/削除はシートに退避）
+    if (ev.closed) {
+      ctaBar.innerHTML = `
+        <button class="ev-cta-pill" onclick="openEventEdit('${ev.id}')">✏️ 編集</button>
+        <div style="flex:1;text-align:center;padding:14px;color:rgba(255,255,255,0.5);font-weight:600;font-size:13px;">受付終了</div>
+        <button class="ev-cta-pill more-btn" onclick="openHostActionSheet('${ev.id}')" title="その他">⋯</button>
+      `;
+    } else {
+      ctaBar.innerHTML = `
+        <button class="ev-cta-pill" onclick="openEventEdit('${ev.id}')">✏️ 編集</button>
+        <button class="ev-cta-pill primary" onclick="openEventAddHistory()">📢 追加連絡</button>
+        <button class="ev-cta-pill more-btn" onclick="openHostActionSheet('${ev.id}')" title="その他">⋯</button>
+      `;
+    }
+  } else {
+    if (ev.closed) {
+      ctaBar.innerHTML = `<div style="flex:1;text-align:center;padding:14px;color:rgba(255,255,255,0.5);font-weight:600;">受付終了</div>`;
+    } else {
+      const isGoing = myResponse === 'going';
+      const isMaybe = myResponse === 'maybe';
+      const isSkip  = myResponse === 'skip';
+      ctaBar.innerHTML = `
+        <button class="ev-rsvp-primary ${isGoing ? 'active' : ''}" onclick="setEventResponse('going')">
+          <span class="ev-rsvp-icon">✓</span>
+          <span>${isGoing ? '行く（回答済み）' : '行く'}</span>
+        </button>
+        <button class="ev-rsvp-secondary ${isMaybe ? 'active maybe' : ''}" onclick="setEventResponse('maybe')">
+          <span class="ev-rsvp-sub-ico">?</span>
+          <span>検討</span>
+        </button>
+        <button class="ev-rsvp-secondary ${isSkip ? 'active skip' : ''}" onclick="setEventResponse('skip')">
+          <span class="ev-rsvp-sub-ico">✕</span>
+          <span>不参加</span>
+        </button>
+      `;
+    }
+  }
+}
+
+function resolveEvMember(id) {
+  return (typeof nmMemberData !== 'undefined' && nmMemberData[id])
+      || (typeof groupCircleMembers !== 'undefined' && groupCircleMembers.find(x => x.id === id))
+      || { name: id, avatar: '👤' };
+}
+
+function renderAttendeeStack(ids, total) {
+  if (ids.length === 0) {
+    return `<div style="color:rgba(255,255,255,0.5);font-size:13px;">まだ参加者はいません</div>`;
+  }
+  const visible = ids.slice(0, 5);
+  const remaining = total - visible.length;
+  const avatars = visible.map(id => {
+    const m = resolveEvMember(id);
+    return `<div class="ev-attendee-stack-item">${m.avatar}</div>`;
+  }).join('');
+  const plus = remaining > 0 ? `
+    <div class="ev-attendee-stack-item plus">
+      <span class="plus-num">+${remaining}</span>
+      <span class="plus-lbl">going</span>
+    </div>` : '';
+  return `
+    <div class="ev-attendee-stack">
+      ${avatars}${plus}
+    </div>
+    <div style="margin-top:8px;font-size:13px;color:rgba(255,255,255,0.65);">
+      ${total}人が参加予定
+    </div>
+  `;
+}
+
+function setEventResponse(status) {
+  if (!evDetailCurrentId) return;
+  const ev = eventsData.find(e => e.id === evDetailCurrentId);
+  if (!ev || ev.closed) { showToast('受付終了しています'); return; }
+  ev.responses[EV_SELF_ID] = status;
+  const msg = { going: '「行く」で回答しました', maybe: '「検討中」で回答しました', skip: '「行けない」で回答しました' };
+  showToast(msg[status]);
+  renderEventDetail(ev);
+}
+
+function openEventAddHistory() {
+  const text = prompt('参加者全員への追加連絡を入力してください');
+  if (!text || !text.trim()) return;
+  const ev = eventsData.find(e => e.id === evDetailCurrentId);
+  if (!ev) return;
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const time = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  ev.history.push({ time, text: text.trim() });
+  showToast('✓参加者に通知を送信しました');
+  renderEventDetail(ev);
+}
+
+function closeEventForEveryone() {
+  if (!confirm('このイベントを締めますか？\n締めると以降の回答変更はできなくなります。')) return;
+  const ev = eventsData.find(e => e.id === evDetailCurrentId);
+  if (!ev) return;
+  ev.closed = true;
+  showToast('イベントを締めました');
+  renderEventDetail(ev);
+}
+
+function openEventHostDm() {
+  const ev = eventsData.find(e => e.id === evDetailCurrentId);
+  if (!ev) return;
+  if (typeof openDmChat === 'function') {
+    openDmChat(ev.hostId, ev.hostName, ev.hostAvatar);
+  } else {
+    showToast(`${ev.hostName}へDM`);
+  }
 }
 </script>
 
