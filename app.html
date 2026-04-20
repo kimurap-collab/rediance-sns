@@ -10511,7 +10511,51 @@
         cmpUpdatePhotoFrame();
       });
     }
+    // ===== HASH URL ROUTER (specs用プレビュー) =====
+    // app.html#screen-xxx で各画面を直接開ける。プログラマー（相手AI含む）が
+    // 画面単位で確認できるようにするための仕組み。
+    routeByHash();
+    window.addEventListener('hashchange', routeByHash);
   });
+
+  // ハッシュ→画面の対応表（タブに紐づくものはswitchTabで、それ以外は直接activate）
+  const HASH_TO_TAB = {
+    'screen-home': 'home',
+    'screen-post': 'post',
+    'screen-notif': 'notif',
+    'screen-profile': 'profile',
+    'screen-my': 'my',
+    'screen-talk': 'talk',
+    'screen-search': 'search',
+    'screen-circle': 'circle',
+  };
+  const HASH_DIRECT_SCREENS = new Set([
+    'screen-event-create',
+    'screen-event-detail',
+  ]);
+
+  function routeByHash() {
+    const hash = (location.hash || '').replace(/^#/, '');
+    if (!hash) return;
+    if (HASH_TO_TAB[hash]) {
+      switchTab(HASH_TO_TAB[hash]);
+      return;
+    }
+    if (HASH_DIRECT_SCREENS.has(hash)) {
+      // デモ用：イベントがあれば先頭イベントで開く
+      if (hash === 'screen-event-detail' && typeof eventsData !== 'undefined' && eventsData.length > 0) {
+        if (typeof openEventDetail === 'function') { openEventDetail(eventsData[0].id); return; }
+      }
+      if (hash === 'screen-event-create' && typeof openEventCreate === 'function') {
+        openEventCreate();
+        return;
+      }
+      // フォールバック：直接activate
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const el = document.getElementById(hash);
+      if (el) el.classList.add('active');
+    }
+  }
 
   // (旧Stories Editorコードは削除済み)
 
