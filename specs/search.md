@@ -15,11 +15,11 @@ app.html#screen-search
 - **HTML**: `app.html:6956-6978`
 - **CSS**: `.search-trend-item`, `.search-post-card`, `.search-post-top`, `.search-post-avatar`, `.search-post-name`
 - **JS**:
-  - `handleSearch()` — 入力検知→フィルタリング
-  - `getAllSearchablePosts()` — feedPosts＋各ユーザーのpostsを結合（約8616〜）
-  - `buildSearchPostCard(p)` — 投稿カード描画（約8634〜）
-  - `openSearchPostFs(encodedJson)` — 投稿フルスクリーン展開
-  - `renderSearchRecommendedUsers()` — おすすめユーザーグリッド
+  - `handleSearch()` — 入力検知→フィルタリング（app.html:8666）
+  - `getAllSearchablePosts()` — feedPosts＋各ユーザーのpostsを結合（app.html:8616）
+  - `buildSearchPostCard(p)` — 投稿カード描画（app.html:8634）
+  - `openSearchPostFs(encodedJson)` — 投稿フルスクリーン展開（app.html:11131）
+  - `initSearchRecommended()` — おすすめユーザーグリッド（app.html:8657）
 
 ## Screen Structure
 

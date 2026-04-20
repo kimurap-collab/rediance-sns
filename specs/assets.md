@@ -141,25 +141,36 @@ const EV_COVER_PHOTOS = [
 
 ## フォント
 
-Google Fontsや外部CDNは未使用。**システムフォントのみ**：
+**デフォルト**はシステムフォント：
 
 ```
 -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui,
 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif
 ```
 
+**Google Fonts**（10書体）を `app.html:9` で読み込み済み。主に **投稿コンポーザーのテキストレイヤーのフォント選択**（app.html:5941〜5946）に使用：
+
+| data-font | 表示 | 用途 |
+|---|---|---|
+| `'Noto Sans JP', sans-serif` | 標準ゴシック | デフォルト |
+| `'M PLUS 1p', sans-serif` weight:700 | 太ゴシック | 強調 |
+| `'Noto Serif JP', serif` | 明朝 | 落ち着き |
+| `'Shippori Mincho', serif` | エレガント | 格調高 |
+| `'Yusei Magic', cursive` | 手書き | 親しみ |
+| `'Klee One', cursive` | 学校風 | カジュアル |
+| `'Zen Kaku Gothic New'` / `'Kaisei Decol'` / `'Stick'` / `'Reggae One'` | 予備 | 拡張用 |
+
+UIチャート・本文等の他領域ではシステムフォントを使用する。
+
 ## ロゴ
 
-**現行ブランドは HYPERAY**。ホームヘッダーで使用。
+**現行ブランドは HYPERAY で固定**。ホームヘッダーで使用。
 
 | ファイル | 使用箇所 | 用途 |
 |---|---|---|
-| `hyperay-logo-white.png` | `app.html:5850`（ホームヘッダー中央、28px高） | 現行ロゴ（白背景・ダーク色ヘッダー用） |
+| `hyperay-logo-white.png` | `app.html:5850`（ホームヘッダー中央、28px高） | 現行ロゴ（ダーク色ヘッダー上で白抜き表示） |
 
-以下のファイルはリポジトリに残っているが **現在使われていない**（旧ブランド or 未使用バリエーション）：
-
-- `elsius-logo.jpg` — 旧ブランド時代の遺物。削除候補
-- `hyperay-logo.jpg` — HYPERAYダーク版だが現状未参照
+**注意**: `index.html`（Circle組閣ウィザード）のタイトル・バッジもHYPERAY表記で統一済み。新規ロゴが必要な場合は HYPERAY 名義で作成し、旧ブランド（Elsius／Radiance）名の資産は追加しないこと。
 
 ## 素材選定ルール
 
@@ -172,6 +183,6 @@ Google Fontsや外部CDNは未使用。**システムフォントのみ**：
 
 ## 禁止事項
 
-- 外部アイコンライブラリ（Font Awesome等）の追加は不可（絵文字で統一）
-- Google Fonts等の外部フォント読み込み不可（パフォーマンス・オフライン対応のため）
+- 外部アイコンライブラリ（Font Awesome等）の追加は不可。タブはHeroicons風インラインSVG、UIは絵文字という二層戦略で統一
+- 新規Google Fontsの追加は不可（既存10書体で賄う）。別CDNの外部フォントも不可
 - `<script>` タグを含むSVGのコピペ不可（XSSリスク）

@@ -15,8 +15,8 @@ app.html#screen-event-create
 - **HTML**: `app.html:6856-6947`
 - **CSS**: `.ev-create-header`, `.ev-create-body`, `.ev-cover-editor`, `.ev-cover-preview`, `.ev-cover-drag-hint`, `.ev-cover-section-title`, `.ev-cover-palette`, `.ev-cover-upload-btn`, `.ev-bg-editor-block`, `.ev-bg-editor-title`, `.ev-bg-editor-hint`, `.ev-bg-mini-preview`, `.ev-bg-mini-name`, `.ev-field`, `.ev-field-label`, `.ev-field-optional`, `.ev-field-row`, `.ev-input`, `.ev-input-lg`, `.ev-textarea`, `.ev-scope-toggle`, `.ev-scope-btn`, `.ev-scope-detail`, `.ev-invite-targets`, `.ev-invite-target`, `.ev-invite-summary`, `.ev-send-btn`
 - **JS関数（主要）**:
-  - `openEventCreate()` — 新規作成（約12170行〜）
-  - `openEventEdit(eventId)` — 既存編集（約12205行〜）
+  - `openEventCreate()` — 新規作成（app.html:12214）
+  - `openEventEdit(eventId)` — 既存編集（app.html:12249）
   - `closeEventCreate()` — キャンセル
   - `submitEventCreate()` — 送信
   - `renderEvCoverEditor()` — カバー写真パレット描画
@@ -78,39 +78,56 @@ app.html#screen-event-create
 
 ## Data Requirements
 
+実際の `eventsData` 要素の形状（app.html:12054〜参照、サンプル2件あり）：
+
 ```typescript
 interface Event {
-  id: string;              // 'ev-xxx'
-  title: string;           // 必須
-  date: string;            // YYYY-MM-DD、必須
-  time: string;            // HH:mm、必須
-  endDate?: string;
-  endTime?: string;
-  place: string;           // 必須
-  message?: string;
-  deadline?: string;       // 回答締切
-  scope: 'open' | 'closed';
-  invitedIds?: string[];   // scope='closed'時のみ
-  coverImage: string;      // URL、必須
-  coverPos: { x: number; y: number };  // 0〜100（%）
-  bgGradIdx: number;       // EV_BG_GRADIENTSのインデックス
-  bgPattern: string;       // EV_BG_PATTERNSのキー
-  hostId: string;          // 作成者ID
-  rsvps: { [userId: string]: 'going' | 'maybe' | 'skip' };
+  id: string;                                // 例: 'ev-demo-1'
+  title: string;
+  date: string;                              // YYYY-MM-DD
+  time: string;                              // HH:mm
+  endDate: string | null;
+  endTime: string | null;
+  place: string;
+  message: string;
+  deadline: string | null;                   // 回答締切
+  coverGradient: number;                     // 旧：カバーグラデidx（現在は使われない保持値）
+  coverImage: string;                        // カバー写真URL（必須）
+  coverPos: { x: number; y: number };        // 0〜100(%)
+  bgGradient: number;                        // EV_BG_GRADIENTS のインデックス
+  bgPattern: string;                         // EV_BG_PATTERNS のキー
+  isPublic: boolean;                         // true=オープン / false=クローズド
+  hostId: string;
+  hostName: string;
+  hostAvatar: string;                        // 絵文字
+  hostScore: number;
+  invitees: string[];                        // 招待ユーザーID配列
+  responses: {                               // RSVP
+    [userId: string]: 'going' | 'maybe' | 'skip';
+  };
+  history: { time: string; text: string }[]; // 主催者からの追加連絡
+  closed: boolean;                           // 受付終了フラグ
+  createdAt: string;
 }
 ```
 
-## State変数（グローバル）
+**注意**: UI上「オープン/クローズド」と表示するが、内部では `isPublic: boolean` で保持。`setEventScope('open'|'closed')` が入力を受け取り、保存時に boolean へ変換する。
+
+## State変数（グローバル、app.html:12197〜12205）
 
 ```js
-let evEditingEventId = null;           // 編集中のID、新規はnull
-let evCreateCoverImage = null;         // 選択中のカバー写真URL
-let evCreateCoverPos = { x: 50, y: 50 };
-let evCreateBgGradIdx = 0;
-let evCreateBgPattern = 'black';       // デフォルト
-let evCreateScope = 'open';
-let evCreateInvitedIds = [];
+let evInviteSelectedTiers = new Set();   // 選択中のティア ('core'|'orbit'|'halo'|...) — 単位はティア
+let evInviteSelectedGroups = new Set();  // 選択中のグループID — 単位はグループ
+let evCreateScope = 'open';              // 'open' | 'closed'
+let evCreateCoverIdx = 0;                // プリセット写真のインデックス
+let evCreateCoverImage = null;           // 実際のURL（プリセットURL or dataURL）
+let evCreateCoverPos = { x: 50, y: 50 }; // カバー位置（0〜100%）
+let evCreateBgGradient = 1;              // EV_BG_GRADIENTSのインデックス（デフォ1 ディープ紫）
+let evCreateBgPattern = 'black';         // EV_BG_PATTERNSのキー（デフォ black）
+let evEditingEventId = null;             // 編集対象のeventId（null=新規作成）
 ```
+
+**招待対象はユーザー単位ではなくティア/グループ単位** で管理される。UI上のカード選択もティア/グループを単位としてチェック。
 
 ## Interactions
 

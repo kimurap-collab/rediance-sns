@@ -13,7 +13,7 @@ app.html#screen-post
 ## Source Ranges
 
 - **HTML**: `app.html:5863-6081`
-- **CSS**: `.cmp-*` プレフィックスの全セレクタ（4253行目〜、5000行目周辺）
+- **CSS**: `.cmp-*` プレフィックスの全セレクタ（app.html:4259〜5000行周辺）
 - **JS**:
   - `cmpPost()` — 投稿確定
   - `cmpClose()` — キャンセル
@@ -49,24 +49,26 @@ app.html#screen-post
 ## Data / State
 
 ```typescript
-// グローバル状態
-let cmpBgMode: 'grad' | 'photo';
+// グローバル状態（app.html:9252〜）
+let cmpBgMode: 'grad' | 'photo' | 'gif';
 let cmpSelectedGradIdx: number;      // 0〜9
 let cmpLayers: TextLayer[];          // テキストレイヤー配列
 let cmpSelectedLayerId: string | null;
 let cmpPhotoSelected: boolean;
-let cmpCurrentFilter: string;        // フィルター名
+let cmpCurrentFilterIdx: number;     // 現在フィルターのインデックス（cmpFilters配列の位置）
 
 interface TextLayer {
-  id: string;
+  id: string;                        // 'tl-1', 'tl-2', ...
   text: string;
-  x: number; y: number;              // キャンバス中心からのオフセット
-  rotation: number;
-  scale: number;
-  font: string;
+  fontFamily: string;
+  fontWeight: string | number;
   color: string;
-  align: 'left' | 'center' | 'right';
-  bgMode: 'none' | 'solid' | 'outline';
+  bgType: 'none' | 'solid' | 'outline';
+  x: number;                         // キャンバス中心からのオフセット
+  y: number;
+  scale: number;
+  rotate: number;                    // ラジアンではなくdegree
+  fontSize: number;                  // デフォルト32
 }
 ```
 

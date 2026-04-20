@@ -49,36 +49,51 @@ app.html#screen-profile
 
 ## Data Requirements
 
+実形状（`userProfiles` グローバル、app.html:8070〜）：
+
 ```typescript
 interface UserProfile {
   id: string;
   name: string;
-  handle: string;
-  bio: string;
-  profilePhoto: string;         // Unsplash URL
-  tier: 'radiance' | 'diamond' | 'star' | 'rising' | 'new';
-  score: number;
+  handle: string;                 // '@yu_tanaka' など
+  avatarEmoji: string;            // アバター絵文字
+  avatarClass: string;            // 'avatar-inner' | 'avatar-trusted' | 'avatar-close' | 'avatar-connected'
+  bannerGradient: string;         // CSS linear-gradient文字列
+  profilePhoto: string;           // Unsplash URL
+  bio: string;                    // 改行保持
+  location: string;
+  joinDate: string;               // '2024年X月から利用'
+  score: number;                  // 影響力スコア（R Score）
   stats: {
     trust: number;
     prestige: number;
     insights: number;
     stature: number;
   };
-  identities: {
-    [category: string]: {
-      icon: string;
-      name: string;
-      updated: string;
-      posts: Post[];
-    };
-  };
-  location: string;
-  tags: string[];
-  joinedAt: string;
+  innerCount?: number;            // Circleに入れている人数（Core）
+  trustedCount?: number;          // Orbit
+  closeCount?: number;            // Halo
+  posts: Post[];                  // 本人の投稿
+  identity: IdentityCategory[];   // Identityカテゴリ配列
+}
+
+interface Post {
+  id: string;
+  body: string;
+  time: string;
+  likes: number;
+  shares: number;
+  grad: string;                   // CSS gradient背景
+}
+
+interface IdentityCategory {
+  name: string;                   // 絵文字＋名前、例 "🤖 AIエージェント"
+  updated: string;                // '8分前'
+  posts: { body: string; grad: string }[];
 }
 ```
 
-データ元: `userProfiles` グローバル（app.html:8070〜）
+**称号（tier）はデータ上のフィールドではない**。`getTitle(score)` 関数（app.html:7813）がスコアから動的に導出する。10段階：Human / Leader / Icon / Rising / Star / Nova / Supernova / Gravity / Singularity / Universe。
 
 ## Interactions
 

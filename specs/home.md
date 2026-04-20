@@ -15,8 +15,8 @@ app.html#screen-home
 - **HTML**: `app.html:5846-5859`
 - **CSS**: `app.html` 内のhome関連セレクタ（`.home-header`, `.home-stories-row`, 投稿カード系）
 - **JS関数**:
-  - `renderHomeFeed()` — フィード描画
-  - `buildHomeStoriesRow()` — ストーリーズバー描画
+  - `buildHomeFeed()` — フィード描画（app.html:10993）
+  - `buildHomeStories()` — ストーリーズバー描画（app.html:10662）
   - `switchTab('home')` — 画面切替（app.html:8579〜）
 
 ## Screen Structure
@@ -36,21 +36,23 @@ app.html#screen-home
 
 ```typescript
 interface FeedPost {
+  id: string;                 // 'f1', 'f2', ...
   userId: string;
   name: string;
-  avatar: string;        // 絵文字
-  avatarImg?: string;    // プロフィール写真URL
-  body: string;
-  grad?: string;         // CSS gradient（img未指定時）
-  img?: string;          // Unsplash URL
-  time: string;          // '2h', '5m' 形式
+  avatar: string;             // 絵文字
+  avatarClass: string;        // 'avatar-radiance' | 'avatar-inner' | ...（tier色）
+  score: number;              // 影響力スコア（この値からtierが動的導出される）
+  time: string;               // '1時間前', '8分前' 形式（相対日本語）
+  body: string;               // 改行保持
+  grad: string;               // CSS gradient背景（img未指定時のカード背景）
+  img?: string;               // Unsplash URL（投稿に写真がある場合）
   likes: number;
   shares: number;
-  score: number;         // 影響力スコア
+  isSun: boolean;             // トップ階層の"太陽"表示フラグ
 }
 ```
 
-データは `feedPosts` グローバル配列（app.html:10856〜）。
+データは `feedPosts` グローバル配列（app.html:10831〜）。tier（Star/Nova等）は保存されず、`getTitle(score)`（app.html:7813）が score から動的に導出する。
 
 ## Interactions
 

@@ -23,12 +23,12 @@ app.html#screen-event-detail
   ```
 - **CSS**: `.ev-detail-*`, `.ev-rsvp-*`, `.ev-answer-*`, `.ev-cta-pill`, `.ev-detail-scope-badge`
 - **JS**:
-  - `openEventDetail(eventId, returnTo)` — 開く（約12690行〜）
-  - `closeEventDetail()` — 閉じて遷移元へ戻る
-  - `renderEventDetail(ev)` — 画面内容をinnerHTMLで生成
-  - `renderEventRsvp(ev)` — RSVP操作ボタン生成
-  - `setEventRsvp(eventId, status)` — RSVP更新
-  - `applyEventPageBg(screen, gradIdx, patternKey)` — 背景塗り
+  - `openEventDetail(eventId, returnTo)` — 開く（app.html:12690）
+  - `closeEventDetail()` — 閉じて遷移元へ戻る（app.html:12700）
+  - `renderEventDetail(ev)` — 画面内容をinnerHTMLで生成（app.html:12723）
+  - `setEventResponse(status)` — RSVP更新（app.html:12858 onclick内）
+  - `setInviteResponseFromFeed(eventId, status)` — ホームフィードから即時RSVP（app.html:12714）
+  - `applyEventPageBg(screen, gradIdx, patternKey)` — 背景塗り（app.html:12025）
 
 ## Rendered Structure（動的HTML）
 
@@ -67,7 +67,7 @@ interface EventResponses {
 | カバー写真 | なし（装飾のみ） |
 | 参加者アバター | openUserProfile |
 | 編集ボタン（ホストのみ） | openEventEdit(id) |
-| 🟢行く/🟡仮/🔴スキップ | setEventRsvp → トースト＋UI更新 |
+| 🟢行く/🟡仮/🔴スキップ | setEventResponse → トースト＋UI更新 |
 | 戻る | closeEventDetail → returnTo(talk/home) |
 
 ## CTA Bar（ev-detail-cta-bar）
