@@ -50,37 +50,55 @@ const EV_COVER_PHOTOS = [
 
 ## アイコン
 
-**全て絵文字（Unicode）で実装**。外部アイコンライブラリは未使用。
+**アイコン戦略は二層**：
 
-### ナビゲーションタブ（5タブ）
+1. **ナビゲーションタブ**: インラインSVG（Heroicons風、stroke線画）
+2. **UI内の機能表示**: Unicode絵文字（🔥💎⭐🌌🤝 等）
 
-| タブ | 絵文字 | ID |
+外部アイコンライブラリ（Font Awesome等）は未使用。
+
+### ナビゲーションタブ（4タブ + 中央投稿ボタン）
+
+実装は `app.html:7488-7506`。すべてインラインSVG（24x24、stroke-width 1.5、`currentColor`でテーマ追従）。
+
+| タブ | アイコンSVG出典 | onclick | ID |
+|---|---|---|---|
+| ホーム | Heroicons home（家型） | `switchTab('home')` | `tab-home` |
+| トーク | Heroicons chat-bubble | `switchTab('talk')` | `tab-talk` |
+| 投稿（中央） | Heroicons plus（＋） | `switchTab('post')` | なし（`class="tab-post"`） |
+| 検索 | Heroicons magnifying-glass | `switchTab('search')` | `tab-search` |
+| プロフィール | Heroicons user | `switchTab('my')` | `tab-my` |
+
+**注意**: 通知（notif）と サークル（circle）、プロフィール他者（profile）はタブバーには出ない。別画面として独立し、特定の呼び出し関数（showNotif(), openCircleSettings(), openUserProfile(id)）からのみ到達する。
+
+### ホームヘッダー内のボタン
+
+`app.html:5847-5852`：
+
+| 位置 | 内容 | 実装 |
 |---|---|---|
-| ホーム | 🏠 | `tab-home` |
-| 検索 | 🔍 | `tab-search` |
-| 投稿 | ➕ | `tab-post` |
-| トーク | 💬 | `tab-talk` |
-| プロフィール | 👤 | `tab-my` |
+| 左 | ＋（投稿） | テキスト記号、`onclick="switchTab('post')"` |
+| 中央 | HYPERAYロゴ | `<img src="hyperay-logo-white.png" height:28px>` |
+| 右 | ♡（通知） | テキスト記号、`onclick="showNotif()"` |
 
-### 機能アイコン
+### UI内の絵文字（代表例）
 
-| 用途 | 絵文字 |
-|---|---|
-| いいね | ❤️ |
-| シェア | 🔄 |
-| コメント | 💬 |
-| 通知 | 🔔 |
-| サークル | 🌐 |
-| 称号（ランク上位） | 👑 |
-| 称号（中位） | ⭐ |
-| 称号（下位） | 🌟 |
-| イベント作成 | 📅 |
-| 場所 | 📍 |
-| 時間 | ⏰ |
-| 招待 | 💌 |
-| RSVP行く | ✅ |
-| RSVP仮 | 🤔 |
-| RSVPスキップ | ❌ |
+| 用途 | 絵文字 | 備考 |
+|---|---|---|
+| Core（サークル） | 🔥 | |
+| Orbit（サークル） | 💎 | |
+| Halo（サークル） | ⭐ | |
+| Galaxy（サークル） | 🌌 | |
+| Connect（サークル） | 🤝 | |
+| 通知ヘッダー | 🔔 通知 | |
+| 場所 | 📍 | |
+| スコープオープン | 🌐 | イベント公開範囲 |
+| スコープクローズド | 🔒 | イベント公開範囲 |
+| RSVPタグ | ✅🤔❌ | 行く/仮/スキップ |
+| アバター代替 | 🧑👩🧔👨🙍 | ユーザー写真がない時 |
+| 設定メニュー | ☰ | My Pageヘッダー右 |
+
+絶対的な一覧表ではなく、代表例。実装時は `app.html` の該当セクションを直接読むこと。
 
 ### アバター絵文字（ユーザー用）
 
@@ -132,11 +150,16 @@ Google Fontsや外部CDNは未使用。**システムフォントのみ**：
 
 ## ロゴ
 
-| ファイル | 用途 |
-|---|---|
-| `elsius-logo.jpg` | Elsiusブランドロゴ |
-| `hyperay-logo.jpg` | Hyperayブランドロゴ |
-| `hyperay-logo-white.png` | Hyperay白バージョン |
+**現行ブランドは HYPERAY**。ホームヘッダーで使用。
+
+| ファイル | 使用箇所 | 用途 |
+|---|---|---|
+| `hyperay-logo-white.png` | `app.html:5850`（ホームヘッダー中央、28px高） | 現行ロゴ（白背景・ダーク色ヘッダー用） |
+
+以下のファイルはリポジトリに残っているが **現在使われていない**（旧ブランド or 未使用バリエーション）：
+
+- `elsius-logo.jpg` — 旧ブランド時代の遺物。削除候補
+- `hyperay-logo.jpg` — HYPERAYダーク版だが現状未参照
 
 ## 素材選定ルール
 
