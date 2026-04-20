@@ -2629,22 +2629,40 @@
       width: 100%;
       aspect-ratio: 16 / 9;
       border-radius: 16px;
-      background: linear-gradient(135deg,#1E3A5F 0%,#7C3AED 50%,#EC4899 100%);
+      background: #0A0A0F;
       box-shadow: 0 8px 24px rgba(0,0,0,0.3);
       position: relative;
       overflow: hidden;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
     }
-    .ev-cover-preview::after {
-      content: '🎨';
-      position: absolute;
-      bottom: 12px; right: 12px;
-      width: 36px; height: 36px;
-      background: rgba(0,0,0,0.45);
-      border-radius: 50%;
+    .ev-cover-preview.has-image {
+      cursor: grab;
+    }
+    .ev-cover-preview.dragging {
+      cursor: grabbing;
+    }
+    .ev-cover-preview.empty {
+      cursor: default;
+      background:
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0, rgba(255,255,255,0.04) 10px, transparent 10px, transparent 20px),
+        #14141F;
+      border: 1.5px dashed rgba(255,255,255,0.2);
       display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      color: rgba(255,255,255,0.5);
+      font-size: 13px; font-weight: 600;
+      text-align: center;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    .ev-cover-drag-hint {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      margin-top: 6px;
+      letter-spacing: 0.3px;
     }
     .ev-cover-palette {
       display: flex; gap: 8px;
@@ -2723,27 +2741,27 @@
       aspect-ratio: 16 / 7;
       border-radius: 12px;
       background: #0A0A0F;
-      padding: 18px 16px;
-      display: flex; flex-direction: column; justify-content: flex-end;
+      display: flex; align-items: center; justify-content: center;
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,0.08);
     }
-    .ev-bg-mini-title {
-      font-size: 16px; font-weight: 800;
-      color: #fff;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-    }
-    .ev-bg-mini-sub {
+    .ev-bg-mini-name {
       font-size: 11px;
-      color: rgba(255,255,255,0.65);
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6), 0 0 8px rgba(0,0,0,0.4);
+      padding: 4px 12px;
+      background: rgba(0,0,0,0.35);
+      border-radius: 12px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
-    .ev-bg-swatch-none {
-      display: flex; align-items: center; justify-content: center;
-      background: #0A0A0F;
-      color: rgba(255,255,255,0.5);
-      font-size: 18px;
-      font-weight: 700;
+    .ev-bg-swatch-pattern.ev-bg-swatch-black {
+      background: #000 !important;
+      border: 1.5px solid rgba(255,255,255,0.15);
     }
     .ev-bg-swatch-pattern {
       /* inline style の background が全部上書きする */
@@ -2775,39 +2793,38 @@
     .ev-scope-detail {
       margin-top: 12px;
       padding: 12px;
-      background: rgba(168,85,247,0.08);
-      border: 1px solid rgba(168,85,247,0.25);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 12px;
     }
     .ev-scope-detail-title {
       font-size: 12px; font-weight: 700;
-      color: var(--text);
+      color: var(--text-main);
       margin-bottom: 8px;
     }
     .ev-invite-targets {
-      display: flex; flex-direction: column; gap: 4px;
-      background: rgba(0,0,0,0.2);
-      border: 1.5px solid rgba(255,255,255,0.1);
-      border-radius: 10px;
-      padding: 6px;
+      display: flex; flex-direction: column; gap: 6px;
+      background: transparent;
+      border: none;
+      padding: 0;
     }
     .ev-invite-target {
       display: flex; align-items: center; gap: 10px;
       padding: 10px 12px;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      background: rgba(255,255,255,0.04);
-      border: 1.5px solid transparent;
+      background: #FFFFFF;
+      border: 1.5px solid var(--border);
     }
-    .ev-invite-target:active { background: rgba(255,255,255,0.08); }
+    .ev-invite-target:active { background: #F5F5F5; }
     .ev-invite-target.checked {
-      background: rgba(168,85,247,0.2);
+      background: rgba(168,85,247,0.08);
       border-color: #A855F7;
     }
     .ev-invite-check {
       width: 22px; height: 22px;
-      border: 2px solid rgba(255,255,255,0.5);
-      background: rgba(255,255,255,0.05);
+      border: 2px solid #CFD4DC;
+      background: #FFFFFF;
       border-radius: 6px;
       display: flex; align-items: center; justify-content: center;
       font-size: 14px; color: #fff; font-weight: 800;
@@ -2817,14 +2834,14 @@
       background: #A855F7; border-color: #A855F7;
     }
     .ev-invite-target-body { flex: 1; min-width: 0; }
-    .ev-invite-target-name { font-size: 14px; font-weight: 700; color: #fff; }
-    .ev-invite-target-meta { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+    .ev-invite-target-name { font-size: 14px; font-weight: 700; color: var(--text-main); }
+    .ev-invite-target-meta { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
     .ev-invite-summary {
       margin-top: 10px; padding: 10px 14px;
-      background: linear-gradient(135deg, rgba(168,85,247,0.35), rgba(236,72,153,0.25));
-      border: 1px solid rgba(168,85,247,0.5);
+      background: #FFFFFF;
+      border: 1px solid var(--border);
       border-radius: 10px;
-      font-size: 13px; color: #fff; font-weight: 700;
+      font-size: 13px; color: var(--text-main); font-weight: 700;
       text-align: center;
     }
     .ev-send-btn {
@@ -6843,13 +6860,12 @@
         <div style="width:36px;"></div>
       </div>
       <div class="ev-create-body">
-        <!-- ヒーロー画像エリア -->
+        <!-- ヒーロー画像エリア（写真必須） -->
         <div class="ev-cover-editor">
           <div class="ev-cover-preview" id="evCoverPreview"></div>
-          <div class="ev-cover-section-title">写真</div>
+          <div class="ev-cover-drag-hint" id="evCoverDragHint" style="display:none;">ドラッグで位置調整</div>
+          <div class="ev-cover-section-title">写真を選ぶ</div>
           <div class="ev-cover-palette" id="evCoverPhotos"></div>
-          <div class="ev-cover-section-title">背景カラー</div>
-          <div class="ev-cover-palette" id="evCoverPalette"></div>
           <label class="ev-cover-upload-btn">
             <input type="file" accept="image/*" id="evCoverUploadInput" onchange="handleEvCoverUpload(event)" hidden>
             <span>📷 自分の写真をアップロード</span>
@@ -6861,8 +6877,7 @@
           <div class="ev-bg-editor-title">✨ ページ背景</div>
           <div class="ev-bg-editor-hint">下のプレビューに即反映されます</div>
           <div class="ev-bg-mini-preview" id="evBgMiniPreview">
-            <div class="ev-bg-mini-title">プレビュー</div>
-            <div class="ev-bg-mini-sub">イベントページの雰囲気</div>
+            <div class="ev-bg-mini-name" id="evBgMiniName">Solid Black</div>
           </div>
           <div class="ev-cover-section-title">グラデーション</div>
           <div class="ev-cover-palette" id="evBgGradPalette"></div>
@@ -10953,9 +10968,10 @@
         const d = new Date(ev.date);
         const dateShort = `${d.getMonth()+1}/${d.getDate()}(${weekdayArr[d.getDay()]})`;
         const goingCount = Object.values(ev.responses).filter(r => r === 'going').length;
+        const coverPos2 = ev.coverPos ? `${ev.coverPos.x}% ${ev.coverPos.y}%` : 'center';
         const coverBg = ev.coverImage
-          ? `background-image: url(${ev.coverImage});`
-          : `background-image: ${EV_COVER_GRADIENTS[ev.coverGradient || 0]};`;
+          ? `background-image: url(${ev.coverImage}); background-position: ${coverPos2};`
+          : '';
         const labelText = ev.isPublic ? '📅 オープンイベント' : '📅 招待';
         card.innerHTML = `
           <div class="invite-card-cover" style="${coverBg}">
@@ -11890,7 +11906,7 @@ const EV_COVER_GRADIENTS = [
 
 // イベントページ背景グラデーション（ガラスカード前提で全体華やか）
 const EV_BG_GRADIENTS = [
-  '#0A0A0F',                                                                                    // 0: 無地ブラック
+  'linear-gradient(180deg, #0A0A0F 0%, #1F1B2E 60%, #2A2340 100%)',                             // 0: ダークナイト（柄が乗るようグラデ化）
   'linear-gradient(180deg, #E879F9 0%, #A855F7 40%, #6D28D9 80%, #4C1D95 100%)',                // 1: ネオン紫
   'linear-gradient(180deg, #FB923C 0%, #EF4444 40%, #BE123C 80%, #7F1D1D 100%)',                // 2: サンセット
   'linear-gradient(180deg, #22D3EE 0%, #3B82F6 40%, #1D4ED8 80%, #1E3A8A 100%)',                // 3: オーシャン
@@ -11905,60 +11921,68 @@ const EV_BG_GRADIENTS = [
 // Pure CSS gradient patterns（Lea Verou's CSS3 Patterns Gallery・MITライセンスより移植）
 // apply: 透過パターンのみ → 下のgradientと重ねる / swatch: 独立した見本
 const EV_BG_PATTERNS = {
-  none: { label: 'なし', apply: null, swatch: null },
+  black: { label: '黒', nameEn: 'Solid Black', apply: null, swatch: '#000' },
   polkadot: {
-    label: 'ドット',
+    label: 'ドット', nameEn: 'Polka Dot',
     apply:  'radial-gradient(rgba(255,255,255,0.22) 15%, transparent 16%) 0 0 / 36px 36px, radial-gradient(rgba(255,255,255,0.22) 15%, transparent 16%) 18px 18px / 36px 36px',
     swatch: 'radial-gradient(white 15%, transparent 16%) 0 0 / 10px 10px, radial-gradient(white 15%, transparent 16%) 5px 5px / 10px 10px, #001',
   },
   checker: {
-    label: 'チェッカー',
+    label: 'チェッカー', nameEn: 'Checker',
     apply:  'linear-gradient(45deg, rgba(255,255,255,0.13) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.13) 75%) 0 0 / 40px 40px, linear-gradient(45deg, rgba(255,255,255,0.13) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.13) 75%) 20px 20px / 40px 40px',
     swatch: 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%, transparent 75%, #1a1a1a 75%, #1a1a1a) 0 0 / 14px 14px, linear-gradient(45deg, #1a1a1a 25%, transparent 25%, transparent 75%, #1a1a1a 75%, #1a1a1a) 7px 7px / 14px 14px, #eee',
   },
   stripe: {
-    label: '斜めストライプ',
+    label: '斜めストライプ', nameEn: 'Diagonal Stripes',
     apply:  'repeating-linear-gradient(45deg, transparent, transparent 18px, rgba(255,255,255,0.18) 18px, rgba(255,255,255,0.18) 36px)',
     swatch: 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.9) 4px, rgba(255,255,255,0.9) 8px) #1E3A8A',
   },
   waves: {
-    label: '波',
+    label: '波', nameEn: 'Waves',
     apply:  'radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,0.18) 21%, rgba(255,255,255,0.18) 34%, transparent 35%, transparent) 0 0 / 60px 80px, radial-gradient(circle at 0% 50%, transparent 20%, rgba(255,255,255,0.18) 21%, rgba(255,255,255,0.18) 34%, transparent 35%, transparent) 0 -40px / 60px 80px',
     swatch: 'radial-gradient(circle at 100% 50%, transparent 20%, white 21%, white 34%, transparent 35%, transparent) 0 0 / 18px 24px, radial-gradient(circle at 0% 50%, transparent 20%, white 21%, white 34%, transparent 35%, transparent) 0 -12px / 18px 24px, slategray',
   },
   hearts: {
-    label: 'ハート',
+    label: 'ハート', nameEn: 'Hearts',
     apply:  'radial-gradient(circle closest-side at 60% 43%, rgba(255,255,255,0.25) 26%, transparent 27%) 0 0 / 80px 80px, radial-gradient(circle closest-side at 40% 43%, rgba(255,255,255,0.25) 26%, transparent 27%) 0 0 / 80px 80px, radial-gradient(circle closest-side at 42% 22%, rgba(255,255,255,0.3) 43%, transparent 45%) 0 0 / 80px 80px, radial-gradient(circle closest-side at 58% 22%, rgba(255,255,255,0.3) 43%, transparent 45%) 0 0 / 80px 80px, radial-gradient(circle closest-side at 50% 35%, rgba(255,255,255,0.3) 32%, transparent 33%) 0 0 / 80px 80px',
     swatch: 'radial-gradient(circle closest-side at 60% 43%, #b03 26%, transparent 27%) 0 0 / 28px 28px, radial-gradient(circle closest-side at 40% 43%, #b03 26%, transparent 27%) 0 0 / 28px 28px, radial-gradient(circle closest-side at 42% 22%, #d35 43%, transparent 45%) 0 0 / 28px 28px, radial-gradient(circle closest-side at 58% 22%, #d35 43%, transparent 45%) 0 0 / 28px 28px, radial-gradient(circle closest-side at 50% 35%, #d35 32%, transparent 33%) 0 0 / 28px 28px, #fde2e7',
   },
   hstripe: {
-    label: '横ストライプ',
+    label: '横ストライプ', nameEn: 'Horizontal Stripes',
     apply:  'linear-gradient(transparent 50%, rgba(255,255,255,0.14) 50%) 0 0 / 100% 28px',
     swatch: 'linear-gradient(transparent 50%, rgba(255,255,255,0.9) 50%) 0 0 / 100% 10px, #7C3AED',
   },
   argyle: {
-    label: 'アーガイル',
+    label: 'アーガイル', nameEn: 'Argyle',
     apply:  'repeating-linear-gradient(120deg, rgba(255,255,255,0.12), rgba(255,255,255,0.12) 1px, transparent 1px, transparent 42px), repeating-linear-gradient(60deg, rgba(255,255,255,0.12), rgba(255,255,255,0.12) 1px, transparent 1px, transparent 42px), linear-gradient(60deg, rgba(255,255,255,0.08) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.08) 75%) 0 0 / 48px 84px, linear-gradient(120deg, rgba(255,255,255,0.08) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.08) 75%) 0 0 / 48px 84px',
     swatch: 'repeating-linear-gradient(120deg, rgba(255,255,255,0.3), rgba(255,255,255,0.3) 1px, transparent 1px, transparent 14px), repeating-linear-gradient(60deg, rgba(255,255,255,0.3), rgba(255,255,255,0.3) 1px, transparent 1px, transparent 14px), linear-gradient(60deg, rgba(0,0,0,0.25) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.25) 75%) 0 0 / 16px 28px, linear-gradient(120deg, rgba(0,0,0,0.25) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.25) 75%) 0 0 / 16px 28px, #6d695c',
   },
   honeycomb: {
-    label: '蜂の巣',
+    label: '蜂の巣', nameEn: 'Honeycomb',
     apply:  'radial-gradient(circle farthest-side at 0% 50%, rgba(255,255,255,0.16) 23.5%, transparent 0) 21px 30px / 40px 60px, radial-gradient(circle farthest-side at 0% 50%, rgba(255,255,255,0.12) 24%, transparent 0) 19px 30px / 40px 60px, linear-gradient(rgba(255,255,255,0.16) 14%, transparent 0, transparent 85%, rgba(255,255,255,0.16) 0) 0 0 / 40px 60px, linear-gradient(150deg, rgba(255,255,255,0.16) 24%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 26%, transparent 0, transparent 74%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 76%, rgba(255,255,255,0.16) 0) 0 0 / 40px 60px, linear-gradient(30deg, rgba(255,255,255,0.16) 24%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 26%, transparent 0, transparent 74%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 76%, rgba(255,255,255,0.16) 0) 0 0 / 40px 60px',
     swatch: 'radial-gradient(circle farthest-side at 0% 50%, #fb1 23.5%, transparent 0) 11px 15px / 20px 30px, radial-gradient(circle farthest-side at 0% 50%, #B71 24%, transparent 0) 9px 15px / 20px 30px, linear-gradient(#fb1 14%, transparent 0, transparent 85%, #fb1 0) 0 0 / 20px 30px, linear-gradient(150deg, #fb1 24%, #B71 0, #B71 26%, transparent 0, transparent 74%, #B71 0, #B71 76%, #fb1 0) 0 0 / 20px 30px, linear-gradient(30deg, #fb1 24%, #B71 0, #B71 26%, transparent 0, transparent 74%, #B71 0, #B71 76%, #fb1 0) 0 0 / 20px 30px, #fb1',
   },
   tartan: {
-    label: 'タータン',
+    label: 'タータン', nameEn: 'Tartan',
     apply:  'repeating-linear-gradient(transparent, transparent 24px, rgba(255,255,255,0.14) 24px, rgba(255,255,255,0.14) 26px, transparent 26px, transparent 30px, rgba(255,255,255,0.14) 30px, rgba(255,255,255,0.14) 32px, transparent 32px, transparent 56px, rgba(0,0,0,0.25) 56px, rgba(0,0,0,0.25) 82px, rgba(255,255,255,0.12) 82px, rgba(255,255,255,0.12) 84px, rgba(0,0,0,0.25) 84px, rgba(0,0,0,0.25) 110px), repeating-linear-gradient(90deg, transparent, transparent 24px, rgba(255,255,255,0.14) 24px, rgba(255,255,255,0.14) 26px, transparent 26px, transparent 30px, rgba(255,255,255,0.14) 30px, rgba(255,255,255,0.14) 32px, transparent 32px, transparent 56px, rgba(0,0,0,0.25) 56px, rgba(0,0,0,0.25) 82px, rgba(255,255,255,0.12) 82px, rgba(255,255,255,0.12) 84px, rgba(0,0,0,0.25) 84px, rgba(0,0,0,0.25) 110px)',
     swatch: 'repeating-linear-gradient(transparent, transparent 6px, rgba(0,0,0,0.5) 6px, rgba(0,0,0,0.5) 8px, transparent 8px, transparent 14px, rgba(255,255,255,0.3) 14px, rgba(255,255,255,0.3) 16px), repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0,0,0,0.5) 6px, rgba(0,0,0,0.5) 8px, transparent 8px, transparent 14px, rgba(255,255,255,0.3) 14px, rgba(255,255,255,0.3) 16px), hsl(2, 57%, 40%)',
   },
   seigaiha: {
-    label: '青海波（和）',
+    label: '青海波（和）', nameEn: 'Seigaiha',
     apply:  'radial-gradient(circle at 100% 150%, rgba(255,255,255,0.16) 24%, transparent 24%, transparent 28%, rgba(255,255,255,0.16) 28%, rgba(255,255,255,0.16) 36%, transparent 36%, transparent 40%, transparent) 0 0 / 60px 30px, radial-gradient(circle at 0 150%, rgba(255,255,255,0.16) 24%, transparent 24%, transparent 28%, rgba(255,255,255,0.16) 28%, rgba(255,255,255,0.16) 36%, transparent 36%, transparent 40%, transparent) 0 0 / 60px 30px, radial-gradient(circle at 50% 100%, transparent 10%, rgba(255,255,255,0.16) 10%, rgba(255,255,255,0.16) 23%, transparent 23%, transparent 30%, rgba(255,255,255,0.16) 30%, rgba(255,255,255,0.16) 43%, transparent 43%, transparent 50%, rgba(255,255,255,0.16) 50%, rgba(255,255,255,0.16) 63%, transparent 63%, transparent 71%, transparent) 0 0 / 60px 30px',
     swatch: 'radial-gradient(circle at 100% 150%, silver 24%, white 24%, white 28%, silver 28%, silver 36%, white 36%, white 40%, transparent 40%, transparent) 0 0 / 20px 10px, radial-gradient(circle at 0 150%, silver 24%, white 24%, white 28%, silver 28%, silver 36%, white 36%, white 40%, transparent 40%, transparent) 0 0 / 20px 10px, radial-gradient(circle at 50% 100%, white 10%, silver 10%, silver 23%, white 23%, white 30%, silver 30%, silver 43%, white 43%, white 50%, silver 50%, silver 63%, white 63%, white 71%, transparent 71%, transparent) 0 0 / 20px 10px, silver',
   },
 };
 function applyEventPageBg(el, gradIdx, patternKey) {
   if (!el) return;
+  // 'black'（または旧 'none'）→ 単色ブラックで上書き、グラデは無視
+  if (patternKey === 'black' || patternKey === 'none') {
+    el.style.background = '#000';
+    el.style.backgroundColor = '#000';
+    el.style.backgroundImage = 'none';
+    el.style.backgroundAttachment = 'local';
+    return;
+  }
   const grad = EV_BG_GRADIENTS[gradIdx || 0] || '#0A0A0F';
   const pat = EV_BG_PATTERNS[patternKey]?.apply;
   const gradIsImage = grad.startsWith('linear') || grad.startsWith('radial');
@@ -11995,7 +12019,8 @@ let eventsData = [
     message: '飯と温泉とサウナあります。2日間のんびりしよう！\n普段忙しい仲間で集まって、島で思いっきりリフレッシュしよう。',
     deadline: '2026-05-10',
     coverGradient: 0,
-    coverImage: null,
+    coverImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
+    coverPos: { x: 50, y: 50 },
     bgGradient: 5,
     bgPattern: 'seigaiha',
     isPublic: false,
@@ -12028,7 +12053,8 @@ let eventsData = [
     message: '30歳の節目、ぜひ来てください',
     deadline: null,
     coverGradient: 2,
-    coverImage: null,
+    coverImage: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80',
+    coverPos: { x: 50, y: 50 },
     bgGradient: 2,
     bgPattern: 'hearts',
     isPublic: true,
@@ -12129,8 +12155,9 @@ let evInviteSelectedGroups = new Set();
 let evCreateScope = 'open';     // 'open' | 'closed'
 let evCreateCoverIdx = 0;
 let evCreateCoverImage = null;  // データURL or Unsplash URL
+let evCreateCoverPos = { x: 50, y: 50 }; // 写真位置（％）
 let evCreateBgGradient = 1;     // デフォルト：ディープ紫
-let evCreateBgPattern = 'none'; // デフォルト：模様なし
+let evCreateBgPattern = 'black'; // デフォルト：ブラック
 let evEditingEventId = null;    // 編集モード時のみイベントIDが入る（null=新規作成）
 
 function updateEventCreateUI(isEditMode) {
@@ -12158,8 +12185,9 @@ function openEventCreate() {
   evCreateScope = 'open';
   evCreateCoverIdx = 0;
   evCreateCoverImage = null;
+  evCreateCoverPos = { x: 50, y: 50 };
   evCreateBgGradient = 1;
-  evCreateBgPattern = 'none';
+  evCreateBgPattern = 'black';
   renderEventInviteTargets();
   renderEvCoverEditor();
   renderEvBgEditor();
@@ -12169,6 +12197,9 @@ function openEventCreate() {
   // 画面切替
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-event-create').classList.add('active');
+  // 冒頭へスクロール
+  const screen = document.getElementById('screen-event-create');
+  if (screen) screen.scrollTop = 0;
 }
 
 function openEventEdit(eventId) {
@@ -12196,8 +12227,10 @@ function openEventEdit(eventId) {
   evCreateScope = ev.isPublic ? 'open' : 'closed';
   evCreateCoverIdx = ev.coverGradient || 0;
   evCreateCoverImage = ev.coverImage || null;
+  evCreateCoverPos = ev.coverPos ? { ...ev.coverPos } : { x: 50, y: 50 };
   evCreateBgGradient = ev.bgGradient || 0;
-  evCreateBgPattern = ev.bgPattern || 'none';
+  // 旧 'none' は 'black' にマイグレーション
+  evCreateBgPattern = (ev.bgPattern === 'none' || !ev.bgPattern) ? 'black' : ev.bgPattern;
   renderEventInviteTargets();
   renderEvCoverEditor();
   renderEvBgEditor();
@@ -12207,6 +12240,9 @@ function openEventEdit(eventId) {
   // 画面切替
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-event-create').classList.add('active');
+  // 編集時も冒頭から開始
+  const screen = document.getElementById('screen-event-create');
+  if (screen) screen.scrollTop = 0;
 }
 
 function deleteEventFromDetail(eventId) {
@@ -12264,27 +12300,28 @@ function deleteEventFromSheet(eventId) {
 
 function renderEvCoverEditor() {
   const preview = document.getElementById('evCoverPreview');
-  const palette = document.getElementById('evCoverPalette');
   const photos  = document.getElementById('evCoverPhotos');
-  if (!preview || !palette || !photos) return;
+  const dragHint = document.getElementById('evCoverDragHint');
+  if (!preview || !photos) return;
 
-  // プレビュー：写真優先、なければグラデ
   if (evCreateCoverImage) {
+    preview.classList.add('has-image');
+    preview.classList.remove('empty');
+    preview.textContent = '';
     preview.style.background = '#000';
     preview.style.backgroundImage = `url(${evCreateCoverImage})`;
     preview.style.backgroundSize = 'cover';
-    preview.style.backgroundPosition = 'center';
+    preview.style.backgroundPosition = `${evCreateCoverPos.x}% ${evCreateCoverPos.y}%`;
+    if (dragHint) dragHint.style.display = 'block';
+    attachCoverDragHandlers(preview);
   } else {
-    preview.style.background = EV_COVER_GRADIENTS[evCreateCoverIdx];
+    preview.classList.remove('has-image');
+    preview.classList.add('empty');
+    preview.style.background = '';
     preview.style.backgroundImage = '';
+    preview.textContent = '写真を選んでください（必須）';
+    if (dragHint) dragHint.style.display = 'none';
   }
-
-  // グラデパレット
-  palette.innerHTML = EV_COVER_GRADIENTS.map((g, i) => `
-    <div class="ev-cover-swatch ${(!evCreateCoverImage && i === evCreateCoverIdx) ? 'active' : ''}"
-         style="background:${g};"
-         onclick="selectEvCoverGradient(${i})"></div>
-  `).join('');
 
   // 写真プリセット
   photos.innerHTML = EV_COVER_PHOTOS.map((url, i) => `
@@ -12294,19 +12331,60 @@ function renderEvCoverEditor() {
   `).join('');
 }
 
-function selectEvCoverGradient(idx) {
-  evCreateCoverIdx = idx;
-  evCreateCoverImage = null;
+function selectEvCoverPhoto(url) {
+  evCreateCoverImage = url;
+  evCreateCoverPos = { x: 50, y: 50 }; // 新しい写真は中央から
   renderEvCoverEditor();
 }
 
-function selectEvCoverPhoto(url) {
-  evCreateCoverImage = url;
-  renderEvCoverEditor();
+// ===== カバー写真の位置ドラッグ =====
+let _evCoverDragState = null;
+function attachCoverDragHandlers(el) {
+  if (el._evCoverDragBound) return; // 二重バインド防止
+  el._evCoverDragBound = true;
+
+  const getPoint = (e) => e.touches ? e.touches[0] : e;
+  const onDown = (e) => {
+    if (!evCreateCoverImage) return;
+    const p = getPoint(e);
+    _evCoverDragState = {
+      startX: p.clientX, startY: p.clientY,
+      baseX: evCreateCoverPos.x, baseY: evCreateCoverPos.y,
+      w: el.clientWidth, h: el.clientHeight,
+    };
+    el.classList.add('dragging');
+    e.preventDefault();
+  };
+  const onMove = (e) => {
+    if (!_evCoverDragState) return;
+    const p = getPoint(e);
+    const dx = p.clientX - _evCoverDragState.startX;
+    const dy = p.clientY - _evCoverDragState.startY;
+    // 画像表示サイズに対する％で移動（ドラッグ方向＝画像が動く方向）
+    const nx = _evCoverDragState.baseX - (dx / _evCoverDragState.w) * 100;
+    const ny = _evCoverDragState.baseY - (dy / _evCoverDragState.h) * 100;
+    evCreateCoverPos.x = Math.max(0, Math.min(100, nx));
+    evCreateCoverPos.y = Math.max(0, Math.min(100, ny));
+    el.style.backgroundPosition = `${evCreateCoverPos.x}% ${evCreateCoverPos.y}%`;
+    e.preventDefault();
+  };
+  const onUp = () => {
+    if (!_evCoverDragState) return;
+    _evCoverDragState = null;
+    el.classList.remove('dragging');
+  };
+
+  el.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  el.addEventListener('touchstart', onDown, { passive: false });
+  window.addEventListener('touchmove', onMove, { passive: false });
+  window.addEventListener('touchend', onUp);
 }
 
 function renderEvBgEditor() {
   const preview = document.getElementById('evBgMiniPreview');
+  const nameEl  = document.getElementById('evBgMiniName');
   const gradPal = document.getElementById('evBgGradPalette');
   const patPal  = document.getElementById('evBgPatternPalette');
   if (!preview || !gradPal || !patPal) return;
@@ -12314,12 +12392,17 @@ function renderEvBgEditor() {
   // ミニプレビュー反映
   applyEventPageBg(preview, evCreateBgGradient, evCreateBgPattern);
 
+  // 模様の英語名を中央小表示
+  if (nameEl) {
+    const p = EV_BG_PATTERNS[evCreateBgPattern];
+    nameEl.textContent = (p && p.nameEn) ? p.nameEn : '';
+  }
+
   // グラデパレット
   gradPal.innerHTML = EV_BG_GRADIENTS.map((g, i) => {
-    const bg = g.startsWith('linear') || g.startsWith('radial') ? g : g;
     return `
       <div class="ev-cover-swatch ${i === evCreateBgGradient ? 'active' : ''}"
-           style="background:${bg};"
+           style="background:${g};"
            onclick="selectEvBgGradient(${i})"></div>
     `;
   }).join('');
@@ -12328,13 +12411,10 @@ function renderEvBgEditor() {
   patPal.innerHTML = Object.keys(EV_BG_PATTERNS).map(key => {
     const p = EV_BG_PATTERNS[key];
     const active = key === evCreateBgPattern ? 'active' : '';
-    if (!p.apply) {
-      return `<div class="ev-cover-swatch ev-bg-swatch-none ${active}"
-                   onclick="selectEvBgPattern('${key}')">⊘</div>`;
-    }
-    return `<div class="ev-cover-swatch ev-bg-swatch-pattern ${active}"
+    const blackCls = key === 'black' ? 'ev-bg-swatch-black' : '';
+    return `<div class="ev-cover-swatch ev-bg-swatch-pattern ${blackCls} ${active}"
                  style="background: ${p.swatch};"
-                 onclick="selectEvBgPattern('${key}')" title="${p.label}"></div>`;
+                 onclick="selectEvBgPattern('${key}')" title="${p.nameEn || p.label}"></div>`;
   }).join('');
 }
 
@@ -12473,6 +12553,7 @@ function submitEventCreate() {
   const message  = document.getElementById('evCreateMessage').value.trim();
   const deadline = document.getElementById('evCreateDeadline').value || null;
 
+  if (!evCreateCoverImage) { showToast('カバー写真を選択してください'); return; }
   if (!title) { showToast('タイトルを入力してください'); return; }
   if (!date)  { showToast('開始日付を選択してください'); return; }
   if (!time)  { showToast('開始時刻を選択してください'); return; }
@@ -12508,6 +12589,7 @@ function submitEventCreate() {
       place, message, deadline,
       coverGradient: evCreateCoverIdx,
       coverImage: evCreateCoverImage,
+      coverPos: { ...evCreateCoverPos },
       bgGradient: evCreateBgGradient,
       bgPattern: evCreateBgPattern,
       isPublic,
@@ -12529,6 +12611,7 @@ function submitEventCreate() {
     deadline,
     coverGradient: evCreateCoverIdx,
     coverImage: evCreateCoverImage,
+    coverPos: { ...evCreateCoverPos },
     bgGradient: evCreateBgGradient,
     bgPattern: evCreateBgPattern,
     isPublic,
@@ -12621,10 +12704,11 @@ function renderEventDetail(ev) {
     dateStr += ` 〜 ${ev.endTime}`;
   }
 
-  // カバー
+  // カバー（写真必須・位置適用。万一画像ない旧データはカバー非表示）
+  const coverPos = ev.coverPos ? `${ev.coverPos.x}% ${ev.coverPos.y}%` : 'center';
   const coverBg = ev.coverImage
-    ? `background-image: url(${ev.coverImage});`
-    : `background-image: ${EV_COVER_GRADIENTS[ev.coverGradient || 0]};`;
+    ? `background-image: url(${ev.coverImage}); background-position: ${coverPos};`
+    : '';
 
   // スコープバッジ
   const scopeBadge = ev.isPublic
