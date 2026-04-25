@@ -3376,6 +3376,15 @@
       align-items: center;
       gap: 8px;
     }
+    .contacts-group-tier-avatar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .contacts-group-tier-avatar > .group-avatar-photo,
+    .contacts-group-tier-avatar > .group-avatar-grad {
+      vertical-align: middle;
+    }
     .contacts-tier-label {
       font-size: 13px;
       font-weight: 700;
@@ -13267,27 +13276,33 @@ function renderContactsGroups() {
   container.innerHTML = sorted.map(g => {
     const members = getGroupMembersData(g.memberIds);
     const memberRows = members.map(m => `
-      <div class="contacts-group-member-row" onclick="openDmChat('${m.id}','${m.name}','${m.avatar}')">
-        <div class="contacts-group-member-avatar">${m.avatar}</div>
-        <span class="contacts-group-member-name">${m.name}</span>
+      <div class="contacts-member-row" onclick="openDmChat('${m.id}','${m.name}','${m.avatar}')">
+        <div class="contacts-member-avatar">${m.avatar}</div>
+        <span class="contacts-member-name">${m.name}</span>
+        <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="${m.id}"></span>
       </div>`).join('');
+    const memberDataStr = JSON.stringify(members.map(m => ({id:m.id, name:m.name, avatar:m.avatar})))
+      .replace(/"/g, '&quot;');
     return `
-      <div class="contacts-group-section" id="cgrp-${g.id}">
-        <div class="contacts-group-row" onclick="openGroupEdit('${g.id}')">
-          <div class="contacts-group-icon-wrap">${renderGroupAvatar(g, 36)}</div>
-          <div class="contacts-group-body">
-            <div class="contacts-group-name">${g.name}</div>
-            <div class="contacts-group-meta">${g.memberIds.length}人のメンバー</div>
+      <div class="contacts-tier-section" id="cgrp-${g.id}">
+        <div class="contacts-tier-row" onclick="toggleContactsTier('cgrp-${g.id}')">
+          <div class="contacts-tier-left">
+            <span class="contacts-group-tier-avatar">${renderGroupAvatar(g, 24)}</span>
+            <span class="contacts-tier-label">${g.name}</span>
+            <span class="contacts-tier-count">${g.memberIds.length}人</span>
           </div>
-          <div class="contacts-group-right">
-            <button class="contacts-action-btn" onclick="event.stopPropagation();toggleContactsGroup('cgrp-${g.id}')" style="font-size:11px;padding:4px 8px;">▾</button>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <button class="contacts-action-btn" onclick="event.stopPropagation();openGroupThread('${g.id}')">全員に送信</button>
+            <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset(${memberDataStr})">編集して送信</button>
+            <span class="contacts-tier-chevron">▾</span>
           </div>
         </div>
-        <div class="contacts-group-body-expanded">
+        <div class="contacts-member-list">
           ${memberRows}
         </div>
       </div>`;
   }).join('');
+  if (typeof initCosmicBadges === 'function') initCosmicBadges();
 }
 
 // 後方互換：旧来の sendAll/editSend 関数は openGroupThread にリダイレクト
