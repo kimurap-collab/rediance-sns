@@ -2240,6 +2240,16 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+    .circle-member-cosmic {
+      font-size: 9px;
+      text-align: center;
+      max-width: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      opacity: 0.7;
+      margin-top: 1px;
+    }
 
     .add-slot {
       min-width: 60px;
@@ -5734,6 +5744,23 @@
       color: var(--text-light);
       margin-top: 1px;
     }
+    .group-member-section-heading {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-light);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 10px 16px 4px;
+    }
+    .member-cosmic-title {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 1px;
+      display: block;
+    }
+    .group-edit-member-info {
+      flex: 1;
+    }
     .group-create-check {
       width: 24px;
       height: 24px;
@@ -5751,6 +5778,676 @@
       background: #1E3A5F;
       border-color: #1E3A5F;
       color: #fff;
+    }
+
+    /* ===== GROUP LIST SCREEN ===== */
+    .group-list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .group-list-back-btn {
+      background: none;
+      border: none;
+      font-size: 22px;
+      color: var(--text-main);
+      cursor: pointer;
+      padding: 4px 8px 4px 0;
+      line-height: 1;
+    }
+    .group-list-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.3px;
+    }
+    .group-list-add-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--primary);
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+    }
+    .group-list-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      transition: background 0.12s;
+      user-select: none;
+    }
+    .group-list-item:active { background: var(--surface); }
+    .group-list-emoji-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .group-list-body { flex: 1; min-width: 0; }
+    .group-list-name { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 2px; }
+    .group-list-count { font-size: 12px; color: var(--text-sub); }
+    .group-list-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .group-list-drag-handle {
+      font-size: 18px;
+      color: var(--text-light);
+      cursor: grab;
+      padding: 4px;
+      line-height: 1;
+    }
+    .group-list-edit-btn {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px;
+      color: var(--text-sub);
+      line-height: 1;
+    }
+    .group-list-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 32px;
+      gap: 12px;
+      text-align: center;
+    }
+    .group-list-empty-icon {
+      font-size: 48px;
+      opacity: 0.4;
+    }
+    .group-list-empty-text {
+      font-size: 15px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+    .group-list-empty-btn {
+      margin-top: 8px;
+      padding: 10px 24px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .group-list-item.drag-over {
+      border-top: 2px solid var(--primary);
+    }
+    .group-list-item.dragging {
+      opacity: 0.5;
+    }
+
+    /* ===== GROUP THREAD SCREEN ===== */
+    .group-thread-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .group-thread-back-btn {
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      padding: 4px 8px 4px 0;
+      color: var(--text-main);
+      line-height: 1;
+    }
+    .group-thread-title-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .group-thread-emoji {
+      font-size: 20px;
+    }
+    .group-thread-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.2px;
+    }
+    .group-thread-menu-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text-sub);
+      padding: 4px;
+    }
+    .group-thread-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 0 90px;
+    }
+    .group-thread-card {
+      margin: 0 12px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .group-thread-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .group-thread-card-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .group-thread-card-sender {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      flex: 1;
+    }
+    .group-thread-card-time {
+      font-size: 11px;
+      color: var(--text-light);
+    }
+    .group-thread-card-count-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--primary-bg);
+      color: var(--primary);
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .group-thread-card-body {
+      padding: 12px 14px;
+      font-size: 15px;
+      color: var(--text-main);
+      line-height: 1.5;
+      white-space: pre-wrap;
+      border-bottom: 1px solid var(--border);
+    }
+    .group-thread-card-replies {
+      background: var(--surface);
+    }
+    .group-thread-reply-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 9px 14px 9px 24px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .group-thread-reply-row:last-of-type { border-bottom: none; }
+    .group-thread-reply-row:active { background: rgba(0,0,0,0.06); }
+    .group-thread-reply-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .group-thread-reply-body { flex: 1; min-width: 0; }
+    .group-thread-reply-sender {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+    .group-thread-reply-text {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+    .group-thread-reply-time {
+      font-size: 10px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+    .group-thread-unread-badge {
+      display: inline-block;
+      background: #EF4444;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 50px;
+      padding: 1px 6px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .group-thread-expand-btn {
+      width: 100%;
+      padding: 8px 14px;
+      background: none;
+      border: none;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--primary);
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+    }
+    .group-thread-no-reply {
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    /* 旧fabは非表示（後方互換） */
+    .group-thread-fab { display: none !important; }
+
+    /* ===== GROUP THREAD 下部固定入力欄 ===== */
+    .group-thread-input-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+      position: sticky;
+      bottom: 0;
+    }
+    .group-thread-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 10px 16px;
+      font-size: 14px;
+      color: var(--text-main);
+      outline: none;
+    }
+    .group-thread-input::placeholder { color: var(--text-light); }
+    .group-thread-send-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      flex-shrink: 0;
+    }
+    .group-thread-send-btn:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+    .group-thread-avatar-wrap { display: flex; align-items: center; }
+
+    .group-thread-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 32px;
+      gap: 12px;
+      text-align: center;
+    }
+    .group-thread-empty-icon { font-size: 44px; opacity: 0.4; }
+    .group-thread-empty-text { font-size: 14px; color: var(--text-sub); line-height: 1.6; }
+
+    /* ===== GROUP AVATAR UI (作成/編集シート) ===== */
+    .group-avatar-ui {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 0 4px;
+    }
+    .group-avatar-preview { display: flex; align-items: center; justify-content: center; }
+    .group-avatar-btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .group-avatar-pick-btn {
+      background: var(--primary-bg);
+      color: var(--primary-dark);
+      border: none;
+      border-radius: 20px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .group-avatar-del-btn {
+      background: var(--surface);
+      color: var(--text-sub);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 7px 14px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* グループ行のアバターラップ */
+    .group-list-avatar-wrap { display: flex; align-items: center; flex-shrink: 0; }
+    .contacts-group-icon-wrap { display: flex; align-items: center; flex-shrink: 0; }
+
+    /* Messagesタブ：グループバッジアイコン */
+    .tl-group-badge-icon {
+      position: absolute;
+      bottom: -2px;
+      right: -4px;
+      font-size: 12px;
+      background: var(--bg);
+      border-radius: 50%;
+      line-height: 1;
+      padding: 1px;
+    }
+
+    /* Group list / thread screens: fix flex layout inside .screen */
+    #screen-group-list, #screen-group-thread {
+      display: flex !important;
+      flex-direction: column;
+      overflow: hidden !important;
+    }
+    #screen-group-list.active, #screen-group-thread.active {
+      overflow: hidden !important;
+    }
+    #screen-group-list #groupListContent {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #screen-group-thread .group-thread-body {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 72px;
+    }
+
+    /* ===== GROUP EDIT MODAL ===== */
+    .group-edit-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 6000;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      max-width: 430px;
+      margin: 0 auto;
+    }
+    .group-edit-overlay.open { display: flex; }
+    .group-edit-sheet {
+      width: 100%;
+      background: var(--bg);
+      border-radius: 20px 20px 0 0;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .group-edit-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 10px auto 0;
+      flex-shrink: 0;
+    }
+    .group-edit-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .group-edit-cancel {
+      background: none;
+      border: none;
+      font-size: 14px;
+      color: var(--text-sub);
+      cursor: pointer;
+    }
+    .group-edit-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .group-edit-save {
+      background: #000;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 50px;
+      padding: 6px 16px;
+      cursor: pointer;
+    }
+    .group-edit-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+    }
+    .group-edit-menu-btn {
+      background: none;
+      border: none;
+      font-size: 22px;
+      line-height: 1;
+      color: var(--text);
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 6px;
+    }
+    .group-edit-menu-btn:hover { background: var(--bg-soft); }
+    .group-edit-menu-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      min-width: 180px;
+      padding: 6px;
+      z-index: 100;
+      display: none;
+    }
+    .group-edit-menu-dropdown.open { display: block; }
+    .group-edit-menu-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      padding: 10px 12px;
+      font-size: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text);
+    }
+    .group-edit-menu-item:hover { background: var(--bg-soft); }
+    .group-edit-menu-item.danger { color: #DC2626; }
+    .group-edit-menu-item.danger:hover { background: rgba(220,38,38,0.08); }
+    .group-edit-body {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 24px;
+    }
+    .group-edit-emoji-row {
+      padding: 14px 16px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .group-edit-emoji-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-light);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .group-edit-emoji-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .group-edit-emoji-option {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .group-edit-emoji-option.selected {
+      border-color: #000;
+      background: #000;
+    }
+    .group-edit-name-row {
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .group-edit-input {
+      width: 100%;
+      border: none;
+      border-bottom: 2px solid var(--border);
+      padding: 8px 0;
+      font-size: 18px;
+      font-weight: 600;
+      background: none;
+      outline: none;
+      color: var(--text-main);
+    }
+    .group-edit-input:focus { border-bottom-color: #000; }
+    .group-edit-members-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-light);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 14px 16px 8px;
+    }
+    .group-edit-member-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .group-edit-member-row:active { background: var(--surface); }
+    .group-edit-member-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .group-edit-member-name {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+    .group-edit-member-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: transparent;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .group-edit-member-row.selected .group-edit-member-check {
+      background: #1E3A5F;
+      border-color: #1E3A5F;
+      color: #fff;
+    }
+    .group-edit-delete-btn {
+      margin: 20px 16px 0;
+      padding: 12px 0;
+      width: calc(100% - 32px);
+      background: none;
+      border: 1.5px solid #EF4444;
+      color: #EF4444;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: block;
+      text-align: center;
+    }
+
+    /* ===== GROUP CREATE EMOJI SECTION ===== */
+    .group-create-emoji-row {
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+    .group-create-emoji-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .group-create-emoji-option {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .group-create-emoji-option.selected {
+      border-color: #000;
+      background: #000;
     }
 
     /* ===== CIRCLE SETTINGS OVERLAY ===== */
@@ -6330,7 +7027,7 @@
       <div style="display:flex;gap:8px;padding:4px 16px 12px;">
         <button onclick="showToast('Edit Profile (coming soon)')" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Edit Profile</button>
         <button onclick="openCircleSettings();closeSettingsMenu && closeSettingsMenu()" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Circle Settings</button>
-        <button onclick="openGroupCreate()" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Group Settings</button>
+        <button onclick="openGroupList()" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Group Settings</button>
       </div>
 
       <!-- タブ切り替え -->
@@ -6443,102 +7140,9 @@
         <button class="talk-seg-tab" id="talkSegTab-events" onclick="switchTalkTab('events')">Events</button>
       </div>
 
-      <!-- ===== タブ①：トーク一覧 ===== -->
+      <!-- ===== タブ①：トーク一覧（動的レンダリング） ===== -->
       <div class="talk-tab-content active" id="talkContent-dm">
-        <div class="tl-list">
-          <!-- 田中 悠（未読2） -->
-          <div class="tl-row" onclick="openDmChat('yu_tanaka', '田中 悠', '🧑')">
-            <div class="tl-avatar-wrap">
-              <div class="tl-avatar">🧑</div>
-            </div>
-            <div class="tl-body">
-              <div class="tl-top">
-                <div class="tl-name unread">田中 悠</div>
-                <div class="tl-time">12:30</div>
-              </div>
-              <div class="tl-bottom">
-                <div class="tl-preview unread">AGIの件、面白いアイデアがあるんだけど...</div>
-                <div class="tl-badge">2</div>
-              </div>
-            </div>
-          </div>
-          <!-- 鈴木 里奈（未読1） -->
-          <div class="tl-row" onclick="openDmChat('rina_s', '鈴木 里奈', '👩')">
-            <div class="tl-avatar-wrap">
-              <div class="tl-avatar">👩</div>
-            </div>
-            <div class="tl-body">
-              <div class="tl-top">
-                <div class="tl-name unread">鈴木 里奈</div>
-                <div class="tl-time">昨日</div>
-              </div>
-              <div class="tl-bottom">
-                <div class="tl-preview unread">朝活の件ありがとう！来週も参加するね...</div>
-                <div class="tl-badge">1</div>
-              </div>
-            </div>
-          </div>
-          <!-- Sarah Chen（既読） -->
-          <div class="tl-row" onclick="openDmChat('sarah_ai', 'Sarah Chen', '👩')">
-            <div class="tl-avatar-wrap">
-              <div class="tl-avatar">👩</div>
-            </div>
-            <div class="tl-body">
-              <div class="tl-top">
-                <div class="tl-name">Sarah Chen</div>
-                <div class="tl-time">2日前</div>
-              </div>
-              <div class="tl-bottom">
-                <div class="tl-preview">That sounds amazing! Let me check my...</div>
-              </div>
-            </div>
-          </div>
-          <!-- 佐藤 健太（既読） -->
-          <div class="tl-row" onclick="openDmChat('kenta_s', '佐藤 健太', '🧑')">
-            <div class="tl-avatar-wrap">
-              <div class="tl-avatar">🧑</div>
-            </div>
-            <div class="tl-body">
-              <div class="tl-top">
-                <div class="tl-name">佐藤 健太</div>
-                <div class="tl-time">4日前</div>
-              </div>
-              <div class="tl-bottom">
-                <div class="tl-preview">SEAのスタートアップの件、資料送るね</div>
-              </div>
-            </div>
-          </div>
-          <!-- 伊藤 大輔（既読） -->
-          <div class="tl-row" onclick="openDmChat('daisuke_ito', '伊藤 大輔', '👨')">
-            <div class="tl-avatar-wrap">
-              <div class="tl-avatar">👨</div>
-            </div>
-            <div class="tl-body">
-              <div class="tl-top">
-                <div class="tl-name">伊藤 大輔</div>
-                <div class="tl-time">5日前</div>
-              </div>
-              <div class="tl-bottom">
-                <div class="tl-preview">了解です！よろしくお願いします</div>
-              </div>
-            </div>
-          </div>
-          <!-- 高橋 美咲（既読） -->
-          <div class="tl-row" onclick="openDmChat('misaki_t', '高橋 美咲', '👩')">
-            <div class="tl-avatar-wrap">
-              <div class="tl-avatar">👩</div>
-            </div>
-            <div class="tl-body">
-              <div class="tl-top">
-                <div class="tl-name">高橋 美咲</div>
-                <div class="tl-time">1週間前</div>
-              </div>
-              <div class="tl-bottom">
-                <div class="tl-preview">またコラボしましょう！楽しかったです</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div class="tl-list" id="talkMessagesList"></div>
       </div>
 
       <!-- ===== タブ②：連絡先 ===== -->
@@ -6583,12 +7187,12 @@
               <div class="contacts-member-row" onclick="openDmChat('yu_tanaka','田中 悠','🧑')">
                 <div class="contacts-member-avatar">🧑</div>
                 <span class="contacts-member-name">田中 悠</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(0,0,0,0.08);color:#000000;">🔥 Core</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="yu_tanaka"></span>
               </div>
               <div class="contacts-member-row" onclick="openDmChat('rina_s','鈴木 里奈','👩')">
                 <div class="contacts-member-avatar">👩</div>
                 <span class="contacts-member-name">鈴木 里奈</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(0,0,0,0.08);color:#000000;">🔥 Core</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="rina_s"></span>
               </div>
             </div>
           </div>
@@ -6611,27 +7215,27 @@
               <div class="contacts-member-row" onclick="openDmChat('kenta_s','佐藤 健太','🧑')">
                 <div class="contacts-member-avatar">🧑</div>
                 <span class="contacts-member-name">佐藤 健太</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(59,130,246,0.12);color:#1D4ED8;">💎 Orbit</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="kenta_s"></span>
               </div>
               <div class="contacts-member-row" onclick="openDmChat('daisuke_ito','伊藤 大輔','👨')">
                 <div class="contacts-member-avatar">👨</div>
                 <span class="contacts-member-name">伊藤 大輔</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(59,130,246,0.12);color:#1D4ED8;">💎 Orbit</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="daisuke_ito"></span>
               </div>
               <div class="contacts-member-row" onclick="openDmChat('misaki_t','高橋 美咲','👱‍♀️')">
                 <div class="contacts-member-avatar">👱‍♀️</div>
                 <span class="contacts-member-name">高橋 美咲</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(59,130,246,0.12);color:#1D4ED8;">💎 Orbit</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="misaki_t"></span>
               </div>
               <div class="contacts-member-row" onclick="openDmChat('ryo_k','小林 亮','🧔')">
                 <div class="contacts-member-avatar">🧔</div>
                 <span class="contacts-member-name">小林 亮</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(59,130,246,0.12);color:#1D4ED8;">💎 Orbit</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="ryo_k"></span>
               </div>
               <div class="contacts-member-row" onclick="openDmChat('aya_w','渡辺 彩','🙍')">
                 <div class="contacts-member-avatar">🙍</div>
                 <span class="contacts-member-name">渡辺 彩</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(59,130,246,0.12);color:#1D4ED8;">💎 Orbit</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="aya_w"></span>
               </div>
             </div>
           </div>
@@ -6654,17 +7258,17 @@
               <div class="contacts-member-row" onclick="openDmChat('ayaka_y','山田 彩香','👩')">
                 <div class="contacts-member-avatar">👩</div>
                 <span class="contacts-member-name">山田 彩香</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(245,158,11,0.12);color:#B45309;">⭐ Halo</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="ayaka_y"></span>
               </div>
               <div class="contacts-member-row" onclick="openDmChat('sho_n','中村 花','👩')">
                 <div class="contacts-member-avatar">👩</div>
                 <span class="contacts-member-name">中村 花</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(245,158,11,0.12);color:#B45309;">⭐ Halo</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="sho_n"></span>
               </div>
               <div class="contacts-member-row" onclick="openDmChat('kato_sho','加藤 翔','👨')">
                 <div class="contacts-member-avatar">👨</div>
                 <span class="contacts-member-name">加藤 翔</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(245,158,11,0.12);color:#B45309;">⭐ Halo</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="kato_sho"></span>
               </div>
             </div>
           </div>
@@ -6687,17 +7291,17 @@
               <div class="contacts-member-row" onclick="openDmChat('matsuda_e','松田 恵','👩')">
                 <div class="contacts-member-avatar">👩</div>
                 <span class="contacts-member-name">松田 恵</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(99,102,241,0.12);color:#4338CA;">🌌 Galaxy</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="matsuda_e"></span>
               </div>
               <div class="contacts-member-row" onclick="openDmChat('fujii_m','藤井 誠','🧑')">
                 <div class="contacts-member-avatar">🧑</div>
                 <span class="contacts-member-name">藤井 誠</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(99,102,241,0.12);color:#4338CA;">🌌 Galaxy</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="fujii_m"></span>
               </div>
               <div class="contacts-member-row" onclick="openDmChat('kinoshita_a','木下 彩','👩')">
                 <div class="contacts-member-avatar">👩</div>
                 <span class="contacts-member-name">木下 彩</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(99,102,241,0.12);color:#4338CA;">🌌 Galaxy</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="kinoshita_a"></span>
               </div>
             </div>
           </div>
@@ -6720,17 +7324,17 @@
               <div class="contacts-member-row" onclick="openDmChat('ishikawa_t','石川 拓','🧑')">
                 <div class="contacts-member-avatar">🧑</div>
                 <span class="contacts-member-name">石川 拓</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(148,163,184,0.15);color:#64748B;">🤝 Connect</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="ishikawa_t"></span>
               </div>
               <div class="contacts-member-row" onclick="openDmChat('shimizu_m','清水 美穂','👩')">
                 <div class="contacts-member-avatar">👩</div>
                 <span class="contacts-member-name">清水 美穂</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(148,163,184,0.15);color:#64748B;">🤝 Connect</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="shimizu_m"></span>
               </div>
               <div class="contacts-member-row" onclick="openDmChat('noda_k','野田 健一','👨')">
                 <div class="contacts-member-avatar">👨</div>
                 <span class="contacts-member-name">野田 健一</span>
-                <span class="contacts-tier-badge-small" style="background:rgba(148,163,184,0.15);color:#64748B;">🤝 Connect</span>
+                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="noda_k"></span>
               </div>
             </div>
           </div>
@@ -6738,102 +7342,11 @@
           <!-- ===== セクション2: グループ ===== -->
           <div class="contacts-section-header" style="margin-top:4px;">
             <span class="contacts-section-title">Groups</span>
-            <button class="contacts-section-edit-btn" onclick="openGroupCreate()">＋</button>
+            <button class="contacts-section-edit-btn" onclick="openGroupList()">＋</button>
           </div>
 
-          <!-- 酒好き -->
-          <div class="contacts-group-section" id="cgrp-sake">
-            <div class="contacts-group-row" onclick="toggleContactsGroup('cgrp-sake')">
-              <div class="contacts-group-icon">🍺</div>
-              <div class="contacts-group-body">
-                <div class="contacts-group-name">酒好き</div>
-                <div class="contacts-group-meta">3人のメンバー</div>
-              </div>
-              <div class="contacts-group-right">
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'},{id:'kenta_s',name:'佐藤 健太',avatar:'🧑'},{id:'daisuke_ito',name:'伊藤 大輔',avatar:'👨'}])">全員に送信</button>
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'},{id:'kenta_s',name:'佐藤 健太',avatar:'🧑'},{id:'daisuke_ito',name:'伊藤 大輔',avatar:'👨'}])">編集して送信</button>
-                <span class="contacts-group-chevron">▾</span>
-              </div>
-            </div>
-            <div class="contacts-group-body-expanded">
-              <div class="contacts-group-member-row" onclick="openDmChat('yu_tanaka','田中 悠','🧑')">
-                <div class="contacts-group-member-avatar">🧑</div>
-                <span class="contacts-group-member-name">田中 悠</span>
-              </div>
-              <div class="contacts-group-member-row" onclick="openDmChat('kenta_s','佐藤 健太','🧑')">
-                <div class="contacts-group-member-avatar">🧑</div>
-                <span class="contacts-group-member-name">佐藤 健太</span>
-              </div>
-              <div class="contacts-group-member-row" onclick="openDmChat('daisuke_ito','伊藤 大輔','👨')">
-                <div class="contacts-group-member-avatar">👨</div>
-                <span class="contacts-group-member-name">伊藤 大輔</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 投資仲間 -->
-          <div class="contacts-group-section" id="cgrp-toshi">
-            <div class="contacts-group-row" onclick="toggleContactsGroup('cgrp-toshi')">
-              <div class="contacts-group-icon">📈</div>
-              <div class="contacts-group-body">
-                <div class="contacts-group-name">投資仲間</div>
-                <div class="contacts-group-meta">3人のメンバー</div>
-              </div>
-              <div class="contacts-group-right">
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'rina_s',name:'鈴木 里奈',avatar:'👩'},{id:'kenji_founder',name:'Kenji Ito',avatar:'🎙'},{id:'sarah_ai',name:'Sarah Chen',avatar:'👩'}])">全員に送信</button>
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'rina_s',name:'鈴木 里奈',avatar:'👩'},{id:'kenji_founder',name:'Kenji Ito',avatar:'🎙'},{id:'sarah_ai',name:'Sarah Chen',avatar:'👩'}])">編集して送信</button>
-                <span class="contacts-group-chevron">▾</span>
-              </div>
-            </div>
-            <div class="contacts-group-body-expanded">
-              <div class="contacts-group-member-row" onclick="openDmChat('rina_s','鈴木 里奈','👩')">
-                <div class="contacts-group-member-avatar">👩</div>
-                <span class="contacts-group-member-name">鈴木 里奈</span>
-              </div>
-              <div class="contacts-group-member-row" onclick="openDmChat('kenji_founder','Kenji Ito','🎙')">
-                <div class="contacts-group-member-avatar">🎙</div>
-                <span class="contacts-group-member-name">Kenji Ito</span>
-              </div>
-              <div class="contacts-group-member-row" onclick="openDmChat('sarah_ai','Sarah Chen','👩')">
-                <div class="contacts-group-member-avatar">👩</div>
-                <span class="contacts-group-member-name">Sarah Chen</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- ゴルフ部 -->
-          <div class="contacts-group-section" id="cgrp-golf">
-            <div class="contacts-group-row" onclick="toggleContactsGroup('cgrp-golf')">
-              <div class="contacts-group-icon">⛳</div>
-              <div class="contacts-group-body">
-                <div class="contacts-group-name">ゴルフ部</div>
-                <div class="contacts-group-meta">4人のメンバー</div>
-              </div>
-              <div class="contacts-group-right">
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'kenta_s',name:'佐藤 健太',avatar:'🧑'},{id:'ryo_k',name:'小林 亮',avatar:'🧔'},{id:'misaki_t',name:'高橋 美咲',avatar:'👱‍♀️'},{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'}])">全員に送信</button>
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'kenta_s',name:'佐藤 健太',avatar:'🧑'},{id:'ryo_k',name:'小林 亮',avatar:'🧔'},{id:'misaki_t',name:'高橋 美咲',avatar:'👱‍♀️'},{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'}])">編集して送信</button>
-                <span class="contacts-group-chevron">▾</span>
-              </div>
-            </div>
-            <div class="contacts-group-body-expanded">
-              <div class="contacts-group-member-row" onclick="openDmChat('kenta_s','佐藤 健太','🧑')">
-                <div class="contacts-group-member-avatar">🧑</div>
-                <span class="contacts-group-member-name">佐藤 健太</span>
-              </div>
-              <div class="contacts-group-member-row" onclick="openDmChat('ryo_k','小林 亮','🧔')">
-                <div class="contacts-group-member-avatar">🧔</div>
-                <span class="contacts-group-member-name">小林 亮</span>
-              </div>
-              <div class="contacts-group-member-row" onclick="openDmChat('misaki_t','高橋 美咲','👱‍♀️')">
-                <div class="contacts-group-member-avatar">👱‍♀️</div>
-                <span class="contacts-group-member-name">高橋 美咲</span>
-              </div>
-              <div class="contacts-group-member-row" onclick="openDmChat('yu_tanaka','田中 悠','🧑')">
-                <div class="contacts-group-member-avatar">🧑</div>
-                <span class="contacts-group-member-name">田中 悠</span>
-              </div>
-            </div>
-          </div>
+          <!-- 動的レンダリング -->
+          <div id="contactsGroupsContainer"></div>
 
           </div><!-- /contacts-main-content -->
 
@@ -6974,6 +7487,33 @@
           <div class="search-trend-item" onclick="document.getElementById('searchInput').value='投資';handleSearch();">#投資</div>
           <div class="search-trend-item" onclick="document.getElementById('searchInput').value='デザイン';handleSearch();">#デザイン</div>
         </div>
+      </div>
+    </div>
+
+    <!-- ===== GROUP LIST SCREEN ===== -->
+    <div class="screen" id="screen-group-list" style="overflow-y:auto;display:flex;flex-direction:column;">
+      <div class="group-list-header">
+        <button class="group-list-back-btn" onclick="closeGroupListScreen()">&#8592;</button>
+        <span class="group-list-title">Groups</span>
+        <button class="group-list-add-btn" onclick="openGroupCreateFromList()">＋</button>
+      </div>
+      <div id="groupListContent" style="flex:1;"></div>
+    </div>
+
+    <!-- ===== GROUP THREAD SCREEN ===== -->
+    <div class="screen" id="screen-group-thread" style="overflow-y:hidden;display:flex;flex-direction:column;">
+      <div class="group-thread-header">
+        <button class="group-thread-back-btn" onclick="closeGroupThreadScreen()">&#8592;</button>
+        <div class="group-thread-title-area">
+          <div class="group-thread-avatar-wrap" id="groupThreadAvatarWrap"></div>
+          <span class="group-thread-name" id="groupThreadName"></span>
+        </div>
+        <button class="group-thread-menu-btn" id="groupThreadMenuBtn" onclick="openGroupEditFromThread()">&#8942;</button>
+      </div>
+      <div class="group-thread-body" id="groupThreadBody" style="flex:1;overflow-y:auto;padding-bottom:72px;"></div>
+      <div class="group-thread-input-bar">
+        <input type="text" class="group-thread-input" id="groupThreadInputField" placeholder="メッセージを入力..." oninput="onGroupThreadInputChange()" onkeydown="onGroupThreadInputKeydown(event)">
+        <button class="group-thread-send-btn" id="groupThreadSendBtn" onclick="sendGroupThreadMessage()" disabled>送信</button>
       </div>
     </div>
 
@@ -10781,13 +11321,53 @@
     document.getElementById('dmChatName').textContent = name;
     const container = document.getElementById('dmChatMessages');
     container.innerHTML = '';
-    const convo = dmConversations[userId] || [];
-    convo.forEach(msg => {
+
+    // ステルス配信メッセージをDMにマージ
+    const baseConvo = (dmConversations[userId] || []).map(msg => ({
+      from: msg.from,
+      text: msg.text,
+      time: msg.time,
+      _ts: msg._ts || 0
+    }));
+
+    // userGroupsの中でこのuserIdがmemberIdsに含まれるグループのthreadsを探す
+    const groupMessages = [];
+    if (typeof userGroups !== 'undefined') {
+      userGroups.forEach(group => {
+        if (!group.memberIds.includes(userId)) return;
+        (group.threads || []).forEach(thread => {
+          // 自分→相手: スレッド本文
+          groupMessages.push({
+            from: 'me',
+            text: thread.text,
+            time: relativeTime(thread.sentAt),
+            _ts: new Date(thread.sentAt).getTime()
+          });
+          // 相手→自分: 該当userIdの返信
+          (thread.replies || []).forEach(reply => {
+            if (reply.userId === userId) {
+              groupMessages.push({
+                from: 'theirs',
+                text: reply.text,
+                time: relativeTime(reply.sentAt),
+                _ts: new Date(reply.sentAt).getTime()
+              });
+            }
+          });
+        });
+      });
+    }
+
+    // 時系列マージ（_tsでソート）
+    const merged = [...baseConvo, ...groupMessages].sort((a, b) => a._ts - b._ts);
+
+    merged.forEach(msg => {
       const bubble = document.createElement('div');
       bubble.className = 'chat-bubble ' + (msg.from === 'me' ? 'mine' : 'theirs');
       bubble.innerHTML = msg.text + '<div class="chat-bubble-meta">' + msg.time + '</div>';
       container.appendChild(bubble);
     });
+
     document.getElementById('dmChatOverlay').classList.add('open');
     container.scrollTop = container.scrollHeight;
   }
@@ -11231,6 +11811,79 @@
   }
 
   // ===== TALK SCREEN TAB SWITCH =====
+  // ===== DM THREADS DATA =====
+  const dmThreads = [
+    { kind: 'dm', userId: 'yu_tanaka', name: '田中 悠', avatar: '🧑', preview: 'AGIの件、面白いアイデアがあるんだけど...', sentAt: '2026-04-20T12:30:00', unread: 2 },
+    { kind: 'dm', userId: 'rina_s', name: '鈴木 里奈', avatar: '👩', preview: '朝活の件ありがとう！来週も参加するね...', sentAt: '2026-04-19T18:00:00', unread: 1 },
+    { kind: 'dm', userId: 'sarah_ai', name: 'Sarah Chen', avatar: '👩', preview: 'That sounds amazing! Let me check my...', sentAt: '2026-04-18T10:00:00', unread: 0 },
+    { kind: 'dm', userId: 'kenta_s', name: '佐藤 健太', avatar: '🧑', preview: 'SEAのスタートアップの件、資料送るね', sentAt: '2026-04-16T09:00:00', unread: 0 },
+    { kind: 'dm', userId: 'daisuke_ito', name: '伊藤 大輔', avatar: '👨', preview: '了解です！よろしくお願いします', sentAt: '2026-04-15T14:00:00', unread: 0 },
+    { kind: 'dm', userId: 'misaki_t', name: '高橋 美咲', avatar: '👩', preview: 'またコラボしましょう！楽しかったです', sentAt: '2026-04-13T11:00:00', unread: 0 },
+  ];
+
+  // ===== TALK MESSAGES LIST 動的レンダリング =====
+  function renderTalkMessagesList() {
+    const container = document.getElementById('talkMessagesList');
+    if (!container) return;
+
+    // グループ行を生成
+    const groupThreads = userGroups.map(g => ({
+      kind: 'group',
+      groupId: g.id,
+      group: g,
+      name: g.name,
+      preview: g.threads[0] ? g.threads[0].text : 'まだ送信していません',
+      sentAt: g.threads[0] ? g.threads[0].sentAt : (g.createdAt || '2026-01-01T00:00:00'),
+      unread: g.threads.reduce((sum, t) => sum + t.replies.filter(r => !r.readByMe).length, 0),
+    }));
+
+    // 統合してsentAt降順ソート
+    const all = [...dmThreads, ...groupThreads].sort((a, b) => new Date(b.sentAt) - new Date(a.sentAt));
+
+    container.innerHTML = all.map(item => {
+      const hasUnread = item.unread > 0;
+      const timeStr = relativeTime(item.sentAt);
+      if (item.kind === 'dm') {
+        return `
+          <div class="tl-row" onclick="openDmChat('${item.userId}','${item.name}','${item.avatar}')">
+            <div class="tl-avatar-wrap">
+              <div class="tl-avatar">${item.avatar}</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-top">
+                <div class="tl-name${hasUnread ? ' unread' : ''}">${item.name}</div>
+                <div class="tl-time">${timeStr}</div>
+              </div>
+              <div class="tl-bottom">
+                <div class="tl-preview${hasUnread ? ' unread' : ''}">${item.preview}</div>
+                ${hasUnread ? `<div class="tl-badge">${item.unread}</div>` : ''}
+              </div>
+            </div>
+          </div>`;
+      } else {
+        // グループ行
+        const avatarHtml = renderGroupAvatar(item.group, 44);
+        return `
+          <div class="tl-row" onclick="openGroupThread('${item.groupId}')">
+            <div class="tl-avatar-wrap" style="position:relative;">
+              ${avatarHtml}
+              <div class="tl-group-badge-icon">👥</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-top">
+                <div class="tl-name${hasUnread ? ' unread' : ''}">${item.name}</div>
+                <div class="tl-time">${timeStr}</div>
+              </div>
+              <div class="tl-bottom">
+                <div class="tl-preview${hasUnread ? ' unread' : ''}">${item.preview}</div>
+                ${hasUnread ? `<div class="tl-badge">${item.unread}</div>` : ''}
+              </div>
+            </div>
+          </div>`;
+      }
+    }).join('');
+  }
+
   function switchTalkTab(tab) {
     ['dm', 'contacts', 'events'].forEach(t => {
       const content = document.getElementById('talkContent-' + t);
@@ -11238,6 +11891,7 @@
       if (content) content.classList.toggle('active', t === tab);
       if (segTab)  segTab.classList.toggle('active', t === tab);
     });
+    if (tab === 'dm') renderTalkMessagesList();
     if (tab === 'events') buildEventsHub();
   }
 
@@ -11257,6 +11911,7 @@
   buildHomeStories();
   buildHomeFeed();
   initSearchRecommended();
+  // renderTalkMessagesList() は userGroups 定義後の initGroupSystem() で呼ぶ（TDZ回避）
   // renderMyPosts() — post grid removed from profile screen
 
   // ===== NEW MESSAGE: 状態管理 =====
@@ -11834,9 +12489,44 @@
         <div class="group-create-label">GROUP NAME</div>
         <input type="text" class="group-create-input" id="groupNameInput" placeholder="e.g. Weekend Trip, Work Crew..." oninput="onGroupNameInput(this.value)" maxlength="30">
       </div>
+      <!-- Emoji selection -->
+      <div class="group-create-emoji-row">
+        <div class="group-create-label">EMOJI</div>
+        <div class="group-create-emoji-grid" id="groupCreateEmojiGrid"></div>
+      </div>
       <!-- Member selection -->
-      <div class="group-create-label" style="padding:0 16px;margin-bottom:8px;">ADD MEMBERS FROM YOUR CIRCLE</div>
+      <div class="group-create-label" style="padding:12px 16px 8px;margin-bottom:0;">ADD MEMBERS FROM YOUR CIRCLE</div>
       <div class="group-create-members" id="groupCreateMembers"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GROUP EDIT MODAL ===== -->
+<div class="group-edit-overlay" id="groupEditOverlay">
+  <div class="group-edit-sheet">
+    <div class="group-edit-handle"></div>
+    <div class="group-edit-header">
+      <button class="group-edit-cancel" onclick="closeGroupEdit()">キャンセル</button>
+      <div class="group-edit-title">グループ編集</div>
+      <div class="group-edit-header-right">
+        <button class="group-edit-save" onclick="submitGroupEdit()">保存</button>
+        <button class="group-edit-menu-btn" onclick="event.stopPropagation();toggleGroupEditMenu()" aria-label="メニュー">⋮</button>
+        <div class="group-edit-menu-dropdown" id="groupEditMenuDropdown" onclick="event.stopPropagation()">
+          <button class="group-edit-menu-item danger" onclick="closeGroupEditMenu();confirmDeleteGroup()">このグループを削除</button>
+        </div>
+      </div>
+    </div>
+    <div class="group-edit-body">
+      <div class="group-edit-emoji-row">
+        <div class="group-edit-emoji-label">EMOJI</div>
+        <div class="group-edit-emoji-grid" id="groupEditEmojiGrid"></div>
+      </div>
+      <div class="group-edit-name-row">
+        <div class="group-edit-emoji-label">GROUP NAME</div>
+        <input type="text" class="group-edit-input" id="groupEditNameInput" placeholder="グループ名" maxlength="30">
+      </div>
+      <div class="group-edit-members-label">MEMBERS</div>
+      <div id="groupEditMembers"></div>
     </div>
   </div>
 </div>
@@ -11844,26 +12534,23 @@
 <script>
 // ===== GROUP CREATE =====
 const groupCircleMembers = [
-  {id:'yu_tanaka', name:'田中 悠', avatar:'🧑', tier:'🔥 Core'},
-  {id:'rina_s', name:'鈴木 里奈', avatar:'👩', tier:'🔥 Core'},
-  {id:'kenta_s', name:'佐藤 健太', avatar:'🧑', tier:'⚡ Trusted'},
-  {id:'daisuke_ito', name:'伊藤 大輔', avatar:'👨', tier:'⚡ Trusted'},
-  {id:'misaki_t', name:'高橋 美咲', avatar:'👱‍♀️', tier:'⚡ Trusted'},
-  {id:'ryo_k', name:'小林 亮', avatar:'🧔', tier:'⚡ Trusted'},
-  {id:'aya_w', name:'渡辺 彩', avatar:'🙍', tier:'⚡ Trusted'},
-  {id:'ayaka_y', name:'山田 彩香', avatar:'👩', tier:'🌟 Close'},
-  {id:'sho_n', name:'中村 花', avatar:'👩', tier:'🌟 Close'},
-  {id:'kato_sho', name:'加藤 翔', avatar:'👨', tier:'🌟 Close'},
+  {id:'yu_tanaka',    name:'田中 悠',    avatar:'🧑',    tier:'Core'},
+  {id:'rina_s',      name:'鈴木 里奈',  avatar:'👩',    tier:'Core'},
+  {id:'kenta_s',     name:'佐藤 健太',  avatar:'🧑',    tier:'Orbit'},
+  {id:'daisuke_ito', name:'伊藤 大輔',  avatar:'👨',    tier:'Orbit'},
+  {id:'misaki_t',    name:'高橋 美咲',  avatar:'👱‍♀️',  tier:'Orbit'},
+  {id:'ryo_k',       name:'小林 亮',    avatar:'🧔',    tier:'Orbit'},
+  {id:'aya_w',       name:'渡辺 彩',    avatar:'🙍',    tier:'Orbit'},
+  {id:'ayaka_y',     name:'山田 彩香',  avatar:'👩',    tier:'Halo'},
+  {id:'sho_n',       name:'中村 花',    avatar:'👩',    tier:'Halo'},
+  {id:'kato_sho',    name:'加藤 翔',    avatar:'👨',    tier:'Halo'},
+  {id:'matsuda_e',   name:'松田 恵',    avatar:'👩',    tier:'Galaxy'},
+  {id:'fujii_m',     name:'藤井 誠',    avatar:'🧑',    tier:'Galaxy'},
+  {id:'kinoshita_a', name:'木下 彩',    avatar:'👩',    tier:'Galaxy'},
+  {id:'ishikawa_t',  name:'石川 拓',    avatar:'🧑',    tier:'Connect'},
+  {id:'shimizu_m',   name:'清水 美穂',  avatar:'👩',    tier:'Connect'},
 ];
 let groupSelectedMembers = new Set();
-
-function openGroupCreate() {
-  groupSelectedMembers = new Set();
-  document.getElementById('groupNameInput').value = '';
-  document.getElementById('groupCreateDoneBtn').disabled = true;
-  renderGroupCreateMembers();
-  document.getElementById('groupCreateOverlay').classList.add('open');
-}
 
 function closeGroupCreate() {
   document.getElementById('groupCreateOverlay').classList.remove('open');
@@ -11877,18 +12564,32 @@ function closeCircleSettings() {
   document.getElementById('circleSettingsOverlay').classList.remove('open');
 }
 
+const CIRCLE_TIERS_ORDER = ['Core', 'Orbit', 'Halo', 'Galaxy', 'Connect'];
+const CIRCLE_TIER_LABELS = { Core: '🔥 Core', Orbit: '💎 Orbit', Halo: '⭐ Halo', Galaxy: '🌌 Galaxy', Connect: '🤝 Connect' };
+
 function renderGroupCreateMembers() {
   const container = document.getElementById('groupCreateMembers');
-  container.innerHTML = groupCircleMembers.map(m => `
+  let html = '';
+  CIRCLE_TIERS_ORDER.forEach(tier => {
+    const members = groupCircleMembers.filter(m => m.tier === tier);
+    if (members.length === 0) return;
+    html += `<div class="group-member-section-heading">${CIRCLE_TIER_LABELS[tier]}</div>`;
+    html += members.map(m => {
+      const profile = (typeof userProfiles !== 'undefined' && userProfiles[m.id]) ? userProfiles[m.id] : null;
+      const titleInfo = profile ? getTitle(profile.score) : null;
+      const titleHtml = titleInfo ? `<span class="member-cosmic-title">${titleInfo.emoji} ${titleInfo.name}</span>` : '';
+      return `
     <div class="group-create-member-row${groupSelectedMembers.has(m.id) ? ' selected' : ''}" onclick="toggleGroupMember('${m.id}')">
       <div class="group-create-member-avatar">${m.avatar}</div>
       <div class="group-create-member-info">
         <div class="group-create-member-name">${m.name}</div>
-        <div class="group-create-member-tier">${m.tier}</div>
+        ${titleHtml}
       </div>
       <div class="group-create-check">${groupSelectedMembers.has(m.id) ? '✓' : ''}</div>
-    </div>
-  `).join('');
+    </div>`;
+    }).join('');
+  });
+  container.innerHTML = html;
 }
 
 function toggleGroupMember(id) {
@@ -11903,6 +12604,7 @@ function toggleGroupMember(id) {
 
 function onGroupNameInput(val) {
   updateGroupCreateDoneBtn();
+  renderGroupCreateAvatarUI();
 }
 
 function updateGroupCreateDoneBtn() {
@@ -11914,9 +12616,735 @@ function updateGroupCreateDoneBtn() {
 function submitGroupCreate() {
   const name = document.getElementById('groupNameInput').value.trim();
   if (!name || groupSelectedMembers.size === 0) return;
-  showToast(`"${name}" group created with ${groupSelectedMembers.size} members!`);
+  const emoji = window._groupCreateSelectedEmoji || '👥';
+  const memberIds = Array.from(groupSelectedMembers);
+  const colorIdx = userGroups.length % 10;
+  const photoDataUrl = window._groupCreatePhotoDataUrl || null;
+  const newGroup = {
+    id: 'g_' + Date.now(),
+    name: name,
+    emoji: emoji,
+    photoDataUrl: photoDataUrl,
+    colorIdx: colorIdx,
+    createdAt: new Date().toISOString(),
+    memberIds: memberIds,
+    order: 0,
+    threads: []
+  };
+  userGroups.unshift(newGroup);
+  // 全グループのorderを再計算
+  userGroups.forEach((g, i) => { g.order = i; });
+  showToast(`"${name}" グループを作成しました`);
   closeGroupCreate();
+  renderGroupList();
+  renderContactsGroups();
+  renderTalkMessagesList();
 }
+
+// ===== EMOJI PRESETS (互換のため残す) =====
+const GROUP_EMOJI_PRESETS = ['👨‍👩‍👧','💼','🍻','🍺','📈','⛳','🎮','🎵','🏃‍♂️','📚','🎨','✈️','🎯','🌸','🍱','🏔️','🎤','🌏','🍕','🎂'];
+
+// ===== GROUP CREATE AVATAR UI =====
+function renderGroupCreateAvatarUI() {
+  const container = document.getElementById('groupCreateEmojiGrid');
+  if (!container) return;
+  const previewIdx = userGroups.length % 10;
+  const previewBg = GROUP_AVATAR_GRADIENTS[previewIdx];
+  const nameVal = (document.getElementById('groupNameInput') || {}).value || '';
+  const initial = nameVal.trim().charAt(0) || '?';
+  const hasPhoto = !!window._groupCreatePhotoDataUrl;
+  const previewHtml = hasPhoto
+    ? `<img src="${window._groupCreatePhotoDataUrl}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;">`
+    : `<div style="width:72px;height:72px;border-radius:50%;background:${previewBg};display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.4);">${initial || '?'}</div>`;
+  container.innerHTML = `
+    <div class="group-avatar-ui">
+      <div class="group-avatar-preview">${previewHtml}</div>
+      <div class="group-avatar-btns">
+        <button class="group-avatar-pick-btn" onclick="document.getElementById('groupCreatePhotoInput').click()">📷 写真を選ぶ</button>
+        ${hasPhoto ? `<button class="group-avatar-del-btn" onclick="groupCreateClearPhoto()">写真を削除</button>` : ''}
+      </div>
+      <input type="file" id="groupCreatePhotoInput" accept="image/*" style="display:none" onchange="groupCreateOnPhotoChange(this)">
+    </div>`;
+}
+
+function groupCreateOnPhotoChange(input) {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    window._groupCreatePhotoDataUrl = e.target.result;
+    renderGroupCreateAvatarUI();
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function groupCreateClearPhoto() {
+  window._groupCreatePhotoDataUrl = null;
+  renderGroupCreateAvatarUI();
+}
+
+function selectGroupCreateEmoji(emoji) {
+  window._groupCreateSelectedEmoji = emoji;
+  renderGroupCreateAvatarUI();
+}
+
+// ===== GROUP AVATAR GRADIENTS =====
+const GROUP_AVATAR_GRADIENTS = [
+  'linear-gradient(135deg, #1E3A5F 0%, #7C3AED 50%, #EC4899 100%)', // HYPERAY
+  'linear-gradient(135deg, #FF0080 0%, #FF8C00 50%, #FFE500 100%)', // Sunset
+  'linear-gradient(135deg, #00F5FF 0%, #7B2FF7 50%, #F107A3 100%)', // Neon
+  'linear-gradient(135deg, #43E97B 0%, #38F9D7 100%)',              // Mint
+  'linear-gradient(135deg, #4FACFE 0%, #00F2FE 100%)',              // Ocean
+  'linear-gradient(135deg, #F093FB 0%, #F5576C 100%)',              // Rose
+  'linear-gradient(135deg, #FA709A 0%, #FEE140 100%)',              // Peach
+  'linear-gradient(135deg, #A8EDEA 0%, #FED6E3 100%)',              // Pastel
+  'linear-gradient(135deg, #667EEA 0%, #764BA2 100%)',              // Royal
+  'linear-gradient(135deg, #F77062 0%, #FE5196 100%)',              // Coral
+];
+
+// ===== GROUP AVATAR HELPER =====
+function renderGroupAvatar(group, size = 48) {
+  const fontSize = Math.round(size * 0.42);
+  if (group.photoDataUrl) {
+    return `<img src="${group.photoDataUrl}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;display:block;">`;
+  }
+  const bg = GROUP_AVATAR_GRADIENTS[(group.colorIdx || 0) % 10];
+  const initial = (group.name || '?').charAt(0);
+  return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-size:${fontSize}px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.4);flex-shrink:0;">${initial}</div>`;
+}
+
+// ===== USER GROUPS DATA MODEL =====
+let userGroups = [
+  {
+    id: 'g_sake',
+    name: '酒好き',
+    emoji: '🍺',
+    photoDataUrl: null,
+    colorIdx: 0,
+    createdAt: '2026-04-10T10:00:00',
+    memberIds: ['yu_tanaka','kenta_s','daisuke_ito'],
+    order: 0,
+    threads: [
+      {
+        id: 't1',
+        sentAt: '2026-04-19T19:30:00',
+        text: '今週末飲みいかへん？',
+        replies: [
+          { userId: 'yu_tanaka', text: '行ける！何時から？', sentAt: '2026-04-19T19:45:00', readByMe: false },
+          { userId: 'kenta_s', text: '土曜なら大丈夫です', sentAt: '2026-04-19T20:10:00', readByMe: true },
+        ]
+      },
+      {
+        id: 't2',
+        sentAt: '2026-04-15T12:00:00',
+        text: '先週のお店よかったな〜またいこ',
+        replies: [
+          { userId: 'daisuke_ito', text: '最高でしたね！', sentAt: '2026-04-15T12:30:00', readByMe: true },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'g_toshi',
+    name: '投資仲間',
+    emoji: '📈',
+    photoDataUrl: null,
+    colorIdx: 1,
+    createdAt: '2026-04-12T09:00:00',
+    memberIds: ['rina_s','kenji_founder','sarah_ai'],
+    order: 1,
+    threads: [
+      {
+        id: 't3',
+        sentAt: '2026-04-18T08:00:00',
+        text: '米国株の決算シーズン始まったね。注目銘柄ある？',
+        replies: [
+          { userId: 'rina_s', text: 'NVIDIAは押さえとく予定', sentAt: '2026-04-18T08:20:00', readByMe: false },
+          { userId: 'kenji_founder', text: 'AIインフラ系は全部要チェック', sentAt: '2026-04-18T09:00:00', readByMe: false },
+          { userId: 'sarah_ai', text: 'Agreed! Energy sector also looking strong', sentAt: '2026-04-18T09:30:00', readByMe: true },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'g_golf',
+    name: 'ゴルフ部',
+    emoji: '⛳',
+    photoDataUrl: null,
+    colorIdx: 2,
+    createdAt: '2026-04-14T08:00:00',
+    memberIds: ['kenta_s','ryo_k','misaki_t','yu_tanaka'],
+    order: 2,
+    threads: [
+      {
+        id: 't4',
+        sentAt: '2026-04-17T07:00:00',
+        text: '来月ラウンド行こう！5月3日どう？',
+        replies: [
+          { userId: 'kenta_s', text: '行けます！', sentAt: '2026-04-17T07:15:00', readByMe: true },
+          { userId: 'ryo_k', text: '自分も大丈夫です', sentAt: '2026-04-17T08:00:00', readByMe: true },
+          { userId: 'misaki_t', text: 'ちょっと確認します〜', sentAt: '2026-04-17T09:00:00', readByMe: false },
+          { userId: 'yu_tanaka', text: 'OKです！楽しみ', sentAt: '2026-04-17T10:00:00', readByMe: false },
+        ]
+      }
+    ]
+  }
+];
+
+// ===== GROUP MEMBER LOOKUP =====
+function getGroupMembersData(memberIds) {
+  return memberIds.map(id => {
+    const m = groupCircleMembers.find(x => x.id === id);
+    if (m) return { id: m.id, name: m.name, avatar: m.avatar };
+    // fallback for kenji_founder / sarah_ai not in groupCircleMembers
+    const extras = {
+      'kenji_founder': { id: 'kenji_founder', name: 'Kenji Ito', avatar: '🎙' },
+      'sarah_ai': { id: 'sarah_ai', name: 'Sarah Chen', avatar: '👩' },
+    };
+    return extras[id] || { id: id, name: id, avatar: '👤' };
+  });
+}
+
+// ===== RELATIVE TIME =====
+function relativeTime(isoStr) {
+  const now = new Date();
+  const then = new Date(isoStr);
+  const diff = Math.floor((now - then) / 1000);
+  if (diff < 60) return 'たった今';
+  if (diff < 3600) return Math.floor(diff / 60) + '分前';
+  if (diff < 86400) return Math.floor(diff / 3600) + '時間前';
+  if (diff < 86400 * 2) return '昨日';
+  return Math.floor(diff / 86400) + '日前';
+}
+
+// ===== GROUP LIST SCREEN =====
+let _prevScreenBeforeGroupList = null;
+let _prevScreenBeforeGroupThread = null;
+let _currentGroupThreadId = null;
+
+function openGroupList() {
+  _prevScreenBeforeGroupList = document.querySelector('.screen.active');
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-group-list').classList.add('active');
+  renderGroupList();
+}
+
+function closeGroupListScreen() {
+  document.getElementById('screen-group-list').classList.remove('active');
+  if (_prevScreenBeforeGroupList) {
+    _prevScreenBeforeGroupList.classList.add('active');
+    _prevScreenBeforeGroupList = null;
+  } else {
+    document.getElementById('screen-my').classList.add('active');
+  }
+}
+
+function renderGroupList() {
+  const container = document.getElementById('groupListContent');
+  if (!container) return;
+  const sorted = [...userGroups].sort((a, b) => a.order - b.order);
+  if (sorted.length === 0) {
+    container.innerHTML = `
+      <div class="group-list-empty">
+        <div class="group-list-empty-icon">👥</div>
+        <div class="group-list-empty-text">まだグループがありません<br>送信先をまとめて管理しよう</div>
+        <button class="group-list-empty-btn" onclick="openGroupCreateFromList()">＋ 新規作成</button>
+      </div>`;
+    return;
+  }
+  container.innerHTML = sorted.map(g => `
+    <div class="group-list-item" id="gli-${g.id}"
+      draggable="true"
+      ondragstart="onGroupDragStart(event,'${g.id}')"
+      ondragover="onGroupDragOver(event)"
+      ondrop="onGroupDrop(event,'${g.id}')"
+      ondragleave="onGroupDragLeave(event)"
+      onclick="openGroupEdit('${g.id}')">
+      <div class="group-list-avatar-wrap">${renderGroupAvatar(g, 44)}</div>
+      <div class="group-list-body">
+        <div class="group-list-name">${g.name}</div>
+        <div class="group-list-count">${g.memberIds.length}人のメンバー</div>
+      </div>
+      <div class="group-list-actions" onclick="event.stopPropagation()">
+        <div class="group-list-drag-handle" draggable="false">&#8801;</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== DRAG & DROP =====
+let _dragGroupId = null;
+
+function onGroupDragStart(e, groupId) {
+  _dragGroupId = groupId;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function onGroupDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  e.currentTarget.classList.add('drag-over');
+}
+
+function onGroupDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+
+function onGroupDrop(e, targetGroupId) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (!_dragGroupId || _dragGroupId === targetGroupId) { _dragGroupId = null; return; }
+  const fromGroup = userGroups.find(g => g.id === _dragGroupId);
+  const toGroup = userGroups.find(g => g.id === targetGroupId);
+  if (!fromGroup || !toGroup) { _dragGroupId = null; return; }
+  const fromOrder = fromGroup.order;
+  const toOrder = toGroup.order;
+  fromGroup.order = toOrder;
+  toGroup.order = fromOrder;
+  _dragGroupId = null;
+  renderGroupList();
+  renderContactsGroups();
+}
+
+// ===== GROUP CREATE (from list) =====
+function openGroupCreateFromList() {
+  window._groupCreateFromList = true;
+  window._groupCreateSelectedEmoji = GROUP_EMOJI_PRESETS[0];
+  window._groupCreatePhotoDataUrl = null;
+  groupSelectedMembers = new Set();
+  document.getElementById('groupNameInput').value = '';
+  document.getElementById('groupCreateDoneBtn').disabled = true;
+  renderGroupCreateAvatarUI();
+  renderGroupCreateMembers();
+  document.getElementById('groupCreateOverlay').classList.add('open');
+}
+
+// openGroupCreateを既存からも呼べるようにwrap
+function openGroupCreate() {
+  window._groupCreateFromList = false;
+  window._groupCreateSelectedEmoji = GROUP_EMOJI_PRESETS[0];
+  window._groupCreatePhotoDataUrl = null;
+  groupSelectedMembers = new Set();
+  document.getElementById('groupNameInput').value = '';
+  document.getElementById('groupCreateDoneBtn').disabled = true;
+  renderGroupCreateAvatarUI();
+  renderGroupCreateMembers();
+  document.getElementById('groupCreateOverlay').classList.add('open');
+}
+
+// ===== GROUP THREAD SCREEN =====
+function openGroupThread(groupId) {
+  const group = userGroups.find(g => g.id === groupId);
+  if (!group) return;
+  _currentGroupThreadId = groupId;
+  _prevScreenBeforeGroupThread = document.querySelector('.screen.active');
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-group-thread').classList.add('active');
+  const avatarEl = document.getElementById('groupThreadAvatarWrap');
+  if (avatarEl) avatarEl.innerHTML = renderGroupAvatar(group, 36);
+  document.getElementById('groupThreadName').textContent = group.name;
+  // 入力欄リセット
+  const inp = document.getElementById('groupThreadInputField');
+  if (inp) inp.value = '';
+  const btn = document.getElementById('groupThreadSendBtn');
+  if (btn) btn.disabled = true;
+  renderGroupThread(groupId);
+}
+
+function closeGroupThreadScreen() {
+  document.getElementById('screen-group-thread').classList.remove('active');
+  _currentGroupThreadId = null;
+  if (_prevScreenBeforeGroupThread) {
+    _prevScreenBeforeGroupThread.classList.add('active');
+    _prevScreenBeforeGroupThread = null;
+  } else {
+    document.getElementById('screen-group-list').classList.add('active');
+  }
+}
+
+function renderGroupThread(groupOrId) {
+  const group = (typeof groupOrId === 'string') ? userGroups.find(g => g.id === groupOrId) : groupOrId;
+  if (!group) return;
+  const body = document.getElementById('groupThreadBody');
+  if (!group.threads || group.threads.length === 0) {
+    body.innerHTML = `
+      <div class="group-thread-empty">
+        <div class="group-thread-empty-icon">${renderGroupAvatar(group, 56)}</div>
+        <div class="group-thread-empty-text">まだ送信履歴がありません<br>下の入力欄から最初のメッセージを送ろう</div>
+      </div>`;
+    return;
+  }
+  const sorted = [...group.threads].sort((a, b) => new Date(b.sentAt) - new Date(a.sentAt));
+  body.innerHTML = sorted.map(thread => {
+    const unreadCount = thread.replies.filter(r => !r.readByMe).length;
+    const noReplyCount = group.memberIds.length - (new Set(thread.replies.map(r => r.userId))).size;
+    const countBadge = `<span class="group-thread-card-count-badge">${group.memberIds.length}人に送信</span>`;
+    const repliesHtml = renderThreadReplies(thread, group);
+    return `
+      <div class="group-thread-card">
+        <div class="group-thread-card-header">
+          <div class="group-thread-card-avatar">🧑‍💻</div>
+          <span class="group-thread-card-sender">あなた</span>
+          ${countBadge}
+          <span class="group-thread-card-time">${relativeTime(thread.sentAt)}</span>
+        </div>
+        <div class="group-thread-card-body">${thread.text}</div>
+        <div class="group-thread-card-replies">
+          ${repliesHtml}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderThreadReplies(thread, group) {
+  if (!thread.replies || thread.replies.length === 0) {
+    return '<div class="group-thread-no-reply">まだ返信はありません</div>';
+  }
+  const SHOW_LIMIT = 3;
+  const visible = thread.replies.slice(0, SHOW_LIMIT);
+  const rest = thread.replies.slice(SHOW_LIMIT);
+  const rowsHtml = visible.map(r => {
+    const m = groupCircleMembers.find(x => x.id === r.userId) ||
+      { id: r.userId, name: r.userId, avatar: '👤' };
+    const avatar = (r.userId === 'kenji_founder') ? '🎙' : (r.userId === 'sarah_ai') ? '👩' : m.avatar;
+    const name = (r.userId === 'kenji_founder') ? 'Kenji Ito' : (r.userId === 'sarah_ai') ? 'Sarah Chen' : m.name;
+    const unreadBadge = !r.readByMe ? '<span class="group-thread-unread-badge">未読</span>' : '';
+    return `
+      <div class="group-thread-reply-row" onclick="openDmChat('${r.userId}','${name}','${avatar}')">
+        <div class="group-thread-reply-avatar">${avatar}</div>
+        <div class="group-thread-reply-body">
+          <div class="group-thread-reply-sender">${name}${unreadBadge}</div>
+          <div class="group-thread-reply-text">${r.text}</div>
+          <div class="group-thread-reply-time">${relativeTime(r.sentAt)}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  const expandBtn = rest.length > 0
+    ? `<button class="group-thread-expand-btn" onclick="expandThreadReplies(this, '${thread.id}', '${group.id}')">他${rest.length}人の返信を見る ▼</button>`
+    : '';
+  const restHtml = rest.map(r => {
+    const m = groupCircleMembers.find(x => x.id === r.userId) ||
+      { id: r.userId, name: r.userId, avatar: '👤' };
+    const avatar = (r.userId === 'kenji_founder') ? '🎙' : (r.userId === 'sarah_ai') ? '👩' : m.avatar;
+    const name = (r.userId === 'kenji_founder') ? 'Kenji Ito' : (r.userId === 'sarah_ai') ? 'Sarah Chen' : m.name;
+    const unreadBadge = !r.readByMe ? '<span class="group-thread-unread-badge">未読</span>' : '';
+    return `
+      <div class="group-thread-reply-row" style="display:none" data-extra-reply onclick="openDmChat('${r.userId}','${name}','${avatar}')">
+        <div class="group-thread-reply-avatar">${avatar}</div>
+        <div class="group-thread-reply-body">
+          <div class="group-thread-reply-sender">${name}${unreadBadge}</div>
+          <div class="group-thread-reply-text">${r.text}</div>
+          <div class="group-thread-reply-time">${relativeTime(r.sentAt)}</div>
+        </div>
+      </div>`;
+  }).join('');
+  return rowsHtml + restHtml + expandBtn;
+}
+
+function expandThreadReplies(btn, threadId, groupId) {
+  const card = btn.closest('.group-thread-card-replies');
+  card.querySelectorAll('[data-extra-reply]').forEach(el => el.style.display = 'flex');
+  btn.remove();
+}
+
+// 下部固定入力欄：送信
+function sendGroupThreadMessage() {
+  const input = document.getElementById('groupThreadInputField');
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text) return;
+  const g = userGroups.find(x => x.id === _currentGroupThreadId);
+  if (!g) return;
+  const newThread = {
+    id: 't_' + Date.now(),
+    sentAt: new Date().toISOString(),
+    text: text,
+    replies: [],
+  };
+  g.threads.unshift(newThread);
+  input.value = '';
+  const btn = document.getElementById('groupThreadSendBtn');
+  if (btn) btn.disabled = true;
+  renderGroupThread(g.id);
+  renderTalkMessagesList();
+  showToast(`${g.memberIds.length}人に送信しました`);
+}
+
+function onGroupThreadInputChange() {
+  const input = document.getElementById('groupThreadInputField');
+  const btn = document.getElementById('groupThreadSendBtn');
+  if (btn) btn.disabled = !(input && input.value.trim().length > 0);
+}
+
+function onGroupThreadInputKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendGroupThreadMessage();
+  }
+}
+
+// 後方互換：groupThreadSendNew は sendGroupThreadMessage のエイリアス
+function groupThreadSendNew() {
+  sendGroupThreadMessage();
+}
+
+function openGroupEditFromThread() {
+  if (_currentGroupThreadId) openGroupEdit(_currentGroupThreadId);
+}
+
+// ===== GROUP EDIT MODAL =====
+let _editGroupId = null;
+let _editGroupSelectedEmoji = null;
+let _editGroupSelectedMembers = new Set();
+
+let _editGroupPhotoDataUrl = null;
+
+function openGroupEdit(groupId) {
+  const group = userGroups.find(g => g.id === groupId);
+  if (!group) return;
+  _editGroupId = groupId;
+  _editGroupSelectedEmoji = group.emoji;
+  _editGroupSelectedMembers = new Set(group.memberIds);
+  _editGroupPhotoDataUrl = group.photoDataUrl || null;
+  document.getElementById('groupEditNameInput').value = group.name;
+  renderGroupEditAvatarUI(group);
+  renderGroupEditMembers();
+  document.getElementById('groupEditOverlay').classList.add('open');
+}
+
+function closeGroupEdit() {
+  document.getElementById('groupEditOverlay').classList.remove('open');
+  closeGroupEditMenu();
+  _editGroupId = null;
+}
+
+function toggleGroupEditMenu() {
+  const dd = document.getElementById('groupEditMenuDropdown');
+  if (!dd) return;
+  dd.classList.toggle('open');
+}
+function closeGroupEditMenu() {
+  const dd = document.getElementById('groupEditMenuDropdown');
+  if (dd) dd.classList.remove('open');
+}
+document.addEventListener('click', function(e) {
+  const dd = document.getElementById('groupEditMenuDropdown');
+  if (!dd || !dd.classList.contains('open')) return;
+  if (!e.target.closest('.group-edit-header-right')) closeGroupEditMenu();
+});
+
+function renderGroupEditAvatarUI(group) {
+  const container = document.getElementById('groupEditEmojiGrid');
+  if (!container) return;
+  const g = group || userGroups.find(x => x.id === _editGroupId);
+  if (!g) return;
+  const bg = GROUP_AVATAR_GRADIENTS[(g.colorIdx || 0) % 10];
+  const nameVal = document.getElementById('groupEditNameInput').value || g.name || '';
+  const initial = nameVal.trim().charAt(0) || '?';
+  const hasPhoto = !!_editGroupPhotoDataUrl;
+  const previewHtml = hasPhoto
+    ? `<img src="${_editGroupPhotoDataUrl}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;">`
+    : `<div style="width:72px;height:72px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.4);">${initial}</div>`;
+  container.innerHTML = `
+    <div class="group-avatar-ui">
+      <div class="group-avatar-preview">${previewHtml}</div>
+      <div class="group-avatar-btns">
+        <button class="group-avatar-pick-btn" onclick="document.getElementById('groupEditPhotoInput').click()">📷 写真を選ぶ</button>
+        ${hasPhoto ? `<button class="group-avatar-del-btn" onclick="groupEditClearPhoto()">写真を削除</button>` : ''}
+      </div>
+      <input type="file" id="groupEditPhotoInput" accept="image/*" style="display:none" onchange="groupEditOnPhotoChange(this)">
+    </div>`;
+}
+
+function groupEditOnPhotoChange(input) {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    _editGroupPhotoDataUrl = e.target.result;
+    renderGroupEditAvatarUI();
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function groupEditClearPhoto() {
+  _editGroupPhotoDataUrl = null;
+  renderGroupEditAvatarUI();
+}
+
+function selectGroupEditEmoji(emoji) {
+  _editGroupSelectedEmoji = emoji;
+  renderGroupEditAvatarUI();
+}
+
+function renderGroupEditMembers() {
+  const container = document.getElementById('groupEditMembers');
+  if (!container) return;
+  let html = '';
+  CIRCLE_TIERS_ORDER.forEach(tier => {
+    const members = groupCircleMembers.filter(m => m.tier === tier);
+    if (members.length === 0) return;
+    html += `<div class="group-member-section-heading">${CIRCLE_TIER_LABELS[tier]}</div>`;
+    html += members.map(m => {
+      const profile = (typeof userProfiles !== 'undefined' && userProfiles[m.id]) ? userProfiles[m.id] : null;
+      const titleInfo = profile ? getTitle(profile.score) : null;
+      const titleHtml = titleInfo ? `<span class="member-cosmic-title">${titleInfo.emoji} ${titleInfo.name}</span>` : '';
+      return `
+    <div class="group-edit-member-row${_editGroupSelectedMembers.has(m.id) ? ' selected' : ''}" onclick="toggleGroupEditMember('${m.id}')">
+      <div class="group-edit-member-avatar">${m.avatar}</div>
+      <div class="group-edit-member-info">
+        <div class="group-edit-member-name">${m.name}</div>
+        ${titleHtml}
+      </div>
+      <div class="group-edit-member-check">${_editGroupSelectedMembers.has(m.id) ? '✓' : ''}</div>
+    </div>`;
+    }).join('');
+  });
+  container.innerHTML = html;
+}
+
+function toggleGroupEditMember(id) {
+  if (_editGroupSelectedMembers.has(id)) {
+    _editGroupSelectedMembers.delete(id);
+  } else {
+    _editGroupSelectedMembers.add(id);
+  }
+  renderGroupEditMembers();
+}
+
+function submitGroupEdit() {
+  if (!_editGroupId) return;
+  const group = userGroups.find(g => g.id === _editGroupId);
+  if (!group) return;
+  const newName = document.getElementById('groupEditNameInput').value.trim();
+  if (!newName) { showToast('グループ名を入力してください'); return; }
+  if (_editGroupSelectedMembers.size === 0) { showToast('メンバーを1人以上選択してください'); return; }
+  group.name = newName;
+  group.emoji = _editGroupSelectedEmoji;
+  group.photoDataUrl = _editGroupPhotoDataUrl;
+  group.memberIds = Array.from(_editGroupSelectedMembers);
+  showToast(`"${group.name}" を更新しました`);
+  closeGroupEdit();
+  renderGroupList();
+  renderContactsGroups();
+  renderTalkMessagesList();
+  // スレッド画面が開いていれば更新
+  if (_currentGroupThreadId === group.id) {
+    const avatarEl = document.getElementById('groupThreadAvatarWrap');
+    if (avatarEl) avatarEl.innerHTML = renderGroupAvatar(group, 36);
+    document.getElementById('groupThreadName').textContent = group.name;
+    renderGroupThread(group.id);
+  }
+}
+
+function confirmDeleteGroup() {
+  if (!_editGroupId) return;
+  const group = userGroups.find(g => g.id === _editGroupId);
+  if (!group) return;
+  if (!confirm(`"${group.name}" を削除しますか？`)) return;
+  userGroups = userGroups.filter(g => g.id !== _editGroupId);
+  userGroups.forEach((g, i) => { g.order = i; });
+  showToast(`"${group.name}" を削除しました`);
+  closeGroupEdit();
+  renderGroupList();
+  renderContactsGroups();
+  renderTalkMessagesList();
+  // スレッド画面が開いていれば一覧に戻る
+  if (_currentGroupThreadId === group.id) {
+    closeGroupThreadScreen();
+  }
+}
+
+// ===== CONTACTS GROUPS 動的レンダリング =====
+function renderContactsGroups() {
+  const container = document.getElementById('contactsGroupsContainer');
+  if (!container) return;
+  const sorted = [...userGroups].sort((a, b) => a.order - b.order);
+  if (sorted.length === 0) {
+    container.innerHTML = '<div style="padding:16px;font-size:13px;color:var(--text-light);text-align:center;">グループがありません</div>';
+    return;
+  }
+  container.innerHTML = sorted.map(g => {
+    const members = getGroupMembersData(g.memberIds);
+    const memberRows = members.map(m => `
+      <div class="contacts-group-member-row" onclick="openDmChat('${m.id}','${m.name}','${m.avatar}')">
+        <div class="contacts-group-member-avatar">${m.avatar}</div>
+        <span class="contacts-group-member-name">${m.name}</span>
+      </div>`).join('');
+    return `
+      <div class="contacts-group-section" id="cgrp-${g.id}">
+        <div class="contacts-group-row" onclick="openGroupEdit('${g.id}')">
+          <div class="contacts-group-icon-wrap">${renderGroupAvatar(g, 36)}</div>
+          <div class="contacts-group-body">
+            <div class="contacts-group-name">${g.name}</div>
+            <div class="contacts-group-meta">${g.memberIds.length}人のメンバー</div>
+          </div>
+          <div class="contacts-group-right">
+            <button class="contacts-action-btn" onclick="event.stopPropagation();toggleContactsGroup('cgrp-${g.id}')" style="font-size:11px;padding:4px 8px;">▾</button>
+          </div>
+        </div>
+        <div class="contacts-group-body-expanded">
+          ${memberRows}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// 後方互換：旧来の sendAll/editSend 関数は openGroupThread にリダイレクト
+function sendAllFromContactsGroup(groupId) {
+  openGroupThread(groupId);
+}
+
+function editSendFromContactsGroup(groupId) {
+  openGroupThread(groupId);
+}
+
+// ===== 宇宙階級バッジ初期化 =====
+// 名前→userID マッピング（circle-member用）
+const CIRCLE_NAME_TO_ID = {
+  '田中 悠': 'yu_tanaka', '鈴木 里奈': 'rina_s', '佐藤 健太': 'kenta_s',
+  '伊藤 大輔': 'daisuke_ito', '高橋 美咲': 'misaki_t', '小林 亮': 'ryo_k',
+  '渡辺 彩': 'aya_w', '山田 彩香': 'ayaka_y', '中村 翔': 'sho_n',
+  '加藤 翔': 'kato_sho', '松田 恵': 'matsuda_e', '藤井 誠': 'fujii_m',
+  '木下 彩': 'kinoshita_a', '石川 拓': 'ishikawa_t', '清水 美穂': 'shimizu_m',
+  '野田 健一': 'noda_k',
+};
+
+function getCosmicTitle(userId) {
+  const profile = (typeof userProfiles !== 'undefined' && userProfiles[userId]) ? userProfiles[userId] : null;
+  return getTitle(profile ? profile.score : 0);
+}
+
+function initCosmicBadges() {
+  // data-userid属性付きバッジ
+  document.querySelectorAll('.member-cosmic-badge[data-userid]').forEach(el => {
+    const titleInfo = getCosmicTitle(el.dataset.userid);
+    el.textContent = titleInfo.emoji + ' ' + titleInfo.name;
+    el.style.background = 'rgba(0,0,0,0.06)';
+    el.style.color = titleInfo.color || 'var(--text-light)';
+  });
+  // circle-member要素に宇宙階級サブテキストを追加
+  document.querySelectorAll('.circle-member').forEach(el => {
+    if (el.querySelector('.circle-member-cosmic')) return; // 二重追加防止
+    const nameEl = el.querySelector('.circle-member-name');
+    if (!nameEl) return;
+    const name = nameEl.textContent.trim();
+    const uid = CIRCLE_NAME_TO_ID[name];
+    const titleInfo = getCosmicTitle(uid || '');
+    const cosmicEl = document.createElement('div');
+    cosmicEl.className = 'circle-member-cosmic';
+    cosmicEl.textContent = titleInfo.emoji + ' ' + titleInfo.name;
+    cosmicEl.style.color = titleInfo.color || 'var(--text-light)';
+    el.appendChild(cosmicEl);
+  });
+}
+
+// 初期描画
+(function initGroupSystem() {
+  renderContactsGroups();
+  renderTalkMessagesList();
+  initCosmicBadges();
+})();
 
 // ============================================================
 // ===== EVENT (招待) 機能 =====
@@ -11924,9 +13352,11 @@ function submitGroupCreate() {
 
 // 階級定義（groupCircleMembersから逆引き）
 const EV_TIERS = [
-  { key: '🔥 Core',    label: '🔥 Core',    desc: '最も近しい仲間' },
-  { key: '⚡ Trusted', label: '⚡ Trusted', desc: '信頼できる仲間' },
-  { key: '🌟 Close',   label: '🌟 Close',   desc: 'よく会う仲間' },
+  { key: 'Core',    label: '🔥 Core',    desc: '最も近しい仲間' },
+  { key: 'Orbit',   label: '💎 Orbit',   desc: '信頼できる仲間' },
+  { key: 'Halo',    label: '⭐ Halo',    desc: 'よく会う仲間' },
+  { key: 'Galaxy',  label: '🌌 Galaxy',  desc: '知り合いの仲間' },
+  { key: 'Connect', label: '🤝 Connect', desc: 'つながっている人' },
 ];
 // グループ定義（連絡先タブに登場するもの）
 const EV_GROUPS = [
