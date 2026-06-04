@@ -304,6 +304,61 @@
       white-space: nowrap;
     }
 
+    /* ===== STORY POP MODAL (中央ポン演出) ===== */
+    .story-pop-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 950;
+      opacity: 0;
+      transition: opacity 0.22s ease;
+      pointer-events: none;
+    }
+    .story-pop-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .story-pop-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: min(92vw, 400px);
+      max-height: 80vh;
+      transform: translate(-50%, -50%) scale(0.9);
+      opacity: 0;
+      transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), opacity 0.22s ease;
+      z-index: 951;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #111;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+    }
+    .story-pop-container.open {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .story-pop-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      z-index: 10;
+      background: rgba(0,0,0,0.5);
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      line-height: 1;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     /* ===== HOME ACTION BUTTONS ===== */
     .home-action-row {
       display: flex;
@@ -1093,6 +1148,26 @@
     }
     .stories-overlay.open {
       transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+
+    /* ===== STORIES POP-MODE: 中央スケール＋フェード（translateY一切なし） ===== */
+    .stories-overlay.pop-mode {
+      top: 50%;
+      left: 50%;
+      width: min(92vw, 400px);
+      max-width: 400px;
+      height: min(640px, 88vh);
+      border-radius: 18px;
+      transform: translate(-50%, -50%) scale(0.9);
+      opacity: 0;
+      transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), opacity 0.22s ease;
+      pointer-events: none;
+      z-index: 951;
+    }
+    .stories-overlay.pop-mode.open {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
       pointer-events: auto;
     }
 
@@ -3078,6 +3153,11 @@
       font-size: 20px;
       letter-spacing: 1px;
     }
+    /* 4ボタン並びのとき文字を少し小さく */
+    .ev-detail-cta-bar.four-btn .ev-cta-pill {
+      font-size: 12px;
+      padding: 12px 4px;
+    }
     /* RSVP ボタン（Partifulスタイル：行く主役） */
     .ev-rsvp-primary {
       flex: 2;
@@ -3328,6 +3408,290 @@
       font-size: 11px; color: rgba(255,255,255,0.5);
       display: flex; justify-content: space-between;
     }
+
+    /* ===== イベントカード 日付バッジ強調 ===== */
+    .invite-card-cover-date {
+      position: absolute;
+      top: 10px; right: 10px;
+      z-index: 2;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      background: linear-gradient(135deg, rgba(124,58,237,0.85), rgba(236,72,153,0.85));
+      border: 1px solid rgba(255,255,255,0.25);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 5px 12px;
+      border-radius: 20px;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    /* ===== 参加者 Instagram風 スタック ===== */
+    .ev-attendee-ig-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .ev-attendee-ig-stack {
+      display: flex;
+    }
+    .ev-attendee-ig-item {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 2px solid #0A0A0F;
+      display: flex; align-items: center; justify-content: center;
+      background: #334155;
+      font-size: 16px;
+      margin-left: -10px;
+      flex-shrink: 0;
+    }
+    .ev-attendee-ig-item:first-child { margin-left: 0; }
+    .ev-attendee-ig-names {
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+      cursor: pointer;
+      line-height: 1.4;
+    }
+    .ev-attendee-ig-names .tap-target {
+      text-decoration: underline;
+      text-decoration-color: rgba(255,255,255,0.35);
+      text-underline-offset: 2px;
+    }
+    .ev-attendee-ig-names .tap-target:active { opacity: 0.7; }
+
+    /* ===== 参加者全員リスト 右スライドインシート ===== */
+    #evAttendeesSheet {
+      position: fixed;
+      top: 0; right: 0; bottom: 0;
+      width: min(340px, 92vw);
+      background: #111216;
+      border-left: 1px solid rgba(255,255,255,0.08);
+      z-index: 9000;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -8px 0 32px rgba(0,0,0,0.5);
+    }
+    #evAttendeesSheet.open {
+      transform: translateX(0);
+    }
+    #evAttendeesSheetOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 8999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    #evAttendeesSheetOverlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .ev-attendees-sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
+    .ev-attendees-sheet-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .ev-attendees-sheet-close {
+      width: 32px; height: 32px;
+      border: none;
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7);
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ev-attendees-sheet-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0 32px;
+    }
+    .ev-attendees-sheet-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .ev-attendees-sheet-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: #334155;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .ev-attendees-sheet-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .ev-attendees-sheet-status {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 8px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .ev-attendees-sheet-status.going { background: rgba(34,197,94,0.22); color: #86EFAC; }
+    .ev-attendees-sheet-status.maybe { background: rgba(234,179,8,0.22); color: #FDE68A; }
+    .ev-attendees-sheet-status.skip  { background: rgba(239,68,68,0.22); color: #FCA5A5; }
+
+    /* ===== 参加者シート Instagram風レイアウト拡張 ===== */
+    .ev-attendees-sheet-item {
+      cursor: default;
+    }
+    .ev-attendees-sheet-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+    .ev-attendees-sheet-name-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+    .ev-attendees-sheet-tier {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .ev-attendees-follow-btn {
+      flex-shrink: 0;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .ev-attendees-follow-btn:active { opacity: 0.7; }
+    .ev-attendees-follow-btn.unfollow-state {
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .ev-attendees-follow-btn.follow-state {
+      background: #3B82F6;
+      color: #fff;
+    }
+
+    /* 主催イベント一覧をリッチカードで表示するためhub内の余白調整 */
+    #eventsHubList .invite-card { margin-left: 0; margin-right: 0; }
+
+    /* ===== 追加連絡ボトムシート ===== */
+    #evAddHistoryOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 8998;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    #evAddHistoryOverlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #evAddHistorySheet {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(100%);
+      width: 100%;
+      max-width: 430px;
+      background: #111216;
+      border-radius: 20px 20px 0 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      z-index: 8999;
+      padding: 0 0 32px;
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
+    }
+    #evAddHistorySheet.open {
+      transform: translateX(-50%) translateY(0);
+    }
+    .ev-add-history-handle {
+      width: 36px; height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.18);
+      margin: 12px auto 4px;
+    }
+    .ev-add-history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .ev-add-history-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .ev-add-history-close {
+      width: 28px; height: 28px;
+      border: none;
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.65);
+      border-radius: 50%;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ev-add-history-body {
+      padding: 16px;
+    }
+    .ev-add-history-textarea {
+      width: 100%;
+      min-height: 100px;
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      padding: 12px;
+      resize: none;
+      outline: none;
+      box-sizing: border-box;
+      font-family: inherit;
+      line-height: 1.5;
+    }
+    .ev-add-history-textarea::placeholder { color: rgba(255,255,255,0.3); }
+    .ev-add-history-send {
+      margin-top: 12px;
+      width: 100%;
+      padding: 13px 0;
+      background: #3B82F6;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .ev-add-history-send:active { opacity: 0.8; }
 
     /* ===== CONTACTS TAB (連絡先) ===== */
     .contacts-wrap { padding: 0 0 100px; }
@@ -4009,19 +4373,21 @@
       padding: 12px 16px 0;
     }
     .up-follow-btn {
-      height: 36px;
+      height: 40px;
       padding: 0 20px;
-      border-radius: 18px;
+      border-radius: 8px;
       border: 1.5px solid var(--primary);
       background: var(--primary);
       color: white;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
       transition: all 0.15s;
+      flex: 1;
     }
     .up-follow-btn.following {
       background: var(--bg);
@@ -4029,6 +4395,47 @@
       border-color: var(--border);
     }
     .up-follow-btn:active { opacity: 0.75; }
+
+    /* ===== USER PROFILE ACTION ROW (3-button: Follow / Message / +) ===== */
+    .up-action-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px 0;
+    }
+    .up-msg-btn {
+      height: 40px;
+      padding: 0;
+      border-radius: 8px;
+      border: none;
+      background: #EFEFEF;
+      color: #111111;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+      flex: 1;
+    }
+    .up-msg-btn:hover { background: #DBDBDB; }
+    .up-msg-btn:active { background: #C8C8C8; }
+    .up-add-btn {
+      height: 40px;
+      width: 40px;
+      border-radius: 8px;
+      border: none;
+      background: #EFEFEF;
+      color: #111111;
+      font-size: 18px;
+      font-weight: 400;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .up-add-btn:hover { background: #DBDBDB; }
+    .up-add-btn:active { background: #C8C8C8; }
 
     /* ===== USER PROFILE TABS ===== */
     .up-tab-bar {
@@ -4592,6 +4999,35 @@
     .cmp-photo-frame .cmp-layer-handle.corner.bl { bottom: -8px; left: -8px; }
     .cmp-photo-frame .cmp-layer-handle.corner.br { bottom: -8px; right: -8px; }
     .cmp-photo-frame .cmp-layer-handle.rotate { top: -32px; }
+
+    /* ===== イベントシェアカード ハンドル ===== */
+    .cmp-ev-card-handle {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid rgba(0,0,0,0.4);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      cursor: pointer;
+      touch-action: none;
+      z-index: 25;
+      pointer-events: auto;
+    }
+    .cmp-ev-handle-tl { top: -9px; left: -9px; cursor: nwse-resize; }
+    .cmp-ev-handle-tr { top: -9px; right: -9px; cursor: nesw-resize; }
+    .cmp-ev-handle-bl { bottom: -9px; left: -9px; cursor: nesw-resize; }
+    .cmp-ev-handle-br { bottom: -9px; right: -9px; cursor: nwse-resize; }
+    .cmp-ev-handle-rot {
+      top: -34px; left: 50%;
+      transform: translateX(-50%);
+      background: #4aa8ff;
+      border-color: rgba(255,255,255,0.9);
+      cursor: grab;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #fff;
+    }
+    #cmpEvCard { outline: 1.5px dashed rgba(255,255,255,0.5); outline-offset: 2px; }
 
     /* ボトムコントロールエリア */
     .cmp-controls {
@@ -7367,7 +7803,7 @@
         <div class="events-hub-wrap">
           <button class="events-create-btn" onclick="openEventCreate()">
             <span class="events-create-icon">＋</span>
-            <span>新しい招待を作る</span>
+            <span>新しいイベントを作る</span>
           </button>
           <div id="eventsHubList"></div>
         </div>
@@ -7472,6 +7908,30 @@
     <div class="screen" id="screen-event-detail">
       <div class="ev-detail-body" id="evDetailBody"></div>
       <div class="ev-detail-cta-bar" id="evDetailCtaBar"></div>
+    </div>
+
+    <!-- ===== 参加者全員リスト 右スライドインシート ===== -->
+    <div id="evAttendeesSheetOverlay" onclick="closeAttendeesSheet()"></div>
+    <div id="evAttendeesSheet">
+      <div class="ev-attendees-sheet-header">
+        <div class="ev-attendees-sheet-title" id="evAttendeesSheetTitle">参加者</div>
+        <button class="ev-attendees-sheet-close" onclick="closeAttendeesSheet()">✕</button>
+      </div>
+      <div class="ev-attendees-sheet-body" id="evAttendeesSheetBody"></div>
+    </div>
+
+    <!-- ===== 追加連絡 ボトムシート ===== -->
+    <div id="evAddHistoryOverlay" onclick="closeEventAddHistory()"></div>
+    <div id="evAddHistorySheet">
+      <div class="ev-add-history-handle"></div>
+      <div class="ev-add-history-header">
+        <div class="ev-add-history-title">追加連絡を送る</div>
+        <button class="ev-add-history-close" onclick="closeEventAddHistory()">✕</button>
+      </div>
+      <div class="ev-add-history-body">
+        <textarea class="ev-add-history-textarea" id="evAddHistoryInput" placeholder="参加者全員への連絡を入力..."></textarea>
+        <button class="ev-add-history-send" onclick="submitEventAddHistory()">参加者に送信</button>
+      </div>
     </div>
 
     <!-- ===== SEARCH SCREEN ===== -->
@@ -7697,8 +8157,10 @@
         <div class="up-header-name" id="upHeaderName"></div>
       </div>
       <div id="upPokemonCard"></div>
-      <div class="up-follow-row">
+      <div class="up-action-row" id="upActionRow">
         <button class="up-follow-btn" id="upFollowBtn" onclick="toggleFollow()">Follow</button>
+        <button class="up-msg-btn" id="upMsgBtn" onclick="openDmFromProfile()">メッセージ</button>
+        <button class="up-add-btn" id="upAddBtn" onclick="upAddSuggested()" title="おすすめユーザー追加">＋</button>
       </div>
       <!-- タブ切り替え -->
       <div class="up-tab-bar">
@@ -8116,6 +8578,15 @@
   </div>
 </div>
 
+<!-- EVENT SHARE ACTION SHEET -->
+<div class="action-sheet-overlay" id="evShareSheet" onclick="closeEvShareSheet()">
+  <div class="action-sheet" onclick="event.stopPropagation()">
+    <div class="action-sheet-handle"></div>
+    <div class="action-sheet-title">このイベントをシェア</div>
+    <div id="evShareSheetBody"></div>
+  </div>
+</div>
+
 <!-- ADD MEMBER BOTTOM SHEET -->
 <div class="add-member-overlay" id="addMemberOverlay" onclick="closeAddMemberSheet()">
   <div class="add-member-sheet" onclick="event.stopPropagation()">
@@ -8325,11 +8796,18 @@
 </div>
 
 <!-- STORIES OVERLAY -->
+<!-- ===== STORY POP MODAL ===== -->
+<div class="story-pop-backdrop" id="storyPopBackdrop" onclick="closeStoryPop()"></div>
+<div class="story-pop-container" id="storyPopContainer">
+  <button class="story-pop-close" onclick="closeStoryPop()">✕</button>
+  <div id="storyPopInner" style="flex:1;overflow-y:auto;"></div>
+</div>
+
 <div class="stories-overlay" id="storiesOverlay">
   <!-- progress bars -->
   <div class="stories-progress-bar" id="storiesProgressBar"></div>
   <!-- close button (top right) -->
-  <button class="stories-close-btn" onclick="closeStories()" style="position:absolute;top:22px;right:12px;z-index:10;">✕</button>
+  <button class="stories-close-btn" onclick="document.getElementById('storiesOverlay').classList.contains('pop-mode') ? closeStoryPop() : closeStories()" style="position:absolute;top:22px;right:12px;z-index:10;">✕</button>
   <!-- radiance label (shown conditionally) -->
   <div class="stories-radiance-label" id="storiesRadianceLabel" style="display:none;">✨ 強い光が届きました</div>
   <!-- slide background -->
@@ -8931,23 +9409,36 @@
   function openStories(userId) {
     const user = storiesData.find(u => u.id === userId);
     if (!user) return;
+    const _ov = document.getElementById('storiesOverlay');
+    _ov.classList.remove('pop-mode'); // 全画面ビューアは pop-mode を使わない（下から上がる従来挙動）
     currentStoriesUserId = userId;
     currentStoriesIdx = 0;
-    document.getElementById('storiesOverlay').classList.add('open');
+    _ov.classList.add('open');
     renderStorySlide();
     startStoriesTimer();
   }
 
-  function closeStories() {
+  // 共通後始末（タイマー停止・seen記録・状態リセット）
+  // closeStories / closeStoryPop 両方から呼ぶ。直接 closeStories を呼ばないこと（ループ防止）
+  function _storiesTeardown() {
     stopStoriesTimer();
-    document.getElementById('storiesOverlay').classList.remove('open');
-    // Mark as seen
     if (currentStoriesUserId) {
       storiesSeen[currentStoriesUserId] = true;
       buildHomeStories();
     }
     currentStoriesUserId = null;
     currentStoriesIdx = 0;
+  }
+
+  function closeStories() {
+    const _ov = document.getElementById('storiesOverlay');
+    // pop-mode 中は closeStoryPop に委譲（translateY スライドを防ぐ）
+    if (_ov && _ov.classList.contains('pop-mode')) {
+      closeStoryPop();
+      return;
+    }
+    _ov.classList.remove('open');
+    _storiesTeardown();
   }
 
   function renderStorySlide() {
@@ -9333,13 +9824,25 @@
     currentProfileUserId = userId;
     document.getElementById('upHeaderName').textContent = user.name;
     document.getElementById('upPokemonCard').innerHTML = buildPokemonCard(user);
+    const isSelfProfile = (userId === 'taisho_k');
     const followBtn = document.getElementById('upFollowBtn');
-    if (followState[userId]) {
-      followBtn.textContent = 'フォロー中 ▾';
-      followBtn.classList.add('following');
+    const msgBtn = document.getElementById('upMsgBtn');
+    const addBtn = document.getElementById('upAddBtn');
+    if (isSelfProfile) {
+      followBtn.style.display = 'none';
+      if (msgBtn) msgBtn.style.display = 'none';
+      if (addBtn) addBtn.style.display = 'none';
     } else {
-      followBtn.textContent = 'Follow';
-      followBtn.classList.remove('following');
+      followBtn.style.display = '';
+      if (msgBtn) msgBtn.style.display = '';
+      if (addBtn) addBtn.style.display = '';
+      if (followState[userId]) {
+        followBtn.textContent = 'フォロー中 ▾';
+        followBtn.classList.add('following');
+      } else {
+        followBtn.textContent = 'Follow';
+        followBtn.classList.remove('following');
+      }
     }
 
     // Build identity section if data exists
@@ -9414,6 +9917,27 @@
       btn.classList.remove('following');
       showToast('フォローを解除しました');
     }
+  }
+
+  // ===== OPEN DM FROM USER PROFILE =====
+  function openDmFromProfile() {
+    if (!currentProfileUserId) return;
+    const user = userProfiles[currentProfileUserId];
+    if (!user) return;
+    // closeUserProfile() の前に必要な値を退避（close後にcurrentProfileUserIdがnullになるため）
+    const userId = currentProfileUserId;
+    const avatar = user.avatarEmoji || '👤';
+    const name = user.name || userId;
+    closeUserProfile();
+    openDmChat(userId, name, avatar);
+  }
+
+  // ===== ADD SUGGESTED USER FROM PROFILE =====
+  function upAddSuggested() {
+    if (!currentProfileUserId) return;
+    const user = userProfiles[currentProfileUserId];
+    const name = user ? user.name : currentProfileUserId;
+    showToast('おすすめユーザー: ' + name);
   }
 
   function renderUserPosts(user) {
@@ -9801,6 +10325,10 @@
   let cmpBgMode      = 'grad';   // 'grad' | 'photo' | 'gif'
   let cmpCurrentGrad = CMP_HYPERAY_GRAD;
   let cmpTextColor   = '#ffffff';
+
+  // ===== イベントシェアモード =====
+  let cmpEvShareMode = false;
+  let cmpEvShareData = null; // イベントオブジェクトのスナップショット
   let cmpFontFamily  = "'Noto Sans JP', sans-serif";
   let cmpFontWeight  = '700';
   let cmpPhotoEl     = null;     // 写真操作用
@@ -10819,7 +11347,8 @@
   function cmpPost() {
     cmpPruneEmptyLayers();
     const hasText = cmpLayers.some(l => l.text && l.text.trim());
-    if (!hasText && cmpBgMode !== 'photo') {
+    // イベントシェアモードはカードがあれば無テキストでもOK
+    if (!hasText && cmpBgMode !== 'photo' && !cmpEvShareMode) {
       showToast('テキストを入力してください');
       return;
     }
@@ -10915,27 +11444,52 @@
       .filter(l => l.text && l.text.trim())
       .map(l => ({ ...l }));
 
+    const postGrad = cmpBgMode === 'grad' ? cmpCurrentGrad : 'linear-gradient(135deg,#020408,#1E3A5F)';
     const userData = storiesData.find(u => u.id === 'taisho_k');
     if (userData) {
       userData.stories.unshift({
-        text: textContent || '(画像投稿)',
+        text: textContent || (cmpEvShareMode && cmpEvShareData ? cmpEvShareData.title : '(画像投稿)'),
         time: 'たった今',
         likes: 0,
         shares: 0,
         tags: [],
-        grad: cmpBgMode === 'grad' ? cmpCurrentGrad : 'linear-gradient(135deg,#020408,#1E3A5F)',
+        grad: postGrad,
         textLayers: textLayersSnapshot,
         urlData: cmpUrlData || null,
+        evShareId: cmpEvShareMode && cmpEvShareData ? cmpEvShareData.id : null,
       });
       userData.hasNew = true;
       storiesSeen['taisho_k'] = false;
     }
+
+    // イベントシェアモードの場合、フィードにも追加
+    if (cmpEvShareMode && cmpEvShareData) {
+      const evData = cmpEvShareData;
+      const newPostId = 'ev-share-' + Date.now();
+      feedPosts.unshift({
+        id: newPostId,
+        userId: 'taisho_k',
+        name: '木村 誠司',
+        avatar: '🧔',
+        avatarClass: 'avatar-inner',
+        score: 50879,
+        time: 'たった今',
+        body: textContent || ('📅 ' + evData.title),
+        grad: postGrad,
+        likes: 0,
+        shares: 0,
+        isSun: false,
+        evShareId: evData.id,
+      });
+    }
+
     cmpClosePublishModal();
     showToast('投稿しました！');
     setTimeout(() => {
       cmpReset();
       switchTab('home');
       buildHomeStories();
+      buildHomeFeed();
     }, 800);
   }
 
@@ -10948,6 +11502,11 @@
 
   // リセット
   function cmpReset() {
+    cmpEvShareMode = false;
+    cmpEvShareData = null;
+    // イベントカードDOMを削除
+    const existingCard = document.getElementById('cmpEvCard');
+    if (existingCard) existingCard.remove();
     cmpBgMode = 'grad';
     cmpCurrentGrad = CMP_HYPERAY_GRAD;
     cmpCurrentGradIndex = 0;
@@ -11026,6 +11585,152 @@
     if (document.getElementById('cmpTextLayers')) {
       cmpCreateTextLayer(false);
     }
+  }
+
+  // ===== イベントシェアカード（ステッカー）描画 =====
+  function cmpEvRenderCard() {
+    if (!cmpEvShareMode || !cmpEvShareData) return;
+    const canvas = document.getElementById('cmpCanvas');
+    if (!canvas) return;
+    // 既存カードがあれば削除
+    const old = document.getElementById('cmpEvCard');
+    if (old) old.remove();
+
+    const ev = cmpEvShareData;
+    const weekdayArr = ['日','月','火','水','木','金','土'];
+    const dEv = new Date(ev.date);
+    const dateShortEv = `${dEv.getMonth()+1}月${dEv.getDate()}日(${weekdayArr[dEv.getDay()]}) ${ev.time}`;
+
+    // イベント背景CSS
+    let cardBg = '';
+    if (ev.bgPattern === 'black' || ev.bgPattern === 'none') {
+      cardBg = 'background:#000;';
+    } else {
+      const ecGrad = EV_BG_GRADIENTS[ev.bgGradient || 0] || '#0A0A0F';
+      const ecPat = EV_BG_PATTERNS[ev.bgPattern] ? EV_BG_PATTERNS[ev.bgPattern].apply : null;
+      if (ecPat) {
+        cardBg = `background:${ecPat}, ${ecGrad};`;
+      } else {
+        cardBg = `background:${ecGrad};`;
+      }
+    }
+
+    const card = document.createElement('div');
+    card.id = 'cmpEvCard';
+    card.style.cssText = `
+      position:absolute;
+      left:50%; top:50%;
+      width:220px;
+      border-radius:16px;
+      overflow:hidden;
+      box-shadow:0 6px 28px rgba(0,0,0,0.6);
+      cursor:grab;
+      user-select:none;
+      touch-action:none;
+      z-index:20;
+      ${cardBg}
+      transform:translate(-50%,-50%) rotate(0deg) scale(1);
+    `;
+    card.innerHTML = `
+      <div style="padding:14px 14px 12px;position:relative;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.5);margin-bottom:5px;text-transform:uppercase;">HYPERAY Event</div>
+        <div style="font-size:15px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:8px;text-shadow:0 1px 6px rgba(0,0,0,0.4);">${(ev.title||'').replace(/</g,'&lt;')}</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.85);display:flex;align-items:center;gap:4px;margin-bottom:3px;">📅 ${dateShortEv}</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.85);display:flex;align-items:center;gap:4px;margin-bottom:8px;">📍 ${(ev.place||'').replace(/</g,'&lt;')}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:9px;color:rgba(255,255,255,0.6);">主催: ${(ev.hostName||'').replace(/</g,'&lt;')}</div>
+          <div style="font-size:8px;font-weight:800;letter-spacing:1px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;">HYPERAY</div>
+        </div>
+      </div>
+      <div class="cmp-ev-card-handle cmp-ev-handle-tl" data-eh="tl"></div>
+      <div class="cmp-ev-card-handle cmp-ev-handle-tr" data-eh="tr"></div>
+      <div class="cmp-ev-card-handle cmp-ev-handle-bl" data-eh="bl"></div>
+      <div class="cmp-ev-card-handle cmp-ev-handle-br" data-eh="br"></div>
+      <div class="cmp-ev-card-handle cmp-ev-handle-rot" data-eh="rot">↻</div>
+    `;
+    canvas.appendChild(card);
+    cmpEvAttachDrag(card);
+  }
+
+  // イベントカードのドラッグ・スケール・回転
+  function cmpEvAttachDrag(card) {
+    let evX = 0, evY = 0, evScale = 1, evRot = 0;
+    let isDragging = false, isHandling = false;
+    let startPX = 0, startPY = 0;
+    let startEvX = 0, startEvY = 0;
+    let handleType = null;
+    let startDist = 0, startScale = 1;
+    let startAngle = 0, startRot = 0;
+    let activePointers = {};
+
+    function applyTransform() {
+      card.style.transform = `translate(calc(-50% + ${evX}px), calc(-50% + ${evY}px)) rotate(${evRot}deg) scale(${evScale})`;
+    }
+
+    // ポインタダウン
+    card.addEventListener('pointerdown', (e) => {
+      // ハンドルかどうか確認
+      const handleEl = e.target.closest('[data-eh]');
+      if (handleEl) {
+        handleType = handleEl.dataset.eh;
+        isHandling = true;
+        e.stopPropagation();
+        e.preventDefault();
+        handleEl.setPointerCapture(e.pointerId);
+        activePointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+        startPX = e.clientX; startPY = e.clientY;
+        startScale = evScale; startRot = evRot;
+        startEvX = evX; startEvY = evY;
+        // カード中心をcanvas内の座標で算出
+        const cardRect = card.getBoundingClientRect();
+        const cx = cardRect.left + cardRect.width / 2;
+        const cy = cardRect.top + cardRect.height / 2;
+        startAngle = Math.atan2(e.clientY - cy, e.clientX - cx);
+        startDist = Math.hypot(e.clientX - cx, e.clientY - cy);
+        return;
+      }
+      // ドラッグ
+      isDragging = true;
+      e.stopPropagation();
+      e.preventDefault();
+      card.setPointerCapture(e.pointerId);
+      activePointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+      startPX = e.clientX; startPY = e.clientY;
+      startEvX = evX; startEvY = evY;
+    });
+
+    card.addEventListener('pointermove', (e) => {
+      if (!isDragging && !isHandling) return;
+      e.preventDefault();
+      if (isDragging) {
+        evX = startEvX + (e.clientX - startPX);
+        evY = startEvY + (e.clientY - startPY);
+        applyTransform();
+      }
+      if (isHandling && handleType) {
+        const cardRect = card.getBoundingClientRect();
+        const cx = cardRect.left + cardRect.width / 2;
+        const cy = cardRect.top + cardRect.height / 2;
+        const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+        const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
+        if (handleType === 'rot') {
+          evRot = startRot + (angle - startAngle) * (180 / Math.PI);
+        } else {
+          // スケール：初期距離との比率
+          evScale = Math.max(0.3, Math.min(4, startScale * (dist / (startDist || 1))));
+        }
+        applyTransform();
+      }
+    });
+
+    const endDrag = (e) => {
+      isDragging = false;
+      isHandling = false;
+      handleType = null;
+      delete activePointers[e.pointerId];
+    };
+    card.addEventListener('pointerup', endDrag);
+    card.addEventListener('pointercancel', endDrag);
   }
 
   // init
@@ -11215,12 +11920,18 @@
     storiesData.forEach(user => {
       const isSelf = user.id === 'taisho_k';
       const isSeen = storiesSeen[user.id];
-      const ringClass = (!isSeen && user.hasNew) ? 'has-new' : 'seen';
+      const hasNewStory = user.hasNew && !isSeen;
+      const ringClass = hasNewStory ? 'has-new' : 'seen';
       const firstName = isSelf ? '自分' : user.name.split(' ')[0];
 
       const item = document.createElement('div');
       item.className = 'home-story-item';
-      item.onclick = () => openStories(user.id);
+      // 分岐：ストーリー有 → 中央ポン演出 / ストーリー無 → プロフィール遷移
+      if (user.hasNew && user.stories && user.stories.length > 0) {
+        item.onclick = () => openStoryPop(user.id);
+      } else {
+        item.onclick = () => openUserProfile(user.id);
+      }
       item.innerHTML = `
         <div class="home-story-ring ${ringClass}">
           <div class="home-story-ring-inner">${user.avatar}</div>
@@ -11419,6 +12130,21 @@
   // ===== HOME FEED DATA =====
   const feedPosts = [
     {
+      id: 'ev-share-demo',
+      userId: 'taisho_k',
+      name: '木村 誠司',
+      avatar: '🧔',
+      avatarClass: 'avatar-inner',
+      score: 50879,
+      time: 'たった今',
+      body: '📅 Yogbo淡路島保養所 お泊り会',
+      grad: 'linear-gradient(135deg,#020408,#1E3A5F)',
+      likes: 0,
+      shares: 0,
+      isSun: false,
+      evShareId: 'ev-demo-1',
+    },
+    {
       id: 'f1',
       userId: 'sarah_ai',
       name: 'Sarah Chen',
@@ -11606,7 +12332,10 @@
           ? `background-image: url(${ev.coverImage}); background-position: ${coverPos2};`
           : '';
         const labelText = ev.isPublic ? '📅 オープンイベント' : '📅 招待';
+        // ホームのタイムラインに出るイベントカードは全て「招待されている」扱い（大将方針：表示されてる時点で招待）
+        const homeInviteLabel = `<div style="padding:6px 12px 2px;"><span style="font-size:11px;font-weight:700;color:#FCD34D;letter-spacing:0.03em;">あなたが招待されています（限定）</span></div>`;
         card.innerHTML = `
+          ${homeInviteLabel}
           <div class="invite-card-cover" style="${coverBg}">
             <div class="invite-card-label">${labelText}</div>
             <div class="invite-card-cover-date">${dateShort} ${ev.time}</div>
@@ -11655,7 +12384,12 @@
         border: 1px solid rgba(255,255,255,0.12);
         transition: transform 0.15s;
       `;
-      card.onclick = () => openFeedFs(idx);
+      // イベントシェア投稿はイベント詳細、通常はフルスクリーンビューアー
+      if (post.evShareId) {
+        card.onclick = () => openEventDetail(post.evShareId, 'home');
+      } else {
+        card.onclick = () => openFeedFs(idx);
+      }
 
       const sunLabel = isSun ? `<div style="display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,0.22);border:1px solid rgba(245,158,11,0.45);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;color:#FCD34D;margin-bottom:6px;">✨ 強い光が届きました</div>` : '';
 
@@ -11663,30 +12397,92 @@
       const snippet = snippetText.length > 80 ? snippetText.slice(0, 80) + '…<span style="opacity:0.6;">続きを読む</span>' : snippetText;
 
       const scoreDisp = formatRS(post.score);
-      card.innerHTML = `
-        <div style="position:absolute;inset:0;background:${overlayGrad};pointer-events:none;"></div>
-        <!-- 上部: ユーザー情報 -->
-        <div style="position:absolute;top:0;left:0;right:0;padding:12px 14px 0;z-index:2;">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${post.userId}')">
-              <div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;border:1.5px solid rgba(255,255,255,0.5);">${post.avatar}</div>
-              <div>
-                <div style="font-size:13px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.5);">${post.name}</div>
-                <div style="font-size:11px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,0.5);color:${titleInfo.color};">${titleInfo.emoji} ${titleInfo.name} <span style="opacity:0.75;font-weight:600;">(${scoreDisp})</span></div>
+
+      // イベントシェア投稿は専用ビジュアル
+      if (post.evShareId) {
+        const sharedEv = typeof eventsData !== 'undefined' ? eventsData.find(e => e.id === post.evShareId) : null;
+        let evCardInner = '';
+        if (sharedEv) {
+          const weekdayArr2 = ['日','月','火','水','木','金','土'];
+          const dEv = new Date(sharedEv.date);
+          const dateShortEv = `${dEv.getMonth()+1}月${dEv.getDate()}日(${weekdayArr2[dEv.getDay()]}) ${sharedEv.time}`;
+          // イベント背景をインラインスタイルで再現
+          let evCardBgStyle = '';
+          if (sharedEv.bgPattern === 'black' || sharedEv.bgPattern === 'none') {
+            evCardBgStyle = 'background:#000;';
+          } else {
+            const ecGrad = EV_BG_GRADIENTS[sharedEv.bgGradient || 0] || '#0A0A0F';
+            const ecPat = EV_BG_PATTERNS[sharedEv.bgPattern] ? EV_BG_PATTERNS[sharedEv.bgPattern].apply : null;
+            if (ecPat) {
+              evCardBgStyle = `background:${ecPat}, ${ecGrad};`;
+            } else {
+              evCardBgStyle = `background:${ecGrad};`;
+            }
+          }
+          evCardInner = `
+            <div style="position:absolute;inset:0;background:${overlayGrad};pointer-events:none;z-index:1;"></div>
+            <!-- 上部: ユーザー情報 -->
+            <div style="position:absolute;top:0;left:0;right:0;padding:10px 12px 0;z-index:3;">
+              <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${post.userId}')">
+                <div style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;border:1.5px solid rgba(255,255,255,0.5);">${post.avatar}</div>
+                <div>
+                  <div style="font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.5);">${post.name}</div>
+                  <div style="font-size:10px;color:rgba(255,255,255,0.7);">イベントをシェア</div>
+                </div>
               </div>
             </div>
+            <!-- 中央: イベントカード -->
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;width:82%;max-width:260px;">
+              <div style="border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.5);${evCardBgStyle}">
+                <div style="padding:14px 14px 12px;">
+                  <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,0.55);margin-bottom:6px;">HYPERAY EVENT</div>
+                  <div style="font-size:14px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:8px;text-shadow:0 1px 4px rgba(0,0,0,0.4);">${escapeHtml(sharedEv.title)}</div>
+                  <div style="font-size:10px;color:rgba(255,255,255,0.8);margin-bottom:3px;">📅 ${dateShortEv}</div>
+                  <div style="font-size:10px;color:rgba(255,255,255,0.8);">📍 ${escapeHtml(sharedEv.place)}</div>
+                </div>
+              </div>
+            </div>
+            <!-- 下部: テキスト & いいね -->
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 12px;z-index:3;">
+              ${post.body && post.body !== '📅 ' + sharedEv.title ? `<div style="font-size:12px;color:#fff;opacity:0.9;margin-bottom:4px;text-shadow:0 1px 3px rgba(0,0,0,0.5);">${escapeHtml(post.body.slice(0,50))}</div>` : ''}
+              <div style="font-size:11px;color:#fff;opacity:0.65;">♡ ${post.likes || 0}　🔄 ${post.shares || 0}</div>
+            </div>
+          `;
+        } else {
+          evCardInner = `
+            <div style="position:absolute;inset:0;background:${overlayGrad};pointer-events:none;"></div>
+            <div style="position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);padding:0 14px;z-index:2;pointer-events:none;">
+              <div style="font-size:13px;font-weight:600;color:#fff;text-align:center;">📅 イベント</div>
+            </div>
+          `;
+        }
+        card.innerHTML = evCardInner;
+      } else {
+        card.innerHTML = `
+          <div style="position:absolute;inset:0;background:${overlayGrad};pointer-events:none;"></div>
+          <!-- 上部: ユーザー情報 -->
+          <div style="position:absolute;top:0;left:0;right:0;padding:12px 14px 0;z-index:2;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${post.userId}')">
+                <div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;border:1.5px solid rgba(255,255,255,0.5);">${post.avatar}</div>
+                <div>
+                  <div style="font-size:13px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.5);">${post.name}</div>
+                  <div style="font-size:11px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,0.5);color:${titleInfo.color};">${titleInfo.emoji} ${titleInfo.name} <span style="opacity:0.75;font-weight:600;">(${scoreDisp})</span></div>
+                </div>
+              </div>
+            </div>
+            ${sunLabel}
           </div>
-          ${sunLabel}
-        </div>
-        <!-- 中央: 投稿テキスト -->
-        <div style="position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);padding:0 14px;z-index:2;pointer-events:none;">
-          <div style="font-size:13px;font-weight:600;color:#fff;line-height:1.55;text-shadow:0 1px 4px rgba(0,0,0,0.6);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${snippet}</div>
-        </div>
-        <!-- 下部: いいね・転用数 -->
-        <div style="position:absolute;bottom:0;left:0;right:0;padding:12px 14px;z-index:2;">
-          <div style="font-size:12px;color:#fff;opacity:0.75;text-shadow:0 1px 3px rgba(0,0,0,0.5);">♡ ${post.likes || 0}　🔄 ${post.shares || 0}</div>
-        </div>
-      `;
+          <!-- 中央: 投稿テキスト -->
+          <div style="position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);padding:0 14px;z-index:2;pointer-events:none;">
+            <div style="font-size:13px;font-weight:600;color:#fff;line-height:1.55;text-shadow:0 1px 4px rgba(0,0,0,0.6);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${snippet}</div>
+          </div>
+          <!-- 下部: いいね・転用数 -->
+          <div style="position:absolute;bottom:0;left:0;right:0;padding:12px 14px;z-index:2;">
+            <div style="font-size:12px;color:#fff;opacity:0.75;text-shadow:0 1px 3px rgba(0,0,0,0.5);">♡ ${post.likes || 0}　🔄 ${post.shares || 0}</div>
+          </div>
+        `;
+      }
       container.appendChild(card);
     });
   }
@@ -12825,6 +13621,27 @@ function relativeTime(isoStr) {
   return Math.floor(diff / 86400) + '日前';
 }
 
+// 履歴タイムスタンプ用：「YYYY-MM-DD HH:MM」形式 → 相対表記（30日超は日付表示）
+function formatRelativeTime(timeStr) {
+  if (!timeStr) return '';
+  // YYYY-MM-DD HH:MM → ISO に変換してパース
+  const iso = timeStr.replace(' ', 'T') + ':00';
+  const then = new Date(iso);
+  if (isNaN(then.getTime())) return timeStr;
+  const now = new Date();
+  const diffMs = now - then;
+  const diffSec = Math.floor(diffMs / 1000);
+  if (diffSec < 60) return 'たった今';
+  if (diffSec < 3600) return Math.floor(diffSec / 60) + '分前';
+  if (diffSec < 86400) return Math.floor(diffSec / 3600) + '時間前';
+  const diffDays = Math.floor(diffMs / 86400000);
+  if (diffDays <= 30) return diffDays + '日前';
+  // 30日超は従来の日付表示
+  const m = then.getMonth() + 1;
+  const d = then.getDate();
+  return m + '月' + d + '日';
+}
+
 // ===== GROUP LIST SCREEN =====
 let _prevScreenBeforeGroupList = null;
 let _prevScreenBeforeGroupThread = null;
@@ -13586,14 +14403,14 @@ function buildEventsHub() {
   if (hosted.length === 0) {
     html += '<div class="events-empty">まだ主催したイベントはありません</div>';
   } else {
-    hosted.forEach(ev => { html += renderEventRow(ev); });
+    hosted.forEach(ev => { html += renderEvInviteCard(ev); });
   }
 
   html += '<div class="events-section-title">📥 招待されたもの</div>';
   if (invited.length === 0) {
     html += '<div class="events-empty">まだ招待はありません</div>';
   } else {
-    invited.forEach(ev => { html += renderEventRow(ev); });
+    invited.forEach(ev => { html += renderEvInviteCard(ev); });
   }
 
   list.innerHTML = html;
@@ -13628,6 +14445,45 @@ function renderEventRow(ev) {
         <div class="events-row-title">${escapeHtml(ev.title)}</div>
         <div class="events-row-meta">${ev.time} · ${escapeHtml(ev.place)}</div>
         ${statusHtml}
+      </div>
+    </div>
+  `;
+}
+
+// ===== ホームのinvite-cardと共通のリッチカード（主催イベント一覧用） =====
+function renderEvInviteCard(ev) {
+  const weekdayArr = ['日','月','火','水','木','金','土'];
+  const d = new Date(ev.date);
+  const dateShort = `${d.getMonth()+1}/${d.getDate()}(${weekdayArr[d.getDay()]})`;
+  const goingCount = Object.values(ev.responses).filter(r => r === 'going').length;
+  const coverPos = ev.coverPos ? `${ev.coverPos.x}% ${ev.coverPos.y}%` : 'center';
+  const coverBg = ev.coverImage
+    ? `background-image: url(${ev.coverImage}); background-position: ${coverPos};`
+    : '';
+  const labelText = ev.hostId === EV_SELF_ID ? '📅 主催' : (ev.isPublic ? '📅 オープンイベント' : '📅 招待');
+  const myR = ev.responses[EV_SELF_ID];
+  const cls = (k) => (myR === k ? `active ${k}` : '');
+  return `
+    <div class="invite-card" onclick="openEventDetail('${ev.id}')">
+      <div class="invite-card-cover" style="${coverBg}">
+        <div class="invite-card-label">${labelText}</div>
+        <div class="invite-card-cover-date">${dateShort} ${ev.time}</div>
+        <div class="invite-card-cover-overlay"></div>
+      </div>
+      <div class="invite-card-body">
+        <div class="invite-card-title">${escapeHtml(ev.title)}</div>
+        <div class="invite-card-host">主催: ${escapeHtml(ev.hostName)}</div>
+        <div class="invite-card-meta"><span class="ico">📍</span>${escapeHtml(ev.place)}</div>
+        ${ev.message ? `<div class="invite-card-msg">${escapeHtml(ev.message)}</div>` : ''}
+        <div class="invite-card-actions">
+          <button class="invite-card-btn ${cls('going')}" onclick="event.stopPropagation(); setInviteResponseFromFeed('${ev.id}','going')">✓ 行く</button>
+          <button class="invite-card-btn ${cls('maybe')}" onclick="event.stopPropagation(); setInviteResponseFromFeed('${ev.id}','maybe')">? 検討</button>
+          <button class="invite-card-btn ${cls('skip')}"  onclick="event.stopPropagation(); setInviteResponseFromFeed('${ev.id}','skip')">✗ 行けない</button>
+        </div>
+        <div class="invite-card-footer">
+          <span>✓ ${goingCount}人が参加予定</span>
+          ${ev.deadline ? `<span>締切 ${ev.deadline}</span>` : '<span></span>'}
+        </div>
       </div>
     </div>
   `;
@@ -13785,6 +14641,57 @@ function reopenEventFromSheet(eventId) {
 function deleteEventFromSheet(eventId) {
   closeActionSheet();
   setTimeout(() => deleteEventFromDetail(eventId), 150);
+}
+
+// ===== イベントシェア機能 =====
+function openEvShareSheet(eventId) {
+  const body = document.getElementById('evShareSheetBody');
+  body.innerHTML = `
+    <div class="action-sheet-item" onclick="evShareCopyLink('${eventId}')">
+      <span class="action-icon">🔗</span><span>リンクをコピー</span>
+    </div>
+    <div class="action-sheet-item" onclick="openEvShareComposer('${eventId}')">
+      <span class="action-icon">✈️</span><span>投稿でシェア</span>
+    </div>
+    <div class="action-sheet-item" onclick="closeEvShareSheet()" style="justify-content:center;">
+      <span>キャンセル</span>
+    </div>
+  `;
+  document.getElementById('evShareSheet').classList.add('show');
+}
+function closeEvShareSheet() {
+  document.getElementById('evShareSheet').classList.remove('show');
+}
+function evShareCopyLink(eventId) {
+  closeEvShareSheet();
+  const dummyUrl = 'https://hyperay.app/e/' + eventId;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(dummyUrl).then(() => {
+      showToast('リンクをコピーしました');
+    }).catch(() => {
+      showToast('リンクをコピーしました');
+    });
+  } else {
+    showToast('リンクをコピーしました');
+  }
+}
+function openEvShareComposer(eventId) {
+  closeEvShareSheet();
+  const ev = eventsData.find(e => e.id === eventId);
+  if (!ev) return;
+  // コンポーザーをイベントシェアモードで開く
+  cmpReset();
+  cmpEvShareMode = true;
+  cmpEvShareData = { ...ev };
+  // コンポーザー画面に切り替え
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-post').classList.add('active');
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  // テキストレイヤーが空なら作成（ユーザーが自由に入力できる枠）
+  setTimeout(() => {
+    if (cmpLayers.length === 0) cmpCreateTextLayer(false);
+    cmpEvRenderCard();
+  }, 80);
 }
 
 function renderEvCoverEditor() {
@@ -14163,6 +15070,8 @@ function setInviteResponseFromFeed(eventId, status) {
   const msg = { going: '「行く」で回答しました', maybe: '「検討中」で回答しました', skip: '「行けない」で回答しました' };
   showToast(msg[status]);
   buildHomeFeed();
+  // hub（イベントタブ）が表示中なら再描画
+  if (document.getElementById('eventsHubList')) buildEventsHub();
 }
 
 function renderEventDetail(ev) {
@@ -14248,7 +15157,7 @@ function renderEventDetail(ev) {
 
       <div class="ev-detail-section-new">
         <div class="ev-detail-section-heading">参加者</div>
-        ${renderAttendeeStack(goingIds, goingCount)}
+        ${renderAttendeeStack(goingIds, goingCount, ev.id)}
       </div>
 
       ${ev.message ? `
@@ -14262,9 +15171,9 @@ function renderEventDetail(ev) {
         <div class="ev-detail-section-heading">主催者からの連絡</div>
         ${ev.history.length === 0
           ? `<div class="events-empty" style="padding:12px 0;">まだ連絡はありません</div>`
-          : ev.history.map(h => `
+          : ev.history.slice().reverse().map(h => `
               <div class="ev-history-new-item">
-                <div class="ev-history-new-time">${escapeHtml(h.time)}</div>
+                <div class="ev-history-new-time">${escapeHtml(formatRelativeTime(h.time))}</div>
                 <div class="ev-history-new-text">${escapeHtml(h.text)}</div>
               </div>
             `).join('')
@@ -14278,24 +15187,33 @@ function renderEventDetail(ev) {
   // 下部固定CTAバー
   const ctaBar = document.getElementById('evDetailCtaBar');
   if (isHost) {
-    // 主催者メニュー：左=編集（同格プライマリ）、中=追加連絡 or 受付終了表示、右=⋯（締める/削除はシートに退避）
+    // 主催者メニュー：編集・追加連絡・シェア・⋯
     if (ev.closed) {
+      ctaBar.className = 'ev-detail-cta-bar four-btn';
       ctaBar.innerHTML = `
         <button class="ev-cta-pill" onclick="openEventEdit('${ev.id}')">✏️ 編集</button>
-        <div style="flex:1;text-align:center;padding:14px;color:rgba(255,255,255,0.5);font-weight:600;font-size:13px;">受付終了</div>
+        <div style="flex:1;text-align:center;padding:12px 4px;color:rgba(255,255,255,0.5);font-weight:600;font-size:12px;">受付終了</div>
+        <button class="ev-cta-pill" onclick="openEvShareSheet('${ev.id}')">📤 シェア</button>
         <button class="ev-cta-pill more-btn" onclick="openHostActionSheet('${ev.id}')" title="その他">⋯</button>
       `;
     } else {
+      ctaBar.className = 'ev-detail-cta-bar four-btn';
       ctaBar.innerHTML = `
         <button class="ev-cta-pill" onclick="openEventEdit('${ev.id}')">✏️ 編集</button>
         <button class="ev-cta-pill primary" onclick="openEventAddHistory()">📢 追加連絡</button>
+        <button class="ev-cta-pill" onclick="openEvShareSheet('${ev.id}')">📤 シェア</button>
         <button class="ev-cta-pill more-btn" onclick="openHostActionSheet('${ev.id}')" title="その他">⋯</button>
       `;
     }
   } else {
     if (ev.closed) {
-      ctaBar.innerHTML = `<div style="flex:1;text-align:center;padding:14px;color:rgba(255,255,255,0.5);font-weight:600;">受付終了</div>`;
+      ctaBar.className = 'ev-detail-cta-bar';
+      ctaBar.innerHTML = `
+        <div style="flex:1;text-align:center;padding:14px;color:rgba(255,255,255,0.5);font-weight:600;">受付終了</div>
+        <button class="ev-cta-pill" style="flex:0 0 auto;" onclick="openEvShareSheet('${ev.id}')">📤 シェア</button>
+      `;
     } else {
+      ctaBar.className = 'ev-detail-cta-bar';
       const isGoing = myResponse === 'going';
       const isMaybe = myResponse === 'maybe';
       const isSkip  = myResponse === 'skip';
@@ -14312,6 +15230,7 @@ function renderEventDetail(ev) {
           <span class="ev-rsvp-sub-ico">✕</span>
           <span>不参加</span>
         </button>
+        <button class="ev-rsvp-secondary" onclick="openEvShareSheet('${ev.id}')" style="flex:0 0 auto;padding:0 14px;">📤</button>
       `;
     }
   }
@@ -14323,29 +15242,96 @@ function resolveEvMember(id) {
       || { name: id, avatar: '👤' };
 }
 
-function renderAttendeeStack(ids, total) {
+// Instagram風：顔3つ重ね＋「○○さん、他N人」テキスト。タップで右スライドシート
+function renderAttendeeStack(ids, total, eventId) {
   if (ids.length === 0) {
     return `<div style="color:rgba(255,255,255,0.5);font-size:13px;">まだ参加者はいません</div>`;
   }
-  const visible = ids.slice(0, 5);
-  const remaining = total - visible.length;
-  const avatars = visible.map(id => {
+  const stackIds = ids.slice(0, 3);
+  const stackAvatars = stackIds.map(id => {
     const m = resolveEvMember(id);
-    return `<div class="ev-attendee-stack-item">${m.avatar}</div>`;
+    return `<div class="ev-attendee-ig-item">${m.avatar}</div>`;
   }).join('');
-  const plus = remaining > 0 ? `
-    <div class="ev-attendee-stack-item plus">
-      <span class="plus-num">+${remaining}</span>
-      <span class="plus-lbl">going</span>
-    </div>` : '';
+
+  // テキスト生成：最初の2人の名前＋「他N人」
+  const firstName = resolveEvMember(ids[0]).name;
+  const secondName = ids.length >= 2 ? resolveEvMember(ids[1]).name : null;
+  let nameText = '';
+  if (total === 1) {
+    nameText = `${escapeHtml(firstName)}さん`;
+  } else if (total === 2) {
+    nameText = `${escapeHtml(firstName)}さん、${escapeHtml(secondName)}さん`;
+  } else {
+    const rest = total - 2;
+    nameText = secondName
+      ? `${escapeHtml(firstName)}さん、${escapeHtml(secondName)}さん、他${rest}人`
+      : `${escapeHtml(firstName)}さん、他${total - 1}人`;
+  }
+
+  const evId = eventId || evDetailCurrentId || '';
   return `
-    <div class="ev-attendee-stack">
-      ${avatars}${plus}
-    </div>
-    <div style="margin-top:8px;font-size:13px;color:rgba(255,255,255,0.65);">
-      ${total}人が参加予定
+    <div class="ev-attendee-ig-wrap" onclick="openAttendeesSheet('${evId}', 'going')">
+      <div class="ev-attendee-ig-stack">${stackAvatars}</div>
+      <div class="ev-attendee-ig-names">
+        <span class="tap-target">${nameText}</span>
+        <span style="color:rgba(255,255,255,0.5);"> が参加予定</span>
+      </div>
     </div>
   `;
+}
+
+// 右スライドインシート：参加者全員リスト表示
+function openAttendeesSheet(eventId, filterStatus) {
+  const ev = eventsData.find(e => e.id === eventId);
+  if (!ev) return;
+
+  const statusLabels = { going: '✓ 行く', maybe: '? 検討中', skip: '✗ 行けない' };
+  const titleEl = document.getElementById('evAttendeesSheetTitle');
+  const bodyEl  = document.getElementById('evAttendeesSheetBody');
+  if (!titleEl || !bodyEl) return;
+
+  // 全レスポンスIDを取得（filterStatusがあればそれでフィルタ、なければ全員）
+  let targetIds;
+  if (filterStatus) {
+    targetIds = Object.keys(ev.responses).filter(id => ev.responses[id] === filterStatus);
+    titleEl.textContent = `${statusLabels[filterStatus] || filterStatus} (${targetIds.length}人)`;
+  } else {
+    targetIds = [...new Set([...ev.invitees, ...Object.keys(ev.responses)])];
+    titleEl.textContent = `参加者一覧 (${targetIds.length}人)`;
+  }
+
+  bodyEl.innerHTML = targetIds.map(id => {
+    const m = resolveEvMember(id);
+    const titleInfo = (typeof getTitle === 'function') ? getTitle(
+      (typeof userProfiles !== 'undefined' && userProfiles[id]) ? userProfiles[id].score : 0
+    ) : { emoji: '', name: '' };
+    const tierLabel = titleInfo.emoji + ' ' + titleInfo.name;
+    const isSelf = (id === (typeof EV_SELF_ID !== 'undefined' ? EV_SELF_ID : ''));
+    const isFollowed = !isSelf && (typeof followState !== 'undefined') && followState[id];
+    const followBtnCls = isSelf ? 'display:none;' : '';
+    const btnStateClass = isFollowed ? 'unfollow-state' : 'follow-state';
+    const btnLabel = isFollowed ? 'フォロー中' : 'フォロー';
+    return `
+      <div class="ev-attendees-sheet-item">
+        <div class="ev-attendees-sheet-left" onclick="closeAttendeesSheet(); openUserProfile('${id}')">
+          <div class="ev-attendees-sheet-avatar">${m.avatar}</div>
+          <div class="ev-attendees-sheet-name-wrap">
+            <div class="ev-attendees-sheet-name">${escapeHtml(m.name)}</div>
+            <div class="ev-attendees-sheet-tier" style="color:${titleInfo.color || 'rgba(255,255,255,0.45)'};">${tierLabel}</div>
+          </div>
+        </div>
+        <button class="ev-attendees-follow-btn ${btnStateClass}" style="${followBtnCls}" onclick="toggleFollowFromSheet('${id}', this)">${btnLabel}</button>
+      </div>
+    `;
+  }).join('') || `<div style="padding:24px;text-align:center;color:rgba(255,255,255,0.4);">まだ参加者はいません</div>`;
+
+  document.getElementById('evAttendeesSheetOverlay').classList.add('open');
+  document.getElementById('evAttendeesSheet').classList.add('open');
+}
+
+function closeAttendeesSheet() {
+  document.getElementById('evAttendeesSheetOverlay').classList.remove('open');
+  document.getElementById('evAttendeesSheet').classList.remove('open');
 }
 
 function setEventResponse(status) {
@@ -14359,16 +15345,49 @@ function setEventResponse(status) {
 }
 
 function openEventAddHistory() {
-  const text = prompt('参加者全員への追加連絡を入力してください');
-  if (!text || !text.trim()) return;
+  const inputEl = document.getElementById('evAddHistoryInput');
+  if (inputEl) inputEl.value = '';
+  document.getElementById('evAddHistoryOverlay').classList.add('open');
+  document.getElementById('evAddHistorySheet').classList.add('open');
+  if (inputEl) setTimeout(() => inputEl.focus(), 320);
+}
+
+function closeEventAddHistory() {
+  document.getElementById('evAddHistoryOverlay').classList.remove('open');
+  document.getElementById('evAddHistorySheet').classList.remove('open');
+}
+
+function submitEventAddHistory() {
+  const inputEl = document.getElementById('evAddHistoryInput');
+  const text = inputEl ? inputEl.value.trim() : '';
+  if (!text) { showToast('連絡内容を入力してください'); return; }
   const ev = eventsData.find(e => e.id === evDetailCurrentId);
   if (!ev) return;
   const now = new Date();
   const pad = n => String(n).padStart(2, '0');
   const time = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
-  ev.history.push({ time, text: text.trim() });
+  ev.history.push({ time, text });
+  closeEventAddHistory();
   showToast('✓参加者に通知を送信しました');
   renderEventDetail(ev);
+}
+
+function toggleFollowFromSheet(userId, btn) {
+  if (typeof followState === 'undefined') return;
+  followState[userId] = !followState[userId];
+  if (followState[userId]) {
+    btn.textContent = 'フォロー中';
+    btn.classList.remove('follow-state');
+    btn.classList.add('unfollow-state');
+    if (typeof showToast === 'function' && typeof userProfiles !== 'undefined' && userProfiles[userId]) {
+      showToast(userProfiles[userId].name + 'をフォローしました');
+    }
+  } else {
+    btn.textContent = 'フォロー';
+    btn.classList.remove('unfollow-state');
+    btn.classList.add('follow-state');
+    if (typeof showToast === 'function') showToast('フォローを解除しました');
+  }
 }
 
 function closeEventForEveryone() {
@@ -14388,6 +15407,59 @@ function openEventHostDm() {
   } else {
     showToast(`${ev.hostName}へDM`);
   }
+}
+
+// eventsData 定義後にホームフィードを再描画（初期データの evShareId カードを反映）
+if (typeof buildHomeFeed === 'function') buildHomeFeed();
+
+// ===== STORY POP MODAL (中央ポン演出) =====
+// インラインstyle廃止。pop-mode クラスで完全制御。translateY スライドゼロ。
+
+function openStoryPop(userId) {
+  const storiesEl = document.getElementById('storiesOverlay');
+  const backdrop  = document.getElementById('storyPopBackdrop');
+  if (!storiesEl || !backdrop) { openStories(userId); return; }
+
+  // 二重オープン防止（既に表示中＝open のときだけ弾く。pop-mode は閉じても常駐するので判定に使わない）
+  if (storiesEl.classList.contains('open')) return;
+
+  // pop-mode クラスを付与（scale0.9/opacity0 の初期状態）
+  storiesEl.classList.add('pop-mode');
+  backdrop.classList.add('open');
+
+  // ストーリーデータ・タイマーをセット（この中で .open は付かない）
+  const user = typeof storiesData !== 'undefined' && storiesData.find(u => u.id === userId);
+  if (!user) { storiesEl.classList.remove('pop-mode'); backdrop.classList.remove('open'); return; }
+  currentStoriesUserId = userId;
+  currentStoriesIdx = 0;
+  renderStorySlide();
+  startStoriesTimer();
+
+  // 1フレーム後に .open を付けてアニメ開始（pop-mode.open = scale1/opacity1）
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      storiesEl.classList.add('open');
+    });
+  });
+}
+
+function closeStoryPop() {
+  const storiesEl = document.getElementById('storiesOverlay');
+  const backdrop  = document.getElementById('storyPopBackdrop');
+  if (!storiesEl || !storiesEl.classList.contains('pop-mode')) return;
+
+  // .open を外す → pop-mode（open無し）= scale0.9/opacity0 に中央縮小フェード
+  // ここでは pop-mode は外さない（外すと base CSS の translateY100% が顔を出してスライドが復活する）
+  storiesEl.classList.remove('open');
+  if (backdrop) backdrop.classList.remove('open');
+
+  // transition 完了後（230ms）に後始末
+  setTimeout(() => {
+    // 後始末：タイマー停止・seen記録・状態リセット
+    _storiesTeardown();
+    // pop-mode は外さない：外すと base CSS の translateY100% が顔を出して下スライドが復活する。
+    // 閉じた pop-mode（open無し）= 中央・opacity0・pointer-events:none で完全に隠れている。
+  }, 230);
 }
 </script>
 
