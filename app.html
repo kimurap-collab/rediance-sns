@@ -6992,7 +6992,7 @@
     <div class="screen active" id="screen-home" style="overflow-y:auto;">
       <!-- Header -->
       <div class="home-header">
-        <button class="icon-btn" onclick="switchTab('post')">＋</button>
+        <button class="icon-btn" onclick="openCreateMenu()">＋</button>
         <img src="hyperay-logo-white.png" alt="HYPERAY" style="position:absolute;left:50%;transform:translateX(-50%);height:28px;width:auto;object-fit:contain;">
         <button class="icon-btn" onclick="showNotif()">♡</button>
       </div>
@@ -8501,26 +8501,28 @@
 
   <!-- CREATE MENU OVERLAY -->
   <div id="createMenuOverlay" style="display:none;position:fixed;inset:0;z-index:9990;">
-    <div onclick="closeCreateMenu()" style="position:absolute;inset:0;background:rgba(0,0,0,0.45);"></div>
-    <div id="createMenuPanel" style="position:absolute;left:0;top:0;bottom:0;width:72%;max-width:280px;background:var(--bg);box-shadow:4px 0 20px rgba(0,0,0,0.18);padding:60px 0 40px;display:flex;flex-direction:column;animation:slideInLeft 0.25s ease;">
-      <div style="padding:0 20px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:15px;font-weight:700;color:var(--text);">作成する</span>
-        <button onclick="closeCreateMenu()" style="background:none;border:none;padding:4px;cursor:pointer;color:var(--text-sub);font-size:18px;line-height:1;">✕</button>
+    <div id="createMenuPanel" style="position:absolute;inset:0;background:rgba(10,12,20,0.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:flex;flex-direction:column;animation:slideInLeft 0.25s ease;">
+      <!-- 閉じるボタン -->
+      <div style="display:flex;justify-content:flex-end;padding:16px 20px 0;">
+        <button onclick="closeCreateMenu()" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);border-radius:50%;width:36px;height:36px;cursor:pointer;color:#fff;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;">✕</button>
       </div>
-      <button onclick="closeCreateMenu(); switchTab('post');" style="display:flex;align-items:center;gap:14px;padding:20px 20px;background:none;border:none;border-bottom:1px solid var(--border);cursor:pointer;text-align:left;width:100%;">
-        <span style="font-size:28px;line-height:1;">📝</span>
-        <div>
-          <div style="font-size:15px;font-weight:600;color:var(--text);">ストーリーズ投稿</div>
-          <div style="font-size:12px;color:var(--text-sub);margin-top:2px;">フォロワーに近況を届ける</div>
-        </div>
-      </button>
-      <button onclick="closeCreateMenu(); openEventCreate();" style="display:flex;align-items:center;gap:14px;padding:20px 20px;background:none;border:none;border-bottom:1px solid var(--border);cursor:pointer;text-align:left;width:100%;">
-        <span style="font-size:28px;line-height:1;">🎉</span>
-        <div>
-          <div style="font-size:15px;font-weight:600;color:var(--text);">イベント作成</div>
-          <div style="font-size:12px;color:var(--text-sub);margin-top:2px;">みんなを集めてイベントを開く</div>
-        </div>
-      </button>
+      <!-- カード群：画面中央〜やや上に配置 -->
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:0 28px 60px;">
+        <button onclick="closeCreateMenu(); switchTab('post');" style="display:flex;align-items:center;gap:16px;width:100%;max-width:340px;padding:22px 24px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:16px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;text-align:left;transition:background 0.18s,border-color 0.18s,box-shadow 0.18s;" onmouseover="this.style.background='rgba(var(--primary-rgb,100,80,255),0.22)';this.style.borderColor='var(--primary-light,#a78bfa)';this.style.boxShadow='0 0 18px rgba(var(--primary-rgb,100,80,255),0.35)';" onmouseout="this.style.background='rgba(255,255,255,0.08)';this.style.borderColor='rgba(255,255,255,0.18)';this.style.boxShadow='none';">
+          <span style="font-size:32px;line-height:1;flex-shrink:0;">📝</span>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:#fff;">ストーリーズ投稿</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:3px;">フォロワーに近況を届ける</div>
+          </div>
+        </button>
+        <button onclick="closeCreateMenu(); openEventCreate();" style="display:flex;align-items:center;gap:16px;width:100%;max-width:340px;padding:22px 24px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:16px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;text-align:left;transition:background 0.18s,border-color 0.18s,box-shadow 0.18s;" onmouseover="this.style.background='rgba(var(--primary-rgb,100,80,255),0.22)';this.style.borderColor='var(--primary-light,#a78bfa)';this.style.boxShadow='0 0 18px rgba(var(--primary-rgb,100,80,255),0.35)';" onmouseout="this.style.background='rgba(255,255,255,0.08)';this.style.borderColor='rgba(255,255,255,0.18)';this.style.boxShadow='none';">
+          <span style="font-size:32px;line-height:1;flex-shrink:0;">🎉</span>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:#fff;">イベント作成</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:3px;">みんなを集めてイベントを開く</div>
+          </div>
+        </button>
+      </div>
     </div>
   </div><!-- /createMenuOverlay -->
 
