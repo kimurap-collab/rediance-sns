@@ -1877,6 +1877,10 @@
       from { transform: translateX(100%); }
       to { transform: translateX(0); }
     }
+    @keyframes slideInLeft {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(0); }
+    }
     .settings-menu-item {
       padding: 14px 20px;
       font-size: 14px;
@@ -8495,6 +8499,31 @@
     </div>
   </div><!-- /nm2Overlay -->
 
+  <!-- CREATE MENU OVERLAY -->
+  <div id="createMenuOverlay" style="display:none;position:fixed;inset:0;z-index:9990;">
+    <div onclick="closeCreateMenu()" style="position:absolute;inset:0;background:rgba(0,0,0,0.45);"></div>
+    <div id="createMenuPanel" style="position:absolute;left:0;top:0;bottom:0;width:72%;max-width:280px;background:var(--bg);box-shadow:4px 0 20px rgba(0,0,0,0.18);padding:60px 0 40px;display:flex;flex-direction:column;animation:slideInLeft 0.25s ease;">
+      <div style="padding:0 20px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:15px;font-weight:700;color:var(--text);">作成する</span>
+        <button onclick="closeCreateMenu()" style="background:none;border:none;padding:4px;cursor:pointer;color:var(--text-sub);font-size:18px;line-height:1;">✕</button>
+      </div>
+      <button onclick="closeCreateMenu(); switchTab('post');" style="display:flex;align-items:center;gap:14px;padding:20px 20px;background:none;border:none;border-bottom:1px solid var(--border);cursor:pointer;text-align:left;width:100%;">
+        <span style="font-size:28px;line-height:1;">📝</span>
+        <div>
+          <div style="font-size:15px;font-weight:600;color:var(--text);">ストーリーズ投稿</div>
+          <div style="font-size:12px;color:var(--text-sub);margin-top:2px;">フォロワーに近況を届ける</div>
+        </div>
+      </button>
+      <button onclick="closeCreateMenu(); openEventCreate();" style="display:flex;align-items:center;gap:14px;padding:20px 20px;background:none;border:none;border-bottom:1px solid var(--border);cursor:pointer;text-align:left;width:100%;">
+        <span style="font-size:28px;line-height:1;">🎉</span>
+        <div>
+          <div style="font-size:15px;font-weight:600;color:var(--text);">イベント作成</div>
+          <div style="font-size:12px;color:var(--text-sub);margin-top:2px;">みんなを集めてイベントを開く</div>
+        </div>
+      </button>
+    </div>
+  </div><!-- /createMenuOverlay -->
+
   <!-- TAB BAR -->
   <div class="tab-bar">
     <button class="tab-item active" onclick="switchTab('home')" id="tab-home">
@@ -8503,7 +8532,7 @@
     <button class="tab-item" onclick="switchTab('talk')" id="tab-talk">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>
     </button>
-    <button class="tab-post" onclick="switchTab('post')">
+    <button class="tab-post" onclick="openCreateMenu()">
       <div class="tab-post-btn">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
       </div>
@@ -14510,6 +14539,18 @@ function updateEventCreateUI(isEditMode) {
   const btnEl   = document.getElementById('evCreateSubmitBtn');
   if (titleEl) titleEl.textContent = isEditMode ? 'イベント編集' : 'イベント作成';
   if (btnEl)   btnEl.textContent   = isEditMode ? '変更を保存' : 'イベントを作成';
+}
+
+// ===== CREATE MENU =====
+function openCreateMenu() {
+  const overlay = document.getElementById('createMenuOverlay');
+  if (!overlay) return;
+  overlay.style.display = 'block';
+}
+function closeCreateMenu() {
+  const overlay = document.getElementById('createMenuOverlay');
+  if (!overlay) return;
+  overlay.style.display = 'none';
 }
 
 function openEventCreate() {
