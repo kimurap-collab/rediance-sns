@@ -6177,7 +6177,7 @@
       gap: 2px;
     }
     .identity-post-item {
-      aspect-ratio: 1;
+      aspect-ratio: 9 / 16;
       border-radius: 4px;
       overflow: hidden;
       cursor: pointer;
@@ -7222,7 +7222,7 @@
         <button class="icon-btn" onclick="openCreateMenu()">＋</button>
         <img src="hyperay-logo-white.png" alt="HYPERAY" style="position:absolute;left:50%;transform:translateX(-50%);height:28px;width:auto;object-fit:contain;">
         <div style="display:flex;align-items:center;gap:4px;">
-          <button class="home-layout-toggle-btn" id="homeLayoutToggleBtn" onclick="cycleHomeStoryLayout()" title="レイアウト切替">⊞</button>
+          <button class="home-layout-toggle-btn" id="homeLayoutToggleBtn" onclick="cycleHomeStoryLayout()" title="レイアウト切替">⊟</button>
           <button class="icon-btn" onclick="showNotif()">♡</button>
         </div>
       </div>
@@ -7677,20 +7677,6 @@
         <div class="insta-profile-info">
           <div class="insta-profile-name">木村 誠司</div>
           <div class="insta-profile-handle">@taisho_k</div>
-          <div class="insta-profile-stats-row">
-            <div class="insta-profile-stat">
-              <span class="insta-profile-stat-val">5</span>
-              <span class="insta-profile-stat-label">投稿</span>
-            </div>
-            <div class="insta-profile-stat">
-              <span class="insta-profile-stat-val">1.2K</span>
-              <span class="insta-profile-stat-label">フォロワー</span>
-            </div>
-            <div class="insta-profile-stat">
-              <span class="insta-profile-stat-val">284</span>
-              <span class="insta-profile-stat-label">フォロー中</span>
-            </div>
-          </div>
           <div class="insta-profile-bio-text">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
           <div class="insta-profile-bio-tags">
             <span class="insta-profile-bio-tag">経営者</span>
@@ -7701,12 +7687,14 @@
         </div>
       </div>
 
-      <!-- RS SCORE BLOCK -->
-      <div class="insta-rs-block">
-        <div class="insta-rs-block-title">RADIANCE SCORE</div>
-        <div class="insta-rs-score-row">
-          <span class="insta-rs-score-val">50.9K</span>
+      <!-- RS SCORE BLOCK (主役) -->
+      <div class="insta-rs-block" style="margin:0 16px 4px;border-radius:14px;background:linear-gradient(135deg,var(--surface) 0%,var(--primary-bg) 100%);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <span class="insta-rs-block-title" style="font-size:12px;letter-spacing:1px;margin-bottom:0;">RADIANCE SCORE</span>
           <span class="insta-rs-tier-badge rank-badge-star">⭐ Star</span>
+        </div>
+        <div class="insta-rs-score-row" style="margin-bottom:12px;">
+          <span class="insta-rs-score-val" style="font-size:32px;">50.9K</span>
         </div>
         <div class="insta-rs-sub-stats">
           <div class="insta-rs-sub-stat" onclick="showStatInfo('trust')">
@@ -9364,6 +9352,33 @@
         { text: "The platform is the message.\n\nWe were told social media connects people.\nIt connected us to versions of ourselves we perform for each other.\n\nHYPERAY was built to end that.", time: '5m ago', likes: 142000, shares: 48000, tags: ['taisho_k', 'yuki_singularity'], grad: 'linear-gradient(135deg, #FF0080, #FF8C00, #FFD700, #00FF80, #00BFFF, #8000FF)' },
         { text: "I don't post often.\n\nWhen I do, it's because something needs to be said that no algorithm would ever surface.\n\nPay attention.", time: '1 month ago', likes: 230000, shares: 72000, tags: [], grad: 'linear-gradient(135deg, #000000, #7C3AED, #FF0080)' },
         { text: "Status:\n\n8.1M RS. Universe tier.\n\nNone of it matters unless the people closest to you trust you with their truth.\n\nStart there.", time: '3 months ago', likes: 310000, shares: 89000, tags: [], grad: 'linear-gradient(135deg, #0a0a0a, #1a0030, #FF8C00)' },
+      ]
+    },
+    {
+      id: 'photo_maya',
+      name: '橘 まや',
+      avatar: '📸',
+      handle: '@maya_lens',
+      score: 18700,
+      hasNew: true,
+      isRadiance: false,
+      stories: [
+        { text: '今日の夕景。\nシンガポールの空は毎日ドラマがある。', time: '15分前', likes: 312, shares: 54, tags: [], img: 'https://picsum.photos/seed/sg_sunset/400/700', grad: 'linear-gradient(135deg, #7C3AED, #EC4899)' },
+        { text: '朝のコーヒーと作業。\nこの時間が一日で一番好き。', time: '6時間前', likes: 187, shares: 28, tags: [], img: 'https://picsum.photos/seed/coffee_work/400/700', grad: 'linear-gradient(135deg, #422006, #9A3412)' },
+        { text: 'ストリートの一枚。\n偶然の光が最高の被写体になる。', time: '3日前', likes: 445, shares: 89, tags: ['misaki_t'], img: 'https://picsum.photos/seed/street_light/400/700', grad: 'linear-gradient(135deg, #0f172a, #334155)' },
+      ]
+    },
+    {
+      id: 'photo_kai',
+      name: 'Kai Watanabe',
+      avatar: '🌿',
+      handle: '@kai_outside',
+      score: 9400,
+      hasNew: true,
+      isRadiance: false,
+      stories: [
+        { text: "Trail run this morning.\n\n12km through the jungle — best way to reset the mind.", time: '1h ago', likes: 143, shares: 21, tags: [], img: 'https://picsum.photos/seed/jungle_trail/400/700', grad: 'linear-gradient(135deg, #064E3B, #047857)' },
+        { text: "Remote work, actual remote.\n\nNothing beats writing code with this view.", time: '2 days ago', likes: 267, shares: 43, tags: ['yu_tanaka'], img: 'https://picsum.photos/seed/mountain_view/400/700', grad: 'linear-gradient(135deg, #0C4A6E, #0369A1)' },
       ]
     },
   ];
@@ -12204,7 +12219,7 @@
   const storyCardOpened = new Set();
 
   // Layout columns state: 1 / 2 / 3
-  let homeStoryCols = 2;
+  let homeStoryCols = 3;
 
   function cycleHomeStoryLayout() {
     homeStoryCols = homeStoryCols >= 3 ? 1 : homeStoryCols + 1;
