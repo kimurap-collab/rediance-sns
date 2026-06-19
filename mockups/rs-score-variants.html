@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RS Score Variants — HYPERAY</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=M+PLUS+1p:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ── HYPERAY design tokens (from app.html) ── */
+    :root {
+      --primary: #1E3A5F;
+      --primary-light: #2E5EAA;
+      --primary-dark: #0F2040;
+      --gold: #F59E0B;
+      --gold-light: #FCD34D;
+      --silver: #94A3B8;
+      --bg: #FFFFFF;
+      --surface: #F5F5F5;
+      --border: #E8E8E8;
+      --text-main: #000000;
+      --text-sub: #555555;
+      --text-light: #999999;
+      --success: #10B981;
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.10);
+
+      /* Brand gradient */
+      --grad-brand: linear-gradient(135deg, #1E3A5F 0%, #2E5EAA 50%, #7C3AED 100%);
+      --grad-gold: linear-gradient(135deg, #F59E0B, #FCD34D);
+      --grad-glow: linear-gradient(135deg, #7C3AED, #2E5EAA, #06B6D4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui,
+                   'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      padding: 24px 16px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+    }
+
+    h1.page-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #888;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* Phone frame wrapper */
+    .phone-frame {
+      width: 375px;
+      max-width: 100%;
+      background: var(--bg);
+      border-radius: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .variant-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      text-align: center;
+      padding: 14px 0 10px;
+      background: #f8f8f8;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Divider between variants inside phone */
+    .variant-divider {
+      height: 6px;
+      background: #ebebeb;
+    }
+
+    /* ══════════════════════════════════════════
+       案1 — インスタ忠実型
+    ══════════════════════════════════════════ */
+    .v1 {
+      padding: 24px 24px 28px;
+      background: #fff;
+    }
+    .v1-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .v1-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--grad-brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--primary-light);
+    }
+    .v1-name-row {
+      flex: 1;
+    }
+    .v1-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .v1-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: linear-gradient(135deg, #F59E0B, #FCD34D);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+    }
+    .v1-handle {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+    /* Stats row — Instagram-style */
+    .v1-stats {
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+      margin-bottom: 18px;
+    }
+    .v1-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .v1-stat-val {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+    }
+    .v1-stat-val.primary {
+      font-size: 22px;
+      color: var(--primary-light);
+    }
+    .v1-stat-lbl {
+      font-size: 10px;
+      color: var(--text-light);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+    .v1-stat-lbl.primary { color: var(--primary-light); font-weight: 700; }
+    .v1-stature-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #f8f9ff;
+      border-radius: 10px;
+      padding: 8px 12px;
+    }
+    .v1-stature-icon { font-size: 14px; }
+    .v1-stature-text {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+    .v1-stature-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary-light);
+    }
+
+    /* ══════════════════════════════════════════
+       案2 — X風ミニマル
+    ══════════════════════════════════════════ */
+    .v2 {
+      padding: 28px 28px 32px;
+      background: #fff;
+    }
+    .v2-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--grad-brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+    .v2-name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .v2-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .v2-badge {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--primary-light);
+      border: 1px solid rgba(46,94,170,0.3);
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.06em;
+    }
+    .v2-handle {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 20px;
+    }
+    /* Main score */
+    .v2-main-score {
+      margin-bottom: 6px;
+    }
+    .v2-score-val {
+      font-size: 42px;
+      font-weight: 900;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .v2-score-lbl {
+      font-size: 11px;
+      color: var(--text-light);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    /* Thin divider */
+    .v2-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+    /* Sub-stats row */
+    .v2-sub-stats {
+      display: flex;
+      gap: 0;
+    }
+    .v2-sub-stat {
+      flex: 1;
+      padding-right: 16px;
+    }
+    .v2-sub-stat:not(:last-child) {
+      border-right: 1px solid var(--border);
+      padding-right: 16px;
+      margin-right: 16px;
+    }
+    .v2-sub-val {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
+    .v2-sub-lbl {
+      font-size: 10px;
+      color: var(--text-light);
+      font-weight: 400;
+      margin-top: 1px;
+      letter-spacing: 0.04em;
+    }
+    /* Stature — separate section */
+    .v2-stature {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .v2-stature-lbl {
+      font-size: 11px;
+      color: var(--text-light);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .v2-stature-val {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    /* ══════════════════════════════════════════
+       案3 — ヒーロータイポ
+    ══════════════════════════════════════════ */
+    .v3 {
+      padding: 32px 24px 28px;
+      background: #fff;
+      text-align: center;
+    }
+    .v3-crown {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(135deg, #F59E0B10, #FCD34D20);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 20px;
+      padding: 5px 14px;
+      margin-bottom: 20px;
+    }
+    .v3-crown-icon { font-size: 14px; }
+    .v3-crown-txt {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+    /* Hero number */
+    .v3-hero {
+      font-size: 72px;
+      font-weight: 900;
+      color: var(--text-main);
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      font-variant-numeric: tabular-nums;
+    }
+    .v3-hero-lbl {
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--primary-light);
+      font-weight: 700;
+      margin-top: 8px;
+      margin-bottom: 28px;
+    }
+    /* Chips row for sub-stats */
+    .v3-chips {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .v3-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 8px 14px;
+      min-width: 72px;
+    }
+    .v3-chip-val {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
+    .v3-chip-lbl {
+      font-size: 9px;
+      color: var(--text-light);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+    .v3-stature-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, rgba(30,58,95,0.06), rgba(46,94,170,0.06));
+      border: 1px solid rgba(46,94,170,0.15);
+      border-radius: 20px;
+      padding: 6px 16px;
+    }
+    .v3-stature-chip-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary-light);
+    }
+    .v3-stature-chip-lbl {
+      font-size: 10px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* ══════════════════════════════════════════
+       案4 — リングゲージ
+    ══════════════════════════════════════════ */
+    .v4 {
+      padding: 28px 24px 28px;
+      background: #fff;
+    }
+    .v4-ring-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .v4-svg-ring {
+      width: 160px;
+      height: 160px;
+    }
+    .v4-ring-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .v4-ring-val {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .v4-ring-lbl {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--primary-light);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+    .v4-ring-badge {
+      font-size: 16px;
+      margin-bottom: 2px;
+    }
+    /* Sub stats in a 3-col grid */
+    .v4-sub-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .v4-sub-item {
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .v4-sub-val {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .v4-sub-lbl {
+      font-size: 9px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+    .v4-stature-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(90deg, rgba(30,58,95,0.05), rgba(46,94,170,0.05));
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+    .v4-stature-left {
+      font-size: 10px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .v4-stature-right {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary-light);
+    }
+
+    /* ══════════════════════════════════════════
+       案5 — ネオングラデ（ダーク背景）
+    ══════════════════════════════════════════ */
+    .v5 {
+      padding: 32px 24px 32px;
+      background: #080c18;
+      color: #fff;
+    }
+    .v5-avatar-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .v5-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--grad-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 16px rgba(124,58,237,0.5);
+      flex-shrink: 0;
+    }
+    .v5-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .v5-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: linear-gradient(135deg, #F59E0B, #FCD34D);
+      color: #000;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+      margin-top: 4px;
+    }
+    /* Glow score */
+    .v5-score-block {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .v5-score-lbl-top {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 4px;
+    }
+    .v5-score-val {
+      font-size: 64px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      background: linear-gradient(135deg, #7C3AED, #2E5EAA, #06B6D4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 12px rgba(124,58,237,0.6));
+    }
+    .v5-score-sublbl {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-top: 4px;
+    }
+    /* Sub stats */
+    .v5-sub-row {
+      display: flex;
+      gap: 0;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .v5-sub-item {
+      flex: 1;
+      padding: 12px 8px;
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+    .v5-sub-item:last-child { border-right: none; }
+    .v5-sub-val {
+      font-size: 15px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.85);
+    }
+    .v5-sub-lbl {
+      font-size: 9px;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+    /* Stature */
+    .v5-stature {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(90deg, rgba(124,58,237,0.08), rgba(6,182,212,0.08));
+      border: 1px solid rgba(124,58,237,0.2);
+      border-radius: 12px;
+      padding: 11px 16px;
+    }
+    .v5-stature-lbl {
+      font-size: 10px;
+      color: rgba(255,255,255,0.35);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .v5-stature-val {
+      font-size: 16px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #7C3AED, #06B6D4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="page-title">HYPERAY — RS Score Variants</h1>
+
+  <div class="phone-frame">
+
+    <!-- ── 案1 ── -->
+    <div class="variant-label">案1 — インスタ忠実型</div>
+    <div class="v1">
+      <div class="v1-top">
+        <div class="v1-avatar">🧑</div>
+        <div class="v1-name-row">
+          <div class="v1-name">
+            Taisho K
+            <span class="v1-badge">⭐ Star</span>
+          </div>
+          <div class="v1-handle">@taisho_k</div>
+        </div>
+      </div>
+      <div class="v1-stats">
+        <div class="v1-stat">
+          <span class="v1-stat-val primary">50.9K</span>
+          <span class="v1-stat-lbl primary">影響力</span>
+        </div>
+        <div class="v1-stat">
+          <span class="v1-stat-val">23.0K</span>
+          <span class="v1-stat-lbl">Trust</span>
+        </div>
+        <div class="v1-stat">
+          <span class="v1-stat-val">16.1K</span>
+          <span class="v1-stat-lbl">Prestige</span>
+        </div>
+        <div class="v1-stat">
+          <span class="v1-stat-val">11.7K</span>
+          <span class="v1-stat-lbl">Insights</span>
+        </div>
+      </div>
+      <div class="v1-stature-row">
+        <span class="v1-stature-icon">🏛</span>
+        <span class="v1-stature-text">Stature</span>
+        <span class="v1-stature-val">105.6K</span>
+      </div>
+    </div>
+
+    <div class="variant-divider"></div>
+
+    <!-- ── 案2 ── -->
+    <div class="variant-label">案2 — X風ミニマル</div>
+    <div class="v2">
+      <div class="v2-avatar">🧑</div>
+      <div class="v2-name-row">
+        <span class="v2-name">Taisho K</span>
+        <span class="v2-badge">⭐ Star</span>
+      </div>
+      <div class="v2-handle">@taisho_k</div>
+      <div class="v2-main-score">
+        <div class="v2-score-val">50.9K</div>
+        <div class="v2-score-lbl">Radiance Score</div>
+      </div>
+      <div class="v2-divider"></div>
+      <div class="v2-sub-stats">
+        <div class="v2-sub-stat">
+          <div class="v2-sub-val">23.0K</div>
+          <div class="v2-sub-lbl">Trust</div>
+        </div>
+        <div class="v2-sub-stat">
+          <div class="v2-sub-val">16.1K</div>
+          <div class="v2-sub-lbl">Prestige</div>
+        </div>
+        <div class="v2-sub-stat">
+          <div class="v2-sub-val">11.7K</div>
+          <div class="v2-sub-lbl">Insights</div>
+        </div>
+      </div>
+      <div class="v2-stature">
+        <span class="v2-stature-lbl">Stature</span>
+        <span class="v2-stature-val">105.6K</span>
+      </div>
+    </div>
+
+    <div class="variant-divider"></div>
+
+    <!-- ── 案3 ── -->
+    <div class="variant-label">案3 — ヒーロータイポ</div>
+    <div class="v3">
+      <div class="v3-crown">
+        <span class="v3-crown-icon">⭐</span>
+        <span class="v3-crown-txt">Star</span>
+      </div>
+      <div class="v3-hero">50.9K</div>
+      <div class="v3-hero-lbl">Radiance Score</div>
+      <div class="v3-chips">
+        <div class="v3-chip">
+          <span class="v3-chip-val">23.0K</span>
+          <span class="v3-chip-lbl">Trust</span>
+        </div>
+        <div class="v3-chip">
+          <span class="v3-chip-val">16.1K</span>
+          <span class="v3-chip-lbl">Prestige</span>
+        </div>
+        <div class="v3-chip">
+          <span class="v3-chip-val">11.7K</span>
+          <span class="v3-chip-lbl">Insights</span>
+        </div>
+      </div>
+      <div class="v3-stature-chip">
+        <span class="v3-stature-chip-lbl">Stature</span>
+        <span class="v3-stature-chip-val">105.6K</span>
+      </div>
+    </div>
+
+    <div class="variant-divider"></div>
+
+    <!-- ── 案4 ── -->
+    <div class="variant-label">案4 — リングゲージ</div>
+    <div class="v4">
+      <div class="v4-ring-wrap">
+        <!-- SVG ring: circumference ≈ 408. Fill ~64% (50.9K / 80K cap) -->
+        <svg class="v4-svg-ring" viewBox="0 0 160 160">
+          <defs>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#1E3A5F"/>
+              <stop offset="50%" stop-color="#2E5EAA"/>
+              <stop offset="100%" stop-color="#7C3AED"/>
+            </linearGradient>
+          </defs>
+          <!-- Track -->
+          <circle cx="80" cy="80" r="65"
+            fill="none" stroke="#f0f0f0" stroke-width="10"/>
+          <!-- Progress — stroke-dasharray: 408 total; 64% = 261 -->
+          <circle cx="80" cy="80" r="65"
+            fill="none"
+            stroke="url(#ringGrad)"
+            stroke-width="10"
+            stroke-linecap="round"
+            stroke-dasharray="261 147"
+            stroke-dashoffset="102"
+            transform="rotate(-90 80 80)"/>
+        </svg>
+        <div class="v4-ring-center">
+          <div class="v4-ring-badge">⭐</div>
+          <div class="v4-ring-val">50.9K</div>
+          <div class="v4-ring-lbl">Radiance</div>
+        </div>
+      </div>
+      <div class="v4-sub-grid">
+        <div class="v4-sub-item">
+          <div class="v4-sub-val">23.0K</div>
+          <div class="v4-sub-lbl">Trust</div>
+        </div>
+        <div class="v4-sub-item">
+          <div class="v4-sub-val">16.1K</div>
+          <div class="v4-sub-lbl">Prestige</div>
+        </div>
+        <div class="v4-sub-item">
+          <div class="v4-sub-val">11.7K</div>
+          <div class="v4-sub-lbl">Insights</div>
+        </div>
+      </div>
+      <div class="v4-stature-bar">
+        <span class="v4-stature-left">Stature</span>
+        <span class="v4-stature-right">105.6K</span>
+      </div>
+    </div>
+
+    <div class="variant-divider"></div>
+
+    <!-- ── 案5 ── -->
+    <div class="variant-label">案5 — ネオングラデ（ダーク）</div>
+    <div class="v5">
+      <div class="v5-avatar-row">
+        <div class="v5-avatar">🧑</div>
+        <div>
+          <div class="v5-name">Taisho K</div>
+          <div class="v5-badge">⭐ Star</div>
+        </div>
+      </div>
+      <div class="v5-score-block">
+        <div class="v5-score-lbl-top">Radiance Score</div>
+        <div class="v5-score-val">50.9K</div>
+        <div class="v5-score-sublbl">影響力スコア</div>
+      </div>
+      <div class="v5-sub-row">
+        <div class="v5-sub-item">
+          <div class="v5-sub-val">23.0K</div>
+          <div class="v5-sub-lbl">Trust</div>
+        </div>
+        <div class="v5-sub-item">
+          <div class="v5-sub-val">16.1K</div>
+          <div class="v5-sub-lbl">Prestige</div>
+        </div>
+        <div class="v5-sub-item">
+          <div class="v5-sub-val">11.7K</div>
+          <div class="v5-sub-lbl">Insights</div>
+        </div>
+      </div>
+      <div class="v5-stature">
+        <span class="v5-stature-lbl">Stature</span>
+        <span class="v5-stature-val">105.6K</span>
+      </div>
+    </div>
+
+  </div><!-- /phone-frame -->
+
+</body>
+</html>
