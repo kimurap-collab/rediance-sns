@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RS Score Variants v2 — HYPERAY</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=M+PLUS+1p:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ── HYPERAY design tokens (from app.html) ── */
+    :root {
+      --primary: #1E3A5F;
+      --primary-light: #2E5EAA;
+      --primary-dark: #0F2040;
+      --primary-bg: #EEF3FB;
+      --gold: #F59E0B;
+      --gold-light: #FCD34D;
+      --amber: #D97706;
+      --silver: #94A3B8;
+      --bg: #FFFFFF;
+      --surface: #F5F5F5;
+      --border: #E8E8E8;
+      --text-main: #000000;
+      --text-sub: #555555;
+      --text-light: #999999;
+      --success: #10B981;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.10);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui,
+                   'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      padding: 32px 16px 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 48px;
+    }
+
+    h1.page-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #aaa;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* Phone frame */
+    .phone-frame {
+      width: 375px;
+      max-width: 100%;
+      background: var(--bg);
+      border-radius: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06);
+      overflow: hidden;
+      border: 1px solid #ddd;
+    }
+
+    .variant-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      text-align: center;
+      padding: 13px 0 9px;
+      background: #f8f8f8;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Shared profile header used across all variants */
+    .prof-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 22px 20px 16px;
+    }
+    .prof-avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1E3A5F 0%, #2E5EAA 50%, #7C3AED 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #2E5EAA;
+    }
+    .prof-name-block { flex: 1; min-width: 0; }
+    .prof-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .prof-handle {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+    .prof-bio {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.5;
+      padding: 0 20px 14px;
+    }
+
+    /* Star badge — shared */
+    .badge-star {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      background: linear-gradient(135deg, #F59E0B, #FCD34D);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    /* ══════════════════════════════════════════
+       新案1 — インスタ数値行ど真ん中型
+       影響力大数字を主役、下に3列構成要素、
+       Statureは別行に控えめに。余白ゆったり。
+    ══════════════════════════════════════════ */
+    .v1 { background: #fff; }
+
+    .v1-score-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 20px 20px;
+    }
+    .v1-influence-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 4px;
+    }
+    .v1-influence-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .v1-influence-val {
+      font-size: 42px;
+      font-weight: 900;
+      color: var(--primary);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    /* 3-column sub-stats — Instagram profile number row style */
+    .v1-sub-stats {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      width: 100%;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+      margin-bottom: 16px;
+    }
+    .v1-sub-stat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      position: relative;
+    }
+    .v1-sub-stat + .v1-sub-stat::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 20%;
+      height: 60%;
+      width: 1px;
+      background: var(--border);
+    }
+    .v1-sub-val {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+    }
+    .v1-sub-lbl {
+      font-size: 10px;
+      color: var(--text-light);
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+
+    .v1-stature {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 7px 14px;
+      background: #f8f9ff;
+      border-radius: 8px;
+    }
+    .v1-stature-lbl {
+      font-size: 11px;
+      color: var(--text-light);
+    }
+    .v1-stature-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary-light);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ══════════════════════════════════════════
+       新案2 — X風1行ヘッダー型
+       名前行直下に「50.9K 影響力 ⭐Star」を
+       1行で極限ミニマルに集約。
+    ══════════════════════════════════════════ */
+    .v2 { background: #fff; }
+
+    .v2-inner {
+      padding: 4px 20px 22px;
+    }
+    .v2-influence-line {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .v2-influence-big {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
+    .v2-influence-word {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+    .v2-sub-line {
+      font-size: 12px;
+      color: var(--text-light);
+      line-height: 1.6;
+      letter-spacing: 0.01em;
+    }
+    .v2-sub-line span {
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+    .v2-stature {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    .v2-stature span {
+      font-weight: 700;
+      color: var(--text-sub);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ══════════════════════════════════════════
+       新案3 — 左主役・右構成要素 2カラム型
+       左: 50.9K + ⭐Star 大きく
+       右: Trust / Prestige / Insights 縦リスト
+    ══════════════════════════════════════════ */
+    .v3 { background: #fff; }
+
+    .v3-score-block {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin: 4px 20px 18px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .v3-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 12px;
+      background: var(--primary-bg);
+      gap: 6px;
+    }
+    .v3-lbl {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--primary-light);
+    }
+    .v3-big {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--primary);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .v3-right {
+      width: 140px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 14px 16px;
+      gap: 10px;
+      background: #fff;
+    }
+    .v3-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .v3-row-lbl {
+      font-size: 11px;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+    .v3-row-val {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+    }
+    .v3-stature {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin: 0 20px 18px;
+      padding: 8px 14px;
+      background: #f5f5f5;
+      border-radius: 8px;
+    }
+    .v3-stature-lbl {
+      font-size: 11px;
+      color: var(--text-light);
+    }
+    .v3-stature-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-sub);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ══════════════════════════════════════════
+       新案4 — 区切り線セグメント型
+       上: 影響力50.9K＋⭐Star
+       細いヘアライン罫線で等幅セグメント
+       Apple的明快クリーン構成
+    ══════════════════════════════════════════ */
+    .v4 { background: #fff; }
+
+    .v4-hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 20px 16px;
+    }
+    .v4-hero-left {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .v4-big {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--primary);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .v4-unit {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+
+    /* Segmented stats row */
+    .v4-segments {
+      display: flex;
+      margin: 0 20px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .v4-seg {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 6px;
+      gap: 3px;
+      background: #fff;
+    }
+    .v4-seg + .v4-seg {
+      border-left: 1px solid var(--border);
+    }
+    .v4-seg-val {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.01em;
+    }
+    .v4-seg-lbl {
+      font-size: 9px;
+      color: var(--text-light);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .v4-stature {
+      margin: 0 20px 18px;
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .v4-stature-lbl {
+      font-size: 12px;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+    .v4-stature-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary-light);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ══════════════════════════════════════════
+       新案5 — ミニマルカード型
+       1枚の角丸カードに全情報を上品に収める
+       余白広め、上品、すっきり
+    ══════════════════════════════════════════ */
+    .v5 { background: #fff; }
+
+    .v5-card {
+      margin: 4px 20px 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .v5-card-top {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .v5-top-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .v5-score-lbl {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-light);
+    }
+    .v5-score-val {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--primary);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .v5-card-mid {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .v5-comp {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .v5-comp-val {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+    }
+    .v5-comp-lbl {
+      font-size: 9px;
+      color: var(--text-light);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .v5-comp-dot {
+      font-size: 12px;
+      color: var(--border);
+      align-self: center;
+    }
+    .v5-card-footer {
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fafafa;
+    }
+    .v5-stature-lbl {
+      font-size: 11px;
+      color: var(--text-light);
+    }
+    .v5-stature-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-sub);
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="page-title">RS Score — 新5案 v2</h1>
+
+  <!-- ═══════════════════════ 新案1 ═══════════════════════ -->
+  <div class="phone-frame">
+    <div class="variant-label">新案1 — インスタ数値行ど真ん中型</div>
+
+    <!-- Profile header (shared pattern) -->
+    <div class="prof-header">
+      <div class="prof-avatar">🧔</div>
+      <div class="prof-name-block">
+        <div class="prof-name">
+          木村 誠司
+          <span class="badge-star">⭐ Star</span>
+        </div>
+        <div class="prof-handle">@taisho_k</div>
+      </div>
+    </div>
+    <div class="prof-bio">AIで事業・資産運用を自動化。シンガポール在住。</div>
+
+    <!-- Score section -->
+    <div class="v1">
+      <div class="v1-score-hero">
+        <div class="v1-influence-label">影響力スコア</div>
+        <div class="v1-influence-row">
+          <div class="v1-influence-val">50.9K</div>
+        </div>
+
+        <div class="v1-sub-stats">
+          <div class="v1-sub-stat">
+            <div class="v1-sub-val">23.0K</div>
+            <div class="v1-sub-lbl">Trust</div>
+          </div>
+          <div class="v1-sub-stat">
+            <div class="v1-sub-val">16.1K</div>
+            <div class="v1-sub-lbl">Prestige</div>
+          </div>
+          <div class="v1-sub-stat">
+            <div class="v1-sub-val">11.7K</div>
+            <div class="v1-sub-lbl">Insights</div>
+          </div>
+        </div>
+
+        <div class="v1-stature">
+          <span class="v1-stature-lbl">Stature</span>
+          <span class="v1-stature-val">105.6K</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ 新案2 ═══════════════════════ -->
+  <div class="phone-frame">
+    <div class="variant-label">新案2 — X風1行ヘッダー型</div>
+
+    <div class="prof-header">
+      <div class="prof-avatar">🧔</div>
+      <div class="prof-name-block">
+        <div class="prof-name">木村 誠司</div>
+        <div class="prof-handle">@taisho_k</div>
+      </div>
+    </div>
+    <div class="prof-bio">AIで事業・資産運用を自動化。シンガポール在住。</div>
+
+    <div class="v2">
+      <div class="v2-inner">
+        <div class="v2-influence-line">
+          <div class="v2-influence-big">50.9K</div>
+          <div class="v2-influence-word">影響力</div>
+          <span class="badge-star">⭐ Star</span>
+        </div>
+        <div class="v2-sub-line">
+          Trust <span>23.0K</span> · Prestige <span>16.1K</span> · Insights <span>11.7K</span>
+        </div>
+        <div class="v2-stature">Stature <span>105.6K</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ 新案3 ═══════════════════════ -->
+  <div class="phone-frame">
+    <div class="variant-label">新案3 — 左主役・右構成要素 2カラム型</div>
+
+    <div class="prof-header">
+      <div class="prof-avatar">🧔</div>
+      <div class="prof-name-block">
+        <div class="prof-name">木村 誠司</div>
+        <div class="prof-handle">@taisho_k</div>
+      </div>
+    </div>
+    <div class="prof-bio">AIで事業・資産運用を自動化。シンガポール在住。</div>
+
+    <div class="v3">
+      <div class="v3-score-block">
+        <div class="v3-left">
+          <div class="v3-lbl">影響力</div>
+          <div class="v3-big">50.9K</div>
+          <span class="badge-star">⭐ Star</span>
+        </div>
+        <div class="v3-right">
+          <div class="v3-row">
+            <span class="v3-row-lbl">Trust</span>
+            <span class="v3-row-val">23.0K</span>
+          </div>
+          <div class="v3-row">
+            <span class="v3-row-lbl">Prestige</span>
+            <span class="v3-row-val">16.1K</span>
+          </div>
+          <div class="v3-row">
+            <span class="v3-row-lbl">Insights</span>
+            <span class="v3-row-val">11.7K</span>
+          </div>
+        </div>
+      </div>
+      <div class="v3-stature">
+        <span class="v3-stature-lbl">Stature</span>
+        <span class="v3-stature-val">105.6K</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ 新案4 ═══════════════════════ -->
+  <div class="phone-frame">
+    <div class="variant-label">新案4 — 区切り線セグメント型</div>
+
+    <div class="prof-header">
+      <div class="prof-avatar">🧔</div>
+      <div class="prof-name-block">
+        <div class="prof-name">木村 誠司</div>
+        <div class="prof-handle">@taisho_k</div>
+      </div>
+    </div>
+    <div class="prof-bio">AIで事業・資産運用を自動化。シンガポール在住。</div>
+
+    <div class="v4">
+      <div class="v4-hero">
+        <div class="v4-hero-left">
+          <div class="v4-big">50.9K</div>
+          <div class="v4-unit">影響力</div>
+        </div>
+        <span class="badge-star">⭐ Star</span>
+      </div>
+
+      <div class="v4-segments">
+        <div class="v4-seg">
+          <div class="v4-seg-val">23.0K</div>
+          <div class="v4-seg-lbl">Trust</div>
+        </div>
+        <div class="v4-seg">
+          <div class="v4-seg-val">16.1K</div>
+          <div class="v4-seg-lbl">Prestige</div>
+        </div>
+        <div class="v4-seg">
+          <div class="v4-seg-val">11.7K</div>
+          <div class="v4-seg-lbl">Insights</div>
+        </div>
+      </div>
+
+      <div class="v4-stature">
+        <span class="v4-stature-lbl">Stature</span>
+        <span class="v4-stature-val">105.6K</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ 新案5 ═══════════════════════ -->
+  <div class="phone-frame">
+    <div class="variant-label">新案5 — ミニマルカード型</div>
+
+    <div class="prof-header">
+      <div class="prof-avatar">🧔</div>
+      <div class="prof-name-block">
+        <div class="prof-name">木村 誠司</div>
+        <div class="prof-handle">@taisho_k</div>
+      </div>
+    </div>
+    <div class="prof-bio">AIで事業・資産運用を自動化。シンガポール在住。</div>
+
+    <div class="v5">
+      <div class="v5-card">
+        <div class="v5-card-top">
+          <div class="v5-top-left">
+            <div class="v5-score-lbl">影響力スコア</div>
+            <div class="v5-score-val">50.9K</div>
+          </div>
+          <span class="badge-star">⭐ Star</span>
+        </div>
+        <div class="v5-card-mid">
+          <div class="v5-comp">
+            <div class="v5-comp-val">23.0K</div>
+            <div class="v5-comp-lbl">Trust</div>
+          </div>
+          <div class="v5-comp-dot">·</div>
+          <div class="v5-comp">
+            <div class="v5-comp-val">16.1K</div>
+            <div class="v5-comp-lbl">Prestige</div>
+          </div>
+          <div class="v5-comp-dot">·</div>
+          <div class="v5-comp">
+            <div class="v5-comp-val">11.7K</div>
+            <div class="v5-comp-lbl">Insights</div>
+          </div>
+        </div>
+        <div class="v5-card-footer">
+          <span class="v5-stature-lbl">Stature</span>
+          <span class="v5-stature-val">105.6K</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
