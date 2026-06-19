@@ -250,59 +250,139 @@
       z-index: 50;
       flex-shrink: 0;
     }
-    /* ===== HOME STORIES ROW ===== */
-    .home-stories-row {
-      display: flex;
-      gap: 14px;
-      padding: 8px 16px 12px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
+    /* ===== HOME STORIES CARD GRID ===== */
+    .home-stories-grid {
+      display: grid;
+      grid-template-columns: repeat(var(--story-cols, 2), 1fr);
+      gap: 8px;
+      padding: 8px 12px 12px;
     }
-    .home-stories-row::-webkit-scrollbar { height: 3px; }
-    .home-stories-row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 2px; }
-    .home-stories-row::-webkit-scrollbar-track { background: transparent; }
-    .home-story-item {
+    .home-story-card {
+      position: relative;
+      aspect-ratio: 9 / 16;
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      background: #1a1a2e;
+      border: 1px solid rgba(255,255,255,0.10);
+      transition: transform 0.12s;
+    }
+    .home-story-card:active { transform: scale(0.97); }
+    /* card background (gradient or image) */
+    .home-story-card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+    }
+    /* blur overlay for unread image posts */
+    .home-story-card-bg.blurred {
+      filter: blur(18px);
+      transform: scale(1.1); /* prevent white edges from blur */
+    }
+    /* text content layer */
+    .home-story-card-body {
+      position: absolute;
+      inset: 0;
       display: flex;
       flex-direction: column;
+      padding: 8px 8px 10px;
+      pointer-events: none;
+    }
+    /* black bar redaction lines for unread text posts */
+    .home-story-redact {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px 6px;
+      flex: 1;
+      justify-content: center;
+    }
+    .home-story-redact-bar {
+      height: 10px;
+      border-radius: 4px;
+      background: rgba(0,0,0,0.75);
+    }
+    /* user info row at top of card */
+    .home-story-card-user {
+      display: flex;
       align-items: center;
-      gap: 4px;
-      cursor: pointer;
+      gap: 6px;
+      position: relative;
+      z-index: 2;
+      pointer-events: auto;
+    }
+    .home-story-card-avatar-wrap {
       flex-shrink: 0;
     }
-    .home-story-ring {
-      width: 56px;
-      height: 56px;
+    .home-story-card-ring {
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
+      padding: 2px;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 3px;
     }
-    .home-story-ring.has-new {
-      background: linear-gradient(135deg, #020408 0%, #1E3A5F 35%, #7C3AED 70%, #EC4899 100%);
+    .home-story-card-ring.has-new {
+      background: linear-gradient(135deg, #7C3AED, #EC4899);
     }
-    .home-story-ring.seen {
+    .home-story-card-ring.seen {
       background: var(--border);
     }
-    .home-story-ring-inner {
+    .home-story-card-ring-inner {
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background: var(--bg);
+      background: rgba(0,0,0,0.4);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 16px;
     }
-    .home-story-name {
-      font-size: 10px;
-      color: var(--text-sub);
-      max-width: 56px;
-      text-align: center;
+    .home-story-card-meta {
+      flex: 1;
+      min-width: 0;
+    }
+    .home-story-card-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
     }
+    .home-story-card-time {
+      font-size: 9px;
+      color: rgba(255,255,255,0.7);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    }
+    /* dark gradient overlay at top for text legibility */
+    .home-story-card-top-grad {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 80px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+    /* layout toggle button in home header */
+    .home-layout-toggle-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background 0.12s;
+    }
+    .home-layout-toggle-btn:active { background: rgba(255,255,255,0.15); }
 
     /* ===== STORY POP MODAL (中央ポン演出) ===== */
     .story-pop-backdrop {
@@ -1994,6 +2074,153 @@
     .circle-settings-link:active { background: var(--primary-bg); }
 
     /* ===== MY PROFILE TABS ===== */
+    /* ===== INSTAGRAM-STYLE PROFILE HEADER ===== */
+    .insta-profile-header {
+      padding: 16px 16px 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .insta-profile-avatar-col {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .insta-profile-avatar-ring {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(135deg, #7C3AED, #EC4899);
+    }
+    .insta-profile-avatar-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      overflow: hidden;
+    }
+    .insta-profile-avatar-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .insta-profile-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .insta-profile-name {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+    .insta-profile-handle {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+    }
+    .insta-profile-stats-row {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 8px;
+    }
+    .insta-profile-stat {
+      text-align: center;
+      cursor: pointer;
+    }
+    .insta-profile-stat-val {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: block;
+    }
+    .insta-profile-stat-label {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+    .insta-profile-bio-text {
+      font-size: 13px;
+      color: var(--text-main);
+      line-height: 1.5;
+      margin-bottom: 4px;
+    }
+    .insta-profile-bio-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 6px;
+    }
+    .insta-profile-bio-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-bg);
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    /* RS score block below header */
+    .insta-rs-block {
+      margin: 8px 16px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .insta-rs-block-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-sub);
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .insta-rs-score-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .insta-rs-score-val {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+    .insta-rs-tier-badge {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .insta-rs-sub-stats {
+      display: flex;
+      gap: 0;
+    }
+    .insta-rs-sub-stat {
+      flex: 1;
+      text-align: center;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .insta-rs-sub-stat + .insta-rs-sub-stat {
+      border-left: 1px solid var(--border);
+    }
+    .insta-rs-sub-val {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: block;
+    }
+    .insta-rs-sub-label {
+      font-size: 10px;
+      color: var(--text-sub);
+    }
+
     .my-profile-tab-bar {
       display: flex;
       border-bottom: 1.5px solid var(--border);
@@ -2022,7 +2249,7 @@
     }
     .my-profile-posts-feed { padding: 0 0 100px; }
 
-    /* ===== POST GRID (Instagram style) ===== */
+    /* ===== POST GRID (Instagram Reels style) ===== */
     .post-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -2030,7 +2257,7 @@
       padding: 0 0 100px;
     }
     .post-grid-item {
-      aspect-ratio: 1;
+      aspect-ratio: 9 / 16;
       position: relative;
       cursor: pointer;
       border-radius: 4px;
@@ -6994,11 +7221,14 @@
       <div class="home-header">
         <button class="icon-btn" onclick="openCreateMenu()">＋</button>
         <img src="hyperay-logo-white.png" alt="HYPERAY" style="position:absolute;left:50%;transform:translateX(-50%);height:28px;width:auto;object-fit:contain;">
-        <button class="icon-btn" onclick="showNotif()">♡</button>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <button class="home-layout-toggle-btn" id="homeLayoutToggleBtn" onclick="cycleHomeStoryLayout()" title="レイアウト切替">⊞</button>
+          <button class="icon-btn" onclick="showNotif()">♡</button>
+        </div>
       </div>
 
-      <!-- Stories Row (horizontal scroll) -->
-      <div class="home-stories-row" id="homeStoriesRow"></div>
+      <!-- Stories Card Grid -->
+      <div class="home-stories-grid" id="homeStoriesRow"></div>
 
       <!-- X風フィード -->
       <div id="homeFeed" style="padding:0 0 100px;"></div>
@@ -7435,39 +7665,65 @@
         <button class="icon-btn" onclick="openSettingsMenu()" style="font-size:22px;">☰</button>
       </div>
 
-      <!-- POKEMON CARD — full photo style -->
-      <div class="pokemon-profile-card" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=450&fit=crop&crop=faces&facepad=3');">
-        <div class="pokemon-card-topbar">
-          <div class="pokemon-card-tier-badge rank-badge-star">
-            ⭐ Star
-            <span class="pokemon-card-tier-rs">(50.9K)</span>
+      <!-- INSTAGRAM-STYLE PROFILE HEADER -->
+      <div class="insta-profile-header">
+        <div class="insta-profile-avatar-col">
+          <div class="insta-profile-avatar-ring">
+            <div class="insta-profile-avatar-inner">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces&facepad=3" alt="木村 誠司">
+            </div>
           </div>
         </div>
-        <div class="pokemon-card-overlay">
-          <div class="pokemon-card-name">木村 誠司</div>
-          <div class="pokemon-card-handle">@taisho_k</div>
-          <div class="pokemon-card-bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
-          <div class="pokemon-card-stats">
-            <div class="pokemon-card-stat-item" onclick="showStatInfo('trust')">
-              <span class="pokemon-card-stat-icon">💖</span>
-              <span class="pokemon-card-stat-label">Trust</span>
-              <span class="pokemon-card-stat-value">23.0K</span>
+        <div class="insta-profile-info">
+          <div class="insta-profile-name">木村 誠司</div>
+          <div class="insta-profile-handle">@taisho_k</div>
+          <div class="insta-profile-stats-row">
+            <div class="insta-profile-stat">
+              <span class="insta-profile-stat-val">5</span>
+              <span class="insta-profile-stat-label">投稿</span>
             </div>
-            <div class="pokemon-card-stat-item" onclick="showStatInfo('prestige')">
-              <span class="pokemon-card-stat-icon">💎</span>
-              <span class="pokemon-card-stat-label">Prestige</span>
-              <span class="pokemon-card-stat-value">16.1K</span>
+            <div class="insta-profile-stat">
+              <span class="insta-profile-stat-val">1.2K</span>
+              <span class="insta-profile-stat-label">フォロワー</span>
             </div>
-            <div class="pokemon-card-stat-item" onclick="showStatInfo('insights')">
-              <span class="pokemon-card-stat-icon">📝</span>
-              <span class="pokemon-card-stat-label">Insights</span>
-              <span class="pokemon-card-stat-value">11.7K</span>
+            <div class="insta-profile-stat">
+              <span class="insta-profile-stat-val">284</span>
+              <span class="insta-profile-stat-label">フォロー中</span>
             </div>
-            <div class="pokemon-card-stat-item" onclick="showStatInfo('stature')">
-              <span class="pokemon-card-stat-icon">🏛️</span>
-              <span class="pokemon-card-stat-label">Stature</span>
-              <span class="pokemon-card-stat-value">105.6K</span>
-            </div>
+          </div>
+          <div class="insta-profile-bio-text">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+          <div class="insta-profile-bio-tags">
+            <span class="insta-profile-bio-tag">経営者</span>
+            <span class="insta-profile-bio-tag">AI</span>
+            <span class="insta-profile-bio-tag">投資</span>
+            <span class="insta-profile-bio-tag">SNS開発</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RS SCORE BLOCK -->
+      <div class="insta-rs-block">
+        <div class="insta-rs-block-title">RADIANCE SCORE</div>
+        <div class="insta-rs-score-row">
+          <span class="insta-rs-score-val">50.9K</span>
+          <span class="insta-rs-tier-badge rank-badge-star">⭐ Star</span>
+        </div>
+        <div class="insta-rs-sub-stats">
+          <div class="insta-rs-sub-stat" onclick="showStatInfo('trust')">
+            <span class="insta-rs-sub-val">23.0K</span>
+            <span class="insta-rs-sub-label">💖 Trust</span>
+          </div>
+          <div class="insta-rs-sub-stat" onclick="showStatInfo('prestige')">
+            <span class="insta-rs-sub-val">16.1K</span>
+            <span class="insta-rs-sub-label">💎 Prestige</span>
+          </div>
+          <div class="insta-rs-sub-stat" onclick="showStatInfo('insights')">
+            <span class="insta-rs-sub-val">11.7K</span>
+            <span class="insta-rs-sub-label">📝 Insights</span>
+          </div>
+          <div class="insta-rs-sub-stat" onclick="showStatInfo('stature')">
+            <span class="insta-rs-sub-val">105.6K</span>
+            <span class="insta-rs-sub-label">🏛️ Stature</span>
           </div>
         </div>
       </div>
@@ -11943,33 +12199,118 @@
     });
   }
 
-  // ===== HOME STORIES ROW =====
-  function buildHomeStories() {
-    const row = document.getElementById('homeStoriesRow');
-    if (!row) return;
-    row.innerHTML = '';
-    storiesData.forEach(user => {
-      const isSelf = user.id === 'taisho_k';
-      const isSeen = storiesSeen[user.id];
-      const hasNewStory = user.hasNew && !isSeen;
-      const ringClass = hasNewStory ? 'has-new' : 'seen';
-      const firstName = isSelf ? '自分' : user.name.split(' ')[0];
+  // ===== HOME STORIES CARD GRID =====
+  // Tracks which story cards have been opened (unblurred)
+  const storyCardOpened = new Set();
 
-      const item = document.createElement('div');
-      item.className = 'home-story-item';
-      // 分岐：ストーリー有 → 中央ポン演出 / ストーリー無 → プロフィール遷移
-      if (user.hasNew && user.stories && user.stories.length > 0) {
-        item.onclick = () => openStoryPop(user.id);
-      } else {
-        item.onclick = () => openUserProfile(user.id);
+  // Layout columns state: 1 / 2 / 3
+  let homeStoryCols = 2;
+
+  function cycleHomeStoryLayout() {
+    homeStoryCols = homeStoryCols >= 3 ? 1 : homeStoryCols + 1;
+    const grid = document.getElementById('homeStoriesRow');
+    if (grid) {
+      grid.style.setProperty('--story-cols', homeStoryCols);
+      // Update toggle button icon to indicate current layout
+      const btn = document.getElementById('homeLayoutToggleBtn');
+      if (btn) {
+        const icons = ['⊟', '⊞', '⊟⊟'];
+        btn.textContent = homeStoryCols === 1 ? '▦' : homeStoryCols === 2 ? '⊞' : '⊟';
       }
-      item.innerHTML = `
-        <div class="home-story-ring ${ringClass}">
-          <div class="home-story-ring-inner">${user.avatar}</div>
+    }
+  }
+
+  function buildHomeStories() {
+    const grid = document.getElementById('homeStoriesRow');
+    if (!grid) return;
+    grid.innerHTML = '';
+    // Apply current column setting
+    grid.style.setProperty('--story-cols', homeStoryCols);
+
+    storiesData.forEach(user => {
+      if (!user.stories || user.stories.length === 0) return;
+      const story = user.stories[0]; // first story as card preview
+      const isSelf = user.id === 'taisho_k';
+      const hasNew = user.hasNew && !storiesSeen[user.id];
+      const ringClass = hasNew ? 'has-new' : 'seen';
+      const displayName = isSelf ? '自分' : user.name.split(' ')[0];
+      const cardId = 'home-story-card-' + user.id;
+      const isOpened = storyCardOpened.has(user.id);
+
+      // Relative time from story.time string (already human-readable)
+      const timeLabel = story.time || '';
+
+      // Determine card content: blur image or redact text
+      const hasImg = !!story.img;
+      let bgStyle = '';
+      let bodyContent = '';
+
+      if (hasImg) {
+        // Image post: blur background if unread
+        const blurClass = isOpened ? '' : 'blurred';
+        bgStyle = `background-image: url('${story.img}'); background-size: cover; background-position: center;`;
+        bodyContent = `<div class="home-story-card-bg ${blurClass}" style="${bgStyle}"></div>`;
+      } else {
+        // Text/gradient post
+        const gradStyle = `background: ${story.grad || 'linear-gradient(135deg,#1a1a2e,#7C3AED)'};`;
+        bodyContent = `<div class="home-story-card-bg" style="${gradStyle}"></div>`;
+        if (!isOpened) {
+          // Black-bar redaction for text content
+          bodyContent += `
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none;padding:12px 10px;">
+              <div class="home-story-redact" style="width:100%;">
+                <div class="home-story-redact-bar" style="width:90%;"></div>
+                <div class="home-story-redact-bar" style="width:75%;"></div>
+                <div class="home-story-redact-bar" style="width:85%;"></div>
+                <div class="home-story-redact-bar" style="width:60%;"></div>
+                <div class="home-story-redact-bar" style="width:70%;"></div>
+              </div>
+            </div>`;
+        } else {
+          // Show text snippet when opened
+          const snippet = story.text ? story.text.replace(/\n/g, ' ').slice(0, 70) : '';
+          bodyContent += `
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none;padding:12px 10px;">
+              <div style="font-size:12px;font-weight:600;color:#fff;line-height:1.5;text-shadow:0 1px 4px rgba(0,0,0,0.6);">${snippet}</div>
+            </div>`;
+        }
+      }
+
+      const card = document.createElement('div');
+      card.className = 'home-story-card';
+      card.id = cardId;
+      card.innerHTML = `
+        ${bodyContent}
+        <div class="home-story-card-top-grad"></div>
+        <div class="home-story-card-body">
+          <div class="home-story-card-user">
+            <div class="home-story-card-avatar-wrap">
+              <div class="home-story-card-ring ${ringClass}">
+                <div class="home-story-card-ring-inner">${user.avatar}</div>
+              </div>
+            </div>
+            <div class="home-story-card-meta">
+              <div class="home-story-card-name">${displayName}</div>
+              <div class="home-story-card-time">${timeLabel}</div>
+            </div>
+          </div>
         </div>
-        <div class="home-story-name">${firstName}</div>
       `;
-      row.appendChild(item);
+
+      card.onclick = () => {
+        // Mark as opened (unblur)
+        storyCardOpened.add(user.id);
+        // Navigate to full-screen story viewer
+        if (user.stories && user.stories.length > 0) {
+          openStoryPop(user.id);
+        } else {
+          openUserProfile(user.id);
+        }
+        // Rebuild card to unblur it
+        buildHomeStories();
+      };
+
+      grid.appendChild(card);
     });
   }
 
