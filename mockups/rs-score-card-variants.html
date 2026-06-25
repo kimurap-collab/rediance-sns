@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RSスコアカード 余白活用 5案</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#1E3A5F; --primary-light:#2E5EAA; --primary-dark:#0F2040;
+    --primary-bg:#EEF3FB; --surface:#F5F5F5; --bg:#FFFFFF;
+    --text-main:#000; --text-sub:#555; --text-light:#999;
+    --border:#ECECEC; --num-font:'Space Grotesk';
+    --star-grad:linear-gradient(135deg,#3B82F6,#7C3AED);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans JP',sans-serif;background:#FAFAFB;color:var(--text-main);padding:28px 14px 60px;line-height:1.4;}
+  h1{font-size:18px;text-align:center;margin-bottom:6px;}
+  .sub{text-align:center;color:var(--text-sub);font-size:12px;margin-bottom:26px;}
+  .phone{max-width:390px;margin:0 auto 34px;}
+  .case-label{font-size:13px;font-weight:700;color:var(--primary);margin:0 4px 4px;}
+  .case-desc{font-size:11.5px;color:var(--text-light);margin:0 4px 9px;}
+
+  /* 共通：スコア数字 */
+  .num{font-family:var(--num-font);font-variant-numeric:tabular-nums;}
+  .big{font-family:var(--num-font);font-weight:700;letter-spacing:-0.02em;line-height:0.95;}
+  .star-badge{background:var(--star-grad);color:#fff;font-weight:800;font-size:12px;padding:4px 12px;border-radius:20px;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;}
+  .card-title{font-size:11px;font-weight:700;color:var(--text-sub);letter-spacing:0.5px;}
+  .avatar{border-radius:50%;object-fit:cover;display:block;}
+
+  /* 4指標 共通バー */
+  .substats{display:flex;}
+  .substat{flex:1;text-align:center;padding:5px 0;cursor:pointer;}
+  .substat + .substat{border-left:1px solid var(--border);}
+  .substat .v{font-family:var(--num-font);font-size:13px;font-weight:700;color:var(--text-main);display:block;}
+  .substat .l{font-size:10px;color:var(--text-sub);}
+
+  /* ===== 案1 ヘッダー一体型 ===== */
+  .c1{background:linear-gradient(135deg,var(--surface) 0%,var(--primary-bg) 100%);border-radius:14px;padding:14px 16px;}
+  .c1-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .c1-mid{display:flex;align-items:center;gap:13px;margin-bottom:13px;}
+  .c1-id{flex:1;min-width:0;}
+  .c1-name{font-size:16px;font-weight:700;}
+  .c1-handle{font-size:12px;color:var(--text-light);}
+  .c1-score{text-align:right;}
+  .c1-score .big{font-size:34px;color:var(--text-main);}
+  .c1-score .lbl{font-size:10px;color:var(--text-light);letter-spacing:1px;}
+
+  /* ===== 案2 数字主役・名前添え（最小変更） ===== */
+  .c2{background:linear-gradient(135deg,var(--surface) 0%,var(--primary-bg) 100%);border-radius:14px;padding:14px 16px;}
+  .c2-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .c2-mid{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:13px;gap:12px;}
+  .c2-mid .big{font-size:42px;color:var(--text-main);}
+  .c2-id{text-align:right;padding-bottom:5px;}
+  .c2-name{font-size:15px;font-weight:700;}
+  .c2-handle{font-size:12px;color:var(--text-light);}
+  .c2-word{font-size:11px;color:var(--text-sub);margin-top:2px;}
+
+  /* ===== 案3 ダークヒーロー ===== */
+  .c3{background:linear-gradient(140deg,#0F2040 0%,#1E3A5F 45%,#2E5EAA 100%);border-radius:16px;padding:16px;color:#fff;position:relative;overflow:hidden;}
+  .c3::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(124,58,237,0.35),transparent 70%);}
+  .c3-top{display:flex;align-items:center;gap:11px;margin-bottom:14px;position:relative;z-index:1;}
+  .c3-name{font-size:15px;font-weight:700;color:#fff;}
+  .c3-handle{font-size:12px;color:rgba(255,255,255,0.6);}
+  .c3-top .star-badge{margin-left:auto;}
+  .c3-score{position:relative;z-index:1;margin-bottom:15px;}
+  .c3-score .big{font-size:46px;color:#fff;}
+  .c3-score .lbl{font-size:10px;color:rgba(255,255,255,0.55);letter-spacing:2px;display:block;margin-top:2px;}
+  .c3 .substats{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,0.14);padding-top:6px;}
+  .c3 .substat + .substat{border-left:1px solid rgba(255,255,255,0.14);}
+  .c3 .substat .v{color:#fff;}
+  .c3 .substat .l{color:rgba(255,255,255,0.6);}
+
+  /* ===== 案4 左右2カラム ===== */
+  .c4{background:linear-gradient(135deg,var(--surface) 0%,var(--primary-bg) 100%);border-radius:14px;padding:15px 16px;}
+  .c4-cols{display:flex;gap:14px;margin-bottom:14px;}
+  .c4-left{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center;}
+  .c4-name{font-size:14px;font-weight:700;margin-top:7px;}
+  .c4-handle{font-size:11px;color:var(--text-light);}
+  .c4-tags{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:7px;}
+  .c4-tag{font-size:10px;background:rgba(46,94,170,0.1);color:var(--primary-light);padding:2px 8px;border-radius:10px;}
+  .c4-right{width:140px;border-left:1px solid var(--border);padding-left:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+  .c4-right .big{font-size:36px;color:var(--text-main);}
+  .c4-right .lbl{font-size:10px;color:var(--text-light);letter-spacing:1px;margin:3px 0 8px;}
+
+  /* ===== 案5 スコア＋トレンド ===== */
+  .c5{background:linear-gradient(135deg,var(--surface) 0%,var(--primary-bg) 100%);border-radius:14px;padding:14px 16px;}
+  .c5-top{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+  .c5-name{font-size:14px;font-weight:700;}
+  .c5-handle{font-size:11px;color:var(--text-light);}
+  .c5-top .star-badge{margin-left:auto;}
+  .c5-mid{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:13px;gap:10px;}
+  .c5-mid .big{font-size:40px;color:var(--text-main);}
+  .c5-word{font-size:11px;color:var(--text-sub);}
+  .c5-trend{text-align:right;}
+  .c5-pct{font-family:var(--num-font);font-size:15px;font-weight:700;color:#10B981;}
+  .c5-spark{display:flex;align-items:flex-end;gap:3px;height:26px;margin-top:5px;justify-content:flex-end;}
+  .c5-spark span{width:5px;border-radius:2px;background:var(--primary-light);opacity:0.85;}
+</style>
+</head>
+<body>
+  <h1>RSスコアカード — 余白活用 5案</h1>
+  <div class="sub">「50.9Kの右の余白」をアイデンティティで埋める方向で5パターン</div>
+
+  <!-- ============ 案1 ============ -->
+  <div class="phone" id="case1">
+    <div class="case-label">案1　ヘッダー一体型</div>
+    <div class="case-desc">アバター＋名前を左、大スコアを右に。上のプロフ2カードを1枚へ統合</div>
+    <div class="c1">
+      <div class="c1-top">
+        <span class="card-title">RADIANCE SCORE</span>
+        <span class="star-badge">⭐ Star</span>
+      </div>
+      <div class="c1-mid">
+        <img class="avatar" width="56" height="56" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces&facepad=3" alt="">
+        <div class="c1-id">
+          <div class="c1-name">木村 誠司</div>
+          <div class="c1-handle">@taisho_k</div>
+        </div>
+        <div class="c1-score">
+          <div class="big">50.9K</div>
+          <div class="lbl">影響力</div>
+        </div>
+      </div>
+      <div class="substats">
+        <div class="substat"><span class="v">23.0K</span><span class="l">💖 Trust</span></div>
+        <div class="substat"><span class="v">16.1K</span><span class="l">💎 Prestige</span></div>
+        <div class="substat"><span class="v">11.7K</span><span class="l">📝 Insights</span></div>
+        <div class="substat"><span class="v">105.6K</span><span class="l">🏛️ Stature</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 案2 ============ -->
+  <div class="phone" id="case2">
+    <div class="case-label">案2　数字主役・名前添え（最小変更）</div>
+    <div class="case-desc">50.9Kはデカいまま。右の余白に名前＠IDを小さく寄せるだけ</div>
+    <div class="c2">
+      <div class="c2-top">
+        <span class="card-title">RADIANCE SCORE</span>
+        <span class="star-badge">⭐ Star</span>
+      </div>
+      <div class="c2-mid">
+        <div><span class="big">50.9K</span><div class="c2-word">影響力スコア</div></div>
+        <div class="c2-id">
+          <div class="c2-name">木村 誠司</div>
+          <div class="c2-handle">@taisho_k</div>
+        </div>
+      </div>
+      <div class="substats">
+        <div class="substat"><span class="v">23.0K</span><span class="l">💖 Trust</span></div>
+        <div class="substat"><span class="v">16.1K</span><span class="l">💎 Prestige</span></div>
+        <div class="substat"><span class="v">11.7K</span><span class="l">📝 Insights</span></div>
+        <div class="substat"><span class="v">105.6K</span><span class="l">🏛️ Stature</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 案3 ============ -->
+  <div class="phone" id="case3">
+    <div class="case-label">案3　ダークヒーロー（プレミアム）</div>
+    <div class="case-desc">濃紺グラデの高級カード化。白文字で「格」を演出</div>
+    <div class="c3">
+      <div class="c3-top">
+        <img class="avatar" width="44" height="44" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces&facepad=3" alt="">
+        <div>
+          <div class="c3-name">木村 誠司</div>
+          <div class="c3-handle">@taisho_k</div>
+        </div>
+        <span class="star-badge">⭐ Star</span>
+      </div>
+      <div class="c3-score">
+        <span class="big">50.9K</span>
+        <span class="lbl">RADIANCE SCORE</span>
+      </div>
+      <div class="substats">
+        <div class="substat"><span class="v">23.0K</span><span class="l">💖 Trust</span></div>
+        <div class="substat"><span class="v">16.1K</span><span class="l">💎 Prestige</span></div>
+        <div class="substat"><span class="v">11.7K</span><span class="l">📝 Insights</span></div>
+        <div class="substat"><span class="v">105.6K</span><span class="l">🏛️ Stature</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 案4 ============ -->
+  <div class="phone" id="case4">
+    <div class="case-label">案4　左右2カラム（情報リッチ）</div>
+    <div class="case-desc">左＝アイデンティティ（アバター・名前・タグ）、右＝スコア</div>
+    <div class="c4">
+      <div class="c4-cols">
+        <div class="c4-left">
+          <img class="avatar" width="60" height="60" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces&facepad=3" alt="">
+          <div class="c4-name">木村 誠司</div>
+          <div class="c4-handle">@taisho_k</div>
+          <div class="c4-tags"><span class="c4-tag">経営者</span><span class="c4-tag">AI</span><span class="c4-tag">投資</span></div>
+        </div>
+        <div class="c4-right">
+          <span class="big">50.9K</span>
+          <span class="lbl">影響力</span>
+          <span class="star-badge">⭐ Star</span>
+        </div>
+      </div>
+      <div class="substats">
+        <div class="substat"><span class="v">23.0K</span><span class="l">💖 Trust</span></div>
+        <div class="substat"><span class="v">16.1K</span><span class="l">💎 Prestige</span></div>
+        <div class="substat"><span class="v">11.7K</span><span class="l">📝 Insights</span></div>
+        <div class="substat"><span class="v">105.6K</span><span class="l">🏛️ Stature</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 案5 ============ -->
+  <div class="phone" id="case5">
+    <div class="case-label">案5　スコア＋トレンド（ダッシュボード）</div>
+    <div class="case-desc">右余白に成長率「▲+12%」と今月の推移ミニグラフ</div>
+    <div class="c5">
+      <div class="c5-top">
+        <img class="avatar" width="40" height="40" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces&facepad=3" alt="">
+        <div>
+          <div class="c5-name">木村 誠司</div>
+          <div class="c5-handle">@taisho_k</div>
+        </div>
+        <span class="star-badge">⭐ Star</span>
+      </div>
+      <div class="c5-mid">
+        <div><span class="big">50.9K</span><div class="c5-word">影響力スコア</div></div>
+        <div class="c5-trend">
+          <div class="c5-pct">▲ +12%</div>
+          <div class="c5-spark">
+            <span style="height:40%"></span><span style="height:55%"></span><span style="height:48%"></span>
+            <span style="height:70%"></span><span style="height:82%"></span><span style="height:100%"></span>
+          </div>
+        </div>
+      </div>
+      <div class="substats">
+        <div class="substat"><span class="v">23.0K</span><span class="l">💖 Trust</span></div>
+        <div class="substat"><span class="v">16.1K</span><span class="l">💎 Prestige</span></div>
+        <div class="substat"><span class="v">11.7K</span><span class="l">📝 Insights</span></div>
+        <div class="substat"><span class="v">105.6K</span><span class="l">🏛️ Stature</span></div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

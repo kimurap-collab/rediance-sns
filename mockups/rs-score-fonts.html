@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RS Score — 数字フォント見比べ — HYPERAY</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- 日本語 + 欧文ディスプレイ系5種 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Space+Grotesk:wght@500;600;700&family=Sora:wght@600;700;800&family=Outfit:wght@500;600;700;800&family=Archivo:wght@600;700;800&display=swap" rel="stylesheet">
+  <!-- Clash Display (Fontshare) -->
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&display=swap" rel="stylesheet">
+  <style>
+    /* ── HYPERAY design tokens (from app.html) ── */
+    :root {
+      --primary: #1E3A5F;
+      --primary-light: #2E5EAA;
+      --primary-dark: #0F2040;
+      --primary-bg: #EEF3FB;
+      --gold: #F59E0B;
+      --gold-light: #FCD34D;
+      --bg: #FFFFFF;
+      --surface: #F5F5F5;
+      --border: #E8E8E8;
+      --text-main: #000000;
+      --text-sub: #555555;
+      --text-light: #999999;
+      --radius-md: 8px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, system-ui,
+                   'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      padding: 32px 16px 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 44px;
+    }
+
+    h1.page-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #aaa;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+    .page-sub {
+      font-size: 12px;
+      color: #888;
+      text-align: center;
+      margin-top: -32px;
+      max-width: 360px;
+      line-height: 1.6;
+    }
+
+    /* Phone frame */
+    .phone-frame {
+      width: 375px;
+      max-width: 100%;
+      background: var(--bg);
+      border-radius: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06);
+      overflow: hidden;
+      border: 1px solid #ddd;
+    }
+
+    .variant-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--text-sub);
+      text-align: center;
+      padding: 14px 0 10px;
+      background: #f8f8f8;
+      border-bottom: 1px solid var(--border);
+    }
+    .variant-label small {
+      display: block;
+      font-size: 9px;
+      font-weight: 500;
+      color: var(--text-light);
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+      text-transform: none;
+    }
+
+    /* Shared profile header (新案2準拠) */
+    .prof-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 22px 20px 16px;
+    }
+    .prof-avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1E3A5F 0%, #2E5EAA 50%, #7C3AED 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #2E5EAA;
+    }
+    .prof-name-block { flex: 1; min-width: 0; }
+    .prof-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .prof-handle {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+    .prof-bio {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.5;
+      padding: 0 20px 14px;
+    }
+
+    /* Star badge */
+    .badge-star {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      background: linear-gradient(135deg, #F59E0B, #FCD34D);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      align-self: center;
+    }
+
+    /* ── 新案2 X風1行レイアウト（数字を主役に拡大） ── */
+    .v2-inner { padding: 4px 20px 24px; }
+    .v2-influence-line {
+      display: flex;
+      align-items: baseline;
+      gap: 9px;
+      margin-bottom: 12px;
+    }
+    .v2-influence-big {
+      font-size: 46px;          /* 主役なので大きく */
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .v2-influence-word {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+    .v2-sub-line {
+      font-size: 12.5px;
+      color: var(--text-light);
+      line-height: 1.6;
+      letter-spacing: 0.01em;
+    }
+    .v2-sub-line .num {
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+    .v2-stature {
+      margin-top: 9px;
+      font-size: 12.5px;
+      color: var(--text-light);
+    }
+    .v2-stature .num {
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    /* 数字共通：等幅数字（桁が揃う） */
+    .num {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1;
+    }
+
+    /* ── フォント別の数字適用 ── */
+    .font-space .num { font-family: 'Space Grotesk', sans-serif; }
+    .font-space .v2-influence-big { font-weight: 600; letter-spacing: -0.01em; }
+
+    .font-sora .num { font-family: 'Sora', sans-serif; }
+    .font-sora .v2-influence-big { font-weight: 700; letter-spacing: -0.02em; }
+
+    .font-outfit .num { font-family: 'Outfit', sans-serif; }
+    .font-outfit .v2-influence-big { font-weight: 700; letter-spacing: -0.01em; }
+
+    .font-archivo .num { font-family: 'Archivo', sans-serif; }
+    .font-archivo .v2-influence-big { font-weight: 800; letter-spacing: -0.03em; }
+
+    .font-clash .num { font-family: 'Clash Display', sans-serif; }
+    .font-clash .v2-influence-big { font-weight: 600; letter-spacing: -0.01em; }
+  </style>
+</head>
+<body>
+
+  <h1 class="page-title">RS Score — 数字フォント見比べ</h1>
+  <div class="page-sub">レイアウトは新案2（X風1行）で固定。主役の 50.9K と各数値のフォントだけ5種で振った比較。好きな番号を選んでや。</div>
+
+  <!-- ① Space Grotesk -->
+  <div class="phone-frame font-space">
+    <div class="variant-label">（１）Space Grotesk<small>幾何学的・テック感のある等幅寄り</small></div>
+    <div class="prof-header">
+      <div class="prof-avatar">🧔</div>
+      <div class="prof-name-block">
+        <div class="prof-name">木村 誠司</div>
+        <div class="prof-handle">@taisho_k</div>
+      </div>
+    </div>
+    <div class="prof-bio">AIで事業・資産運用を自動化。シンガポール在住。</div>
+    <div class="v2-inner">
+      <div class="v2-influence-line">
+        <div class="v2-influence-big num">50.9K</div>
+        <div class="v2-influence-word">影響力</div>
+        <span class="badge-star">⭐ Star</span>
+      </div>
+      <div class="v2-sub-line">
+        Trust <span class="num">23.0K</span> · Prestige <span class="num">16.1K</span> · Insights <span class="num">11.7K</span>
+      </div>
+      <div class="v2-stature">Stature <span class="num">105.6K</span></div>
+    </div>
+  </div>
+
+  <!-- ② Sora -->
+  <div class="phone-frame font-sora">
+    <div class="variant-label">（２）Sora<small>モダンで均整のとれたクリーン系</small></div>
+    <div class="prof-header">
+      <div class="prof-avatar">🧔</div>
+      <div class="prof-name-block">
+        <div class="prof-name">木村 誠司</div>
+        <div class="prof-handle">@taisho_k</div>
+      </div>
+    </div>
+    <div class="prof-bio">AIで事業・資産運用を自動化。シンガポール在住。</div>
+    <div class="v2-inner">
+      <div class="v2-influence-line">
+        <div class="v2-influence-big num">50.9K</div>
+        <div class="v2-influence-word">影響力</div>
+        <span class="badge-star">⭐ Star</span>
+      </div>
+      <div class="v2-sub-line">
+        Trust <span class="num">23.0K</span> · Prestige <span class="num">16.1K</span> · Insights <span class="num">11.7K</span>
+      </div>
+      <div class="v2-stature">Stature <span class="num">105.6K</span></div>
+    </div>
+  </div>
+
+  <!-- ③ Outfit -->
+  <div class="phone-frame font-outfit">
+    <div class="variant-label">（３）Outfit<small>ジオメトリックで洗練された印象</small></div>
+    <div class="prof-header">
+      <div class="prof-avatar">🧔</div>
+      <div class="prof-name-block">
+        <div class="prof-name">木村 誠司</div>
+        <div class="prof-handle">@taisho_k</div>
+      </div>
+    </div>
+    <div class="prof-bio">AIで事業・資産運用を自動化。シンガポール在住。</div>
+    <div class="v2-inner">
+      <div class="v2-influence-line">
+        <div class="v2-influence-big num">50.9K</div>
+        <div class="v2-influence-word">影響力</div>
+        <span class="badge-star">⭐ Star</span>
+      </div>
+      <div class="v2-sub-line">
+        Trust <span class="num">23.0K</span> · Prestige <span class="num">16.1K</span> · Insights <span class="num">11.7K</span>
+      </div>
+      <div class="v2-stature">Stature <span class="num">105.6K</span></div>
+    </div>
+  </div>
+
+  <!-- ④ Archivo -->
+  <div class="phone-frame font-archivo">
+    <div class="variant-label">（４）Archivo<small>太く力強い・数字が映える</small></div>
+    <div class="prof-header">
+      <div class="prof-avatar">🧔</div>
+      <div class="prof-name-block">
+        <div class="prof-name">木村 誠司</div>
+        <div class="prof-handle">@taisho_k</div>
+      </div>
+    </div>
+    <div class="prof-bio">AIで事業・資産運用を自動化。シンガポール在住。</div>
+    <div class="v2-inner">
+      <div class="v2-influence-line">
+        <div class="v2-influence-big num">50.9K</div>
+        <div class="v2-influence-word">影響力</div>
+        <span class="badge-star">⭐ Star</span>
+      </div>
+      <div class="v2-sub-line">
+        Trust <span class="num">23.0K</span> · Prestige <span class="num">16.1K</span> · Insights <span class="num">11.7K</span>
+      </div>
+      <div class="v2-stature">Stature <span class="num">105.6K</span></div>
+    </div>
+  </div>
+
+  <!-- ⑤ Clash Display -->
+  <div class="phone-frame font-clash">
+    <div class="variant-label">（５）Clash Display<small>ディスプレイ系・抜けのある攻めた個性</small></div>
+    <div class="prof-header">
+      <div class="prof-avatar">🧔</div>
+      <div class="prof-name-block">
+        <div class="prof-name">木村 誠司</div>
+        <div class="prof-handle">@taisho_k</div>
+      </div>
+    </div>
+    <div class="prof-bio">AIで事業・資産運用を自動化。シンガポール在住。</div>
+    <div class="v2-inner">
+      <div class="v2-influence-line">
+        <div class="v2-influence-big num">50.9K</div>
+        <div class="v2-influence-word">影響力</div>
+        <span class="badge-star">⭐ Star</span>
+      </div>
+      <div class="v2-sub-line">
+        Trust <span class="num">23.0K</span> · Prestige <span class="num">16.1K</span> · Insights <span class="num">11.7K</span>
+      </div>
+      <div class="v2-stature">Stature <span class="num">105.6K</span></div>
+    </div>
+  </div>
+
+</body>
+</html>
