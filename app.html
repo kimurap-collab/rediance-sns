@@ -7,6 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=M+PLUS+1p:wght@700&family=Zen+Kaku+Gothic+New:wght@300&family=Noto+Serif+JP&family=Shippori+Mincho&family=Yusei+Magic&family=Klee+One&family=Kaisei+Decol&family=Stick&family=Reggae+One&display=swap" rel="stylesheet">
+  <!-- Leaflet (地図・ピン指定用。APIキー不要・OpenStreetMap) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     :root {
       --primary: #1E3A5F;
@@ -2908,6 +2911,18 @@
 
     /* イベント作成画面 */
     #screen-event-create { background: var(--bg); overflow-y: auto; }
+    .ev-map-picker { width:100%; height:190px; border-radius:12px; overflow:hidden; margin-top:8px; border:1px solid rgba(255,255,255,0.12); background:#1a1a22; }
+    .ev-map-picker .leaflet-container { background:#1a1a22; }
+    .ev-map-hint { font-size:11px; color:var(--text-light); margin-top:6px; }
+    .ev-place-search { display:flex; gap:8px; }
+    .ev-place-search .ev-input { flex:1; }
+    .ev-place-search-btn { flex-shrink:0; width:46px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-size:17px; cursor:pointer; }
+    .ev-place-results { display:flex; flex-direction:column; gap:2px; margin-top:6px; }
+    .ev-place-result { padding:9px 11px; font-size:12.5px; color:var(--text-main); background:rgba(255,255,255,0.05); border-radius:8px; cursor:pointer; line-height:1.4; }
+    .ev-place-result:active { background:rgba(255,255,255,0.12); }
+    .ev-place-loading, .ev-place-empty { color:var(--text-light); cursor:default; }
+    .ev-detail-maplink { color:inherit; text-decoration:none; }
+    .ev-detail-maplink small { color:var(--primary); font-size:11px; margin-left:6px; white-space:nowrap; }
     .ev-create-header, .ev-detail-header {
       position: sticky; top: 0; z-index: 10;
       display: flex; align-items: center; justify-content: space-between;
@@ -2964,6 +2979,7 @@
     .ev-cover-preview {
       width: 100%;
       aspect-ratio: 16 / 9;
+      margin-top: 14px;
       border-radius: 16px;
       background: #0A0A0F;
       box-shadow: 0 8px 24px rgba(0,0,0,0.3);
@@ -3039,23 +3055,24 @@
       height: auto;
     }
     .ev-cover-upload-btn {
-      display: block;
-      margin-top: 14px;
-      padding: 12px;
-      border: 1.5px dashed rgba(255,255,255,0.25);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 12px;
+      padding: 13px;
+      border: 1.5px solid rgba(168,85,247,0.6);
       border-radius: 12px;
-      background: rgba(255,255,255,0.03);
-      color: var(--text);
+      background: rgba(168,85,247,0.12);
+      color: #C4B5FD;
       text-align: center;
-      font-size: 13px; font-weight: 600;
+      font-size: 13.5px; font-weight: 700;
       cursor: pointer;
       transition: all 0.15s;
     }
     .ev-cover-upload-btn:hover,
     .ev-cover-upload-btn:active {
       border-color: #A855F7;
-      background: rgba(168,85,247,0.1);
+      background: rgba(168,85,247,0.22);
     }
+    .ev-cover-upload-ico { font-size: 16px; }
     /* ページ背景エディタ */
     .ev-bg-editor-block {
       padding: 14px;
@@ -8077,19 +8094,63 @@
         <div style="width:36px;"></div>
       </div>
       <div class="ev-create-body">
-        <!-- ヒーロー画像エリア（写真必須） -->
+        <!-- 1. タイトル -->
+        <label class="ev-field">
+          <span class="ev-field-label">タイトル</span>
+          <input type="text" class="ev-input ev-input-lg" id="evCreateTitle" placeholder="例: Yogbo淡路島保養所 お泊り会">
+        </label>
+
+        <!-- 2. 開始日時 -->
+        <div class="ev-field">
+          <span class="ev-field-label">開始日時</span>
+          <div class="ev-field-row">
+            <input type="date" class="ev-input" id="evCreateDate" style="flex:1.3;">
+            <input type="time" class="ev-input" id="evCreateTime" step="900" style="flex:1;">
+          </div>
+        </div>
+
+        <!-- 3. 終了日時 -->
+        <div class="ev-field">
+          <span class="ev-field-label">終了日時 <span class="ev-field-optional">任意</span></span>
+          <div class="ev-field-row">
+            <input type="date" class="ev-input" id="evCreateEndDate" style="flex:1.3;">
+            <input type="time" class="ev-input" id="evCreateEndTime" step="900" style="flex:1;">
+          </div>
+        </div>
+
+        <!-- 4. 場所（検索→ピン→ドラッグ微調整。LINE方式） -->
+        <div class="ev-field">
+          <span class="ev-field-label">場所</span>
+          <div class="ev-place-search">
+            <input type="text" class="ev-input" id="evCreatePlace" placeholder="場所を検索（例: 淡路島）" autocomplete="off"
+                   oninput="onEvPlaceInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();evPlaceSearch();}">
+            <button type="button" class="ev-place-search-btn" onclick="evPlaceSearch()">🔍</button>
+          </div>
+          <div class="ev-place-results" id="evPlaceResults"></div>
+          <div class="ev-map-picker" id="evCreateMap"></div>
+          <div class="ev-map-hint">📍 検索でピンが立ちます。ピンをドラッグして微調整できます</div>
+        </div>
+
+        <!-- 5. 詳細 -->
+        <label class="ev-field">
+          <span class="ev-field-label">詳細 <span class="ev-field-optional">任意</span></span>
+          <textarea class="ev-input ev-textarea" id="evCreateMessage" placeholder="例: 飯と温泉とサウナあります。2日間のんびりしよう！" rows="4"></textarea>
+        </label>
+
+        <!-- 6. ヒーロー画像エリア（写真必須）：選ぶ→アップロード→プレビュー -->
         <div class="ev-cover-editor">
-          <div class="ev-cover-preview" id="evCoverPreview"></div>
-          <div class="ev-cover-drag-hint" id="evCoverDragHint" style="display:none;">ドラッグで位置調整</div>
           <div class="ev-cover-section-title">写真を選ぶ</div>
           <div class="ev-cover-palette" id="evCoverPhotos"></div>
           <label class="ev-cover-upload-btn">
             <input type="file" accept="image/*" id="evCoverUploadInput" onchange="handleEvCoverUpload(event)" hidden>
-            <span>📷 自分の写真をアップロード</span>
+            <span class="ev-cover-upload-ico">📷</span>
+            <span>自分の写真をアップロード</span>
           </label>
+          <div class="ev-cover-preview" id="evCoverPreview"></div>
+          <div class="ev-cover-drag-hint" id="evCoverDragHint" style="display:none;">ドラッグで位置調整</div>
         </div>
 
-        <!-- ページ背景エディタ -->
+        <!-- 7. ページ背景エディタ -->
         <div class="ev-cover-editor ev-bg-editor-block">
           <div class="ev-bg-editor-title">✨ ページ背景</div>
           <div class="ev-bg-editor-hint">下のプレビューに即反映されます</div>
@@ -8102,37 +8163,7 @@
           <div class="ev-cover-palette" id="evBgPatternPalette"></div>
         </div>
 
-        <label class="ev-field">
-          <span class="ev-field-label">タイトル</span>
-          <input type="text" class="ev-input ev-input-lg" id="evCreateTitle" placeholder="例: Yogbo淡路島保養所 お泊り会">
-        </label>
-
-        <div class="ev-field">
-          <span class="ev-field-label">開始日時</span>
-          <div class="ev-field-row">
-            <input type="date" class="ev-input" id="evCreateDate" style="flex:1.3;">
-            <input type="time" class="ev-input" id="evCreateTime" style="flex:1;">
-          </div>
-        </div>
-
-        <div class="ev-field">
-          <span class="ev-field-label">終了日時 <span class="ev-field-optional">任意</span></span>
-          <div class="ev-field-row">
-            <input type="date" class="ev-input" id="evCreateEndDate" style="flex:1.3;">
-            <input type="time" class="ev-input" id="evCreateEndTime" style="flex:1;">
-          </div>
-        </div>
-
-        <label class="ev-field">
-          <span class="ev-field-label">場所</span>
-          <input type="text" class="ev-input" id="evCreatePlace" placeholder="例: 淡路島 Yogbo保養所">
-        </label>
-        <label class="ev-field">
-          <span class="ev-field-label">詳細 <span class="ev-field-optional">任意</span></span>
-          <textarea class="ev-input ev-textarea" id="evCreateMessage" placeholder="例: 飯と温泉とサウナあります。2日間のんびりしよう！" rows="4"></textarea>
-        </label>
-
-        <!-- 公開範囲 -->
+        <!-- 8. 公開範囲 -->
         <div class="ev-field">
           <span class="ev-field-label">公開範囲</span>
           <div class="ev-scope-toggle">
@@ -8154,6 +8185,7 @@
           </div>
         </div>
 
+        <!-- 9. 回答締切 -->
         <label class="ev-field">
           <span class="ev-field-label">回答締切 <span class="ev-field-optional">任意</span></span>
           <input type="date" class="ev-input" id="evCreateDeadline">
@@ -14922,6 +14954,78 @@ function closeCreateMenu() {
   overlay.style.display = 'none';
 }
 
+// ===== イベント作成: 地図ピン（Leaflet / OpenStreetMap）=====
+let evCreateMapInstance = null, evCreateMarker = null, evCreateLat = null, evCreateLng = null;
+function initEvCreateMap(lat, lng) {
+  if (typeof L === 'undefined') return; // Leaflet未読込（オフライン等）なら地図無しで続行
+  const hasPin = (lat != null && lng != null);
+  const center = hasPin ? [lat, lng] : [34.36, 134.83]; // 既定: 淡路島付近
+  const zoom = hasPin ? 13 : 9;
+  evCreateLat = hasPin ? lat : null;
+  evCreateLng = hasPin ? lng : null;
+  const setPin = (la, ln) => { evCreateLat = la; evCreateLng = ln; };
+  if (!evCreateMapInstance) {
+    evCreateMapInstance = L.map('evCreateMap', { zoomControl: true }).setView(center, zoom);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19, attribution: '© OpenStreetMap'
+    }).addTo(evCreateMapInstance);
+    evCreateMarker = L.marker(center, { draggable: true });
+    evCreateMarker.on('dragend', () => { const p = evCreateMarker.getLatLng(); setPin(p.lat, p.lng); });
+    evCreateMapInstance.on('click', (e) => { evCreateMarker.setLatLng(e.latlng).addTo(evCreateMapInstance); setPin(e.latlng.lat, e.latlng.lng); });
+  }
+  evCreateMapInstance.setView(center, zoom);
+  if (hasPin) { evCreateMarker.setLatLng(center).addTo(evCreateMapInstance); }
+  else if (evCreateMapInstance.hasLayer(evCreateMarker)) { evCreateMapInstance.removeLayer(evCreateMarker); }
+  document.getElementById('evPlaceResults').innerHTML = '';
+  // 現在地スタート（LINE方式。許可されれば現在地へ寄せる。拒否なら既定のまま）
+  if (!hasPin && navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      pos => { if (evCreateMapInstance) evCreateMapInstance.setView([pos.coords.latitude, pos.coords.longitude], 14); },
+      () => {}, { timeout: 6000, maximumAge: 300000 }
+    );
+  }
+  setTimeout(() => { if (evCreateMapInstance) evCreateMapInstance.invalidateSize(); }, 120);
+}
+
+// 場所検索（Nominatim / OSM・無料）→ 候補タップでピン設置
+let evPlaceSearchTimer = null, evPlaceResultsData = [];
+function onEvPlaceInput() {
+  clearTimeout(evPlaceSearchTimer);
+  const q = document.getElementById('evCreatePlace').value.trim();
+  if (q.length < 2) { document.getElementById('evPlaceResults').innerHTML = ''; return; }
+  evPlaceSearchTimer = setTimeout(evPlaceSearch, 600); // 入力が落ち着いたら1回だけ叩く
+}
+function evPlaceSearch() {
+  const q = document.getElementById('evCreatePlace').value.trim();
+  const box = document.getElementById('evPlaceResults');
+  if (!q) { box.innerHTML = ''; return; }
+  box.innerHTML = '<div class="ev-place-result ev-place-loading">検索中…</div>';
+  fetch('https://nominatim.openstreetmap.org/search?format=json&accept-language=ja&limit=5&q=' + encodeURIComponent(q))
+    .then(r => r.json())
+    .then(list => {
+      evPlaceResultsData = Array.isArray(list) ? list : [];
+      if (!evPlaceResultsData.length) {
+        box.innerHTML = '<div class="ev-place-result ev-place-empty">見つかりませんでした。地図をタップ／ピンをドラッグで指定してください</div>';
+        return;
+      }
+      box.innerHTML = evPlaceResultsData.map((it, i) =>
+        `<div class="ev-place-result" onclick="evSelectPlaceResult(${i})">📍 ${escapeHtml(it.display_name)}</div>`
+      ).join('');
+    })
+    .catch(() => { box.innerHTML = '<div class="ev-place-result ev-place-empty">検索に失敗しました（通信環境を確認）</div>'; });
+}
+function evSelectPlaceResult(i) {
+  const it = evPlaceResultsData[i];
+  if (!it || !evCreateMapInstance) return;
+  const lat = parseFloat(it.lat), lng = parseFloat(it.lon);
+  evCreateLat = lat; evCreateLng = lng;
+  evCreateMapInstance.setView([lat, lng], 16);
+  evCreateMarker.setLatLng([lat, lng]).addTo(evCreateMapInstance);
+  document.getElementById('evCreatePlace').value = (it.display_name || '').split(',')[0].trim();
+  document.getElementById('evPlaceResults').innerHTML = '';
+  setTimeout(() => evCreateMapInstance && evCreateMapInstance.invalidateSize(), 50);
+}
+
 function openEventCreate() {
   evEditingEventId = null;
   // 入力初期化
@@ -14955,6 +15059,7 @@ function openEventCreate() {
   // 冒頭へスクロール
   const screen = document.getElementById('screen-event-create');
   if (screen) screen.scrollTop = 0;
+  initEvCreateMap(null, null);
 }
 
 function openEventEdit(eventId) {
@@ -14998,6 +15103,7 @@ function openEventEdit(eventId) {
   // 編集時も冒頭から開始
   const screen = document.getElementById('screen-event-create');
   if (screen) screen.scrollTop = 0;
+  initEvCreateMap(ev.lat != null ? ev.lat : null, ev.lng != null ? ev.lng : null);
 }
 
 function deleteEventFromDetail(eventId) {
@@ -15358,12 +15464,13 @@ function submitEventCreate() {
   const place = document.getElementById('evCreatePlace').value.trim();
   const message  = document.getElementById('evCreateMessage').value.trim();
   const deadline = document.getElementById('evCreateDeadline').value || null;
+  const lat = evCreateLat, lng = evCreateLng;
 
-  if (!evCreateCoverImage) { showToast('カバー写真を選択してください'); return; }
   if (!title) { showToast('タイトルを入力してください'); return; }
   if (!date)  { showToast('開始日付を選択してください'); return; }
   if (!time)  { showToast('開始時刻を選択してください'); return; }
   if (!place) { showToast('場所を入力してください'); return; }
+  if (!evCreateCoverImage) { showToast('カバー写真を選択してください'); return; }
 
   const isPublic = (evCreateScope === 'open');
   let invitees = [];
@@ -15392,7 +15499,7 @@ function submitEventCreate() {
     eventsData[idx] = {
       ...old,
       title, date, time, endDate, endTime,
-      place, message, deadline,
+      place, lat, lng, message, deadline,
       coverGradient: evCreateCoverIdx,
       coverImage: evCreateCoverImage,
       coverPos: { ...evCreateCoverPos },
@@ -15413,7 +15520,7 @@ function submitEventCreate() {
     id: 'ev-' + Date.now(),
     title, date, time,
     endDate, endTime,
-    place, message,
+    place, lat, lng, message,
     deadline,
     coverGradient: evCreateCoverIdx,
     coverImage: evCreateCoverImage,
@@ -15553,7 +15660,7 @@ function renderEventDetail(ev) {
       <div class="ev-detail-infoblock">
         <div class="ev-detail-infoblock-ico">📍</div>
         <div>
-          <div class="ev-detail-infoblock-main">${escapeHtml(ev.place)}</div>
+          <div class="ev-detail-infoblock-main"><a class="ev-detail-maplink" href="https://www.google.com/maps/search/?api=1&query=${(ev.lat != null && ev.lng != null) ? (ev.lat + ',' + ev.lng) : encodeURIComponent(ev.place || '')}" target="_blank" rel="noopener">${escapeHtml(ev.place)}<small>地図で開く ↗</small></a></div>
         </div>
       </div>
 
