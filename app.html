@@ -3218,6 +3218,35 @@
       flex-direction: column;
     }
     #screen-event-detail.active { display: flex; }
+    #screen-event-preview {
+      background: #0A0A0F;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    #screen-event-preview.active { display: flex; }
+    .ev-preview-draft-banner {
+      flex-shrink: 0;
+      background: rgba(251,191,36,0.95);
+      color: #1a1a1a;
+      text-align: center;
+      font-size: 12px; font-weight: 800;
+      padding: 7px 16px;
+      letter-spacing: 0.04em;
+    }
+    .ev-preview-action-bar {
+      flex-shrink: 0;
+      background: rgba(10,10,15,0.95);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    }
+    .ev-preview-invite-section { margin-bottom: 12px; }
+    .ev-preview-invite-label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.95); margin-bottom: 4px; }
+    .ev-preview-invite-count { font-size: 12px; color: var(--text-light); margin-bottom: 6px; }
+    .ev-preview-invite-textarea { width: 100%; box-sizing: border-box; }
+    .ev-preview-btns { display: flex; gap: 10px; }
+    .ev-preview-btns .ev-cta-pill { flex: 1; }
+    .ev-preview-btns .ev-preview-publish { flex: 1.6; background: linear-gradient(135deg,#16A34A,#22C55E); border-color:#22C55E; color:#fff; font-weight:800; }
     .ev-detail-body {
       flex: 1;
       overflow-y: auto;
@@ -3427,13 +3456,17 @@
       padding: 12px 4px;
     }
     /* RSVP ボタン（Partifulスタイル：行く主役） */
+    .ev-detail-cta-bar.rsvp-mode { flex-direction: column; align-items: stretch; }
+    .ev-rsvp-info { font-size: 13px; color: rgba(255,255,255,0.5); display: flex; justify-content: space-between; }
+    .ev-rsvp-info .ev-rsvp-change { color: rgba(255,255,255,0.4); font-size: 12px; }
+    .ev-rsvp-row { display: flex; gap: 8px; width: 100%; }
     .ev-rsvp-primary {
       flex: 2;
       padding: 16px 12px;
       border-radius: 14px;
-      border: 2px solid rgba(34,197,94,0.35);
-      background: rgba(34,197,94,0.1);
-      color: #86EFAC;
+      border: 2px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.7);
       font-size: 15px; font-weight: 800;
       display: flex; align-items: center; justify-content: center;
       gap: 8px;
@@ -3443,7 +3476,7 @@
     .ev-rsvp-primary .ev-rsvp-icon {
       width: 22px; height: 22px;
       display: flex; align-items: center; justify-content: center;
-      background: rgba(34,197,94,0.3);
+      background: rgba(255,255,255,0.1);
       border-radius: 50%;
       font-size: 13px;
       font-weight: 900;
@@ -8191,7 +8224,7 @@
           <input type="date" class="ev-input" id="evCreateDeadline">
         </label>
 
-        <button class="ev-send-btn" id="evCreateSubmitBtn" onclick="submitEventCreate()">イベントを作成</button>
+        <button class="ev-send-btn" id="evCreateSubmitBtn" onclick="previewEventCreate()">プレビューを見る</button>
       </div>
     </div>
 
@@ -8199,6 +8232,23 @@
     <div class="screen" id="screen-event-detail">
       <div class="ev-detail-body" id="evDetailBody"></div>
       <div class="ev-detail-cta-bar" id="evDetailCtaBar"></div>
+    </div>
+
+    <!-- ===== EVENT PREVIEW SCREEN（公開前の確認） ===== -->
+    <div class="screen" id="screen-event-preview">
+      <div class="ev-preview-draft-banner">プレビュー（下書き）― 公開前の確認</div>
+      <div class="ev-detail-body" id="evPreviewBody"></div>
+      <div class="ev-preview-action-bar">
+        <div class="ev-preview-invite-section" id="evPreviewInviteSection" style="display:none;">
+          <div class="ev-preview-invite-label">✉️ 招待メッセージ <span class="ev-field-optional">任意</span></div>
+          <div class="ev-preview-invite-count" id="evPreviewInviteCount"></div>
+          <textarea class="ev-input ev-textarea ev-preview-invite-textarea" id="evPreviewInviteMsg" placeholder="例: 久しぶりに集まろう！ぜひ来てね🎉" rows="3"></textarea>
+        </div>
+        <div class="ev-preview-btns">
+          <button class="ev-cta-pill" onclick="backToEventCreate()">← 修正する</button>
+          <button class="ev-cta-pill ev-preview-publish" onclick="confirmEventPublish()">✓ 確認して公開</button>
+        </div>
+      </div>
     </div>
 
     <!-- ===== 参加者全員リスト 右スライドインシート ===== -->
@@ -14934,12 +14984,13 @@ let evCreateCoverPos = { x: 50, y: 50 }; // 写真位置（％）
 let evCreateBgGradient = 1;     // デフォルト：ディープ紫
 let evCreateBgPattern = 'black'; // デフォルト：ブラック
 let evEditingEventId = null;    // 編集モード時のみイベントIDが入る（null=新規作成）
+let evDraft = null;             // プレビュー中の下書きイベント（公開前。eventsDataには未登録）
 
 function updateEventCreateUI(isEditMode) {
   const titleEl = document.getElementById('evCreateScreenTitle');
   const btnEl   = document.getElementById('evCreateSubmitBtn');
   if (titleEl) titleEl.textContent = isEditMode ? 'イベント編集' : 'イベント作成';
-  if (btnEl)   btnEl.textContent   = isEditMode ? '変更を保存' : 'イベントを作成';
+  if (btnEl)   btnEl.textContent   = isEditMode ? '変更を保存' : 'プレビューを見る';
 }
 
 // ===== CREATE MENU =====
@@ -15455,7 +15506,7 @@ function updateEvInviteSummary() {
   }
 }
 
-function submitEventCreate() {
+function previewEventCreate() {
   const title = document.getElementById('evCreateTitle').value.trim();
   const date  = document.getElementById('evCreateDate').value;
   const time  = document.getElementById('evCreateTime').value;
@@ -15491,7 +15542,7 @@ function submitEventCreate() {
     }
   }
 
-  // 編集モード：既存イベントを上書き更新
+  // 編集モード：プレビューを挟まず即保存（従来挙動を維持）
   if (evEditingEventId) {
     const idx = eventsData.findIndex(e => e.id === evEditingEventId);
     if (idx === -1) { showToast('イベントが見つかりません'); return; }
@@ -15516,12 +15567,11 @@ function submitEventCreate() {
     return;
   }
 
-  const newEvent = {
+  // 新規：下書きを作ってプレビューへ（eventsDataにはまだ積まない）
+  evDraft = {
     id: 'ev-' + Date.now(),
-    title, date, time,
-    endDate, endTime,
-    place, lat, lng, message,
-    deadline,
+    title, date, time, endDate, endTime,
+    place, lat, lng, message, deadline,
     coverGradient: evCreateCoverIdx,
     coverImage: evCreateCoverImage,
     coverPos: { ...evCreateCoverPos },
@@ -15538,18 +15588,58 @@ function submitEventCreate() {
     closed: false,
     createdAt: new Date().toISOString().slice(0, 10),
   };
+  openEventPreview();
+}
 
-  eventsData.unshift(newEvent);
-  if (isPublic) {
-    showToast('イベントを作成し、タイムラインに流しました！');
+function openEventPreview() {
+  if (!evDraft) return;
+  // 詳細画面と同じレンダラを流用（CTAバーはプレビュー用に確認バーを使うのでスキップ）
+  renderEventDetail(evDraft, { bodyId: 'evPreviewBody', ctaId: null, screenId: 'screen-event-preview' });
+
+  const inviteSection = document.getElementById('evPreviewInviteSection');
+  const inviteCount   = document.getElementById('evPreviewInviteCount');
+  if (evDraft.isPublic) {
+    inviteSection.style.display = 'none';
   } else {
-    showToast(`${invitees.length}人に招待を送りました！`);
+    inviteSection.style.display = 'block';
+    inviteCount.textContent = `招待した ${evDraft.invitees.length}人 のトークに届きます`;
+    document.getElementById('evPreviewInviteMsg').value = '';
   }
 
-  // 詳細画面へ遷移
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-event-preview').classList.add('active');
+}
+
+function backToEventCreate() {
+  // フォームのDOMは生きたままなので入力値は保持される
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-event-create').classList.add('active');
+}
+
+function confirmEventPublish() {
+  if (!evDraft) return;
+  const isPublic = evDraft.isPublic;
+  if (!isPublic) {
+    const msg = (document.getElementById('evPreviewInviteMsg').value || '').trim();
+    if (msg) evDraft.inviteMessage = msg;
+  }
+  eventsData.unshift(evDraft);
+  const publishedId = evDraft.id;
+  const count = evDraft.invitees.length;
+  const hadMsg = !!evDraft.inviteMessage;
+  evDraft = null;
+
+  if (isPublic) {
+    showToast('イベントを作成し、タイムラインに流しました！');
+  } else if (hadMsg) {
+    showToast(`${count}人に招待メッセージを送りました`);
+  } else {
+    showToast(`${count}人に招待を送りました！`);
+  }
+
   closeEventCreate();
   switchTalkTab('events');
-  setTimeout(() => openEventDetail(newEvent.id), 100);
+  setTimeout(() => openEventDetail(publishedId), 100);
 }
 
 // ===== 詳細画面 =====
@@ -15591,12 +15681,15 @@ function setInviteResponseFromFeed(eventId, status) {
   if (document.getElementById('eventsHubList')) buildEventsHub();
 }
 
-function renderEventDetail(ev) {
+function renderEventDetail(ev, opts = {}) {
+  const bodyId   = opts.bodyId   || 'evDetailBody';
+  const ctaId    = ('ctaId' in opts) ? opts.ctaId : 'evDetailCtaBar';
+  const screenId = opts.screenId || 'screen-event-detail';
   const isHost = ev.hostId === EV_SELF_ID;
   const myResponse = ev.responses[EV_SELF_ID];
 
   // ページ背景を適用
-  const screenEl = document.getElementById('screen-event-detail');
+  const screenEl = document.getElementById(screenId);
   applyEventPageBg(screenEl, ev.bgGradient, ev.bgPattern);
 
   // 「行く」人を抽出
@@ -15699,10 +15792,11 @@ function renderEventDetail(ev) {
     </div>
   `;
 
-  document.getElementById('evDetailBody').innerHTML = html;
+  document.getElementById(bodyId).innerHTML = html;
 
-  // 下部固定CTAバー
-  const ctaBar = document.getElementById('evDetailCtaBar');
+  // 下部固定CTAバー（プレビュー時は ctaId=null でスキップ）
+  const ctaBar = ctaId ? document.getElementById(ctaId) : null;
+  if (!ctaBar) return;
   if (isHost) {
     // 主催者メニュー：編集・追加連絡・シェア・⋯
     if (ev.closed) {
@@ -15730,24 +15824,33 @@ function renderEventDetail(ev) {
         <button class="ev-cta-pill" style="flex:0 0 auto;" onclick="openEvShareSheet('${ev.id}')">📤 シェア</button>
       `;
     } else {
-      ctaBar.className = 'ev-detail-cta-bar';
+      ctaBar.className = 'ev-detail-cta-bar rsvp-mode';
       const isGoing = myResponse === 'going';
       const isMaybe = myResponse === 'maybe';
       const isSkip  = myResponse === 'skip';
+      const answered = !!myResponse;
+      const statusLabel = isGoing ? '✓ 行く予定' : isMaybe ? '? 検討中' : isSkip ? '✗ 不参加' : null;
+      const infoLine = answered
+        ? `<div class="ev-rsvp-info"><span>${statusLabel}</span><span class="ev-rsvp-change">タップで変更</span></div>`
+        : `<div class="ev-rsvp-info"><span>参加しますか？</span></div>`;
+      const dim = (sel) => (answered && !sel) ? 'opacity:0.35;' : '';
       ctaBar.innerHTML = `
-        <button class="ev-rsvp-primary ${isGoing ? 'active' : ''}" onclick="setEventResponse('going')">
-          <span class="ev-rsvp-icon">✓</span>
-          <span>${isGoing ? '行く（回答済み）' : '行く'}</span>
-        </button>
-        <button class="ev-rsvp-secondary ${isMaybe ? 'active maybe' : ''}" onclick="setEventResponse('maybe')">
-          <span class="ev-rsvp-sub-ico">?</span>
-          <span>検討</span>
-        </button>
-        <button class="ev-rsvp-secondary ${isSkip ? 'active skip' : ''}" onclick="setEventResponse('skip')">
-          <span class="ev-rsvp-sub-ico">✕</span>
-          <span>不参加</span>
-        </button>
-        <button class="ev-rsvp-secondary" onclick="openEvShareSheet('${ev.id}')" style="flex:0 0 auto;padding:0 14px;">📤</button>
+        ${infoLine}
+        <div class="ev-rsvp-row">
+          <button class="ev-rsvp-primary ${isGoing ? 'active' : ''}" style="${dim(isGoing)}" onclick="setEventResponse('going')">
+            <span class="ev-rsvp-icon">✓</span>
+            <span>行く</span>
+          </button>
+          <button class="ev-rsvp-secondary ${isMaybe ? 'active maybe' : ''}" style="${dim(isMaybe)}" onclick="setEventResponse('maybe')">
+            <span class="ev-rsvp-sub-ico">?</span>
+            <span>検討</span>
+          </button>
+          <button class="ev-rsvp-secondary ${isSkip ? 'active skip' : ''}" style="${dim(isSkip)}" onclick="setEventResponse('skip')">
+            <span class="ev-rsvp-sub-ico">✕</span>
+            <span>不参加</span>
+          </button>
+          <button class="ev-rsvp-secondary" onclick="openEvShareSheet('${ev.id}')" style="flex:0 0 auto;padding:0 14px;">📤</button>
+        </div>
       `;
     }
   }
