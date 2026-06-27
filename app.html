@@ -2808,6 +2808,9 @@
     .tg-send-btn:active { background: var(--primary); color: #fff; }
 
     /* ===== EVENTS TAB (イベント) ===== */
+    #screen-events { background: var(--bg); overflow-y: auto; }
+    .events-page-header { padding: 18px 16px 4px; }
+    .events-page-title { font-size: 22px; font-weight: 800; color: var(--text-main); }
     .events-hub-wrap { padding: 16px 16px 100px; }
     .events-create-btn {
       width: 100%;
@@ -3519,6 +3522,35 @@
     .ev-rsvp-primary:active, .ev-rsvp-secondary:active {
       transform: scale(0.97);
     }
+    /* ===== 日程調整（poll） ===== */
+    .ev-poll-add-btn { width:100%; margin-top:8px; padding:12px; border-radius:12px; border:1.5px dashed rgba(168,85,247,0.5); background:rgba(168,85,247,0.06); color:#C084FC; font-size:14px; font-weight:700; cursor:pointer; }
+    .ev-candidate-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; padding:10px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; }
+    .ev-candidate-row input { min-width:0; }
+    .ev-candidate-del-btn { flex-shrink:0; width:32px; height:32px; border-radius:8px; border:none; background:rgba(239,68,68,0.15); color:#F87171; font-size:15px; font-weight:700; cursor:pointer; }
+    .ev-poll-section { margin-top:4px; }
+    .ev-poll-card { padding:14px; margin:0 16px 10px; background:rgba(0,0,0,0.38); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border:1px solid rgba(255,255,255,0.08); border-radius:14px; }
+    .ev-poll-card-date { font-size:15px; font-weight:700; color:#fff; margin-bottom:10px; }
+    /* 結果は「表示」：フラットな行（ボタンに見せない） */
+    .ev-poll-results { background:rgba(255,255,255,0.04); border-radius:10px; padding:6px 10px; margin-bottom:12px; }
+    .ev-poll-result-row { display:flex; align-items:baseline; gap:8px; padding:5px 0; font-size:12.5px; }
+    .ev-poll-result-row + .ev-poll-result-row { border-top:1px solid rgba(255,255,255,0.06); }
+    .ev-poll-mark { font-weight:900; width:15px; text-align:center; flex-shrink:0; }
+    .ev-poll-mark.going { color:#4ADE80; }
+    .ev-poll-mark.maybe { color:#FACC15; }
+    .ev-poll-mark.skip  { color:#F87171; }
+    .ev-poll-rlabel { color:rgba(255,255,255,0.7); flex-shrink:0; width:40px; }
+    .ev-poll-rcount { color:#fff; font-weight:800; flex-shrink:0; width:16px; text-align:right; }
+    .ev-poll-rnames { color:rgba(255,255,255,0.62); flex:1; min-width:0; line-height:1.5; }
+    .ev-poll-best { font-size:11px; color:#86EFAC; font-weight:800; }
+    /* 回答は「ボタン」：はっきり押せる見た目 */
+    .ev-poll-answer-label { font-size:11px; color:rgba(255,255,255,0.5); font-weight:700; margin-bottom:6px; }
+    .ev-poll-rsvp-row { display:flex; gap:6px; }
+    .ev-poll-rsvp-btn { flex:1; padding:11px 4px; border-radius:10px; border:1.5px solid rgba(255,255,255,0.28); background:rgba(255,255,255,0.09); color:rgba(255,255,255,0.88); font-size:12.5px; font-weight:700; cursor:pointer; transition:all 0.15s; }
+    .ev-poll-rsvp-btn:active { transform:scale(0.96); }
+    .ev-poll-rsvp-btn.active-going { background:#22C55E; border-color:#22C55E; color:#fff; }
+    .ev-poll-rsvp-btn.active-maybe { background:#EAB308; border-color:#EAB308; color:#1a1a1a; }
+    .ev-poll-rsvp-btn.active-skip  { background:#EF4444; border-color:#EF4444; color:#fff; }
+    .ev-poll-finalize-btn { width:100%; margin-top:10px; padding:11px; border-radius:12px; border:1.5px solid #A855F7; background:rgba(168,85,247,0.15); color:#C084FC; font-size:13px; font-weight:700; cursor:pointer; }
     .ev-detail-section {
       margin-top: 18px;
     }
@@ -7891,7 +7923,6 @@
       <div class="talk-seg-bar">
         <button class="talk-seg-tab active" id="talkSegTab-dm" onclick="switchTalkTab('dm')">Messages</button>
         <button class="talk-seg-tab" id="talkSegTab-contacts" onclick="switchTalkTab('contacts')">Circle &amp; Groups</button>
-        <button class="talk-seg-tab" id="talkSegTab-events" onclick="switchTalkTab('events')">Events</button>
       </div>
 
       <!-- ===== タブ①：トーク一覧（動的レンダリング） ===== -->
@@ -8108,14 +8139,17 @@
       </div>
 
       <!-- ===== タブ③：イベント ===== -->
-      <div class="talk-tab-content" id="talkContent-events">
-        <div class="events-hub-wrap">
-          <button class="events-create-btn" onclick="openEventCreate()">
-            <span class="events-create-icon">＋</span>
-            <span>新しいイベントを作る</span>
-          </button>
-          <div id="eventsHubList"></div>
-        </div>
+    </div>
+
+    <!-- ===== EVENTS SCREEN（専用ページ・フッターの音符から） ===== -->
+    <div class="screen" id="screen-events">
+      <div class="events-page-header"><div class="events-page-title">イベント</div></div>
+      <div class="events-hub-wrap">
+        <button class="events-create-btn" onclick="openEventCreate()">
+          <span class="events-create-icon">＋</span>
+          <span>イベントを作成</span>
+        </button>
+        <div id="eventsHubList"></div>
       </div>
     </div>
 
@@ -8133,13 +8167,37 @@
           <input type="text" class="ev-input ev-input-lg" id="evCreateTitle" placeholder="例: Yogbo淡路島保養所 お泊り会">
         </label>
 
-        <!-- 2. 開始日時 -->
+        <!-- 2. 日時の決め方（確定 or 日程調整） -->
         <div class="ev-field">
+          <span class="ev-field-label">日時の決め方</span>
+          <div class="ev-scope-toggle" style="margin-top:8px;">
+            <button type="button" class="ev-scope-btn active" id="evModeFixed" onclick="setEvDateMode('fixed')">
+              <div class="ev-scope-icon">📌</div>
+              <div class="ev-scope-label">日時を確定</div>
+              <div class="ev-scope-desc">日程が決まってる</div>
+            </button>
+            <button type="button" class="ev-scope-btn" id="evModePoll" onclick="setEvDateMode('poll')">
+              <div class="ev-scope-icon">🗳️</div>
+              <div class="ev-scope-label">みんなで日程調整</div>
+              <div class="ev-scope-desc">候補から投票で決める</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2a. 確定モード：単一の開始日時 -->
+        <div class="ev-field" id="evDateFixedBlock">
           <span class="ev-field-label">開始日時</span>
           <div class="ev-field-row">
             <input type="date" class="ev-input" id="evCreateDate" style="flex:1.3;">
-            <input type="time" class="ev-input" id="evCreateTime" step="900" style="flex:1;">
+            <select class="ev-input" id="evCreateTime" style="flex:1;"></select>
           </div>
+        </div>
+
+        <!-- 2b. 調整モード：候補日時リスト -->
+        <div class="ev-field" id="evDatePollBlock" style="display:none;">
+          <span class="ev-field-label">候補日時（2件以上）</span>
+          <div id="evCandidateList"></div>
+          <button type="button" class="ev-poll-add-btn" onclick="addEvCandidate()">＋ 候補を追加</button>
         </div>
 
         <!-- 3. 終了日時 -->
@@ -8147,7 +8205,7 @@
           <span class="ev-field-label">終了日時 <span class="ev-field-optional">任意</span></span>
           <div class="ev-field-row">
             <input type="date" class="ev-input" id="evCreateEndDate" style="flex:1.3;">
-            <input type="time" class="ev-input" id="evCreateEndTime" step="900" style="flex:1;">
+            <select class="ev-input" id="evCreateEndTime" style="flex:1;"></select>
           </div>
         </div>
 
@@ -8876,8 +8934,8 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
       </div>
     </button>
-    <button class="tab-item" onclick="switchTab('search')" id="tab-search">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+    <button class="tab-item" onclick="switchTab('events')" id="tab-events">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 18V6l11-2v11"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 8.5 20 6.5"/><ellipse cx="6.5" cy="18" rx="2.5" ry="2" fill="currentColor" stroke="none"/><ellipse cx="17.5" cy="16.5" rx="2.5" ry="2" fill="currentColor" stroke="none"/></svg>
     </button>
     <button class="tab-item" onclick="switchTab('my')" id="tab-my">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>
@@ -10019,7 +10077,7 @@
       profile: 'screen-profile',
       talk: 'screen-talk',
       circle: 'screen-circle',
-      search: 'screen-search',
+      events: 'screen-events',
       my: 'screen-my',
     };
 
@@ -10035,6 +10093,7 @@
     document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
     const tabEl = document.getElementById('tab-' + tab);
     if (tabEl) tabEl.classList.add('active');
+    if (tab === 'events' && typeof buildEventsHub === 'function') buildEventsHub();
     // コンポーザーを開いたら空レイヤーが無ければ作る（初回用）
     if (tab === 'post') {
       setTimeout(() => {
@@ -12814,6 +12873,11 @@
         const labelText = ev.isPublic ? '📅 オープンイベント' : '📅 招待';
         // ホームのタイムラインに出るイベントカードは全て「招待されている」扱い（大将方針：表示されてる時点で招待）
         const homeInviteLabel = `<div style="padding:6px 12px 2px;"><span style="font-size:11px;font-weight:700;color:#FCD34D;letter-spacing:0.03em;">あなたが招待されています（限定）</span></div>`;
+        if (isPoll(ev)) {
+          card.innerHTML = `${homeInviteLabel}${pollCardInner(ev)}`;
+          container.appendChild(card);
+          return;
+        }
         card.innerHTML = `
           ${homeInviteLabel}
           <div class="invite-card-cover" style="${coverBg}">
@@ -13170,14 +13234,13 @@
   }
 
   function switchTalkTab(tab) {
-    ['dm', 'contacts', 'events'].forEach(t => {
+    ['dm', 'contacts'].forEach(t => {
       const content = document.getElementById('talkContent-' + t);
       const segTab  = document.getElementById('talkSegTab-' + t);
       if (content) content.classList.toggle('active', t === tab);
       if (segTab)  segTab.classList.toggle('active', t === tab);
     });
     if (tab === 'dm') renderTalkMessagesList();
-    if (tab === 'events') buildEventsHub();
   }
 
   // ===== CONTACTS: Circle折りたたみ =====
@@ -14795,6 +14858,30 @@ const EV_COVER_PHOTOS = [
 // イベントデータ（主催＋招待両方が混在）
 let eventsData = [
   {
+    id: 'ev-demo-poll',
+    title: '夏の飲み会 日程調整',
+    type: 'poll',
+    candidates: [
+      { id: 'c1', date: '2026-07-10', time: '19:00' },
+      { id: 'c2', date: '2026-07-12', time: '19:00' },
+      { id: 'c3', date: '2026-07-17', time: '19:30' },
+    ],
+    date: null, time: null, endDate: null, endTime: null,
+    place: '渋谷 鳥貴族', lat: 35.658, lng: 139.701,
+    message: '夏の定例飲み！都合のいい日に○をつけてね', deadline: '2026-07-05',
+    coverImage: 'assets/img/u04.jpg', coverGradient: 0, coverPos: { x: 50, y: 50 },
+    bgGradient: 3, bgPattern: 'black',
+    isPublic: false,
+    hostId: 'yu_tanaka', hostName: '田中 悠', hostAvatar: '🧑', hostScore: 32100,
+    invitees: ['taisho_k','rina_s','kenta_s','daisuke_ito'],
+    responses: {
+      'rina_s':      { c1: 'going', c2: 'going', c3: 'going' },
+      'kenta_s':     { c1: 'going', c2: 'maybe', c3: 'skip' },
+      'daisuke_ito': { c1: 'maybe', c2: 'going', c3: 'going' },
+    },
+    history: [], closed: false, createdAt: '2026-06-26',
+  },
+  {
     id: 'ev-demo-1',
     title: 'Yogbo淡路島保養所 お泊り会',
     date: '2026-05-15',
@@ -14931,7 +15018,40 @@ function renderEventRow(ev) {
 }
 
 // ===== ホームのinvite-cardと共通のリッチカード（主催イベント一覧用） =====
+// 日程調整イベント用の招待カード中身（フィード・ハブ共通）
+function pollCardInner(ev) {
+  const coverPos = ev.coverPos ? `${ev.coverPos.x}% ${ev.coverPos.y}%` : 'center';
+  const coverBg = ev.coverImage ? `background-image: url(${ev.coverImage}); background-position: ${coverPos};` : '';
+  const candCount = (ev.candidates || []).length;
+  const myAns = ev.responses[EV_SELF_ID];
+  const answered = (myAns && typeof myAns === 'object') ? Object.keys(myAns).length : 0;
+  const ctaText = answered > 0 ? `回答済み（${answered}/${candCount}）・変更する` : '日程を回答する';
+  return `
+    <div class="invite-card-cover" style="${coverBg}">
+      <div class="invite-card-label">🗳️ みんなで日程調整</div>
+      <div class="invite-card-cover-date">候補 ${candCount}件</div>
+      <div class="invite-card-cover-overlay"></div>
+    </div>
+    <div class="invite-card-body">
+      <div class="invite-card-title">${escapeHtml(ev.title)}</div>
+      <div class="invite-card-host">主催: ${escapeHtml(ev.hostName)}</div>
+      <div class="invite-card-meta"><span class="ico">📍</span>${escapeHtml(ev.place)}</div>
+      ${ev.message ? `<div class="invite-card-msg">${escapeHtml(ev.message)}</div>` : ''}
+      <div class="invite-card-actions">
+        <button class="invite-card-btn" style="flex:1;background:rgba(168,85,247,0.25);border-color:#A855F7;color:#fff;">🗳️ ${ctaText}</button>
+      </div>
+      <div class="invite-card-footer">
+        <span>タップして候補に回答</span>
+        ${ev.deadline ? `<span>締切 ${ev.deadline}</span>` : '<span></span>'}
+      </div>
+    </div>
+  `;
+}
+
 function renderEvInviteCard(ev) {
+  if (isPoll(ev)) {
+    return `<div class="invite-card" onclick="openEventDetail('${ev.id}')">${pollCardInner(ev)}</div>`;
+  }
   const weekdayArr = ['日','月','火','水','木','金','土'];
   const d = new Date(ev.date);
   const dateShort = `${d.getMonth()+1}/${d.getDate()}(${weekdayArr[d.getDay()]})`;
@@ -14985,6 +15105,8 @@ let evCreateBgGradient = 1;     // デフォルト：ディープ紫
 let evCreateBgPattern = 'black'; // デフォルト：ブラック
 let evEditingEventId = null;    // 編集モード時のみイベントIDが入る（null=新規作成）
 let evDraft = null;             // プレビュー中の下書きイベント（公開前。eventsDataには未登録）
+let evDateMode = 'fixed';       // 'fixed'（日時確定）| 'poll'（日程調整）
+let evCandidates = [];          // poll候補日時 [{id,date,time}]（作成フォーム作業用）
 
 function updateEventCreateUI(isEditMode) {
   const titleEl = document.getElementById('evCreateScreenTitle');
@@ -15077,6 +15199,62 @@ function evSelectPlaceResult(i) {
   setTimeout(() => evCreateMapInstance && evCreateMapInstance.invalidateSize(), 50);
 }
 
+// ===== 日程調整（poll）ヘルパー =====
+function isPoll(ev) { return ev && ev.type === 'poll'; }
+function evMemberName(id) {
+  if (id === EV_SELF_ID) return '大将';
+  const m = groupCircleMembers.find(x => x.id === id);
+  return m ? m.name : id;
+}
+// 15分刻みの時刻オプション（00:00〜23:45）。selを選択状態に
+function evTimeOptions(sel) {
+  let o = '<option value="">時刻を選択</option>';
+  for (let h = 0; h < 24; h++) for (let m = 0; m < 60; m += 15) {
+    const v = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+    o += `<option value="${v}"${v === sel ? ' selected' : ''}>${v}</option>`;
+  }
+  return o;
+}
+function fillFixedTimeSelects(startSel, endSel) {
+  const t = document.getElementById('evCreateTime');
+  const e = document.getElementById('evCreateEndTime');
+  if (t) t.innerHTML = evTimeOptions(startSel || '');
+  if (e) e.innerHTML = evTimeOptions(endSel || '');
+}
+function setEvDateMode(mode) {
+  evDateMode = mode;
+  document.getElementById('evModeFixed').classList.toggle('active', mode === 'fixed');
+  document.getElementById('evModePoll').classList.toggle('active', mode === 'poll');
+  document.getElementById('evDateFixedBlock').style.display = mode === 'fixed' ? '' : 'none';
+  document.getElementById('evDatePollBlock').style.display  = mode === 'poll'  ? '' : 'none';
+  const endBlock = document.getElementById('evCreateEndDate').closest('.ev-field');
+  if (endBlock) endBlock.style.display = mode === 'fixed' ? '' : 'none';
+  // 調整モードでは候補を最低2件表示しておく
+  if (mode === 'poll' && evCandidates.length < 2) {
+    while (evCandidates.length < 2) evCandidates.push({ id: 'c' + (Date.now() + evCandidates.length), date: '', time: '' });
+    renderEvCandidateList();
+  }
+}
+function addEvCandidate() {
+  evCandidates.push({ id: 'c' + (Date.now() + evCandidates.length), date: '', time: '' });
+  renderEvCandidateList();
+}
+function removeEvCandidate(id) {
+  evCandidates = evCandidates.filter(c => c.id !== id);
+  renderEvCandidateList();
+}
+function renderEvCandidateList() {
+  const container = document.getElementById('evCandidateList');
+  if (!container) return;
+  container.innerHTML = evCandidates.map(c => `
+    <div class="ev-candidate-row">
+      <input type="date" class="ev-input" value="${c.date}" onchange="const o=evCandidates.find(x=>x.id==='${c.id}'); if(o)o.date=this.value;" style="flex:1.3;">
+      <select class="ev-input" onchange="const o=evCandidates.find(x=>x.id==='${c.id}'); if(o)o.time=this.value;" style="flex:1;">${evTimeOptions(c.time)}</select>
+      <button type="button" class="ev-candidate-del-btn" onclick="removeEvCandidate('${c.id}')">✕</button>
+    </div>
+  `).join('');
+}
+
 function openEventCreate() {
   evEditingEventId = null;
   // 入力初期化
@@ -15088,6 +15266,11 @@ function openEventCreate() {
   document.getElementById('evCreatePlace').value = '';
   document.getElementById('evCreateMessage').value = '';
   document.getElementById('evCreateDeadline').value = '';
+  evDateMode = 'fixed';
+  evCandidates = [];
+  setEvDateMode('fixed');
+  renderEvCandidateList();
+  fillFixedTimeSelects('', '');
   const fileInput = document.getElementById('evCoverUploadInput');
   if (fileInput) fileInput.value = '';
   evInviteSelectedTiers = new Set();
@@ -15128,6 +15311,11 @@ function openEventEdit(eventId) {
   document.getElementById('evCreatePlace').value = ev.place || '';
   document.getElementById('evCreateMessage').value = ev.message || '';
   document.getElementById('evCreateDeadline').value = ev.deadline || '';
+  evDateMode = ev.type === 'poll' ? 'poll' : 'fixed';
+  evCandidates = Array.isArray(ev.candidates) ? ev.candidates.map(c => ({ ...c })) : [];
+  setEvDateMode(evDateMode);
+  renderEvCandidateList();
+  fillFixedTimeSelects(ev.time, ev.endTime);
   const fileInput = document.getElementById('evCoverUploadInput');
   if (fileInput) fileInput.value = '';
 
@@ -15518,8 +15706,14 @@ function previewEventCreate() {
   const lat = evCreateLat, lng = evCreateLng;
 
   if (!title) { showToast('タイトルを入力してください'); return; }
-  if (!date)  { showToast('開始日付を選択してください'); return; }
-  if (!time)  { showToast('開始時刻を選択してください'); return; }
+  const isPollMode = (evDateMode === 'poll');
+  const pollCandidates = isPollMode ? evCandidates.filter(c => c.date && c.time).map(c => ({ ...c })) : null;
+  if (isPollMode) {
+    if (!pollCandidates || pollCandidates.length < 2) { showToast('候補を2件以上入力してください'); return; }
+  } else {
+    if (!date)  { showToast('開始日付を選択してください'); return; }
+    if (!time)  { showToast('開始時刻を選択してください'); return; }
+  }
   if (!place) { showToast('場所を入力してください'); return; }
   if (!evCreateCoverImage) { showToast('カバー写真を選択してください'); return; }
 
@@ -15549,7 +15743,13 @@ function previewEventCreate() {
     const old = eventsData[idx];
     eventsData[idx] = {
       ...old,
-      title, date, time, endDate, endTime,
+      title,
+      date: isPollMode ? null : date,
+      time: isPollMode ? null : time,
+      endDate: isPollMode ? null : endDate,
+      endTime: isPollMode ? null : endTime,
+      type: isPollMode ? 'poll' : 'fixed',
+      candidates: isPollMode ? pollCandidates : undefined,
       place, lat, lng, message, deadline,
       coverGradient: evCreateCoverIdx,
       coverImage: evCreateCoverImage,
@@ -15570,7 +15770,13 @@ function previewEventCreate() {
   // 新規：下書きを作ってプレビューへ（eventsDataにはまだ積まない）
   evDraft = {
     id: 'ev-' + Date.now(),
-    title, date, time, endDate, endTime,
+    title,
+    date: isPollMode ? null : date,
+    time: isPollMode ? null : time,
+    endDate: isPollMode ? null : endDate,
+    endTime: isPollMode ? null : endTime,
+    type: isPollMode ? 'poll' : 'fixed',
+    candidates: isPollMode ? pollCandidates : undefined,
     place, lat, lng, message, deadline,
     coverGradient: evCreateCoverIdx,
     coverImage: evCreateCoverImage,
@@ -15627,9 +15833,12 @@ function confirmEventPublish() {
   const publishedId = evDraft.id;
   const count = evDraft.invitees.length;
   const hadMsg = !!evDraft.inviteMessage;
+  const isPollType = evDraft.type === 'poll';
   evDraft = null;
 
-  if (isPublic) {
+  if (isPollType) {
+    showToast(isPublic ? '日程調整イベントを作成しました！' : `${count}人に日程調整の招待を送りました`);
+  } else if (isPublic) {
     showToast('イベントを作成し、タイムラインに流しました！');
   } else if (hadMsg) {
     showToast(`${count}人に招待メッセージを送りました`);
@@ -15638,15 +15847,88 @@ function confirmEventPublish() {
   }
 
   closeEventCreate();
-  switchTalkTab('events');
-  setTimeout(() => openEventDetail(publishedId), 100);
+  setTimeout(() => openEventDetail(publishedId, 'events'), 100);
+}
+
+// ===== 日程調整（poll）描画・回答・確定 =====
+function renderPollCandidates(ev, isHost) {
+  const weekday = ['日','月','火','水','木','金','土'];
+  const fmt = (d, t) => { const dt = new Date(d); return `${dt.getMonth()+1}月${dt.getDate()}日(${weekday[dt.getDay()]}) ${t||''}`.trim(); };
+  const candidates = ev.candidates || [];
+  const responses = ev.responses || {};
+  const ansOf = (uid, cid) => (responses[uid] && typeof responses[uid] === 'object') ? responses[uid][cid] : undefined;
+  // ○が最多の候補を強調
+  let bestIdx = -1, bestCount = 0;
+  candidates.forEach((c, i) => {
+    const n = Object.keys(responses).filter(uid => ansOf(uid, c.id) === 'going').length;
+    if (n > bestCount) { bestCount = n; bestIdx = i; }
+  });
+  const namesFor = (cid, status) => Object.keys(responses).filter(uid => ansOf(uid, cid) === status).map(uid => escapeHtml(evMemberName(uid)));
+  const resultRow = (cls, mark, label, names) => `
+        <div class="ev-poll-result-row">
+          <span class="ev-poll-mark ${cls}">${mark}</span>
+          <span class="ev-poll-rlabel">${label}</span>
+          <span class="ev-poll-rcount">${names.length}</span>
+          <span class="ev-poll-rnames">${names.length ? names.join('、') : '—'}</span>
+        </div>`;
+  const cards = candidates.map((c, i) => {
+    const goingNames = namesFor(c.id, 'going');
+    const maybeNames = namesFor(c.id, 'maybe');
+    const skipNames  = namesFor(c.id, 'skip');
+    const myAns = ansOf(EV_SELF_ID, c.id);
+    const bestBadge = (i === bestIdx && bestCount > 0) ? ' <span class="ev-poll-best">★最多</span>' : '';
+    return `
+      <div class="ev-poll-card">
+        <div class="ev-poll-card-date">📅 ${fmt(c.date, c.time)}${bestBadge}</div>
+        <div class="ev-poll-results">
+          ${resultRow('going','○','行ける',goingNames)}
+          ${resultRow('maybe','△','微妙',maybeNames)}
+          ${resultRow('skip','×','無理',skipNames)}
+        </div>
+        ${isHost ? `
+          <button class="ev-poll-finalize-btn" onclick="finalizePollDate('${ev.id}','${c.id}')">✓ この日で確定する</button>
+        ` : `
+          <div class="ev-poll-answer-label">あなたの回答</div>
+          <div class="ev-poll-rsvp-row">
+            <button class="ev-poll-rsvp-btn ${myAns==='going'?'active-going':''}" onclick="setPollResponse('${ev.id}','${c.id}','going')">${myAns==='going'?'✓ ':''}○ 行ける</button>
+            <button class="ev-poll-rsvp-btn ${myAns==='maybe'?'active-maybe':''}" onclick="setPollResponse('${ev.id}','${c.id}','maybe')">${myAns==='maybe'?'✓ ':''}△ 微妙</button>
+            <button class="ev-poll-rsvp-btn ${myAns==='skip'?'active-skip':''}" onclick="setPollResponse('${ev.id}','${c.id}','skip')">${myAns==='skip'?'✓ ':''}× 無理</button>
+          </div>
+        `}
+      </div>`;
+  }).join('');
+  const head = `<div style="font-size:13px;font-weight:700;color:#fff;margin:4px 16px 8px;">🗳️ 日程を調整中 — ${isHost ? '一番集まる日を確定できます' : '都合のいい日に答えてね'}</div>`;
+  const note = ev.deadline ? `<div style="font-size:12px;color:rgba(255,255,255,0.55);margin:0 16px 8px;">回答締切: ${ev.deadline}</div>` : '';
+  return `<div class="ev-poll-section">${head}${note}${cards}</div>`;
+}
+function setPollResponse(eventId, candidateId, status) {
+  const ev = eventsData.find(e => e.id === eventId);
+  if (!ev || ev.closed) { showToast('受付は終了しています'); return; }
+  if (typeof ev.responses[EV_SELF_ID] !== 'object' || ev.responses[EV_SELF_ID] === null) ev.responses[EV_SELF_ID] = {};
+  ev.responses[EV_SELF_ID][candidateId] = status;
+  renderEventDetail(ev);
+}
+function finalizePollDate(eventId, candidateId) {
+  const ev = eventsData.find(e => e.id === eventId);
+  if (!ev || ev.hostId !== EV_SELF_ID) return;
+  const cand = (ev.candidates || []).find(c => c.id === candidateId);
+  if (!cand) return;
+  if (!confirm(`「${cand.date} ${cand.time}」で日程を確定しますか？\n確定すると候補は締め切られ、通常の出欠に切り替わります。`)) return;
+  ev.type = 'fixed';
+  ev.date = cand.date;
+  ev.time = cand.time;
+  ev.endDate = null; ev.endTime = null;
+  delete ev.candidates;
+  ev.responses = {};
+  showToast('日程を確定しました');
+  renderEventDetail(ev);
 }
 
 // ===== 詳細画面 =====
 let evDetailCurrentId = null;
 let evDetailReturnTo = 'talk'; // 'talk' | 'home'
 
-function openEventDetail(eventId, returnTo = 'talk') {
+function openEventDetail(eventId, returnTo = 'events') {
   const ev = eventsData.find(e => e.id === eventId);
   if (!ev) return;
   evDetailCurrentId = eventId;
@@ -15658,14 +15940,17 @@ function openEventDetail(eventId, returnTo = 'talk') {
 
 function closeEventDetail() {
   evDetailCurrentId = null;
-  const returnTo = evDetailReturnTo === 'home' ? 'home' : 'talk';
-  evDetailReturnTo = 'talk';
+  const returnTo = evDetailReturnTo === 'home' ? 'home' : 'events';
+  evDetailReturnTo = 'events';
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + returnTo).classList.add('active');
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  const tabEl = document.getElementById('tab-' + returnTo);
+  if (tabEl) tabEl.classList.add('active');
   if (returnTo === 'home') {
     buildHomeFeed();
   } else {
-    switchTalkTab('events');
+    buildEventsHub();
   }
 }
 
@@ -15742,13 +16027,14 @@ function renderEventDetail(ev, opts = {}) {
         ${hostBadge}
       </div>
 
+      ${isPoll(ev) ? renderPollCandidates(ev, isHost) : `
       <div class="ev-detail-infoblock">
         <div class="ev-detail-infoblock-ico">📅</div>
         <div>
           <div class="ev-detail-infoblock-main">${dateStr}</div>
           ${ev.deadline ? `<div class="ev-detail-infoblock-sub">回答締切: ${ev.deadline}</div>` : ''}
         </div>
-      </div>
+      </div>`}
 
       <div class="ev-detail-infoblock">
         <div class="ev-detail-infoblock-ico">📍</div>
@@ -15823,6 +16109,9 @@ function renderEventDetail(ev, opts = {}) {
         <div style="flex:1;text-align:center;padding:14px;color:rgba(255,255,255,0.5);font-weight:600;">受付終了</div>
         <button class="ev-cta-pill" style="flex:0 0 auto;" onclick="openEvShareSheet('${ev.id}')">📤 シェア</button>
       `;
+    } else if (isPoll(ev)) {
+      ctaBar.className = 'ev-detail-cta-bar';
+      ctaBar.innerHTML = `<button class="ev-cta-pill" style="flex:1;" onclick="openEvShareSheet('${ev.id}')">📤 シェア</button>`;
     } else {
       ctaBar.className = 'ev-detail-cta-bar rsvp-mode';
       const isGoing = myResponse === 'going';
