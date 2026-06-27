@@ -15905,7 +15905,11 @@ function setPollResponse(eventId, candidateId, status) {
   const ev = eventsData.find(e => e.id === eventId);
   if (!ev || ev.closed) { showToast('受付は終了しています'); return; }
   if (typeof ev.responses[EV_SELF_ID] !== 'object' || ev.responses[EV_SELF_ID] === null) ev.responses[EV_SELF_ID] = {};
-  ev.responses[EV_SELF_ID][candidateId] = status;
+  if (ev.responses[EV_SELF_ID][candidateId] === status) {
+    delete ev.responses[EV_SELF_ID][candidateId];
+  } else {
+    ev.responses[EV_SELF_ID][candidateId] = status;
+  }
   renderEventDetail(ev);
 }
 function finalizePollDate(eventId, candidateId) {
@@ -15958,9 +15962,14 @@ function closeEventDetail() {
 function setInviteResponseFromFeed(eventId, status) {
   const ev = eventsData.find(e => e.id === eventId);
   if (!ev || ev.closed) { showToast('受付終了しています'); return; }
-  ev.responses[EV_SELF_ID] = status;
-  const msg = { going: '「行く」で回答しました', maybe: '「検討中」で回答しました', skip: '「行けない」で回答しました' };
-  showToast(msg[status]);
+  if (ev.responses[EV_SELF_ID] === status) {
+    delete ev.responses[EV_SELF_ID];
+    showToast('回答を取り消しました');
+  } else {
+    ev.responses[EV_SELF_ID] = status;
+    const msg = { going: '「行く」で回答しました', maybe: '「検討中」で回答しました', skip: '「行けない」で回答しました' };
+    showToast(msg[status]);
+  }
   buildHomeFeed();
   // hub（イベントタブ）が表示中なら再描画
   if (document.getElementById('eventsHubList')) buildEventsHub();
@@ -16247,9 +16256,14 @@ function setEventResponse(status) {
   if (!evDetailCurrentId) return;
   const ev = eventsData.find(e => e.id === evDetailCurrentId);
   if (!ev || ev.closed) { showToast('受付終了しています'); return; }
-  ev.responses[EV_SELF_ID] = status;
-  const msg = { going: '「行く」で回答しました', maybe: '「検討中」で回答しました', skip: '「行けない」で回答しました' };
-  showToast(msg[status]);
+  if (ev.responses[EV_SELF_ID] === status) {
+    delete ev.responses[EV_SELF_ID];
+    showToast('回答を取り消しました');
+  } else {
+    ev.responses[EV_SELF_ID] = status;
+    const msg = { going: '「行く」で回答しました', maybe: '「検討中」で回答しました', skip: '「行けない」で回答しました' };
+    showToast(msg[status]);
+  }
   renderEventDetail(ev);
 }
 
