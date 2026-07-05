@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>案B フルブリード帯 × パレット3種</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:#E9E9EC; display:flex; justify-content:center; padding:24px 0 60px; }
+  .stage { width: 430px; }
+  h1 { font-size:16px; text-align:center; margin-bottom:4px; }
+  .sub { text-align:center; font-size:11.5px; color:#666; margin-bottom:14px; }
+  .tabs { display:flex; gap:8px; justify-content:center; margin-bottom:16px; position:sticky; top:8px; z-index:50; }
+  .tabs button { border:1px solid #ccc; background:#fff; border-radius:999px; padding:8px 16px; font-size:12.5px; cursor:pointer; font-weight:600; }
+  .tabs button.on { background:#1E3A5F; color:#fff; border-color:#1E3A5F; }
+  .phone { background:#fff; border-radius:28px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,.25); }
+  .appbar { background:linear-gradient(135deg,#020408 0%,#1E3A5F 35%,#7C3AED 70%,#EC4899 100%); color:#fff; text-align:center; padding:16px 0 14px; font-weight:800; letter-spacing:4px; font-size:15px; }
+  .band { padding:15px 18px 11px; border-bottom:1px solid rgba(0,0,0,.10); }
+  .pal-note { font-size:11.5px; color:#555; background:#fff; border-radius:10px; padding:10px 14px; margin:0 0 14px; line-height:1.7; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <h1>案B：フルブリード帯タイムライン</h1>
+  <div class="sub">パレットを切り替えて比較（同じ9投稿）</div>
+  <div class="tabs">
+    <button id="tabJewel" class="on" onclick="setPal('jewel')">ジュエル</button>
+    <button id="tabAurora" onclick="setPal('aurora')">HYPERAYオーロラ</button>
+    <button id="tabNeon" onclick="setPal('neon')">ネオンナイト</button>
+  </div>
+  <div class="pal-note" id="palNote"></div>
+  <div class="phone">
+    <div class="appbar">HYPERAY</div>
+    <div id="tl"></div>
+  </div>
+</div>
+
+<script>
+// ── パレット3種（bg×fgペア固定） ──────────────────────
+const PALETTES = {
+  jewel: {
+    note: '<b>ジュエル（現行）：</b>Tailwind 700-800番台の宝石トーン。彩度が高く1色ごとの主張が強い。虹の全域をカバー。',
+    colors: {
+      cream:'#F0EEE6/#292524', slate:'#1E293B/#F1F5F9', crimson:'#9F1239/#FFF1F2', terra:'#C2410C/#FFF7ED',
+      gold:'#B45309/#FFFBEB', forest:'#065F46/#ECFDF5', teal:'#115E59/#F0FDFA', ocean:'#075985/#F0F9FF',
+      indigo:'#3730A3/#EEF2FF', violet:'#5B21B6/#F5F3FF', plum:'#86198F/#FDF4FF', noir:'#09090B/#FAFAFA',
+    },
+    map: { a:'crimson', b:'cream', c:'ocean', d:'slate', e:'gold', f:'cream', g:'indigo', h:'forest', i:'cream' },
+  },
+  aurora: {
+    note: '<b>HYPERAYオーロラ：</b>ブランドのグラデーション（黒→紺→紫→ピンク）を12分割した公式カラー由来。全体が同一色相族なのでタイムラインに統一感が出る。＋ゴールド（ティアの金）。',
+    colors: {
+      cream:'#F0EEE6/#292524', graphite:'#1E293B/#F1F5F9', midnight:'#020617/#E2E8F0', navy:'#1E3A5F/#EFF6FF',
+      steel:'#2E5EAA/#EFF6FF', indigo:'#3730A3/#EEF2FF', violet:'#5B21B6/#F5F3FF', orchid:'#7E22CE/#FAF5FF',
+      plum:'#86198F/#FDF4FF', magenta:'#9D174D/#FDF2F8', rose:'#9F1239/#FFF1F2', gold:'#B45309/#FFFBEB',
+    },
+    map: { a:'magenta', b:'cream', c:'navy', d:'graphite', e:'gold', f:'cream', g:'violet', h:'steel', i:'cream' },
+  },
+  neon: {
+    note: '<b>ネオンナイト（Dracula系）：</b>世界的に有名なダークテーマパレット「Dracula」由来。地はほぼ共通の夜色で、<b>文字がネオン色に光る</b>＝色をテキストで表現。宇宙・光の世界観に一番寄る。',
+    colors: {
+      cream:'#F0EEE6/#292524', night:'#1A1B26/#C0CAF5', purple:'#1A1B26/#BD93F9', pink:'#1A1B26/#FF79C6',
+      cyan:'#1A1B26/#8BE9FD', green:'#1A1B26/#50FA7B', orange:'#1A1B26/#FFB86C', red:'#1A1B26/#FF5555',
+      yellow:'#1A1B26/#F1FA8C', slate:'#1A1B26/#6272A4',
+    },
+    map: { a:'pink', b:'cream', c:'cyan', d:'night', e:'orange', f:'cream', g:'purple', h:'green', i:'cream' },
+  },
+};
+
+const POSTS = [
+  { key:'a', avatar:'👩', name:'鈴木 里奈', tier:'🚀 Rising', handle:'@rina_s・28分前', text:'3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。', likes:132, comments:18 },
+  { key:'b', avatar:'🧑', name:'田中 悠', tier:'🚀 Rising', handle:'@yu_tanaka・42分前', text:'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥 エージェント設計のヒントを掴んだ気がする。', likes:47, comments:6 },
+  { key:'c', avatar:'🤖', name:'Sarah Chen', tier:'💫 Nova', handle:'@sarah_ai・1時間前', text:'The best AI products don\'t feel like AI. They feel like magic that respects you.', likes:310, comments:42 },
+  { key:'d', avatar:'🧑‍💻', name:'佐藤 健太', tier:'✨ Icon', handle:'@kenta_s・2時間前', text:'深夜のコードレビューで見つけた設計ミス。眠い頭で書いたコードは眠い頭にしか読めん。寝ます。', likes:89, comments:9 },
+  { key:'e', avatar:'📷', name:'高橋 麻耶', tier:'🚀 Rising', handle:'@photo_maya・3時間前', text:'夕方の光だけで撮った一枚。機材より光。', likes:78, comments:11, img:'../assets/img/u10.jpg' },
+  { key:'f', avatar:'🧔', name:'木村 誠司', tier:'⭐ Star', handle:'@taisho_k・4時間前', text:'経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。', likes:234, comments:21 },
+  { key:'g', avatar:'🌌', name:'Alex Rivera', tier:'🌀 Gravity', handle:'@alex_gravity・6時間前', text:'Gravity is just consistency over time. Same with influence.', likes:1800, comments:203 },
+  { key:'h', avatar:'👩‍🔬', name:'伊藤 大輔', tier:'✨ Icon', handle:'@daisuke_ito・8時間前', text:'実験ノートを10年分デジタル化した。過去の自分が一番のメンターやった。', likes:64, comments:7 },
+  { key:'i', avatar:'💪', name:'中村 翔', tier:'👤 Human', handle:'@sho_n・11時間前', text:'筋トレ100日目。変わったのは体より「決めたことをやる」感覚のほうやった。', likes:23, comments:2 },
+];
+
+function band(p, pal) {
+  const [bg, fg] = pal.colors[pal.map[p.key]].split('/');
+  const meta = fg + 'A6', line = fg + '22';
+  return `
+  <div class="band" style="background:${bg};color:${fg};">
+    <div style="display:flex;align-items:center;gap:9px;">
+      <span style="font-size:25px;line-height:1;">${p.avatar}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-weight:700;font-size:14.5px;">${p.name}</span>
+          <span style="font-size:12px;">${p.tier}</span>
+        </div>
+        <div style="font-size:12px;color:${meta};">${p.handle}</div>
+      </div>
+    </div>
+    <div style="font-size:15.5px;line-height:1.75;margin:9px 2px 11px;">${p.text}</div>
+    ${p.img ? `<img src="${p.img}" style="display:block;width:100%;border-radius:10px;max-height:300px;object-fit:cover;margin:0 0 11px;">` : ''}
+    <div style="display:flex;gap:26px;border-top:1px solid ${line};padding-top:8px;font-size:13px;color:${meta};">
+      <span>♡ ${p.likes}</span><span>💬 ${p.comments}</span>
+    </div>
+  </div>`;
+}
+
+function setPal(key) {
+  const pal = PALETTES[key];
+  document.getElementById('tl').innerHTML = POSTS.map(p => band(p, pal)).join('');
+  document.getElementById('palNote').innerHTML = pal.note;
+  ['Jewel','Aurora','Neon'].forEach(t => document.getElementById('tab'+t).classList.remove('on'));
+  document.getElementById('tab' + key.charAt(0).toUpperCase() + key.slice(1)).classList.add('on');
+}
+setPal('jewel');
+</script>
+</body>
+</html>
