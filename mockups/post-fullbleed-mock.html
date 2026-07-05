@@ -27,6 +27,7 @@
     <button id="tabJewel" class="on" onclick="setPal('jewel')">ジュエル</button>
     <button id="tabAurora" onclick="setPal('aurora')">HYPERAYオーロラ</button>
     <button id="tabNeon" onclick="setPal('neon')">ネオンナイト</button>
+    <button id="tabNeon2" onclick="setPal('neon2')">色つき夜</button>
   </div>
   <div class="pal-note" id="palNote"></div>
   <div class="phone">
@@ -62,6 +63,15 @@ const PALETTES = {
       cream:'#F0EEE6/#292524', night:'#1A1B26/#C0CAF5', purple:'#1A1B26/#BD93F9', pink:'#1A1B26/#FF79C6',
       cyan:'#1A1B26/#8BE9FD', green:'#1A1B26/#50FA7B', orange:'#1A1B26/#FFB86C', red:'#1A1B26/#FF5555',
       yellow:'#1A1B26/#F1FA8C', slate:'#1A1B26/#6272A4',
+    },
+    map: { a:'pink', b:'cream', c:'cyan', d:'night', e:'orange', f:'cream', g:'purple', h:'green', i:'cream' },
+  },
+  neon2: {
+    note: '<b>色つき夜（ネオンナイト改）：</b>地を真っ黒統一やなく、<b>各色ごとにほんのり色味がかった夜</b>にする。紫の投稿は深紫の夜、シアンは青みの夜。背景にも変化が出るが、夜の統一感は保たれる。文字は同じネオン。',
+    colors: {
+      cream:'#F0EEE6/#292524', night:'#1A1B26/#C0CAF5', purple:'#221635/#BD93F9', pink:'#2B1424/#FF79C6',
+      cyan:'#10222E/#8BE9FD', green:'#10261A/#50FA7B', orange:'#2B1D10/#FFB86C', red:'#2B1316/#FF5555',
+      yellow:'#282511/#F1FA8C', slate:'#1A1B26/#6272A4',
     },
     map: { a:'pink', b:'cream', c:'cyan', d:'night', e:'orange', f:'cream', g:'purple', h:'green', i:'cream' },
   },
@@ -106,7 +116,7 @@ function setPal(key) {
   const pal = PALETTES[key];
   document.getElementById('tl').innerHTML = POSTS.map(p => band(p, pal)).join('');
   document.getElementById('palNote').innerHTML = pal.note;
-  ['Jewel','Aurora','Neon'].forEach(t => document.getElementById('tab'+t).classList.remove('on'));
+  ['Jewel','Aurora','Neon','Neon2'].forEach(t => document.getElementById('tab'+t).classList.remove('on'));
   document.getElementById('tab' + key.charAt(0).toUpperCase() + key.slice(1)).classList.add('on');
 }
 setPal('jewel');

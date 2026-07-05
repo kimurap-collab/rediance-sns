@@ -7343,34 +7343,31 @@
     <div class="screen" id="screen-color-post">
       <style>
         #colorPostText::placeholder { color: inherit; opacity: 0.45; }
-        .cp-swatch { width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; cursor: pointer; border: 2px solid rgba(0,0,0,0.12); transition: transform .15s, border-color .15s, box-shadow .15s; }
+        .cp-swatch { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; cursor: pointer; border: 2px solid rgba(0,0,0,0.12); transition: transform .15s, border-color .15s, box-shadow .15s; }
         .cp-swatch.sel { border-color: #111; transform: scale(1.16); box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
       </style>
-      <div style="display:flex;flex-direction:column;height:100%;background:var(--bg,#FFFFFF);">
-        <!-- 上段スクロール領域（✕ヘッダー＋色帯入力エリア） -->
-        <div style="flex:1;overflow-y:auto;min-height:0;">
-          <!-- ヘッダー：✕のみ（Xと同じ・投稿ボタンは下部ツールバー右） -->
-          <div style="padding:10px 12px;">
-            <button onclick="closeColorComposer()" style="background:none;border:none;width:38px;height:38px;font-size:19px;color:var(--text-main,#000);cursor:pointer;line-height:1;border-radius:50%;">✕</button>
+      <div style="height:100%;overflow-y:auto;background:var(--bg,#FFFFFF);">
+        <!-- ヘッダー：✕のみ（Xと同じ・投稿ボタンは下部ツールバー右） -->
+        <div style="padding:10px 12px;">
+          <button onclick="closeColorComposer()" style="background:none;border:none;width:38px;height:38px;font-size:19px;color:var(--text-main,#000);cursor:pointer;line-height:1;border-radius:50%;">✕</button>
+        </div>
+        <!-- 入力エリア＝フルブリードの色帯（WYSIWYG：色を選んだ瞬間ここが変わる） -->
+        <div id="colorPostCard" style="padding:14px 16px 16px;transition:background .25s ease;">
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="font-size:30px;line-height:1;flex-shrink:0;">🧔</span>
+            <textarea id="colorPostText" placeholder="いまどうしてる？" oninput="updateColorPostState()" style="flex:1;height:118px;background:transparent;border:none;outline:none;resize:none;font-size:17px;line-height:1.7;font-family:inherit;transition:color .25s ease;overflow-y:auto;padding-top:4px;"></textarea>
           </div>
-          <!-- 入力エリア＝フルブリードの色帯（WYSIWYG：色を選んだ瞬間ここが変わる） -->
-          <div id="colorPostCard" style="padding:14px 16px 16px;transition:background .25s ease;">
-            <div style="display:flex;gap:10px;align-items:flex-start;">
-              <span style="font-size:30px;line-height:1;flex-shrink:0;">🧔</span>
-              <textarea id="colorPostText" placeholder="いまどうしてる？" oninput="updateColorPostState()" style="flex:1;height:118px;background:transparent;border:none;outline:none;resize:none;font-size:17px;line-height:1.7;font-family:inherit;transition:color .25s ease;overflow-y:auto;padding-top:4px;"></textarea>
-            </div>
-            <!-- 添付プレビュー：色帯を台紙に画像/動画が乗る（テキスト列に揃える） -->
-            <div id="cpxPreviewWrap" style="display:none;position:relative;margin:10px 0 0 40px;">
-              <img id="cpxPreviewImg" src="" alt="" style="display:none;width:100%;border-radius:12px;max-height:280px;object-fit:cover;">
-              <video id="cpxPreviewVideo" controls muted playsinline style="display:none;width:100%;border-radius:12px;max-height:280px;background:#000;"></video>
-              <button onclick="cpxClearPhoto()" style="position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;border:none;background:rgba(0,0,0,0.55);color:#fff;font-size:14px;cursor:pointer;line-height:1;">✕</button>
-            </div>
+          <!-- 添付プレビュー：色帯を台紙に画像/動画が乗る（テキスト列に揃える） -->
+          <div id="cpxPreviewWrap" style="display:none;position:relative;margin:10px 0 0 40px;">
+            <img id="cpxPreviewImg" src="" alt="" style="display:none;width:100%;border-radius:12px;max-height:280px;object-fit:cover;">
+            <video id="cpxPreviewVideo" controls muted playsinline style="display:none;width:100%;border-radius:12px;max-height:280px;background:#000;"></video>
+            <button onclick="cpxClearPhoto()" style="position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;border:none;background:rgba(0,0,0,0.55);color:#fff;font-size:14px;cursor:pointer;line-height:1;">✕</button>
           </div>
         </div>
-        <!-- 色スウォッチ（タップ1回で即反映・常時表示） -->
-        <div id="colorSwatchRow" style="display:flex;gap:11px;overflow-x:auto;padding:12px 16px 10px;flex-shrink:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;"></div>
-        <!-- 下部ツールバー：メディアボタン左・投稿ボタン右（X準拠）。タブバーの上に常時固定 -->
-        <div style="border-top:1px solid var(--border,#E8E8E8);display:flex;align-items:center;justify-content:space-between;padding:10px 16px 86px;flex-shrink:0;">
+        <!-- 色スウォッチ：入力欄の直下・10色を1行固定（スクロールなし） -->
+        <div id="colorSwatchRow" style="display:flex;justify-content:space-between;padding:12px 16px 8px;"></div>
+        <!-- ツールバー：メディアボタン左・投稿ボタン右（X準拠・スウォッチ直下） -->
+        <div style="border-top:1px solid var(--border,#E8E8E8);display:flex;align-items:center;justify-content:space-between;padding:8px 16px;margin-top:4px;">
           <input type="file" id="cpxPhotoInput" accept="image/*,video/*" style="display:none;" onchange="cpxLoadPhoto(event)">
           <button onclick="document.getElementById('cpxPhotoInput').click()" title="写真・動画を追加" style="background:none;border:none;cursor:pointer;padding:6px;color:var(--primary-light,#2E5EAA);line-height:0;">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/></svg>
