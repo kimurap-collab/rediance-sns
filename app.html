@@ -12847,18 +12847,18 @@
   // ===== イベント招待の帯（投稿テンプレ準拠・2026-07-05） =====
   // 頭に招待コンテキスト行（Xの「○○さんがリポスト」文法）、地はHYPERAYグラデ＝特別な帯の記号。
   // 参加/不参加はここで決めない（ボタンなし）。帯タップでイベント詳細へ。
-  function cpInviteBandHtml(ev) {
+  function cpInviteBandHtml(ev, ctxOverride) {
     const host = cpFindUser(ev.hostId);
     const tier = getTitle(host.score || 0);
     const fg = '#F8FAFC';
     const meta = 'rgba(248,250,252,0.72)';
     const line = 'rgba(255,255,255,0.18)';
     const isPollEv = ev.type === 'poll';
-    const ctx = isPollEv
+    const ctx = ctxOverride || (isPollEv
       ? '🗓 あなたを日程調整に招待しています'
       : (ev.isPublic && !ev.invitees.includes(EV_SELF_ID)
         ? '📅 オープンイベント開催中'
-        : '📩 あなたをイベントに招待しています');
+        : '📩 あなたをイベントに招待しています'));
     let whenLine = '';
     if (isPollEv) {
       const n = (ev.candidates || []).length;
@@ -15496,21 +15496,21 @@ function buildEventsHub() {
   if (upcoming.length === 0) {
     html += '<div class="events-empty">これから予定のイベントはありません</div>';
   } else {
-    upcoming.forEach(ev => { html += (POST_UI_MODE === 'color' ? renderEventRowRay(ev) : renderEventRow(ev)); });
+    upcoming.forEach(ev => { html += (POST_UI_MODE === 'color' ? cpEventHubBand(ev) : renderEventRow(ev)); });
   }
 
   html += '<div class="events-section-title">📤 主催したもの</div>';
   if (hosted.length === 0) {
     html += '<div class="events-empty">まだ主催したイベントはありません</div>';
   } else {
-    hosted.forEach(ev => { html += (POST_UI_MODE === 'color' ? renderEventRowRay(ev) : renderEvInviteCard(ev)); });
+    hosted.forEach(ev => { html += (POST_UI_MODE === 'color' ? cpEventHubBand(ev, '📤 あなたが主催しています') : renderEvInviteCard(ev)); });
   }
 
   html += '<div class="events-section-title">📥 招待されたもの</div>';
   if (invited.length === 0) {
     html += '<div class="events-empty">まだ招待はありません</div>';
   } else {
-    invited.forEach(ev => { html += (POST_UI_MODE === 'color' ? renderEventRowRay(ev) : renderEvInviteCard(ev)); });
+    invited.forEach(ev => { html += (POST_UI_MODE === 'color' ? cpEventHubBand(ev) : renderEvInviteCard(ev)); });
   }
 
   list.innerHTML = html;
@@ -15550,35 +15550,11 @@ function renderEventRow(ev) {
   `;
 }
 
-// レイ準拠のイベント行（フルブリード・ヘアライン区切り）。カラーモードのイベントページ用
-function renderEventRowRay(ev) {
-  const isPollEv = ev.type === 'poll';
-  const baseDate = ev.date || (ev.candidates && ev.candidates[0] && ev.candidates[0].date);
-  const d = baseDate ? new Date(baseDate) : null;
-  const month = d ? ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][d.getMonth()] : '—';
-  const day = d ? d.getDate() : '–';
-  let chip;
-  if (ev.hostId === EV_SELF_ID) chip = ['#EEF3FB', 'var(--primary,#1E3A5F)', '📤 主催'];
-  else if (isPollEv) chip = ['#F5F3FF', '#5B21B6', '🗓 日程調整中'];
-  else {
-    const r = ev.responses && ev.responses[EV_SELF_ID];
-    if (r === 'going') chip = ['#ECFDF5', '#065F46', '✓ 行く'];
-    else if (r === 'maybe') chip = ['#FFFBEB', '#B45309', '? 検討中'];
-    else if (r === 'skip') chip = ['#FEF2F2', '#9F1239', '✗ 行けない'];
-    else chip = ['#F3F4F6', '#555555', '未回答'];
-  }
-  return `
-    <div onclick="openEventDetail('${ev.id}')" style="display:flex;gap:13px;align-items:flex-start;padding:14px 18px;margin:0 -16px;background:var(--bg,#fff);border-bottom:1px solid rgba(0,0,0,0.08);cursor:pointer;">
-      <div style="min-width:52px;text-align:center;padding:7px 4px;background:var(--primary-bg,#EEF3FB);border-radius:10px;">
-        <div style="font-size:10px;font-weight:800;letter-spacing:1px;color:var(--primary,#1E3A5F);">${month}</div>
-        <div style="font-size:20px;font-weight:800;color:var(--primary,#1E3A5F);line-height:1.1;">${day}</div>
-      </div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:15px;font-weight:700;color:var(--text-main,#000);line-height:1.5;">${escapeHtml(ev.title)}</div>
-        <div style="font-size:12.5px;color:var(--text-sub,#555);margin-top:2px;">${isPollEv ? '候補日 ' + ((ev.candidates || []).length) + '件' : (ev.time || '')}${ev.place ? ' · ' + escapeHtml(ev.place) : ''}</div>
-        <div style="display:inline-block;margin-top:7px;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:700;background:${chip[0]};color:${chip[1]};">${chip[2]}</div>
-      </div>
-    </div>`;
+// イベントページ用：ホームの招待帯（cpInviteBandHtml）をそのまま使う。
+// events-hub-wrap の左右padding(16px)を打ち消してフルブリードにするだけのラッパー
+function cpEventHubBand(ev, ctxOverride) {
+  const ctx = ctxOverride || (ev.hostId === EV_SELF_ID ? '📤 あなたが主催しています' : undefined);
+  return '<div style="margin:0 -16px;">' + cpInviteBandHtml(ev, ctx) + '</div>';
 }
 
 // ===== ホームのinvite-cardと共通のリッチカード（主催イベント一覧用） =====
