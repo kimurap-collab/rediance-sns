@@ -12725,6 +12725,57 @@
   }
   function closeColorPostDetail() { switchTab('home'); }
 
+  // ===== イベント招待の帯（投稿テンプレ準拠・2026-07-05） =====
+  // 頭に招待コンテキスト行（Xの「○○さんがリポスト」文法）、地はHYPERAYグラデ＝特別な帯の記号。
+  // 参加/不参加はここで決めない（ボタンなし）。帯タップでイベント詳細へ。
+  function cpInviteBandHtml(ev) {
+    const host = cpFindUser(ev.hostId);
+    const tier = getTitle(host.score || 0);
+    const fg = '#F8FAFC';
+    const meta = 'rgba(248,250,252,0.72)';
+    const line = 'rgba(255,255,255,0.18)';
+    const isPollEv = ev.type === 'poll';
+    const ctx = isPollEv
+      ? '🗓 あなたを日程調整に招待しています'
+      : (ev.isPublic && !ev.invitees.includes(EV_SELF_ID)
+        ? '📅 オープンイベント開催中'
+        : '📩 あなたをイベントに招待しています');
+    let whenLine = '';
+    if (isPollEv) {
+      const n = (ev.candidates || []).length;
+      whenLine = `🗓 候補日 ${n}件・あなたの回答待ち`;
+    } else {
+      const weekdayArr = ['日','月','火','水','木','金','土'];
+      const d = new Date(ev.date);
+      whenLine = `🗓 ${d.getMonth() + 1}/${d.getDate()}(${weekdayArr[d.getDay()]}) ${ev.time || ''}`;
+    }
+    const goingCount = !isPollEv && ev.responses
+      ? Object.values(ev.responses).filter(r => r === 'going').length : 0;
+    const coverPos = ev.coverPos ? `${ev.coverPos.x}% ${ev.coverPos.y}%` : 'center';
+    return `
+    <div onclick="openEventDetail('${ev.id}', 'home')" style="background:linear-gradient(135deg,#020408 0%,#1E3A5F 40%,#5B21B6 75%,#9D174D 100%);color:${fg};padding:14px 18px 11px;border-bottom:1px solid rgba(0,0,0,0.10);cursor:pointer;">
+      <div style="font-size:12.5px;font-weight:700;color:${meta};margin-bottom:9px;">${ctx}</div>
+      <div style="display:flex;align-items:center;gap:9px;">
+        <span style="font-size:26px;line-height:1;">${host.avatar}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(ev.hostName || host.name)}</span>
+            <span style="font-size:12px;white-space:nowrap;">${tier.emoji} ${tier.name}</span>
+          </div>
+          <div style="font-size:12px;color:${meta};">${host.handle || ''}・主催</div>
+        </div>
+      </div>
+      <div style="font-size:16.5px;font-weight:800;line-height:1.5;margin:10px 2px 4px;">${escapeHtml(ev.title)}</div>
+      <div style="font-size:13.5px;color:${meta};line-height:1.8;">${whenLine}${!isPollEv && ev.place ? `　📍 ${escapeHtml(ev.place)}` : ''}</div>
+      ${ev.message ? `<div style="font-size:14px;line-height:1.7;margin:7px 2px 2px;white-space:pre-wrap;word-break:break-word;">${escapeHtml(ev.message.length > 70 ? ev.message.slice(0, 70) + '…' : ev.message)}</div>` : ''}
+      ${ev.coverImage ? `<img src="${ev.coverImage}" alt="" style="display:block;width:100%;border-radius:10px;max-height:220px;object-fit:cover;object-position:${coverPos};margin:9px 0 2px;">` : ''}
+      <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid ${line};margin-top:10px;padding-top:8px;font-size:13px;color:${meta};">
+        <span>${isPollEv ? '⏰ ' + (ev.deadline ? '締切 ' + ev.deadline : '回答受付中') : (goingCount ? '✓ ' + goingCount + '人が参加予定' : '参加受付中')}</span>
+        <span style="font-weight:700;">詳細を見る ›</span>
+      </div>
+    </div>`;
+  }
+
   function buildHomeStories() {
     // X型カラー投稿モードならカラータイムラインを描画（旧グリッドはフラグ復帰でそのまま動く）
     if (POST_UI_MODE === 'color') { buildColorTimeline(); return; }
@@ -13196,6 +13247,15 @@
         e.hostId !== EV_SELF_ID &&
         (e.isPublic || e.invitees.includes(EV_SELF_ID))
       );
+      // カラー投稿モード：招待は投稿と同じ帯テンプレ（HYPERAYグラデ地・ボタンなし・タップで詳細へ）
+      if (POST_UI_MODE === 'color') {
+        myInvites.forEach(ev => {
+          const div = document.createElement('div');
+          div.innerHTML = cpInviteBandHtml(ev);
+          container.appendChild(div.firstElementChild);
+        });
+        return;
+      }
       myInvites.forEach(ev => {
         const card = document.createElement('div');
         card.className = 'invite-card';
