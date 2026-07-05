@@ -7880,9 +7880,10 @@
 
       <!-- アイデンティティタブ -->
       <div id="myTabContent-identity" style="display:none;">
-        <div class="identity-section" style="margin-top:12px;">
+        <!-- Identity＝レイのミニ帯スタック（2026-07-05刷新）。カテゴリ枠のカード化を廃止しフラットに -->
+        <div style="margin-top:4px;">
 
-          <div class="identity-category open" id="my-identity-ai">
+          <div class="identity-category open" id="my-identity-ai" style="border:none;border-radius:0;margin-bottom:0;">
             <div class="identity-cat-header" onclick="toggleIdentitySection('my-identity-ai')">
               <div class="identity-cat-header-left">
                 <span class="identity-cat-name">🤖 AI・テック</span>
@@ -7891,18 +7892,12 @@
               <span class="identity-cat-chevron">▾</span>
             </div>
             <div class="identity-cat-body">
-              <div class="identity-posts-grid">
-                <div class="identity-post-item" style="background:#1A1B26;" onclick="openFsPost(myIdentityPosts['ai'], 0, 'my')">
-                  <div class="identity-post-text" style="color:#8BE9FD;">Claude Codeで自分のAIチーム作ってるんやけど、毎朝勝手にレポート届くの最高すぎる。</div>
-                </div>
-                <div class="identity-post-item" style="background:#312E81;" onclick="openFsPost(myIdentityPosts['ai'], 1, 'my')">
-                  <div class="identity-post-text" style="color:#BD93F9;">AIエージェントの未来は人間を置き換えることじゃなく、任せ方の発明や。</div>
-                </div>
-              </div>
+              <div onclick="openFsPost(myIdentityPosts['ai'], 0, 'my')" style="background:#1A1B26;color:#8BE9FD;padding:14px 18px;font-size:14px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">Claude Codeで自分のAIチーム作ってるんやけど、毎朝勝手にレポート届くの最高すぎる。</div>
+              <div onclick="openFsPost(myIdentityPosts['ai'], 1, 'my')" style="background:#312E81;color:#BD93F9;padding:14px 18px;font-size:14px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">AIエージェントの未来は人間を置き換えることじゃなく、任せ方の発明や。</div>
             </div>
           </div>
 
-          <div class="identity-category open" id="my-identity-sg">
+          <div class="identity-category open" id="my-identity-sg" style="border:none;border-radius:0;margin-bottom:0;">
             <div class="identity-cat-header" onclick="toggleIdentitySection('my-identity-sg')">
               <div class="identity-cat-header-left">
                 <span class="identity-cat-name">🇸🇬 シンガポール</span>
@@ -7911,18 +7906,12 @@
               <span class="identity-cat-chevron">▾</span>
             </div>
             <div class="identity-cat-body">
-              <div class="identity-posts-grid">
-                <div class="identity-post-item" style="background:#064E3B;" onclick="openFsPost(myIdentityPosts['sg'], 0, 'my')">
-                  <div class="identity-post-text" style="color:#50FA7B;">ホーカーで$3のチキンライス食べながら10億の話をするのがシンガポール。</div>
-                </div>
-                <div class="identity-post-item" style="background:#164E63;" onclick="openFsPost(myIdentityPosts['sg'], 1, 'my')">
-                  <div class="identity-post-text" style="color:#8BE9FD;">シンガポールのAI界隈、日本より3年先を行ってる感覚。組み合わせたら最強やろ。</div>
-                </div>
-              </div>
+              <div onclick="openFsPost(myIdentityPosts['sg'], 0, 'my')" style="background:#064E3B;color:#50FA7B;padding:14px 18px;font-size:14px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">ホーカーで$3のチキンライス食べながら10億の話をするのがシンガポール。</div>
+              <div onclick="openFsPost(myIdentityPosts['sg'], 1, 'my')" style="background:#164E63;color:#8BE9FD;padding:14px 18px;font-size:14px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">シンガポールのAI界隈、日本より3年先を行ってる感覚。組み合わせたら最強やろ。</div>
             </div>
           </div>
 
-          <div class="identity-category" id="my-identity-biz">
+          <div class="identity-category" id="my-identity-biz" style="border:none;border-radius:0;margin-bottom:0;">
             <div class="identity-cat-header" onclick="toggleIdentitySection('my-identity-biz')">
               <div class="identity-cat-header-left">
                 <span class="identity-cat-name">💼 経営</span>
@@ -7931,15 +7920,11 @@
               <span class="identity-cat-chevron">▾</span>
             </div>
             <div class="identity-cat-body">
-              <div class="identity-posts-grid">
-                <div class="identity-post-item" style="background:#F0EEE6;" onclick="openFsPost(myIdentityPosts['biz'], 0, 'my')">
-                  <div class="identity-post-text" style="color:#292524;">経営者に一番大事なスキルは「任せる力」。AIにも人にも。</div>
-                </div>
-              </div>
+              <div onclick="openFsPost(myIdentityPosts['biz'], 0, 'my')" style="background:#F0EEE6;color:#292524;padding:14px 18px;font-size:14px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">経営者に一番大事なスキルは「任せる力」。AIにも人にも。</div>
             </div>
           </div>
 
-          <div class="identity-category" id="my-identity-inv">
+          <div class="identity-category" id="my-identity-inv" style="border:none;border-radius:0;margin-bottom:0;">
             <div class="identity-cat-header" onclick="toggleIdentitySection('my-identity-inv')">
               <div class="identity-cat-header-left">
                 <span class="identity-cat-name">📈 投資</span>
@@ -7948,11 +7933,7 @@
               <span class="identity-cat-chevron">▾</span>
             </div>
             <div class="identity-cat-body">
-              <div class="identity-posts-grid">
-                <div class="identity-post-item" style="background:#701A75;" onclick="openFsPost(myIdentityPosts['inv'], 0, 'my')">
-                  <div class="identity-post-text" style="color:#FF79C6;">フォロワー数じゃなくて、誰にフォローされてるか。それが本当の影響力や。</div>
-                </div>
-              </div>
+              <div onclick="openFsPost(myIdentityPosts['inv'], 0, 'my')" style="background:#701A75;color:#FF79C6;padding:14px 18px;font-size:14px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">フォロワー数じゃなくて、誰にフォローされてるか。それが本当の影響力や。</div>
             </div>
           </div>
         </div>
