@@ -9381,22 +9381,21 @@
   // ===== 2軸カラーシステム（2026-07-05大将確定：色だけ・書体固定） =====
   // 背景6種＝一日サイクル「朝→深夜」。文字色は背景の明暗で選択肢が自動で切り替わる
   // （明るい背景→インク6色／暗い背景→ネオン8色）＝「選べるけど間違えられない」方式。
-  // 背景12種：明るい3色（朝・昼・黄金）＋色相環8色（Tailwind 700-800番台＝色相がはっきり見える深さ）＋夜
-  // ※950番台は暗すぎて色相が死ぬ（全部黒っぽく見える）ことが実地で判明。文字インクと同じ700-800帯が正解
-  // 並びは 明3色 → 赤→橙→緑→シアン→青→藍→紫→マゼンタ→無彩色夜（色相環順）
+  // 背景12種＝ジュエルパレット（2026-07-05大将確定・mockups/post-fullbleed-mockの「ジュエル」タブと同一）
+  // 文字色システム（明→インク／暗→ネオンの自動切替）はそのまま
   const POST_BGS = [
-    { id: 'asa',    name: '朝',   bg: '#F0EEE6', dark: false },  // 紙のような朝の光（デフォ）
-    { id: 'hiru',   name: '昼',   bg: '#E7F1F8', dark: false },  // 淡い昼の空
-    { id: 'kogane', name: '黄金', bg: '#FBBF24', dark: false },  // amber-400（黄は暗くすると茶になるので明るい金＋インク文字）
-    { id: 'rose',   name: '紅',   bg: '#9F1239', dark: true  },  // rose-800（赤・ワイン）
-    { id: 'yuu',    name: '夕',   bg: '#C2410C', dark: true  },  // orange-700（橙）
-    { id: 'forest', name: '森',   bg: '#065F46', dark: true  },  // emerald-800（緑）
-    { id: 'umi',    name: '深海', bg: '#155E75', dark: true  },  // cyan-800（シアン）
-    { id: 'ao',     name: '蒼',   bg: '#1E40AF', dark: true  },  // blue-800（青）
-    { id: 'ai',     name: '藍',   bg: '#3730A3', dark: true  },  // indigo-800（藍）
-    { id: 'yoi',    name: '宵',   bg: '#5B21B6', dark: true  },  // violet-800（紫）
-    { id: 'plum',   name: '紫紅', bg: '#86198F', dark: true  },  // fuchsia-800（マゼンタ）
-    { id: 'yoru',   name: '夜',   bg: '#1A1B26', dark: true  },  // Dracula夜（無彩色）
+    { id: 'cream',   name: 'クリーム',     bg: '#F0EEE6', dark: false },  // 紙（デフォ）
+    { id: 'slate',   name: 'グレー',       bg: '#1E293B', dark: true  },
+    { id: 'crimson', name: '深紅',         bg: '#9F1239', dark: true  },
+    { id: 'terra',   name: 'テラコッタ',   bg: '#C2410C', dark: true  },
+    { id: 'gold',    name: 'ゴールド',     bg: '#B45309', dark: true  },
+    { id: 'forest',  name: 'フォレスト',   bg: '#065F46', dark: true  },
+    { id: 'teal',    name: 'ティール',     bg: '#115E59', dark: true  },
+    { id: 'ocean',   name: 'オーシャン',   bg: '#075985', dark: true  },
+    { id: 'indigo',  name: 'インディゴ',   bg: '#3730A3', dark: true  },
+    { id: 'violet',  name: 'バイオレット', bg: '#5B21B6', dark: true  },
+    { id: 'plum',    name: 'プラム',       bg: '#86198F', dark: true  },
+    { id: 'noir',    name: 'ノワール',     bg: '#09090B', dark: true  },
   ];
   // 明るい背景用インク（ジュエルトーンを文字側で再利用＝気分色）
   const POST_INKS = [
@@ -9427,19 +9426,19 @@
 
   // カラー投稿のデモデータ（新しい順）。朝〜深夜の帯が一日の流れみたいに混ざるタイムライン。
   const colorPosts = [
-    { id: 'cp1', uid: 'yu_tanaka',  bgId: 'asa',  fgId: 'sumi',   time: '12分前', likes: 47,  comments: 6,  text: 'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥 エージェント設計のヒントを掴んだ気がする。' },
-    { id: 'cp2', uid: 'rina_s',     bgId: 'yoru', fgId: 'pink',   time: '28分前', likes: 132, comments: 18, text: '3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。' },
-    { id: 'cp3', uid: 'taisho_k',   bgId: 'asa',  fgId: 'kon',    time: '1時間前', likes: 234, comments: 21, text: '経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。' },
-    { id: 'cp10', uid: 'kenji_founder', bgId: 'ai', fgId: 'lav', time: '90分前', likes: 421, comments: 57, text: '起業して10年で分かったことを書く。最初の3年は「正しいことを速くやる」ことばかり考えてた。でも本当に効いたのは「間違いに早く気づいて、素直に方向を変える」ことやった。プライドは判断を遅らせる。数字は嘘をつかんけど、数字の解釈は自分に都合よく歪む。だから週に一回、自分の意思決定を他人の会社の話やと思って見直す時間を作った。これだけで致命傷を3回は回避できた。あと、人の採用は能力より「不機嫌をまき散らさないか」を見る。チームの空気は最強の生産性ツールや。' },
-    { id: 'cp4', uid: 'kenta_s',    bgId: 'yoi',  fgId: 'purple', time: '2時間前', likes: 89,  comments: 9,  text: '深夜のコードレビューで見つけた設計ミス。眠い頭で書いたコードは眠い頭にしか読めん。寝ます。' },
-    { id: 'cp5', uid: 'sarah_ai',   bgId: 'hiru', fgId: 'kon',    time: '3時間前', likes: 310, comments: 42, text: 'The best AI products don\'t feel like AI. They feel like magic that respects you.' },
-    { id: 'cp6', uid: 'misaki_t',   bgId: 'asa',  fgId: 'mori',   time: '5時間前', likes: 56,  comments: 4,  text: '朝イチの空気が好き。誰よりも早くオフィスに着いた日は、なんか勝った気になる。' },
-    { id: 'cp7', uid: 'alex_gravity', bgId: 'umi', fgId: 'cyan', time: '7時間前', likes: 1800, comments: 203, text: 'Gravity is just consistency over time. Same with influence.' },
-    { id: 'cp8', uid: 'photo_maya', bgId: 'yuu',  fgId: 'orange', time: '9時間前', likes: 78,  comments: 11, text: '夕方の光だけで撮った一枚が、今日イチの作品になった。機材より光。', media: { type: 'image', src: 'assets/img/u10.jpg' } },
-    { id: 'cp9', uid: 'sho_n',      bgId: 'hiru', fgId: 'sumi',   time: '11時間前', likes: 23, comments: 2,  text: '筋トレ100日目。変わったのは体より「決めたことをやる」感覚のほうやった。' },
+    { id: 'cp1', uid: 'yu_tanaka',  bgId: 'cream', fgId: 'sumi',   time: '12分前', likes: 47,  comments: 6,  text: 'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥 エージェント設計のヒントを掴んだ気がする。' },
+    { id: 'cp2', uid: 'rina_s',     bgId: 'slate', fgId: 'pink',   time: '28分前', likes: 132, comments: 18, text: '3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。' },
+    { id: 'cp3', uid: 'taisho_k',   bgId: 'cream', fgId: 'kon',    time: '1時間前', likes: 234, comments: 21, text: '経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。' },
+    { id: 'cp10', uid: 'kenji_founder', bgId: 'indigo', fgId: 'lav', time: '90分前', likes: 421, comments: 57, text: '起業して10年で分かったことを書く。最初の3年は「正しいことを速くやる」ことばかり考えてた。でも本当に効いたのは「間違いに早く気づいて、素直に方向を変える」ことやった。プライドは判断を遅らせる。数字は嘘をつかんけど、数字の解釈は自分に都合よく歪む。だから週に一回、自分の意思決定を他人の会社の話やと思って見直す時間を作った。これだけで致命傷を3回は回避できた。あと、人の採用は能力より「不機嫌をまき散らさないか」を見る。チームの空気は最強の生産性ツールや。' },
+    { id: 'cp4', uid: 'kenta_s',    bgId: 'violet', fgId: 'purple', time: '2時間前', likes: 89,  comments: 9,  text: '深夜のコードレビューで見つけた設計ミス。眠い頭で書いたコードは眠い頭にしか読めん。寝ます。' },
+    { id: 'cp5', uid: 'sarah_ai',   bgId: 'ocean', fgId: 'cyan',    time: '3時間前', likes: 310, comments: 42, text: 'The best AI products don\'t feel like AI. They feel like magic that respects you.' },
+    { id: 'cp6', uid: 'misaki_t',   bgId: 'cream', fgId: 'mori',   time: '5時間前', likes: 56,  comments: 4,  text: '朝イチの空気が好き。誰よりも早くオフィスに着いた日は、なんか勝った気になる。' },
+    { id: 'cp7', uid: 'alex_gravity', bgId: 'noir', fgId: 'purple', time: '7時間前', likes: 1800, comments: 203, text: 'Gravity is just consistency over time. Same with influence.' },
+    { id: 'cp8', uid: 'photo_maya', bgId: 'terra', fgId: 'orange', time: '9時間前', likes: 78,  comments: 11, text: '夕方の光だけで撮った一枚が、今日イチの作品になった。機材より光。', media: { type: 'image', src: 'assets/img/u10.jpg' } },
+    { id: 'cp9', uid: 'sho_n',      bgId: 'cream', fgId: 'sumi',   time: '11時間前', likes: 23, comments: 2,  text: '筋トレ100日目。変わったのは体より「決めたことをやる」感覚のほうやった。' },
   ];
   const colorLiked = new Set();    // 自分がいいねした投稿ID
-  let colorComposeBg = 'asa';      // コンポーザーで選択中の背景（朝がデフォ）
+  let colorComposeBg = 'cream';    // コンポーザーで選択中の背景（クリームがデフォ）
   let colorComposeFg = 'sumi';     // コンポーザーで選択中の文字色
   let colorPostSeq = 100;          // 新規投稿ID連番
 
@@ -12526,7 +12525,7 @@
   let cpxAttach = null;  // 添付メディア {type:'image'|'video', src:dataURL}
 
   function openColorComposer() {
-    colorComposeBg = 'asa';
+    colorComposeBg = 'cream';
     colorComposeFg = 'sumi';
     const ta = document.getElementById('colorPostText');
     if (ta) ta.value = '';   // 高さは固定118px（インラインstyleを上書きしない）
