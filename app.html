@@ -7329,12 +7329,18 @@
         </div>
       </div>
 
+      <!-- レイ・ストーリー列（カラーモード用）：未読レイがあるCircleメンバーだけ並ぶ。見たら消える -->
+      <div id="cpStoryRow" style="display:none;gap:14px;overflow-x:auto;padding:10px 14px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none;"></div>
+
       <!-- Stories Card Grid -->
       <div class="home-stories-grid" id="homeStoriesRow"></div>
 
       <!-- X風フィード -->
       <div id="homeFeed" style="padding:0 0 100px;"></div>
     </div>
+
+    <!-- レイ・ストーリービュー（全画面・3層固定：ヘッダー／本文スクロール／フッター。左右端タップで前後） -->
+    <div id="cpStoryViewer" style="display:none;position:absolute;inset:0;z-index:9993;"></div>
 
 
     <!-- ===== X型カラー投稿コンポーザー（POST_UI_MODE='color'時に使用）=====
@@ -7866,14 +7872,14 @@
         <button onclick="openGroupList()" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Group Settings</button>
       </div>
 
-      <!-- タブ切り替え -->
+      <!-- タブ切り替え（2026-07-05：Posts左・デフォに変更） -->
       <div class="my-profile-tab-bar">
-        <button class="my-profile-tab active" id="myTab-identity" onclick="switchMyTab('identity')">Identity</button>
-        <button class="my-profile-tab" id="myTab-posts" onclick="switchMyTab('posts')">Posts</button>
+        <button class="my-profile-tab active" id="myTab-posts" onclick="switchMyTab('posts')">Posts</button>
+        <button class="my-profile-tab" id="myTab-identity" onclick="switchMyTab('identity')">Identity</button>
       </div>
 
       <!-- アイデンティティタブ -->
-      <div id="myTabContent-identity">
+      <div id="myTabContent-identity" style="display:none;">
         <div class="identity-section" style="margin-top:12px;">
 
           <div class="identity-category open" id="my-identity-ai">
@@ -7886,11 +7892,11 @@
             </div>
             <div class="identity-cat-body">
               <div class="identity-posts-grid">
-                <div class="identity-post-item" style="background:linear-gradient(135deg,#7C3AED,#2563EB);" onclick="openFsPost(myIdentityPosts['ai'], 0, 'my')">
-                  <div class="identity-post-text">Claude Codeで自分のAIチーム作ってるんやけど...</div>
+                <div class="identity-post-item" style="background:#1A1B26;" onclick="openFsPost(myIdentityPosts['ai'], 0, 'my')">
+                  <div class="identity-post-text" style="color:#8BE9FD;">Claude Codeで自分のAIチーム作ってるんやけど、毎朝勝手にレポート届くの最高すぎる。</div>
                 </div>
-                <div class="identity-post-item" style="background:linear-gradient(135deg,#0f0c29,#24243e);" onclick="openFsPost(myIdentityPosts['ai'], 1, 'my')">
-                  <div class="identity-post-text">AIエージェントの未来は人間を置き換えることじゃない...</div>
+                <div class="identity-post-item" style="background:#312E81;" onclick="openFsPost(myIdentityPosts['ai'], 1, 'my')">
+                  <div class="identity-post-text" style="color:#BD93F9;">AIエージェントの未来は人間を置き換えることじゃなく、任せ方の発明や。</div>
                 </div>
               </div>
             </div>
@@ -7906,11 +7912,11 @@
             </div>
             <div class="identity-cat-body">
               <div class="identity-posts-grid">
-                <div class="identity-post-item" style="background:linear-gradient(135deg,#059669,#10B981);" onclick="openFsPost(myIdentityPosts['sg'], 0, 'my')">
-                  <div class="identity-post-text">ホーカーで$3のチキンライス食べながら...</div>
+                <div class="identity-post-item" style="background:#064E3B;" onclick="openFsPost(myIdentityPosts['sg'], 0, 'my')">
+                  <div class="identity-post-text" style="color:#50FA7B;">ホーカーで$3のチキンライス食べながら10億の話をするのがシンガポール。</div>
                 </div>
-                <div class="identity-post-item" style="background:linear-gradient(135deg,#0d9488,#0284c7);" onclick="openFsPost(myIdentityPosts['sg'], 1, 'my')">
-                  <div class="identity-post-text">シンガポールのAI界隈、日本より3年先を行ってる感覚...</div>
+                <div class="identity-post-item" style="background:#164E63;" onclick="openFsPost(myIdentityPosts['sg'], 1, 'my')">
+                  <div class="identity-post-text" style="color:#8BE9FD;">シンガポールのAI界隈、日本より3年先を行ってる感覚。組み合わせたら最強やろ。</div>
                 </div>
               </div>
             </div>
@@ -7926,8 +7932,8 @@
             </div>
             <div class="identity-cat-body">
               <div class="identity-posts-grid">
-                <div class="identity-post-item" style="background:linear-gradient(135deg,#1a1a2e,#D97706);" onclick="openFsPost(myIdentityPosts['biz'], 0, 'my')">
-                  <div class="identity-post-text">経営者に一番大事なスキルは『任せる力』...</div>
+                <div class="identity-post-item" style="background:#F0EEE6;" onclick="openFsPost(myIdentityPosts['biz'], 0, 'my')">
+                  <div class="identity-post-text" style="color:#292524;">経営者に一番大事なスキルは「任せる力」。AIにも人にも。</div>
                 </div>
               </div>
             </div>
@@ -7943,8 +7949,8 @@
             </div>
             <div class="identity-cat-body">
               <div class="identity-posts-grid">
-                <div class="identity-post-item" style="background:linear-gradient(135deg,#7C3AED,#EC4899);" onclick="openFsPost(myIdentityPosts['inv'], 0, 'my')">
-                  <div class="identity-post-text">フォロワー数じゃなくて、誰にフォローされてるかが本当の影響力...</div>
+                <div class="identity-post-item" style="background:#701A75;" onclick="openFsPost(myIdentityPosts['inv'], 0, 'my')">
+                  <div class="identity-post-text" style="color:#FF79C6;">フォロワー数じゃなくて、誰にフォローされてるか。それが本当の影響力や。</div>
                 </div>
               </div>
             </div>
@@ -7952,8 +7958,8 @@
         </div>
       </div>
 
-      <!-- 投稿タブ -->
-      <div id="myTabContent-posts" style="display:none;">
+      <!-- 投稿タブ（デフォ表示） -->
+      <div id="myTabContent-posts">
         <div class="post-grid" id="myPostsGrid" style="padding:2px 0 100px;"></div>
       </div>
 
@@ -9424,16 +9430,16 @@
 
   // カラー投稿のデモデータ（新しい順）。朝〜深夜の帯が一日の流れみたいに混ざるタイムライン。
   const colorPosts = [
-    { id: 'cp1', uid: 'yu_tanaka',  bgId: 'cream', fgId: 'sumi',   time: '12分前', likes: 47,  comments: 6,  text: 'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥 エージェント設計のヒントを掴んだ気がする。' },
-    { id: 'cp2', uid: 'rina_s',     bgId: 'yoru', fgId: 'pink',   time: '28分前', likes: 132, comments: 18, text: '3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。' },
-    { id: 'cp3', uid: 'taisho_k',   bgId: 'cream', fgId: 'kon',    time: '1時間前', likes: 234, comments: 21, text: '経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。' },
-    { id: 'cp10', uid: 'kenji_founder', bgId: 'ai', fgId: 'lav', time: '90分前', likes: 421, comments: 57, text: '起業して10年で分かったことを書く。最初の3年は「正しいことを速くやる」ことばかり考えてた。でも本当に効いたのは「間違いに早く気づいて、素直に方向を変える」ことやった。プライドは判断を遅らせる。数字は嘘をつかんけど、数字の解釈は自分に都合よく歪む。だから週に一回、自分の意思決定を他人の会社の話やと思って見直す時間を作った。これだけで致命傷を3回は回避できた。あと、人の採用は能力より「不機嫌をまき散らさないか」を見る。チームの空気は最強の生産性ツールや。' },
-    { id: 'cp4', uid: 'kenta_s',    bgId: 'yoi', fgId: 'purple', time: '2時間前', likes: 89,  comments: 9,  text: '深夜のコードレビューで見つけた設計ミス。眠い頭で書いたコードは眠い頭にしか読めん。寝ます。' },
-    { id: 'cp5', uid: 'sarah_ai',   bgId: 'umi', fgId: 'cyan',    time: '3時間前', likes: 310, comments: 42, text: 'The best AI products don\'t feel like AI. They feel like magic that respects you.' },
-    { id: 'cp6', uid: 'misaki_t',   bgId: 'cream', fgId: 'mori',   time: '5時間前', likes: 56,  comments: 4,  text: '朝イチの空気が好き。誰よりも早くオフィスに着いた日は、なんか勝った気になる。' },
-    { id: 'cp7', uid: 'alex_gravity', bgId: 'ao', fgId: 'purple', time: '7時間前', likes: 1800, comments: 203, text: 'Gravity is just consistency over time. Same with influence.' },
-    { id: 'cp8', uid: 'photo_maya', bgId: 'terra', fgId: 'orange', time: '9時間前', likes: 78,  comments: 11, text: '夕方の光だけで撮った一枚が、今日イチの作品になった。機材より光。', media: { type: 'image', src: 'assets/img/u10.jpg' } },
-    { id: 'cp9', uid: 'sho_n',      bgId: 'cream', fgId: 'sumi',   time: '11時間前', likes: 23, comments: 2,  text: '筋トレ100日目。変わったのは体より「決めたことをやる」感覚のほうやった。' },
+    { id: 'cp1', ts: 12, uid: 'yu_tanaka',  bgId: 'cream', fgId: 'sumi',   time: '12分前', likes: 47,  comments: 6,  text: 'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥 エージェント設計のヒントを掴んだ気がする。' },
+    { id: 'cp2', ts: 28, uid: 'rina_s',     bgId: 'yoru', fgId: 'pink',   time: '28分前', likes: 132, comments: 18, text: '3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。' },
+    { id: 'cp3', ts: 60, uid: 'taisho_k',   bgId: 'cream', fgId: 'kon',    time: '1時間前', likes: 234, comments: 21, text: '経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。' },
+    { id: 'cp10', ts: 90, uid: 'kenji_founder', bgId: 'ai', fgId: 'lav', time: '90分前', likes: 421, comments: 57, text: '起業して10年で分かったことを書く。最初の3年は「正しいことを速くやる」ことばかり考えてた。でも本当に効いたのは「間違いに早く気づいて、素直に方向を変える」ことやった。プライドは判断を遅らせる。数字は嘘をつかんけど、数字の解釈は自分に都合よく歪む。だから週に一回、自分の意思決定を他人の会社の話やと思って見直す時間を作った。これだけで致命傷を3回は回避できた。あと、人の採用は能力より「不機嫌をまき散らさないか」を見る。チームの空気は最強の生産性ツールや。' },
+    { id: 'cp4', ts: 120, uid: 'kenta_s',    bgId: 'yoi', fgId: 'purple', time: '2時間前', likes: 89,  comments: 9,  text: '深夜のコードレビューで見つけた設計ミス。眠い頭で書いたコードは眠い頭にしか読めん。寝ます。' },
+    { id: 'cp5', ts: 180, uid: 'sarah_ai',   bgId: 'umi', fgId: 'cyan',    time: '3時間前', likes: 310, comments: 42, text: 'The best AI products don\'t feel like AI. They feel like magic that respects you.' },
+    { id: 'cp6', ts: 300, uid: 'misaki_t',   bgId: 'cream', fgId: 'mori',   time: '5時間前', likes: 56,  comments: 4,  text: '朝イチの空気が好き。誰よりも早くオフィスに着いた日は、なんか勝った気になる。' },
+    { id: 'cp7', ts: 420, uid: 'alex_gravity', bgId: 'ao', fgId: 'purple', time: '7時間前', likes: 1800, comments: 203, text: 'Gravity is just consistency over time. Same with influence.' },
+    { id: 'cp8', ts: 540, uid: 'photo_maya', bgId: 'terra', fgId: 'orange', time: '9時間前', likes: 78,  comments: 11, text: '夕方の光だけで撮った一枚が、今日イチの作品になった。機材より光。', media: { type: 'image', src: 'assets/img/u10.jpg' } },
+    { id: 'cp9', ts: 660, uid: 'sho_n',      bgId: 'cream', fgId: 'sumi',   time: '11時間前', likes: 23, comments: 2,  text: '筋トレ100日目。変わったのは体より「決めたことをやる」感覚のほうやった。' },
   ];
   const colorLiked = new Set();    // 自分がいいねした投稿ID
   let colorComposeBg = 'cream';    // コンポーザーで選択中の背景（クリームがデフォ）
@@ -10214,6 +10220,7 @@
     const tabEl = document.getElementById('tab-' + tab);
     if (tabEl) tabEl.classList.add('active');
     if (tab === 'events' && typeof buildEventsHub === 'function') buildEventsHub();
+    if (tab === 'my' && typeof switchMyTab === 'function') switchMyTab('posts');
     // コンポーザーを開いたら空レイヤーが無ければ作る（初回用）
     if (tab === 'post') {
       setTimeout(() => {
@@ -12620,6 +12627,7 @@
     if (!text && !cpxAttach) return;   // テキストか添付のどちらかがあれば投稿可
     colorPosts.unshift({
       id: 'cp' + (colorPostSeq++),
+      ts: 0,
       uid: 'taisho_k',
       bgId: colorComposeBg,
       fgId: colorComposeFg,
@@ -12652,7 +12660,12 @@
     if (lt) lt.style.display = 'none';   // グリッド専用の切替ボタンは不要
     grid.style.display = 'block';   // グリッドを縦タイムライン化
     grid.style.padding = '0';       // 案B：フルブリード帯＝左右余白ゼロ・角丸なし
-    grid.innerHTML = colorPosts.map(p => {
+    grid.innerHTML = colorPosts.map(cpBandHtml).join('');
+    if (typeof buildCpStoryRow === 'function') buildCpStoryRow();  // 未読レイのストーリー列も同期
+  }
+
+  // レイ（フルブリード帯）1本分のHTML。ホームのタイムラインとプロフィールPostsで共用
+  function cpBandHtml(p) {
       const u = cpFindUser(p.uid);
       const c = { bg: cpBg(p.bgId).bg, fg: cpFg(p.bgId, p.fgId).fg };
       const tier = getTitle(u.score || 0);
@@ -12683,7 +12696,6 @@
           <span>💬 ${p.comments}</span>
         </div>
       </div>`;
-    }).join('');
   }
 
   // ===== 投稿の全画面詳細（Xのポスト詳細画面準拠：←戻る・全文・大きめ文字・アクション行） =====
@@ -12724,6 +12736,132 @@
     switchTab('colordetail');
   }
   function closeColorPostDetail() { switchTab('home'); }
+
+  // ===== レイ・ストーリー（2026-07-05）＝カラー投稿（レイ）の全画面連続ビュー =====
+  // 列に出るのは「未読レイがあるCircleメンバー」だけ。並び＝最新投稿順（同着はCircleが深い方が先）。
+  // 見終わった人は列から消える。タイマーなし・タップ送り（右端=次/左端=前）・本文だけスクロール可。
+  const cpSeenPosts = new Set();       // 既読レイのID
+  let cpStoryQueue = [];               // 視聴キュー [{uid, posts:[...]}]
+  let cpStoryUserIdx = 0, cpStoryPostIdx = 0;
+
+  function cpCircleTierOf(uid) {
+    const u = cpFindUser(uid);
+    const order = ['inner', 'trusted', 'close', 'connected'];
+    for (let i = 0; i < order.length; i++) {
+      if ((circleMembers[order[i]] || []).includes(u.name)) return i;
+    }
+    return 99;  // Circle外
+  }
+  function cpUnreadOf(uid) {
+    return colorPosts.filter(p => p.uid === uid && !cpSeenPosts.has(p.id))
+      .sort((a, b) => b.ts - a.ts);  // 古い順（ストーリーは古いものから見せる）
+  }
+  function cpStoryUsers() {
+    const uids = [...new Set(colorPosts.map(p => p.uid))]
+      .filter(uid => uid !== 'taisho_k' && cpCircleTierOf(uid) < 99 && cpUnreadOf(uid).length > 0);
+    return uids.sort((a, b) => {
+      const la = Math.min(...colorPosts.filter(p => p.uid === a).map(p => p.ts));
+      const lb = Math.min(...colorPosts.filter(p => p.uid === b).map(p => p.ts));
+      if (la !== lb) return la - lb;                       // 最新投稿が新しい順
+      return cpCircleTierOf(a) - cpCircleTierOf(b);        // 同着はCircleが深い順
+    });
+  }
+  function buildCpStoryRow() {
+    const row = document.getElementById('cpStoryRow');
+    if (!row) return;
+    if (POST_UI_MODE !== 'color') { row.style.display = 'none'; return; }
+    const uids = cpStoryUsers();
+    if (uids.length === 0) { row.style.display = 'none'; row.innerHTML = ''; return; }
+    row.style.display = 'flex';
+    row.innerHTML = uids.map(uid => {
+      const u = cpFindUser(uid);
+      return `
+      <div onclick="openCpStories('${uid}')" style="display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;width:60px;">
+        <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#020408 0%,#1E3A5F 35%,#7C3AED 70%,#EC4899 100%);display:flex;align-items:center;justify-content:center;">
+          <div style="width:49px;height:49px;border-radius:50%;background:var(--bg,#fff);display:flex;align-items:center;justify-content:center;font-size:26px;">${u.avatar}</div>
+        </div>
+        <div style="font-size:10.5px;color:var(--text-sub,#555);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60px;">${u.name.split(' ')[0]}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function openCpStories(startUid) {
+    const uids = cpStoryUsers();
+    const start = uids.indexOf(startUid);
+    if (start < 0) return;
+    cpStoryQueue = uids.map(uid => ({ uid, posts: cpUnreadOf(uid) }));
+    cpStoryUserIdx = start;
+    cpStoryPostIdx = 0;
+    document.getElementById('cpStoryViewer').style.display = 'block';
+    cpStoryRender();
+  }
+  function closeCpStories() {
+    document.getElementById('cpStoryViewer').style.display = 'none';
+    buildCpStoryRow();       // 見終わった人を列から消す
+    buildColorTimeline();    // タイムラインのいいね数等も同期
+  }
+  function cpStoryNext() {
+    const cur = cpStoryQueue[cpStoryUserIdx];
+    if (cpStoryPostIdx < cur.posts.length - 1) { cpStoryPostIdx++; }
+    else if (cpStoryUserIdx < cpStoryQueue.length - 1) { cpStoryUserIdx++; cpStoryPostIdx = 0; }
+    else { closeCpStories(); return; }
+    cpStoryRender();
+  }
+  function cpStoryPrev() {
+    if (cpStoryPostIdx > 0) { cpStoryPostIdx--; }
+    else if (cpStoryUserIdx > 0) { cpStoryUserIdx--; cpStoryPostIdx = cpStoryQueue[cpStoryUserIdx].posts.length - 1; }
+    cpStoryRender();
+  }
+  function cpStoryLike() {
+    const p = cpStoryQueue[cpStoryUserIdx].posts[cpStoryPostIdx];
+    toggleColorLike(p.id);
+    cpStoryRender();
+  }
+  function cpStoryRender() {
+    const viewer = document.getElementById('cpStoryViewer');
+    const entry = cpStoryQueue[cpStoryUserIdx];
+    if (!viewer || !entry) return;
+    const p = entry.posts[cpStoryPostIdx];
+    cpSeenPosts.add(p.id);   // 表示した時点で既読
+    const u = cpFindUser(p.uid);
+    const tier = getTitle(u.score || 0);
+    const c = { bg: cpBg(p.bgId).bg, fg: cpFg(p.bgId, p.fgId).fg };
+    const meta = c.fg + 'A6', line = c.fg + '22';
+    const isShort = (p.text || '').length <= 60 && !p.media;
+    // 進捗バー（そのユーザーの未読数ぶん）
+    const bars = entry.posts.map((_, i) =>
+      `<div style="flex:1;height:2.5px;border-radius:2px;background:${i <= cpStoryPostIdx ? c.fg : c.fg + '44'};"></div>`).join('');
+    viewer.innerHTML = `
+      <div style="position:absolute;inset:0;background:${c.bg};color:${c.fg};display:flex;flex-direction:column;">
+        <!-- 固定ヘッダー -->
+        <div style="flex-shrink:0;padding:10px 14px 0;">
+          <div style="display:flex;gap:4px;margin-bottom:10px;">${bars}</div>
+          <div style="display:flex;align-items:center;gap:9px;">
+            <span style="font-size:26px;line-height:1;">${u.avatar}</span>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:700;font-size:14px;">${u.name} <span style="font-size:11.5px;">${tier.emoji} ${tier.name}</span></div>
+              <div style="font-size:11.5px;color:${meta};">${u.handle || ''}・${p.time}</div>
+            </div>
+            <button onclick="closeCpStories()" style="background:none;border:none;color:${c.fg};font-size:19px;cursor:pointer;padding:6px;line-height:1;">✕</button>
+          </div>
+        </div>
+        <!-- 本文レイヤー（ここだけスクロール可。短文は縦中央） -->
+        <div style="flex:1;overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;${isShort ? 'justify-content:center;' : ''}">
+          ${p.text ? `<div style="font-size:${isShort ? '24px' : '17.5px'};line-height:1.9;white-space:pre-wrap;word-break:break-word;${isShort ? 'text-align:center;font-weight:700;' : ''}">${p.text}</div>` : ''}
+          ${p.media ? (p.media.type === 'video'
+            ? `<video src="${p.media.src}" controls muted playsinline style="display:block;width:100%;border-radius:12px;margin-top:14px;background:#000;"></video>`
+            : `<img src="${p.media.src}" alt="" style="display:block;width:100%;border-radius:12px;margin-top:14px;">`) : ''}
+        </div>
+        <!-- 固定フッター -->
+        <div style="flex-shrink:0;display:flex;gap:30px;padding:12px 22px 20px;border-top:1px solid ${line};font-size:14.5px;color:${meta};">
+          <span style="cursor:pointer;user-select:none;" onclick="cpStoryLike()">${colorLiked.has(p.id) ? '❤️' : '♡'} ${p.likes}</span>
+          <span>💬 ${p.comments}</span>
+        </div>
+        <!-- タップ送りゾーン（左右端25%のみ。中央はスクロール用に空ける） -->
+        <div onclick="cpStoryPrev()" style="position:absolute;left:0;top:70px;bottom:60px;width:25%;"></div>
+        <div onclick="cpStoryNext()" style="position:absolute;right:0;top:70px;bottom:60px;width:25%;"></div>
+      </div>`;
+  }
 
   // ===== イベント招待の帯（投稿テンプレ準拠・2026-07-05） =====
   // 頭に招待コンテキスト行（Xの「○○さんがリポスト」文法）、地はHYPERAYグラデ＝特別な帯の記号。
@@ -13548,6 +13686,16 @@
     });
     if (tab === 'posts') {
       const grid = document.getElementById('myPostsGrid');
+      if (grid && POST_UI_MODE === 'color') {
+        // 自分のレイだけの帯タイムライン（新しい順）。旧グリッドはinstaモード用に温存
+        grid.className = '';
+        grid.style.padding = '0 0 100px';
+        const mine = colorPosts.filter(p => p.uid === 'taisho_k').sort((a, b) => a.ts - b.ts);
+        grid.innerHTML = mine.length
+          ? mine.map(cpBandHtml).join('')
+          : '<div style="padding:48px 20px;text-align:center;color:var(--text-light,#999);font-size:13.5px;">まだレイがありません</div>';
+        return;
+      }
       if (grid) {
         grid.innerHTML = '';
         myPosts.forEach((p, idx) => {
