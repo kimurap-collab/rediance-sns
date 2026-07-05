@@ -7357,7 +7357,7 @@
           <div id="colorPostCard" style="padding:14px 16px 16px;transition:background .25s ease;">
             <div style="display:flex;gap:10px;align-items:flex-start;">
               <span style="font-size:30px;line-height:1;flex-shrink:0;">🧔</span>
-              <textarea id="colorPostText" rows="3" placeholder="いまどうしてる？" oninput="updateColorPostState()" style="flex:1;background:transparent;border:none;outline:none;resize:none;font-size:17px;line-height:1.7;font-family:inherit;transition:color .25s ease;overflow:hidden;padding-top:4px;"></textarea>
+              <textarea id="colorPostText" placeholder="いまどうしてる？" oninput="updateColorPostState()" style="flex:1;height:118px;background:transparent;border:none;outline:none;resize:none;font-size:17px;line-height:1.7;font-family:inherit;transition:color .25s ease;overflow-y:auto;padding-top:4px;"></textarea>
             </div>
             <!-- 添付プレビュー：色帯を台紙に画像/動画が乗る（テキスト列に揃える） -->
             <div id="cpxPreviewWrap" style="display:none;position:relative;margin:10px 0 0 40px;">
@@ -7379,6 +7379,9 @@
         </div>
       </div>
     </div>
+
+    <!-- ===== カラー投稿の全画面詳細（X準拠・中身はopenColorPostDetailが動的生成） ===== -->
+    <div class="screen" id="screen-color-detail" style="overflow-y:auto;"></div>
 
     <!-- ===== POST COMPOSER SCREEN (簡易版) ===== -->
     <div class="screen" id="screen-post">
@@ -9369,35 +9372,34 @@
   // ダメだった場合はここを 'insta' に変えるだけで完全に元へ戻る。旧コードは全て温存。
   const POST_UI_MODE = 'color';
 
-  // ペア固定パレット（ジュエルトーン版・2026-07-05差し替え）。背景と文字色はセット＝ユーザーは色相を1つ選ぶだけ。
-  // 先頭2つがニュートラル（目に優しく、タイムラインの大半を占めても疲れない）。cream がデフォ。
-  // カラー10色はTailwindの700-800番台＝深く彩度のある「宝石」トーン。原色（エクセル赤）は使わない。
+  // ペア固定パレット（ネオンナイト版・2026-07-05大将確定）。Dracula由来。
+  // 地はほぼ共通の夜色（#1A1B26）で、文字がネオンに光る＝色をテキストで表現。宇宙・光の世界観。
+  // cream（デフォ）だけ紙色ニュートラル。swatch＝色選択UIに見せる色（ネオン系は文字色のほう）。
   const POST_COLORS = [
-    { id: 'cream',   name: 'クリーム',     bg: '#F0EEE6', fg: '#292524' },
-    { id: 'slate',   name: 'グレー',       bg: '#1E293B', fg: '#F1F5F9' },
-    { id: 'crimson', name: '深紅',         bg: '#9F1239', fg: '#FFF1F2' },
-    { id: 'terra',   name: 'テラコッタ',   bg: '#C2410C', fg: '#FFF7ED' },
-    { id: 'gold',    name: 'ゴールド',     bg: '#B45309', fg: '#FFFBEB' },
-    { id: 'forest',  name: 'フォレスト',   bg: '#065F46', fg: '#ECFDF5' },
-    { id: 'teal',    name: 'ティール',     bg: '#115E59', fg: '#F0FDFA' },
-    { id: 'ocean',   name: 'オーシャン',   bg: '#075985', fg: '#F0F9FF' },
-    { id: 'indigo',  name: 'インディゴ',   bg: '#3730A3', fg: '#EEF2FF' },
-    { id: 'violet',  name: 'バイオレット', bg: '#5B21B6', fg: '#F5F3FF' },
-    { id: 'plum',    name: 'プラム',       bg: '#86198F', fg: '#FDF4FF' },
-    { id: 'noir',    name: 'ノワール',     bg: '#09090B', fg: '#FAFAFA' },
+    { id: 'cream',  name: 'クリーム',       bg: '#F0EEE6', fg: '#292524', swatch: '#F0EEE6' },
+    { id: 'night',  name: 'ナイト',         bg: '#1A1B26', fg: '#C0CAF5', swatch: '#1A1B26' },
+    { id: 'purple', name: 'ネオンパープル', bg: '#1A1B26', fg: '#BD93F9', swatch: '#BD93F9' },
+    { id: 'pink',   name: 'ネオンピンク',   bg: '#1A1B26', fg: '#FF79C6', swatch: '#FF79C6' },
+    { id: 'cyan',   name: 'ネオンシアン',   bg: '#1A1B26', fg: '#8BE9FD', swatch: '#8BE9FD' },
+    { id: 'green',  name: 'ネオングリーン', bg: '#1A1B26', fg: '#50FA7B', swatch: '#50FA7B' },
+    { id: 'orange', name: 'ネオンオレンジ', bg: '#1A1B26', fg: '#FFB86C', swatch: '#FFB86C' },
+    { id: 'red',    name: 'ネオンレッド',   bg: '#1A1B26', fg: '#FF5555', swatch: '#FF5555' },
+    { id: 'yellow', name: 'ネオンイエロー', bg: '#1A1B26', fg: '#F1FA8C', swatch: '#F1FA8C' },
+    { id: 'mist',   name: 'ミスト',         bg: '#1A1B26', fg: '#6272A4', swatch: '#6272A4' },
   ];
 
-  // カラー投稿のデモデータ（新しい順）。大半はデフォのcream＝落ち着いた紙のタイムラインに、宝石色が時々差す。
+  // カラー投稿のデモデータ（新しい順）。cream（紙）とネオン夜色が交互に流れる宇宙タイムライン。
   const colorPosts = [
-    { id: 'cp1', uid: 'yu_tanaka',  colorId: 'cream',   time: '12分前', likes: 47,  comments: 6,  text: 'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥 エージェント設計のヒントを掴んだ気がする。' },
-    { id: 'cp2', uid: 'rina_s',     colorId: 'crimson', time: '28分前', likes: 132, comments: 18, text: '3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。' },
-    { id: 'cp3', uid: 'taisho_k',   colorId: 'cream',   time: '1時間前', likes: 234, comments: 21, text: '経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。' },
-    { id: 'cp4', uid: 'kenta_s',    colorId: 'slate',   time: '2時間前', likes: 89,  comments: 9,  text: '深夜のコードレビューで見つけた設計ミス。眠い頭で書いたコードは眠い頭にしか読めん。寝ます。' },
-    { id: 'cp5', uid: 'sarah_ai',   colorId: 'ocean',   time: '3時間前', likes: 310, comments: 42, text: 'The best AI products don\'t feel like AI. They feel like magic that respects you.' },
-    { id: 'cp6', uid: 'misaki_t',   colorId: 'cream',   time: '5時間前', likes: 56,  comments: 4,  text: '朝イチの空気が好き。誰よりも早くオフィスに着いた日は、なんか勝った気になる。' },
-    { id: 'cp7', uid: 'alex_gravity', colorId: 'indigo', time: '7時間前', likes: 1800, comments: 203, text: 'Gravity is just consistency over time. Same with influence.' },
-    { id: 'cp8', uid: 'photo_maya', colorId: 'gold',    time: '9時間前', likes: 78,  comments: 11, text: '夕方の光だけで撮った一枚が、今日イチの作品になった。機材より光。', media: { type: 'image', src: 'assets/img/u10.jpg' } },
-    { id: 'cp9', uid: 'sho_n',      colorId: 'cream',   time: '11時間前', likes: 23, comments: 2,  text: '筋トレ100日目。変わったのは体より「決めたことをやる」感覚のほうやった。' },
+    { id: 'cp1', uid: 'yu_tanaka',  colorId: 'cream',  time: '12分前', likes: 47,  comments: 6,  text: 'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥 エージェント設計のヒントを掴んだ気がする。' },
+    { id: 'cp2', uid: 'rina_s',     colorId: 'pink',   time: '28分前', likes: 132, comments: 18, text: '3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。' },
+    { id: 'cp3', uid: 'taisho_k',   colorId: 'cream',  time: '1時間前', likes: 234, comments: 21, text: '経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。' },
+    { id: 'cp10', uid: 'kenji_founder', colorId: 'night', time: '90分前', likes: 421, comments: 57, text: '起業して10年で分かったことを書く。最初の3年は「正しいことを速くやる」ことばかり考えてた。でも本当に効いたのは「間違いに早く気づいて、素直に方向を変える」ことやった。プライドは判断を遅らせる。数字は嘘をつかんけど、数字の解釈は自分に都合よく歪む。だから週に一回、自分の意思決定を他人の会社の話やと思って見直す時間を作った。これだけで致命傷を3回は回避できた。あと、人の採用は能力より「不機嫌をまき散らさないか」を見る。チームの空気は最強の生産性ツールや。' },
+    { id: 'cp4', uid: 'kenta_s',    colorId: 'night',  time: '2時間前', likes: 89,  comments: 9,  text: '深夜のコードレビューで見つけた設計ミス。眠い頭で書いたコードは眠い頭にしか読めん。寝ます。' },
+    { id: 'cp5', uid: 'sarah_ai',   colorId: 'cyan',   time: '3時間前', likes: 310, comments: 42, text: 'The best AI products don\'t feel like AI. They feel like magic that respects you.' },
+    { id: 'cp6', uid: 'misaki_t',   colorId: 'cream',  time: '5時間前', likes: 56,  comments: 4,  text: '朝イチの空気が好き。誰よりも早くオフィスに着いた日は、なんか勝った気になる。' },
+    { id: 'cp7', uid: 'alex_gravity', colorId: 'purple', time: '7時間前', likes: 1800, comments: 203, text: 'Gravity is just consistency over time. Same with influence.' },
+    { id: 'cp8', uid: 'photo_maya', colorId: 'orange', time: '9時間前', likes: 78,  comments: 11, text: '夕方の光だけで撮った一枚が、今日イチの作品になった。機材より光。', media: { type: 'image', src: 'assets/img/u10.jpg' } },
+    { id: 'cp9', uid: 'sho_n',      colorId: 'cream',  time: '11時間前', likes: 23, comments: 2,  text: '筋トレ100日目。変わったのは体より「決めたことをやる」感覚のほうやった。' },
   ];
   const colorLiked = new Set();   // 自分がいいねした投稿ID
   let colorComposeSel = 'cream';  // コンポーザーで選択中の色
@@ -10155,6 +10157,7 @@
       home: 'screen-home',
       post: 'screen-post',
       colorpost: 'screen-color-post',
+      colordetail: 'screen-color-detail',
       notif: 'screen-notif',
       profile: 'screen-profile',
       talk: 'screen-talk',
@@ -12489,7 +12492,7 @@
   function openColorComposer() {
     colorComposeSel = 'cream';
     const ta = document.getElementById('colorPostText');
-    if (ta) { ta.value = ''; ta.style.height = 'auto'; }
+    if (ta) ta.value = '';   // 高さは固定118px（インラインstyleを上書きしない）
     cpxClearPhoto();
     buildColorSwatches();
     applyComposeColor();
@@ -12532,8 +12535,9 @@
   function buildColorSwatches() {
     const row = document.getElementById('colorSwatchRow');
     if (!row) return;
+    // ネオン系は「光る文字色」がその色の正体なので、スウォッチにはswatch（＝ネオン色）を見せる
     row.innerHTML = POST_COLORS.map(c =>
-      `<div class="cp-swatch ${c.id === colorComposeSel ? 'sel' : ''}" data-cid="${c.id}" title="${c.name}" style="background:${c.bg};" onclick="selectPostColor('${c.id}')"></div>`
+      `<div class="cp-swatch ${c.id === colorComposeSel ? 'sel' : ''}" data-cid="${c.id}" title="${c.name}" style="background:${c.swatch || c.bg};" onclick="selectPostColor('${c.id}')"></div>`
     ).join('');
   }
   function selectPostColor(cid) {
@@ -12554,11 +12558,7 @@
     const ta = document.getElementById('colorPostText');
     const btn = document.getElementById('colorPostSubmit');
     if (!ta || !btn) return;
-    // テキストに合わせて入力欄が伸びる（上限240px、超えたらスクロール）
-    ta.style.height = 'auto';
-    const h = Math.min(ta.scrollHeight, 240);
-    ta.style.height = h + 'px';
-    ta.style.overflow = ta.scrollHeight > 240 ? 'auto' : 'hidden';
+    // 入力欄は固定サイズ（118px）。改行はtextarea内部のスクロールで深く入る（LINE/Claude式）
     btn.style.opacity = (ta.value.trim() || cpxAttach) ? '1' : '0.4';
   }
   function submitColorPost() {
@@ -12589,13 +12589,16 @@
     buildColorTimeline();
   }
 
+  // タイムライン表示の文字数上限（超えたら切って「さらに表示」。X準拠）
+  const CP_TEXT_LIMIT = 110;
+
   function buildColorTimeline() {
     const grid = document.getElementById('homeStoriesRow');
     if (!grid) return;
     const lt = document.getElementById('homeLayoutToggleBtn');
     if (lt) lt.style.display = 'none';   // グリッド専用の切替ボタンは不要
     grid.style.display = 'block';   // グリッドを縦タイムライン化
-    grid.style.padding = '4px 14px';
+    grid.style.padding = '0';       // 案B：フルブリード帯＝左右余白ゼロ・角丸なし
     grid.innerHTML = colorPosts.map(p => {
       const u = cpFindUser(p.uid);
       const c = cpColor(p.colorId);
@@ -12603,8 +12606,11 @@
       const liked = colorLiked.has(p.id);
       const meta = c.fg + 'A6';   // 文字色の65%不透明（メタ情報用）
       const line = c.fg + '22';
+      // 長文はクランプして「さらに表示」（X準拠）。帯タップで全画面詳細へ
+      const isLong = p.text && p.text.length > CP_TEXT_LIMIT;
+      const shownText = isLong ? p.text.slice(0, CP_TEXT_LIMIT) : p.text;
       return `
-      <div style="background:${c.bg};color:${c.fg};border-radius:18px;padding:15px 17px 12px;margin-bottom:12px;box-shadow:0 2px 14px rgba(0,0,0,0.25);">
+      <div onclick="openColorPostDetail('${p.id}')" style="background:${c.bg};color:${c.fg};padding:15px 18px 11px;border-bottom:1px solid rgba(0,0,0,0.10);cursor:pointer;">
         <div style="display:flex;align-items:center;gap:9px;">
           <span style="font-size:26px;line-height:1;">${u.avatar}</span>
           <div style="flex:1;min-width:0;">
@@ -12615,17 +12621,56 @@
             <div style="font-size:12px;color:${meta};">${u.handle || ''}・${p.time}</div>
           </div>
         </div>
-        ${p.text ? `<div style="font-size:15.5px;line-height:1.75;margin:10px 2px 12px;white-space:pre-wrap;word-break:break-word;">${p.text}</div>` : '<div style="height:10px;"></div>'}
+        ${p.text ? `<div style="font-size:15.5px;line-height:1.75;margin:9px 2px 11px;white-space:pre-wrap;word-break:break-word;">${shownText}${isLong ? `<span style="color:${meta};font-weight:600;">…さらに表示</span>` : ''}</div>` : '<div style="height:9px;"></div>'}
         ${p.media ? (p.media.type === 'video'
-          ? `<video src="${p.media.src}" controls muted playsinline style="display:block;width:100%;border-radius:12px;max-height:340px;margin:0 0 12px;background:#000;"></video>`
-          : `<img src="${p.media.src}" alt="" style="display:block;width:100%;border-radius:12px;max-height:340px;object-fit:cover;margin:0 0 12px;">`) : ''}
-        <div style="display:flex;gap:26px;border-top:1px solid ${line};padding-top:9px;font-size:13px;color:${meta};">
-          <span style="cursor:pointer;user-select:none;" onclick="toggleColorLike('${p.id}')">${liked ? '❤️' : '♡'} ${p.likes}</span>
+          ? `<video src="${p.media.src}" controls muted playsinline onclick="event.stopPropagation()" style="display:block;width:100%;border-radius:10px;max-height:340px;margin:0 0 11px;background:#000;"></video>`
+          : `<img src="${p.media.src}" alt="" style="display:block;width:100%;border-radius:10px;max-height:340px;object-fit:cover;margin:0 0 11px;">`) : ''}
+        <div style="display:flex;gap:26px;border-top:1px solid ${line};padding-top:8px;font-size:13px;color:${meta};">
+          <span style="cursor:pointer;user-select:none;" onclick="event.stopPropagation(); toggleColorLike('${p.id}')">${liked ? '❤️' : '♡'} ${p.likes}</span>
           <span>💬 ${p.comments}</span>
         </div>
       </div>`;
     }).join('');
   }
+
+  // ===== 投稿の全画面詳細（Xのポスト詳細画面準拠：←戻る・全文・大きめ文字・アクション行） =====
+  function openColorPostDetail(pid) {
+    const p = colorPosts.find(x => x.id === pid);
+    const screen = document.getElementById('screen-color-detail');
+    if (!p || !screen) return;
+    const u = cpFindUser(p.uid);
+    const c = cpColor(p.colorId);
+    const tier = getTitle(u.score || 0);
+    const liked = colorLiked.has(p.id);
+    const meta = c.fg + 'A6', line = c.fg + '22';
+    screen.innerHTML = `
+      <div style="min-height:100%;background:${c.bg};color:${c.fg};">
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 16px;">
+          <button onclick="closeColorPostDetail()" style="background:none;border:none;font-size:20px;color:${c.fg};cursor:pointer;line-height:1;padding:4px;">←</button>
+          <span style="font-size:16px;font-weight:800;">ポスト</span>
+        </div>
+        <div style="padding:6px 18px 110px;">
+          <div style="display:flex;align-items:center;gap:11px;">
+            <span style="font-size:38px;line-height:1;">${u.avatar}</span>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:700;font-size:15.5px;">${u.name} <span style="font-size:12.5px;font-weight:600;">${tier.emoji} ${tier.name}</span></div>
+              <div style="font-size:13px;color:${meta};">${u.handle || ''}</div>
+            </div>
+          </div>
+          ${p.text ? `<div style="font-size:18px;line-height:1.85;margin:16px 0;white-space:pre-wrap;word-break:break-word;">${p.text}</div>` : ''}
+          ${p.media ? (p.media.type === 'video'
+            ? `<video src="${p.media.src}" controls muted playsinline style="display:block;width:100%;border-radius:12px;margin:0 0 16px;background:#000;"></video>`
+            : `<img src="${p.media.src}" alt="" style="display:block;width:100%;border-radius:12px;margin:0 0 16px;">`) : ''}
+          <div style="font-size:13px;color:${meta};padding-bottom:12px;border-bottom:1px solid ${line};">${p.time}</div>
+          <div style="display:flex;gap:34px;padding:12px 2px;border-bottom:1px solid ${line};font-size:14.5px;color:${meta};">
+            <span style="cursor:pointer;user-select:none;" onclick="toggleColorLike('${p.id}'); openColorPostDetail('${p.id}')">${liked ? '❤️' : '♡'} ${p.likes}</span>
+            <span>💬 ${p.comments}</span>
+          </div>
+        </div>
+      </div>`;
+    switchTab('colordetail');
+  }
+  function closeColorPostDetail() { switchTab('home'); }
 
   function buildHomeStories() {
     // X型カラー投稿モードならカラータイムラインを描画（旧グリッドはフラグ復帰でそのまま動く）
