@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>夜背景の明るさ見本 5種</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:#ECECEF; display:flex; justify-content:center; padding:26px 0 60px; }
+  .stage { width: 430px; }
+  h1 { font-size:16px; text-align:center; margin-bottom:4px; }
+  .sub { text-align:center; font-size:11.5px; color:#666; margin-bottom:18px; line-height:1.6; }
+  .label { font-size:12px; font-weight:700; margin:18px 2px 6px; }
+  .label small { font-weight:400; color:#777; margin-left:6px; }
+  .band { border-radius:14px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,.18); }
+  .row { padding:13px 16px 10px; }
+  .row + .row { border-top:1px solid rgba(255,255,255,.07); }
+  .nm { font-weight:700; font-size:13.5px; }
+  .meta { font-size:11px; opacity:.62; margin-top:1px; }
+  .tx { font-size:14px; line-height:1.7; margin-top:6px; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <h1>夜背景の明るさ見本（5種＋現行）</h1>
+  <div class="sub">全部「実在の有名ダークテーマ」の地色。上から暗い順。<br>ネオン文字（ピンク・シアン・ラベンダー）の見え方で比較。</div>
+  <div id="list"></div>
+</div>
+<script>
+const SAMPLES = [
+  { key: '現行',  name: 'Tokyo Night',        hex: '#1A1B26', note: 'いま使っとる基準（参考）' },
+  { key: '案1',  name: 'Catppuccin Mocha',    hex: '#1E1E2E', note: '現行より一段明るい・紫がかった夜' },
+  { key: '案2',  name: 'Tokyo Night Storm',   hex: '#24283B', note: '青みの強い夜。嵐の空' },
+  { key: '案3',  name: 'Dracula（本家）',      hex: '#282A36', note: 'Dracula公式の地色。バランス型' },
+  { key: '案4',  name: 'One Dark（Atom）',     hex: '#282C34', note: 'エンジニアに最も馴染みのある夜' },
+  { key: '案5',  name: 'Catppuccin Frappé',   hex: '#303446', note: '一番明るい夜。柔らかく上品' },
+];
+const NEONS = [
+  { name: '鈴木 里奈', fg: '#FF79C6', text: '3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。' },
+  { name: 'Sarah Chen', fg: '#8BE9FD', text: 'The best AI products feel like magic that respects you.' },
+  { name: 'Kenji Ito', fg: '#C0CAF5', text: 'プライドは判断を遅らせる。数字は嘘をつかんけど、解釈は歪む。' },
+];
+document.getElementById('list').innerHTML = SAMPLES.map(s => `
+  <div class="label">${s.key}：${s.name} <small>${s.hex}・${s.note}</small></div>
+  <div class="band" style="background:${s.hex};">
+    ${NEONS.map(n => `
+      <div class="row" style="color:${n.fg};">
+        <div class="nm">${n.name}</div>
+        <div class="tx">${n.text}</div>
+      </div>`).join('')}
+  </div>
+`).join('');
+</script>
+</body>
+</html>
