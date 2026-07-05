@@ -9381,20 +9381,21 @@
   // ===== 2軸カラーシステム（2026-07-05大将確定：色だけ・書体固定） =====
   // 背景6種＝一日サイクル「朝→深夜」。文字色は背景の明暗で選択肢が自動で切り替わる
   // （明るい背景→インク6色／暗い背景→ネオン8色）＝「選べるけど間違えられない」方式。
-  // 背景12種：明るい2色（朝・昼）＋色相環10色（Tailwind 950番台＝最深色で夜の統一感を維持）
-  // 並びは 明2色 → 赤→橙→黄→緑→シアン→青→藍→紫→マゼンタ→無彩色夜（色相環順）
+  // 背景12種：明るい3色（朝・昼・黄金）＋色相環8色（Tailwind 700-800番台＝色相がはっきり見える深さ）＋夜
+  // ※950番台は暗すぎて色相が死ぬ（全部黒っぽく見える）ことが実地で判明。文字インクと同じ700-800帯が正解
+  // 並びは 明3色 → 赤→橙→緑→シアン→青→藍→紫→マゼンタ→無彩色夜（色相環順）
   const POST_BGS = [
     { id: 'asa',    name: '朝',   bg: '#F0EEE6', dark: false },  // 紙のような朝の光（デフォ）
     { id: 'hiru',   name: '昼',   bg: '#E7F1F8', dark: false },  // 淡い昼の空
-    { id: 'rose',   name: '紅',   bg: '#4C0519', dark: true  },  // rose-950（赤）
-    { id: 'yuu',    name: '夕',   bg: '#431407', dark: true  },  // orange-950（橙）
-    { id: 'amber',  name: '琥珀', bg: '#451A03', dark: true  },  // amber-950（黄）
-    { id: 'forest', name: '森',   bg: '#022C22', dark: true  },  // emerald-950（緑）
-    { id: 'umi',    name: '深海', bg: '#083344', dark: true  },  // cyan-950（シアン）
-    { id: 'ao',     name: '蒼',   bg: '#172554', dark: true  },  // blue-950（青）
-    { id: 'ai',     name: '藍',   bg: '#1E1B4B', dark: true  },  // indigo-950（藍）
-    { id: 'yoi',    name: '宵',   bg: '#2E1065', dark: true  },  // violet-950（紫）
-    { id: 'plum',   name: '紫紅', bg: '#4A044E', dark: true  },  // fuchsia-950（マゼンタ）
+    { id: 'kogane', name: '黄金', bg: '#FBBF24', dark: false },  // amber-400（黄は暗くすると茶になるので明るい金＋インク文字）
+    { id: 'rose',   name: '紅',   bg: '#9F1239', dark: true  },  // rose-800（赤・ワイン）
+    { id: 'yuu',    name: '夕',   bg: '#C2410C', dark: true  },  // orange-700（橙）
+    { id: 'forest', name: '森',   bg: '#065F46', dark: true  },  // emerald-800（緑）
+    { id: 'umi',    name: '深海', bg: '#155E75', dark: true  },  // cyan-800（シアン）
+    { id: 'ao',     name: '蒼',   bg: '#1E40AF', dark: true  },  // blue-800（青）
+    { id: 'ai',     name: '藍',   bg: '#3730A3', dark: true  },  // indigo-800（藍）
+    { id: 'yoi',    name: '宵',   bg: '#5B21B6', dark: true  },  // violet-800（紫）
+    { id: 'plum',   name: '紫紅', bg: '#86198F', dark: true  },  // fuchsia-800（マゼンタ）
     { id: 'yoru',   name: '夜',   bg: '#1A1B26', dark: true  },  // Dracula夜（無彩色）
   ];
   // 明るい背景用インク（ジュエルトーンを文字側で再利用＝気分色）
