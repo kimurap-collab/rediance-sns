@@ -7343,38 +7343,35 @@
     <div class="screen" id="screen-color-post">
       <style>
         #colorPostText::placeholder { color: inherit; opacity: 0.45; }
-        .cp-swatch { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; cursor: pointer; border: 2px solid rgba(0,0,0,0.12); transition: transform .15s, border-color .15s, box-shadow .15s; }
-        .cp-swatch.sel { border-color: #111; transform: scale(1.16); box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+        /* 背景チップ＝FB色付き投稿方式の角丸スクエア／文字チップ＝「A」入りの丸（Instagramテキストツール方式） */
+        .cp-bgchip { width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0; cursor: pointer; border: 1px solid rgba(0,0,0,0.15); transition: transform .12s, box-shadow .12s; }
+        .cp-bgchip.sel { transform: scale(1.18); box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--primary,#1E3A5F); }
+        .cp-fgchip { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13.5px; font-weight: 800; border: 1px solid rgba(0,0,0,0.15); transition: transform .12s, box-shadow .12s; user-select: none; }
+        .cp-fgchip.sel { transform: scale(1.18); box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--primary,#1E3A5F); }
       </style>
       <div style="height:100%;overflow-y:auto;background:var(--bg,#FFFFFF);">
         <!-- ヘッダー：✕のみ（Xと同じ・投稿ボタンは下部ツールバー右） -->
         <div style="padding:10px 12px;">
           <button onclick="closeColorComposer()" style="background:none;border:none;width:38px;height:38px;font-size:19px;color:var(--text-main,#000);cursor:pointer;line-height:1;border-radius:50%;">✕</button>
         </div>
-        <!-- 入力エリア＝フルブリードの色帯（WYSIWYG：色を選んだ瞬間ここが変わる） -->
-        <div id="colorPostCard" style="padding:14px 16px 16px;transition:background .25s ease;">
-          <div style="display:flex;gap:10px;align-items:flex-start;">
-            <span style="font-size:30px;line-height:1;flex-shrink:0;">🧔</span>
-            <textarea id="colorPostText" placeholder="いまどうしてる？" oninput="updateColorPostState()" style="flex:1;height:118px;background:transparent;border:none;outline:none;resize:none;font-size:17px;line-height:1.7;font-family:inherit;transition:color .25s ease;overflow-y:auto;padding-top:4px;"></textarea>
+        <!-- 入力エリア＝フルブリードの色帯（WYSIWYG：色を選んだ瞬間ここが変わる）。骨格はXの投稿画面準拠 -->
+        <div id="colorPostCard" style="padding:16px 16px 14px;transition:background .25s ease;">
+          <div style="display:flex;gap:11px;align-items:flex-start;">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(127,127,127,0.18);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🧔</div>
+            <textarea id="colorPostText" placeholder="いまどうしてる？" oninput="updateColorPostState()" style="flex:1;height:112px;background:transparent;border:none;outline:none;resize:none;font-size:18px;line-height:1.65;font-family:inherit;transition:color .25s ease;overflow-y:auto;padding-top:7px;"></textarea>
           </div>
+          <!-- 公開範囲表示（Xの「全員が返信できます」に相当・モックでは固定表示） -->
+          <div id="cpxScope" style="font-size:13px;font-weight:600;margin:4px 0 0 51px;transition:color .25s ease;">🌐 全員に公開</div>
           <!-- 添付プレビュー：色帯を台紙に画像/動画が乗る（テキスト列に揃える） -->
-          <div id="cpxPreviewWrap" style="display:none;position:relative;margin:10px 0 0 40px;">
+          <div id="cpxPreviewWrap" style="display:none;position:relative;margin:10px 0 0 51px;">
             <img id="cpxPreviewImg" src="" alt="" style="display:none;width:100%;border-radius:12px;max-height:280px;object-fit:cover;">
             <video id="cpxPreviewVideo" controls muted playsinline style="display:none;width:100%;border-radius:12px;max-height:280px;background:#000;"></video>
             <button onclick="cpxClearPhoto()" style="position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;border:none;background:rgba(0,0,0,0.55);color:#fff;font-size:14px;cursor:pointer;line-height:1;">✕</button>
           </div>
         </div>
-        <!-- 色選択：背景（朝→深夜の6種）と文字色（背景の明暗で選択肢が切り替わる）の2段 -->
-        <div style="padding:10px 16px 6px;">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span style="font-size:11px;color:var(--text-light,#999);width:26px;flex-shrink:0;">背景</span>
-            <div id="bgSwatchRow" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;justify-items:center;flex:1;"></div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;margin-top:9px;">
-            <span style="font-size:11px;color:var(--text-light,#999);width:26px;flex-shrink:0;">文字</span>
-            <div id="fgSwatchRow" style="display:flex;gap:10px;flex:1;"></div>
-          </div>
-        </div>
+        <!-- 色チップ（FB色付き投稿方式）：上段＝背景12色（角丸スクエア）、下段＝文字色（A入りの丸） -->
+        <div id="bgSwatchRow" style="display:flex;justify-content:space-between;padding:12px 16px 4px;"></div>
+        <div id="fgSwatchRow" style="display:flex;gap:9px;padding:8px 16px 12px;"></div>
         <!-- ツールバー：メディアボタン左・投稿ボタン右（X準拠・スウォッチ直下） -->
         <div style="border-top:1px solid var(--border,#E8E8E8);display:flex;align-items:center;justify-content:space-between;padding:8px 16px;margin-top:4px;">
           <input type="file" id="cpxPhotoInput" accept="image/*,video/*" style="display:none;" onchange="cpxLoadPhoto(event)">
@@ -9381,21 +9378,21 @@
   // ===== 2軸カラーシステム（2026-07-05大将確定：色だけ・書体固定） =====
   // 背景6種＝一日サイクル「朝→深夜」。文字色は背景の明暗で選択肢が自動で切り替わる
   // （明るい背景→インク6色／暗い背景→ネオン8色）＝「選べるけど間違えられない」方式。
-  // 背景12種＝ジュエルパレット（2026-07-05大将確定・mockups/post-fullbleed-mockの「ジュエル」タブと同一）
-  // 文字色システム（明→インク／暗→ネオンの自動切替）はそのまま
+  // 背景12種＝色つき夜レベル2（Tailwind 900番台・2026-07-05大将確定）
+  // 「投稿が色で区別できて、かつ夜」の両立点。文字色システム（明→インク／暗→ネオンの自動切替）はそのまま
   const POST_BGS = [
-    { id: 'cream',   name: 'クリーム',     bg: '#F0EEE6', dark: false },  // 紙（デフォ）
-    { id: 'slate',   name: 'グレー',       bg: '#1E293B', dark: true  },
-    { id: 'crimson', name: '深紅',         bg: '#9F1239', dark: true  },
-    { id: 'terra',   name: 'テラコッタ',   bg: '#C2410C', dark: true  },
-    { id: 'gold',    name: 'ゴールド',     bg: '#B45309', dark: true  },
-    { id: 'forest',  name: 'フォレスト',   bg: '#065F46', dark: true  },
-    { id: 'teal',    name: 'ティール',     bg: '#115E59', dark: true  },
-    { id: 'ocean',   name: 'オーシャン',   bg: '#075985', dark: true  },
-    { id: 'indigo',  name: 'インディゴ',   bg: '#3730A3', dark: true  },
-    { id: 'violet',  name: 'バイオレット', bg: '#5B21B6', dark: true  },
-    { id: 'plum',    name: 'プラム',       bg: '#86198F', dark: true  },
-    { id: 'noir',    name: 'ノワール',     bg: '#09090B', dark: true  },
+    { id: 'cream',  name: 'クリーム', bg: '#F0EEE6', dark: false },  // 紙（デフォ・唯一の明背景）
+    { id: 'rose',   name: '紅',       bg: '#881337', dark: true  },  // rose-900
+    { id: 'terra',  name: '橙',       bg: '#7C2D12', dark: true  },  // orange-900
+    { id: 'amber',  name: '琥珀',     bg: '#78350F', dark: true  },  // amber-900
+    { id: 'forest', name: '森',       bg: '#064E3B', dark: true  },  // emerald-900
+    { id: 'teal',   name: '常磐',     bg: '#134E4A', dark: true  },  // teal-900
+    { id: 'umi',    name: '深海',     bg: '#164E63', dark: true  },  // cyan-900
+    { id: 'ao',     name: '蒼',       bg: '#1E3A8A', dark: true  },  // blue-900
+    { id: 'ai',     name: '藍',       bg: '#312E81', dark: true  },  // indigo-900
+    { id: 'yoi',    name: '宵',       bg: '#4C1D95', dark: true  },  // violet-900
+    { id: 'plum',   name: '紫紅',     bg: '#701A75', dark: true  },  // fuchsia-900
+    { id: 'yoru',   name: '夜',       bg: '#1A1B26', dark: true  },  // 無彩色の夜
   ];
   // 明るい背景用インク（ジュエルトーンを文字側で再利用＝気分色）
   const POST_INKS = [
@@ -9427,13 +9424,13 @@
   // カラー投稿のデモデータ（新しい順）。朝〜深夜の帯が一日の流れみたいに混ざるタイムライン。
   const colorPosts = [
     { id: 'cp1', uid: 'yu_tanaka',  bgId: 'cream', fgId: 'sumi',   time: '12分前', likes: 47,  comments: 6,  text: 'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥 エージェント設計のヒントを掴んだ気がする。' },
-    { id: 'cp2', uid: 'rina_s',     bgId: 'slate', fgId: 'pink',   time: '28分前', likes: 132, comments: 18, text: '3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。' },
+    { id: 'cp2', uid: 'rina_s',     bgId: 'yoru', fgId: 'pink',   time: '28分前', likes: 132, comments: 18, text: '3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。' },
     { id: 'cp3', uid: 'taisho_k',   bgId: 'cream', fgId: 'kon',    time: '1時間前', likes: 234, comments: 21, text: '経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。' },
-    { id: 'cp10', uid: 'kenji_founder', bgId: 'indigo', fgId: 'lav', time: '90分前', likes: 421, comments: 57, text: '起業して10年で分かったことを書く。最初の3年は「正しいことを速くやる」ことばかり考えてた。でも本当に効いたのは「間違いに早く気づいて、素直に方向を変える」ことやった。プライドは判断を遅らせる。数字は嘘をつかんけど、数字の解釈は自分に都合よく歪む。だから週に一回、自分の意思決定を他人の会社の話やと思って見直す時間を作った。これだけで致命傷を3回は回避できた。あと、人の採用は能力より「不機嫌をまき散らさないか」を見る。チームの空気は最強の生産性ツールや。' },
-    { id: 'cp4', uid: 'kenta_s',    bgId: 'violet', fgId: 'purple', time: '2時間前', likes: 89,  comments: 9,  text: '深夜のコードレビューで見つけた設計ミス。眠い頭で書いたコードは眠い頭にしか読めん。寝ます。' },
-    { id: 'cp5', uid: 'sarah_ai',   bgId: 'ocean', fgId: 'cyan',    time: '3時間前', likes: 310, comments: 42, text: 'The best AI products don\'t feel like AI. They feel like magic that respects you.' },
+    { id: 'cp10', uid: 'kenji_founder', bgId: 'ai', fgId: 'lav', time: '90分前', likes: 421, comments: 57, text: '起業して10年で分かったことを書く。最初の3年は「正しいことを速くやる」ことばかり考えてた。でも本当に効いたのは「間違いに早く気づいて、素直に方向を変える」ことやった。プライドは判断を遅らせる。数字は嘘をつかんけど、数字の解釈は自分に都合よく歪む。だから週に一回、自分の意思決定を他人の会社の話やと思って見直す時間を作った。これだけで致命傷を3回は回避できた。あと、人の採用は能力より「不機嫌をまき散らさないか」を見る。チームの空気は最強の生産性ツールや。' },
+    { id: 'cp4', uid: 'kenta_s',    bgId: 'yoi', fgId: 'purple', time: '2時間前', likes: 89,  comments: 9,  text: '深夜のコードレビューで見つけた設計ミス。眠い頭で書いたコードは眠い頭にしか読めん。寝ます。' },
+    { id: 'cp5', uid: 'sarah_ai',   bgId: 'umi', fgId: 'cyan',    time: '3時間前', likes: 310, comments: 42, text: 'The best AI products don\'t feel like AI. They feel like magic that respects you.' },
     { id: 'cp6', uid: 'misaki_t',   bgId: 'cream', fgId: 'mori',   time: '5時間前', likes: 56,  comments: 4,  text: '朝イチの空気が好き。誰よりも早くオフィスに着いた日は、なんか勝った気になる。' },
-    { id: 'cp7', uid: 'alex_gravity', bgId: 'noir', fgId: 'purple', time: '7時間前', likes: 1800, comments: 203, text: 'Gravity is just consistency over time. Same with influence.' },
+    { id: 'cp7', uid: 'alex_gravity', bgId: 'ao', fgId: 'purple', time: '7時間前', likes: 1800, comments: 203, text: 'Gravity is just consistency over time. Same with influence.' },
     { id: 'cp8', uid: 'photo_maya', bgId: 'terra', fgId: 'orange', time: '9時間前', likes: 78,  comments: 11, text: '夕方の光だけで撮った一枚が、今日イチの作品になった。機材より光。', media: { type: 'image', src: 'assets/img/u10.jpg' } },
     { id: 'cp9', uid: 'sho_n',      bgId: 'cream', fgId: 'sumi',   time: '11時間前', likes: 23, comments: 2,  text: '筋トレ100日目。変わったのは体より「決めたことをやる」感覚のほうやった。' },
   ];
@@ -12572,12 +12569,15 @@
     const bgRow = document.getElementById('bgSwatchRow');
     const fgRow = document.getElementById('fgSwatchRow');
     if (!bgRow || !fgRow) return;
+    // 背景チップ：角丸スクエア（FB色付き投稿方式）
     bgRow.innerHTML = POST_BGS.map(b =>
-      `<div class="cp-swatch ${b.id === colorComposeBg ? 'sel' : ''}" title="${b.name}" style="background:${b.bg};" onclick="selectPostBg('${b.id}')"></div>`
+      `<div class="cp-bgchip ${b.id === colorComposeBg ? 'sel' : ''}" title="${b.name}" style="background:${b.bg};" onclick="selectPostBg('${b.id}')"></div>`
     ).join('');
-    // 文字色の選択肢は背景の明暗で自動で切り替わる（読めない組み合わせを構造的に排除）
+    // 文字色チップ：選択中の背景を地にした「A」＝ミニプレビュー（Instagramテキストツール方式）
+    // 選択肢は背景の明暗で自動で切り替わる（読めない組み合わせを構造的に排除）
+    const bgc = cpBg(colorComposeBg).bg;
     fgRow.innerHTML = cpFgList(colorComposeBg).map(f =>
-      `<div class="cp-swatch ${f.id === colorComposeFg ? 'sel' : ''}" title="${f.name}" style="background:${f.fg};" onclick="selectPostFg('${f.id}')"></div>`
+      `<div class="cp-fgchip ${f.id === colorComposeFg ? 'sel' : ''}" title="${f.name}" style="background:${bgc};color:${f.fg};" onclick="selectPostFg('${f.id}')">A</div>`
     ).join('');
   }
   function selectPostBg(id) {
@@ -12597,8 +12597,10 @@
     const f = cpFg(colorComposeBg, colorComposeFg);
     const card = document.getElementById('colorPostCard');
     const ta = document.getElementById('colorPostText');
+    const scope = document.getElementById('cpxScope');
     if (card) card.style.background = b.bg;
     if (ta) ta.style.color = f.fg;
+    if (scope) scope.style.color = f.fg + 'B3';   // 公開範囲行は文字色の70%
   }
   function updateColorPostState() {
     const ta = document.getElementById('colorPostText');
