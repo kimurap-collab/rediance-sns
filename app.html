@@ -7368,7 +7368,7 @@
         <div style="padding:10px 16px 6px;">
           <div style="display:flex;align-items:center;gap:10px;">
             <span style="font-size:11px;color:var(--text-light,#999);width:26px;flex-shrink:0;">背景</span>
-            <div id="bgSwatchRow" style="display:flex;gap:10px;flex:1;"></div>
+            <div id="bgSwatchRow" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;justify-items:center;flex:1;"></div>
           </div>
           <div style="display:flex;align-items:center;gap:10px;margin-top:9px;">
             <span style="font-size:11px;color:var(--text-light,#999);width:26px;flex-shrink:0;">文字</span>
@@ -9381,13 +9381,21 @@
   // ===== 2軸カラーシステム（2026-07-05大将確定：色だけ・書体固定） =====
   // 背景6種＝一日サイクル「朝→深夜」。文字色は背景の明暗で選択肢が自動で切り替わる
   // （明るい背景→インク6色／暗い背景→ネオン8色）＝「選べるけど間違えられない」方式。
+  // 背景12種：明るい2色（朝・昼）＋色相環10色（Tailwind 950番台＝最深色で夜の統一感を維持）
+  // 並びは 明2色 → 赤→橙→黄→緑→シアン→青→藍→紫→マゼンタ→無彩色夜（色相環順）
   const POST_BGS = [
     { id: 'asa',    name: '朝',   bg: '#F0EEE6', dark: false },  // 紙のような朝の光（デフォ）
     { id: 'hiru',   name: '昼',   bg: '#E7F1F8', dark: false },  // 淡い昼の空
-    { id: 'yuu',    name: '夕',   bg: '#431407', dark: true  },  // 燃え残りの夕焼け
-    { id: 'yoi',    name: '宵',   bg: '#2E1065', dark: true  },  // 日没後の深紫
-    { id: 'yoru',   name: '夜',   bg: '#1A1B26', dark: true  },  // ネオンナイトの夜
-    { id: 'shinya', name: '深夜', bg: '#0A0A12', dark: true  },  // ほぼ漆黒
+    { id: 'rose',   name: '紅',   bg: '#4C0519', dark: true  },  // rose-950（赤）
+    { id: 'yuu',    name: '夕',   bg: '#431407', dark: true  },  // orange-950（橙）
+    { id: 'amber',  name: '琥珀', bg: '#451A03', dark: true  },  // amber-950（黄）
+    { id: 'forest', name: '森',   bg: '#022C22', dark: true  },  // emerald-950（緑）
+    { id: 'umi',    name: '深海', bg: '#083344', dark: true  },  // cyan-950（シアン）
+    { id: 'ao',     name: '蒼',   bg: '#172554', dark: true  },  // blue-950（青）
+    { id: 'ai',     name: '藍',   bg: '#1E1B4B', dark: true  },  // indigo-950（藍）
+    { id: 'yoi',    name: '宵',   bg: '#2E1065', dark: true  },  // violet-950（紫）
+    { id: 'plum',   name: '紫紅', bg: '#4A044E', dark: true  },  // fuchsia-950（マゼンタ）
+    { id: 'yoru',   name: '夜',   bg: '#1A1B26', dark: true  },  // Dracula夜（無彩色）
   ];
   // 明るい背景用インク（ジュエルトーンを文字側で再利用＝気分色）
   const POST_INKS = [
@@ -9421,11 +9429,11 @@
     { id: 'cp1', uid: 'yu_tanaka',  bgId: 'asa',  fgId: 'sumi',   time: '12分前', likes: 47,  comments: 6,  text: 'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥 エージェント設計のヒントを掴んだ気がする。' },
     { id: 'cp2', uid: 'rina_s',     bgId: 'yoru', fgId: 'pink',   time: '28分前', likes: 132, comments: 18, text: '3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。' },
     { id: 'cp3', uid: 'taisho_k',   bgId: 'asa',  fgId: 'kon',    time: '1時間前', likes: 234, comments: 21, text: '経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。' },
-    { id: 'cp10', uid: 'kenji_founder', bgId: 'shinya', fgId: 'lav', time: '90分前', likes: 421, comments: 57, text: '起業して10年で分かったことを書く。最初の3年は「正しいことを速くやる」ことばかり考えてた。でも本当に効いたのは「間違いに早く気づいて、素直に方向を変える」ことやった。プライドは判断を遅らせる。数字は嘘をつかんけど、数字の解釈は自分に都合よく歪む。だから週に一回、自分の意思決定を他人の会社の話やと思って見直す時間を作った。これだけで致命傷を3回は回避できた。あと、人の採用は能力より「不機嫌をまき散らさないか」を見る。チームの空気は最強の生産性ツールや。' },
+    { id: 'cp10', uid: 'kenji_founder', bgId: 'ai', fgId: 'lav', time: '90分前', likes: 421, comments: 57, text: '起業して10年で分かったことを書く。最初の3年は「正しいことを速くやる」ことばかり考えてた。でも本当に効いたのは「間違いに早く気づいて、素直に方向を変える」ことやった。プライドは判断を遅らせる。数字は嘘をつかんけど、数字の解釈は自分に都合よく歪む。だから週に一回、自分の意思決定を他人の会社の話やと思って見直す時間を作った。これだけで致命傷を3回は回避できた。あと、人の採用は能力より「不機嫌をまき散らさないか」を見る。チームの空気は最強の生産性ツールや。' },
     { id: 'cp4', uid: 'kenta_s',    bgId: 'yoi',  fgId: 'purple', time: '2時間前', likes: 89,  comments: 9,  text: '深夜のコードレビューで見つけた設計ミス。眠い頭で書いたコードは眠い頭にしか読めん。寝ます。' },
     { id: 'cp5', uid: 'sarah_ai',   bgId: 'hiru', fgId: 'kon',    time: '3時間前', likes: 310, comments: 42, text: 'The best AI products don\'t feel like AI. They feel like magic that respects you.' },
     { id: 'cp6', uid: 'misaki_t',   bgId: 'asa',  fgId: 'mori',   time: '5時間前', likes: 56,  comments: 4,  text: '朝イチの空気が好き。誰よりも早くオフィスに着いた日は、なんか勝った気になる。' },
-    { id: 'cp7', uid: 'alex_gravity', bgId: 'shinya', fgId: 'cyan', time: '7時間前', likes: 1800, comments: 203, text: 'Gravity is just consistency over time. Same with influence.' },
+    { id: 'cp7', uid: 'alex_gravity', bgId: 'umi', fgId: 'cyan', time: '7時間前', likes: 1800, comments: 203, text: 'Gravity is just consistency over time. Same with influence.' },
     { id: 'cp8', uid: 'photo_maya', bgId: 'yuu',  fgId: 'orange', time: '9時間前', likes: 78,  comments: 11, text: '夕方の光だけで撮った一枚が、今日イチの作品になった。機材より光。', media: { type: 'image', src: 'assets/img/u10.jpg' } },
     { id: 'cp9', uid: 'sho_n',      bgId: 'hiru', fgId: 'sumi',   time: '11時間前', likes: 23, comments: 2,  text: '筋トレ100日目。変わったのは体より「決めたことをやる」感覚のほうやった。' },
   ];
