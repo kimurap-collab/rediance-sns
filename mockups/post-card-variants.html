@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>カラー投稿カード 5案比較</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: linear-gradient(170deg, #0b0e1a 0%, #141329 55%, #1a1033 100%);
+    color: #fff; padding: 30px 0 80px;
+  }
+  .col { width: 430px; margin: 0 auto; }
+  h1 { font-size: 20px; text-align: center; margin-bottom: 6px; }
+  .sub { text-align: center; font-size: 12px; color: rgba(255,255,255,.55); margin-bottom: 26px; }
+  h2 { font-size: 15px; margin: 44px 0 4px; padding: 0 14px; }
+  .desc { font-size: 12px; color: rgba(255,255,255,.55); margin: 0 14px 14px; line-height: 1.6; }
+  .pal { display:flex; gap:8px; padding: 0 14px; margin-bottom: 8px; flex-wrap: wrap; }
+  .pal .sw { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.3); }
+  .pal-label { font-size: 11px; color: rgba(255,255,255,.5); padding: 0 14px; margin: 10px 0 4px; }
+</style>
+</head>
+<body>
+<div class="col">
+  <h1>カラー投稿カード デザイン5案</h1>
+  <div class="sub">同じ3投稿（深紅・クリーム・オーシャン＋写真）を5スタイルで比較</div>
+
+  <div class="pal-label">旧パレット（ポストイット調・不採用方向）</div>
+  <div class="pal" id="palOld"></div>
+  <div class="pal-label">新パレット（ジュエルトーン・700-800番台）</div>
+  <div class="pal" id="palNew"></div>
+
+  <div id="variants"></div>
+</div>
+
+<script>
+const OLD_COLORS = ['#F0EEE6','#1E293B','#FFE4E6','#FEF3C7','#D1FAE5','#CCFBF1','#E0F2FE','#E0E7FF','#EDE9FE','#FAE8FF'];
+const NEW_COLORS = ['#F0EEE6','#1E293B','#9F1239','#C2410C','#B45309','#065F46','#115E59','#075985','#3730A3','#5B21B6','#86198F','#09090B'];
+document.getElementById('palOld').innerHTML = OLD_COLORS.map(c=>`<div class="sw" style="background:${c}"></div>`).join('');
+document.getElementById('palNew').innerHTML = NEW_COLORS.map(c=>`<div class="sw" style="background:${c}"></div>`).join('');
+
+const POSTS = [
+  { avatar:'👩', name:'鈴木 里奈', tier:'🚀 Rising', handle:'@rina_s・28分前', bg:'#9F1239', fg:'#FFF1F2',
+    text:'3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。', likes:132, comments:18 },
+  { avatar:'🧔', name:'木村 誠司', tier:'⭐ Star', handle:'@taisho_k・1時間前', bg:'#F0EEE6', fg:'#292524',
+    text:'経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。', likes:234, comments:21 },
+  { avatar:'📷', name:'高橋 麻耶', tier:'🚀 Rising', handle:'@photo_maya・9時間前', bg:'#075985', fg:'#F0F9FF',
+    text:'夕方の光だけで撮った一枚。機材より光。', likes:78, comments:11, img:'../assets/img/u10.jpg' },
+];
+
+function inner(p, mediaRadius) {
+  const meta = p.fg + 'A6', line = p.fg + '22';
+  return `
+    <div style="display:flex;align-items:center;gap:9px;">
+      <span style="font-size:25px;line-height:1;">${p.avatar}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-weight:700;font-size:14.5px;">${p.name}</span>
+          <span style="font-size:12px;">${p.tier}</span>
+        </div>
+        <div style="font-size:12px;color:${meta};">${p.handle}</div>
+      </div>
+    </div>
+    <div style="font-size:15.5px;line-height:1.75;margin:10px 2px 12px;">${p.text}</div>
+    ${p.img ? `<img src="${p.img}" style="display:block;width:100%;border-radius:${mediaRadius};max-height:300px;object-fit:cover;margin:0 0 12px;">` : ''}
+    <div style="display:flex;gap:26px;border-top:1px solid ${line};padding-top:9px;font-size:13px;color:${meta};">
+      <span>♡ ${p.likes}</span><span>💬 ${p.comments}</span>
+    </div>`;
+}
+
+// アクセントバー案は色を「面」でなく「署名」として使う（カードは常にダークニュートラル）
+function innerAccent(p) {
+  const accent = (p.bg === '#F0EEE6') ? '#D6D3D1' : p.bg;  // クリームは淡グレーの線に読み替え
+  const accentText = (p.bg === '#F0EEE6') ? '#E7E5E4' : mix(p.bg);
+  return `
+    <div style="display:flex;align-items:center;gap:9px;">
+      <span style="font-size:25px;line-height:1;">${p.avatar}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-weight:700;font-size:14.5px;color:${accentText};">${p.name}</span>
+          <span style="font-size:12px;color:#cbd5e1;">${p.tier}</span>
+        </div>
+        <div style="font-size:12px;color:rgba(255,255,255,.5);">${p.handle}</div>
+      </div>
+    </div>
+    <div style="font-size:15.5px;line-height:1.75;margin:10px 2px 12px;color:#E2E8F0;">${p.text}</div>
+    ${p.img ? `<img src="${p.img}" style="display:block;width:100%;border-radius:8px;max-height:300px;object-fit:cover;margin:0 0 12px;">` : ''}
+    <div style="display:flex;gap:26px;border-top:1px solid rgba(255,255,255,.08);padding-top:9px;font-size:13px;color:rgba(255,255,255,.5);">
+      <span>♡ ${p.likes}</span><span>💬 ${p.comments}</span>
+    </div>`;
+}
+// 濃色を明るく持ち上げて「名前の色」にする簡易処理
+function mix(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  const r = Math.min(255, (n>>16) + 110), g = Math.min(255, ((n>>8)&255) + 110), b = Math.min(255, (n&255) + 110);
+  return `rgb(${r},${g},${b})`;
+}
+
+const VARIANTS = [
+  {
+    title: '案A：シャープミニマル',
+    desc: '角丸6px・影なし・極細ボーダー。Linear/Notion系のフラットで硬質な印象。',
+    render: p => `<div style="background:${p.bg};color:${p.fg};border-radius:6px;border:1px solid ${p.fg}26;padding:15px 17px 11px;margin:0 14px 10px;">${inner(p,'4px')}</div>`,
+  },
+  {
+    title: '案B：フルブリード帯（非カード）',
+    desc: 'カードにしない案。左右の余白ゼロ・角丸ゼロで、色の帯がそのままタイムラインになる。X本来の区切り線構造に色を流し込んだ形。',
+    render: p => `<div style="background:${p.bg};color:${p.fg};padding:16px 18px 11px;border-bottom:1px solid rgba(0,0,0,.25);">${inner(p,'10px')}</div>`,
+  },
+  {
+    title: '案C：ガラスティント',
+    desc: '色を半透明のすりガラスにして宇宙背景を透かす。アプリ全体のガラスモーフィズム（作成メニュー等）と統一感が出る。',
+    render: p => {
+      const isLight = p.bg === '#F0EEE6';
+      const glassBg = isLight ? 'rgba(240,238,230,0.92)' : hexToRgba(p.bg, 0.55);
+      return `<div style="background:${glassBg};backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:${isLight ? p.fg : '#fff'};border-radius:16px;border:1px solid rgba(255,255,255,.16);padding:15px 17px 11px;margin:0 14px 12px;">${inner({...p, fg: isLight ? p.fg : '#F8FAFC'},'10px')}</div>`;
+    },
+  },
+  {
+    title: '案D：アクセントバー（色は署名）',
+    desc: 'カードは常にダークで統一し、左の縦バーと名前だけがその人の選んだ色。タイムラインが最も静かで、色は「差し色」として効く。',
+    render: p => {
+      const accent = (p.bg === '#F0EEE6') ? '#A8A29E' : p.bg;
+      return `<div style="background:#151a2b;border-left:4px solid ${accent};border-radius:10px;padding:15px 17px 11px;margin:0 14px 10px;">${innerAccent(p)}</div>`;
+    },
+  },
+  {
+    title: '案E：ソフトラウンド',
+    desc: '角丸22px・ボーダーなし・拡散シャドウ・ゆったりpadding。Luma/Airbnb系の柔らかさ。現行に近いが影と丸みを洗練。',
+    render: p => `<div style="background:${p.bg};color:${p.fg};border-radius:22px;padding:18px 20px 13px;margin:0 14px 14px;box-shadow:0 8px 32px rgba(0,0,0,.4);">${inner(p,'14px')}</div>`,
+  },
+];
+
+function hexToRgba(hex, a) {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`;
+}
+
+document.getElementById('variants').innerHTML = VARIANTS.map(v => `
+  <h2>${v.title}</h2>
+  <div class="desc">${v.desc}</div>
+  <div>${POSTS.map(v.render).join('')}</div>
+`).join('');
+</script>
+</body>
+</html>

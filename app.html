@@ -7350,12 +7350,22 @@
           <button onclick="closeColorComposer()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:50%;width:36px;height:36px;color:#fff;font-size:17px;cursor:pointer;line-height:1;">✕</button>
           <button id="colorPostSubmit" onclick="submitColorPost()" style="background:var(--primary,#7C3AED);border:none;border-radius:999px;padding:9px 26px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;opacity:0.4;transition:opacity .15s;">投稿</button>
         </div>
-        <!-- カード＝入力欄そのもの（WYSIWYG：色を選んだ瞬間ここが変わる） -->
-        <div id="colorPostCard" style="flex:1;margin:6px 16px 14px;border-radius:20px;padding:20px 22px;display:flex;transition:background .25s ease;box-shadow:0 4px 24px rgba(0,0,0,0.35);">
-          <textarea id="colorPostText" placeholder="いまどうしてる？" oninput="updateColorPostState()" style="flex:1;background:transparent;border:none;outline:none;resize:none;font-size:17px;line-height:1.75;font-family:inherit;transition:color .25s ease;"></textarea>
+        <!-- カード＝入力欄そのもの（WYSIWYG：色を選んだ瞬間ここが変わる）。中身に合わせて伸びるコンパクト型 -->
+        <div id="colorPostCard" style="margin:6px 16px 12px;border-radius:20px;padding:16px 18px;transition:background .25s ease;box-shadow:0 4px 24px rgba(0,0,0,0.35);">
+          <textarea id="colorPostText" rows="3" placeholder="いまどうしてる？" oninput="updateColorPostState()" style="display:block;width:100%;background:transparent;border:none;outline:none;resize:none;font-size:17px;line-height:1.75;font-family:inherit;transition:color .25s ease;overflow:hidden;"></textarea>
+          <!-- 添付プレビュー：背景色のカードに画像/動画が乗る（X同様） -->
+          <div id="cpxPreviewWrap" style="display:none;position:relative;margin-top:10px;">
+            <img id="cpxPreviewImg" src="" alt="" style="display:none;width:100%;border-radius:12px;max-height:340px;object-fit:cover;">
+            <video id="cpxPreviewVideo" controls muted playsinline style="display:none;width:100%;border-radius:12px;max-height:340px;background:#000;"></video>
+            <button onclick="cpxClearPhoto()" style="position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;border:none;background:rgba(0,0,0,0.55);color:#fff;font-size:14px;cursor:pointer;line-height:1;">✕</button>
+          </div>
         </div>
-        <!-- 色スウォッチ：タップ1回で即反映 -->
-        <div id="colorSwatchRow" style="display:flex;gap:12px;overflow-x:auto;padding:6px 16px 20px;flex-shrink:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;"></div>
+        <!-- 下段：📷 ＋ 色スウォッチ（タップ1回で即反映） -->
+        <div style="display:flex;align-items:center;gap:12px;padding:2px 16px 20px;flex-shrink:0;">
+          <input type="file" id="cpxPhotoInput" accept="image/*,video/*" style="display:none;" onchange="cpxLoadPhoto(event)">
+          <button onclick="document.getElementById('cpxPhotoInput').click()" title="写真・動画を追加" style="width:40px;height:40px;border-radius:50%;flex-shrink:0;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.22);font-size:17px;cursor:pointer;line-height:1;">📷</button>
+          <div id="colorSwatchRow" style="display:flex;gap:12px;overflow-x:auto;flex:1;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 0;"></div>
+        </div>
       </div>
     </div>
 
@@ -9348,33 +9358,34 @@
   // ダメだった場合はここを 'insta' に変えるだけで完全に元へ戻る。旧コードは全て温存。
   const POST_UI_MODE = 'color';
 
-  // Tailwindベースのペア固定パレット。背景と文字色はセット＝ユーザーは色相を1つ選ぶだけ。
+  // ペア固定パレット（ジュエルトーン版・2026-07-05差し替え）。背景と文字色はセット＝ユーザーは色相を1つ選ぶだけ。
   // 先頭2つがニュートラル（目に優しく、タイムラインの大半を占めても疲れない）。cream がデフォ。
+  // カラー10色はTailwindの700-800番台＝深く彩度のある「宝石」トーン。原色（エクセル赤）は使わない。
   const POST_COLORS = [
-    { id: 'cream',      name: 'クリーム',   bg: '#F0EEE6', fg: '#292524' },
-    { id: 'slate',      name: 'グレー',     bg: '#1E293B', fg: '#F1F5F9' },
-    { id: 'rose',       name: 'ローズ',     bg: '#FFE4E6', fg: '#881337' },
-    { id: 'amber',      name: 'アンバー',   bg: '#FEF3C7', fg: '#78350F' },
-    { id: 'emerald',    name: 'エメラルド', bg: '#D1FAE5', fg: '#064E3B' },
-    { id: 'teal',       name: 'ティール',   bg: '#CCFBF1', fg: '#134E4A' },
-    { id: 'sky',        name: 'スカイ',     bg: '#E0F2FE', fg: '#0C4A6E' },
-    { id: 'indigo',     name: 'インディゴ', bg: '#E0E7FF', fg: '#312E81' },
-    { id: 'violet',     name: 'すみれ',     bg: '#EDE9FE', fg: '#4C1D95' },
-    { id: 'fuchsia',    name: 'フューシャ', bg: '#FAE8FF', fg: '#701A75' },
-    { id: 'deepteal',   name: '深ティール', bg: '#134E4A', fg: '#CCFBF1' },
-    { id: 'deepindigo', name: '深インディゴ', bg: '#312E81', fg: '#E0E7FF' },
+    { id: 'cream',   name: 'クリーム',     bg: '#F0EEE6', fg: '#292524' },
+    { id: 'slate',   name: 'グレー',       bg: '#1E293B', fg: '#F1F5F9' },
+    { id: 'crimson', name: '深紅',         bg: '#9F1239', fg: '#FFF1F2' },
+    { id: 'terra',   name: 'テラコッタ',   bg: '#C2410C', fg: '#FFF7ED' },
+    { id: 'gold',    name: 'ゴールド',     bg: '#B45309', fg: '#FFFBEB' },
+    { id: 'forest',  name: 'フォレスト',   bg: '#065F46', fg: '#ECFDF5' },
+    { id: 'teal',    name: 'ティール',     bg: '#115E59', fg: '#F0FDFA' },
+    { id: 'ocean',   name: 'オーシャン',   bg: '#075985', fg: '#F0F9FF' },
+    { id: 'indigo',  name: 'インディゴ',   bg: '#3730A3', fg: '#EEF2FF' },
+    { id: 'violet',  name: 'バイオレット', bg: '#5B21B6', fg: '#F5F3FF' },
+    { id: 'plum',    name: 'プラム',       bg: '#86198F', fg: '#FDF4FF' },
+    { id: 'noir',    name: 'ノワール',     bg: '#09090B', fg: '#FAFAFA' },
   ];
 
-  // カラー投稿のデモデータ（新しい順）。大半はデフォのcream＝落ち着いた紙のタイムラインに、色が時々差す。
+  // カラー投稿のデモデータ（新しい順）。大半はデフォのcream＝落ち着いた紙のタイムラインに、宝石色が時々差す。
   const colorPosts = [
     { id: 'cp1', uid: 'yu_tanaka',  colorId: 'cream',   time: '12分前', likes: 47,  comments: 6,  text: 'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥 エージェント設計のヒントを掴んだ気がする。' },
-    { id: 'cp2', uid: 'rina_s',     colorId: 'rose',    time: '28分前', likes: 132, comments: 18, text: '3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。' },
+    { id: 'cp2', uid: 'rina_s',     colorId: 'crimson', time: '28分前', likes: 132, comments: 18, text: '3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。' },
     { id: 'cp3', uid: 'taisho_k',   colorId: 'cream',   time: '1時間前', likes: 234, comments: 21, text: '経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。' },
     { id: 'cp4', uid: 'kenta_s',    colorId: 'slate',   time: '2時間前', likes: 89,  comments: 9,  text: '深夜のコードレビューで見つけた設計ミス。眠い頭で書いたコードは眠い頭にしか読めん。寝ます。' },
-    { id: 'cp5', uid: 'sarah_ai',   colorId: 'sky',     time: '3時間前', likes: 310, comments: 42, text: 'The best AI products don\'t feel like AI. They feel like magic that respects you.' },
+    { id: 'cp5', uid: 'sarah_ai',   colorId: 'ocean',   time: '3時間前', likes: 310, comments: 42, text: 'The best AI products don\'t feel like AI. They feel like magic that respects you.' },
     { id: 'cp6', uid: 'misaki_t',   colorId: 'cream',   time: '5時間前', likes: 56,  comments: 4,  text: '朝イチの空気が好き。誰よりも早くオフィスに着いた日は、なんか勝った気になる。' },
-    { id: 'cp7', uid: 'alex_gravity', colorId: 'deepindigo', time: '7時間前', likes: 1800, comments: 203, text: 'Gravity is just consistency over time. Same with influence.' },
-    { id: 'cp8', uid: 'photo_maya', colorId: 'amber',   time: '9時間前', likes: 78,  comments: 11, text: '夕方の光だけで撮った一枚が、今日イチの作品になった。機材より光。' },
+    { id: 'cp7', uid: 'alex_gravity', colorId: 'indigo', time: '7時間前', likes: 1800, comments: 203, text: 'Gravity is just consistency over time. Same with influence.' },
+    { id: 'cp8', uid: 'photo_maya', colorId: 'gold',    time: '9時間前', likes: 78,  comments: 11, text: '夕方の光だけで撮った一枚が、今日イチの作品になった。機材より光。', media: { type: 'image', src: 'assets/img/u10.jpg' } },
     { id: 'cp9', uid: 'sho_n',      colorId: 'cream',   time: '11時間前', likes: 23, comments: 2,  text: '筋トレ100日目。変わったのは体より「決めたことをやる」感覚のほうやった。' },
   ];
   const colorLiked = new Set();   // 自分がいいねした投稿ID
@@ -12462,15 +12473,48 @@
     return POST_COLORS.find(c => c.id === colorId) || POST_COLORS[0];
   }
 
+  let cpxAttach = null;  // 添付メディア {type:'image'|'video', src:dataURL}
+
   function openColorComposer() {
     colorComposeSel = 'cream';
     const ta = document.getElementById('colorPostText');
-    if (ta) ta.value = '';
+    if (ta) { ta.value = ''; ta.style.height = 'auto'; }
+    cpxClearPhoto();
     buildColorSwatches();
     applyComposeColor();
     updateColorPostState();
     switchTab('colorpost');
     setTimeout(() => { if (ta) ta.focus(); }, 80);
+  }
+
+  function cpxLoadPhoto(ev) {
+    const file = ev.target.files && ev.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => cpxSetAttach({ type: file.type.startsWith('video') ? 'video' : 'image', src: e.target.result });
+    reader.readAsDataURL(file);
+    ev.target.value = '';
+  }
+  function cpxSetAttach(media) {
+    cpxAttach = media;
+    const wrap = document.getElementById('cpxPreviewWrap');
+    const img = document.getElementById('cpxPreviewImg');
+    const vid = document.getElementById('cpxPreviewVideo');
+    if (!wrap || !img || !vid) return;
+    wrap.style.display = 'block';
+    if (media.type === 'video') { vid.src = media.src; vid.style.display = 'block'; img.style.display = 'none'; }
+    else { img.src = media.src; img.style.display = 'block'; vid.style.display = 'none'; vid.removeAttribute('src'); }
+    updateColorPostState();
+  }
+  function cpxClearPhoto() {
+    cpxAttach = null;
+    const wrap = document.getElementById('cpxPreviewWrap');
+    const img = document.getElementById('cpxPreviewImg');
+    const vid = document.getElementById('cpxPreviewVideo');
+    if (wrap) wrap.style.display = 'none';
+    if (img) { img.style.display = 'none'; img.removeAttribute('src'); }
+    if (vid) { vid.style.display = 'none'; vid.removeAttribute('src'); }
+    updateColorPostState();
   }
   function closeColorComposer() { switchTab('home'); }
 
@@ -12499,13 +12543,18 @@
     const ta = document.getElementById('colorPostText');
     const btn = document.getElementById('colorPostSubmit');
     if (!ta || !btn) return;
-    btn.style.opacity = ta.value.trim() ? '1' : '0.4';
+    // テキストに合わせて入力欄が伸びる（上限240px、超えたらスクロール）
+    ta.style.height = 'auto';
+    const h = Math.min(ta.scrollHeight, 240);
+    ta.style.height = h + 'px';
+    ta.style.overflow = ta.scrollHeight > 240 ? 'auto' : 'hidden';
+    btn.style.opacity = (ta.value.trim() || cpxAttach) ? '1' : '0.4';
   }
   function submitColorPost() {
     const ta = document.getElementById('colorPostText');
     if (!ta) return;
     const text = ta.value.trim();
-    if (!text) return;
+    if (!text && !cpxAttach) return;   // テキストか添付のどちらかがあれば投稿可
     colorPosts.unshift({
       id: 'cp' + (colorPostSeq++),
       uid: 'taisho_k',
@@ -12513,6 +12562,7 @@
       time: 'たった今',
       likes: 0, comments: 0,
       text,
+      media: cpxAttach || undefined,
     });
     buildColorTimeline();
     switchTab('home');
@@ -12554,7 +12604,10 @@
             <div style="font-size:12px;color:${meta};">${u.handle || ''}・${p.time}</div>
           </div>
         </div>
-        <div style="font-size:15.5px;line-height:1.75;margin:10px 2px 12px;white-space:pre-wrap;word-break:break-word;">${p.text}</div>
+        ${p.text ? `<div style="font-size:15.5px;line-height:1.75;margin:10px 2px 12px;white-space:pre-wrap;word-break:break-word;">${p.text}</div>` : '<div style="height:10px;"></div>'}
+        ${p.media ? (p.media.type === 'video'
+          ? `<video src="${p.media.src}" controls muted playsinline style="display:block;width:100%;border-radius:12px;max-height:340px;margin:0 0 12px;background:#000;"></video>`
+          : `<img src="${p.media.src}" alt="" style="display:block;width:100%;border-radius:12px;max-height:340px;object-fit:cover;margin:0 0 12px;">`) : ''}
         <div style="display:flex;gap:26px;border-top:1px solid ${line};padding-top:9px;font-size:13px;color:${meta};">
           <span style="cursor:pointer;user-select:none;" onclick="toggleColorLike('${p.id}')">${liked ? '❤️' : '♡'} ${p.likes}</span>
           <span>💬 ${p.comments}</span>
@@ -13082,6 +13135,10 @@
         container.appendChild(card);
       });
     }
+
+    // カラー投稿モードでは旧スタイル投稿は出さない（イベント招待・日程調整カードだけ残す）。
+    // タイムライン本体は上段のカラーカード（buildColorTimeline）が担う。
+    if (POST_UI_MODE === 'color') return;
 
     feedPosts.forEach((post, idx) => {
       const titleInfo = getTitle(post.score);
