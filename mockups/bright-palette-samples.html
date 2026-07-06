@@ -97,6 +97,7 @@ const PALETTES = {
       purple: { bg:'linear-gradient(135deg,#512DA8 0%,#9C27B0 100%)', fg:WHT },   // DeepPurple700→Purple500（深宇宙から）
     },
     night: { bg:'linear-gradient(135deg,#020408 0%,#1E3A5F 70%,#2E1065 100%)', fg:'#C0CAF5' },  // HYPERAY宇宙の夜（元から暗部が左）
+    cream: { bg:'linear-gradient(135deg,#E6E2D5 0%,#F4F2EA 100%)', fg:'#292524' },  // 月光: ごく淡い陰影（左がわずかに翳る）。フラット案と比較用
   },
 };
 
@@ -118,8 +119,8 @@ const COMMON = {
 };
 
 function band(p, pal) {
-  // 夜はパレット側で上書き可（Material×宇宙タブ用）。creamは常に共通
-  const c = (p.key === 'night' && pal.night) ? pal.night : (COMMON[p.key] || pal.colors[p.key]);
+  // 夜・creamはパレット側で上書き可（Material×宇宙タブ用）
+  const c = ((p.key === 'night' || p.key === 'cream') && pal[p.key]) ? pal[p.key] : (COMMON[p.key] || pal.colors[p.key]);
   const meta = c.fg + (c.fg === '#FFFFFF' ? 'D9' : 'A6');
   const line = c.fg + '33';
   return `
