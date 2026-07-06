@@ -12572,10 +12572,16 @@
     const i = list.findIndex(x => x.id === colorComposeFg);
     selectPostFg(list[(i + 1) % list.length].id);
   }
+  // 背景→同系ネオン/インクの自動追従マップ（トーン・オン・トーン）。文字⚫︎で自由に外せる
+  const CP_BG_MATCH = {
+    cream: 'sumi',   rose: 'pink',   terra: 'orange', amber: 'yellow',
+    forest: 'green', teal: 'cyan',   umi: 'cyan',     ao: 'lav',
+    ai: 'lav',       yoi: 'purple',  plum: 'pink',    yoru: 'lav',
+  };
   function selectPostBg(id) {
-    const wasDark = cpBg(colorComposeBg).dark;
     colorComposeBg = id;
-    if (wasDark !== cpBg(id).dark) colorComposeFg = cpFgList(id)[0].id;  // 明暗が変わったら文字色をその系の先頭に
+    // デフォルトは同系色で揃える（何も考えなくても美しい配色）。その後の文字⚫︎連打で自由に外せる
+    colorComposeFg = CP_BG_MATCH[id] || cpFgList(id)[0].id;
     buildColorPickers();
     applyComposeColor();
   }
