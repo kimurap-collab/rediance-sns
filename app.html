@@ -9391,14 +9391,30 @@
     { id: 'red',    name: 'レッド',     fg: '#FF5555' },
     { id: 'yellow', name: 'イエロー',   fg: '#F1FA8C' },
   ];
+  // 明るい光の文字色は光ごとにキュレーション（白＋淡色＋その光に映えるインク/ネオン）
+  const FG = {
+    awakin:    { id: 'awakin',    name: '淡金', fg: '#FFECB3' },
+    awasora:   { id: 'awasora',   name: '淡空', fg: '#B3E5FC' },
+    awazakura: { id: 'awazakura', name: '淡桜', fg: '#F8BBD0' },
+    awafuji:   { id: 'awafuji',   name: '淡藤', fg: '#E1BEE7' },
+    awamidori: { id: 'awamidori', name: '淡緑', fg: '#C8E6C9' },
+    sumi:      { id: 'sumi',      name: '墨',   fg: '#292524' },
+    kon:       { id: 'kon',       name: '濃紺', fg: '#1E3A5F' },
+    shinku:    { id: 'shinku',    name: '深紅', fg: '#9F1239' },
+    nYellow:   { id: 'nyellow',   name: 'ネオンイエロー', fg: '#F1FA8C' },
+    nCyan:     { id: 'ncyan',     name: 'ネオンシアン',   fg: '#8BE9FD' },
+    nGreen:    { id: 'ngreen',    name: 'ネオングリーン', fg: '#50FA7B' },
+    nPink:     { id: 'npink',     name: 'ネオンピンク',   fg: '#FF79C6' },
+    nLav:      { id: 'nlav',      name: 'ラベンダー',     fg: '#C0CAF5' },
+  };
   const POST_BGS = [
     { id: 'gekko',     name: '月光',   bg: 'linear-gradient(135deg,#E6E2D5 0%,#F4F2EA 100%)',             fgs: POST_INKS },
-    { id: 'akatsuki',  name: '暁',     bg: 'linear-gradient(135deg,#F4511E 0%,#FFC107 100%)',             fgs: [FG_WHITE, { id: 'awakin',    name: '淡金', fg: '#FFECB3' }] },
-    { id: 'soukyu',    name: '蒼穹',   bg: 'linear-gradient(135deg,#3949AB 0%,#03A9F4 100%)',             fgs: [FG_WHITE, { id: 'awasora',   name: '淡空', fg: '#B3E5FC' }] },
-    { id: 'akane',     name: '茜',     bg: 'linear-gradient(135deg,#E91E63 0%,#FF9800 100%)',             fgs: [FG_WHITE, { id: 'awazakura', name: '淡桜', fg: '#F8BBD0' }] },
-    { id: 'seiun',     name: '星雲',   bg: 'linear-gradient(135deg,#9C27B0 0%,#E91E63 100%)',             fgs: [FG_WHITE, { id: 'awafuji1',  name: '淡藤', fg: '#E1BEE7' }] },
-    { id: 'kyokko',    name: '極光',   bg: 'linear-gradient(135deg,#00695C 0%,#4CAF50 100%)',             fgs: [FG_WHITE, { id: 'awamidori', name: '淡緑', fg: '#C8E6C9' }] },
-    { id: 'shinuchu',  name: '深宇宙', bg: 'linear-gradient(135deg,#512DA8 0%,#9C27B0 100%)',             fgs: [FG_WHITE, { id: 'awafuji2',  name: '淡藤', fg: '#E1BEE7' }] },
+    { id: 'akatsuki',  name: '暁',     bg: 'linear-gradient(135deg,#F4511E 0%,#FFC107 100%)',             fgs: [FG_WHITE, FG.awakin, FG.sumi, FG.shinku, FG.nYellow] },
+    { id: 'soukyu',    name: '蒼穹',   bg: 'linear-gradient(135deg,#3949AB 0%,#03A9F4 100%)',             fgs: [FG_WHITE, FG.awasora, FG.awakin, FG.nCyan, FG.sumi] },
+    { id: 'akane',     name: '茜',     bg: 'linear-gradient(135deg,#E91E63 0%,#FF9800 100%)',             fgs: [FG_WHITE, FG.awazakura, FG.awakin, FG.sumi, FG.nYellow] },
+    { id: 'seiun',     name: '星雲',   bg: 'linear-gradient(135deg,#9C27B0 0%,#E91E63 100%)',             fgs: [FG_WHITE, FG.awafuji, FG.awazakura, FG.nYellow, FG.nCyan] },
+    { id: 'kyokko',    name: '極光',   bg: 'linear-gradient(135deg,#00695C 0%,#4CAF50 100%)',             fgs: [FG_WHITE, FG.awamidori, FG.nGreen, FG.nCyan, FG.awakin] },
+    { id: 'shinuchu',  name: '深宇宙', bg: 'linear-gradient(135deg,#512DA8 0%,#9C27B0 100%)',             fgs: [FG_WHITE, FG.awafuji, FG.nLav, FG.nCyan, FG.nPink] },
     { id: 'hoshizora', name: '星空',   bg: 'linear-gradient(135deg,#020408 0%,#1E3A5F 70%,#2E1065 100%)', fgs: POST_NEONS },
   ];
   function cpBg(id) { return POST_BGS.find(b => b.id === id) || POST_BGS[0]; }
