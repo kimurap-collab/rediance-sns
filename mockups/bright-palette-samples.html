@@ -88,14 +88,15 @@ const PALETTES = {
   matg: {
     note: '<b>Material×宇宙（インスタ式グラデ）：</b>起点も終点も全部Material公式色＝色の発明なし。各気分色から「宇宙側（深い方）」のMaterial色へ135°で流す。夜だけはHYPERAYブランドの宇宙グラデ。文字は白（インスタのグラデ投稿と同じ流儀）。',
     colors: {
-      yellow: { bg:'linear-gradient(135deg,#FFC107 0%,#F4511E 100%)', fg:WHT },   // Amber500→DeepOrange600（夕焼け）
-      orange: { bg:'linear-gradient(135deg,#FF9800 0%,#E91E63 100%)', fg:WHT },   // Orange500→Pink500（インスタの黄金パターン）
-      pink:   { bg:'linear-gradient(135deg,#E91E63 0%,#9C27B0 100%)', fg:WHT },   // Pink500→Purple500（ブランド域）
-      green:  { bg:'linear-gradient(135deg,#4CAF50 0%,#00897B 100%)', fg:WHT },   // Green500→Teal600
-      blue:   { bg:'linear-gradient(135deg,#2196F3 0%,#3949AB 100%)', fg:WHT },   // Blue500→Indigo600（宇宙の紺へ）
-      purple: { bg:'linear-gradient(135deg,#9C27B0 0%,#512DA8 100%)', fg:WHT },   // Purple500→DeepPurple700（深宇宙へ）
+      // 暗部は左（文字の書き出し側）＝白文字のコントラストが要る場所に濃色を置く
+      yellow: { bg:'linear-gradient(135deg,#F4511E 0%,#FFC107 100%)', fg:WHT },   // DeepOrange600→Amber500（夕焼け）
+      orange: { bg:'linear-gradient(135deg,#E91E63 0%,#FF9800 100%)', fg:WHT },   // Pink500→Orange500（インスタの黄金パターン）
+      pink:   { bg:'linear-gradient(135deg,#9C27B0 0%,#E91E63 100%)', fg:WHT },   // Purple500→Pink500（ブランド域）
+      green:  { bg:'linear-gradient(135deg,#00897B 0%,#4CAF50 100%)', fg:WHT },   // Teal600→Green500
+      blue:   { bg:'linear-gradient(135deg,#3949AB 0%,#2196F3 100%)', fg:WHT },   // Indigo600→Blue500（宇宙の紺から）
+      purple: { bg:'linear-gradient(135deg,#512DA8 0%,#9C27B0 100%)', fg:WHT },   // DeepPurple700→Purple500（深宇宙から）
     },
-    night: { bg:'linear-gradient(135deg,#020408 0%,#1E3A5F 70%,#2E1065 100%)', fg:'#C0CAF5' },  // HYPERAY宇宙の夜
+    night: { bg:'linear-gradient(135deg,#020408 0%,#1E3A5F 70%,#2E1065 100%)', fg:'#C0CAF5' },  // HYPERAY宇宙の夜（元から暗部が左）
   },
 };
 
