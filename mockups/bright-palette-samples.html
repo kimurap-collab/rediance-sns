@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>明るい既存パレット3種 × レイ</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:#E9E9EC; display:flex; justify-content:center; padding:24px 0 60px; }
+  .stage { width: 430px; }
+  h1 { font-size:16px; text-align:center; margin-bottom:4px; }
+  .sub { text-align:center; font-size:11.5px; color:#666; margin-bottom:14px; line-height:1.6; }
+  .tabs { display:flex; gap:8px; justify-content:center; margin-bottom:12px; position:sticky; top:8px; z-index:50; }
+  .tabs button { border:1px solid #ccc; background:#fff; border-radius:999px; padding:8px 14px; font-size:12.5px; cursor:pointer; font-weight:600; }
+  .tabs button.on { background:#1E3A5F; color:#fff; border-color:#1E3A5F; }
+  .pal-note { font-size:11.5px; color:#555; background:#fff; border-radius:10px; padding:10px 14px; margin-bottom:14px; line-height:1.7; }
+  .phone { background:#fff; border-radius:28px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,.25); }
+  .appbar { background:linear-gradient(135deg,#020408 0%,#1E3A5F 35%,#7C3AED 70%,#EC4899 100%); color:#fff; text-align:center; padding:16px 0 14px; font-weight:800; letter-spacing:4px; font-size:15px; }
+  .band { padding:15px 18px 11px; border-bottom:1px solid rgba(0,0,0,.10); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <h1>「明るい気分」の背景 × 既存パレット3種</h1>
+  <div class="sub">同じ8投稿（黄・橙・桃・緑・青・紫の気分＋クリーム＋夜）で比較。<br>※文字色は仮（白/墨）。採用パレット決定後に同系トーンへ調整する。</div>
+  <div class="tabs">
+    <button id="tabOc" class="on" onclick="setPal('oc')">Open Color</button>
+    <button id="tabIos" onclick="setPal('ios')">iOS純正</button>
+    <button id="tabFlat" onclick="setPal('flat')">Flat UI</button>
+  </div>
+  <div class="pal-note" id="palNote"></div>
+  <div class="phone">
+    <div class="appbar">HYPERAY</div>
+    <div id="tl"></div>
+  </div>
+</div>
+
+<script>
+const INK = '#1F2937';   // 明るい背景（黄系）用の墨
+const WHT = '#FFFFFF';   // 彩度の高い背景用の白
+
+// 各パレット：気分キー → {bg, fg}。cream/nightは全パレット共通（現行のまま）
+const PALETTES = {
+  oc: {
+    note: '<b>Open Color：</b>「開発者がダサい色を選ばないように」作られたOSSデザイナーパレット（GitHub 2万star超）。明るく楽しいのに彩度の角が取れとる。Violet/Grape/PinkはHYPERAYグラデと同族。',
+    colors: {
+      yellow: { bg:'#FCC419', fg:INK }, orange: { bg:'#FF922B', fg:WHT },
+      pink:   { bg:'#F06595', fg:WHT }, green:  { bg:'#51CF66', fg:INK },
+      blue:   { bg:'#339AF0', fg:WHT }, purple: { bg:'#845EF7', fg:WHT },
+    },
+  },
+  ios: {
+    note: '<b>iOS System Colors（Apple純正）：</b>ヒューマンインターフェースガイドライン定義の公式カラー。「明るいのに安っぽくない」をAppleが10年調整。電光っぽい明るさが「光=Radiance」と合う。',
+    colors: {
+      yellow: { bg:'#FFCC00', fg:INK }, orange: { bg:'#FF9500', fg:WHT },
+      pink:   { bg:'#FF2D55', fg:WHT }, green:  { bg:'#34C759', fg:WHT },
+      blue:   { bg:'#007AFF', fg:WHT }, purple: { bg:'#AF52DE', fg:WHT },
+    },
+  },
+  flat: {
+    note: '<b>Flat UI Colors：</b>フラットデザイン時代を作った超有名パレット。Sunflower=まさに「黄色い気分」のための黄。世界で一番使われた「明るいけどデザインされとる」色群。',
+    colors: {
+      yellow: { bg:'#F1C40F', fg:INK }, orange: { bg:'#E67E22', fg:WHT },
+      pink:   { bg:'#E91E63', fg:WHT }, green:  { bg:'#2ECC71', fg:WHT },
+      blue:   { bg:'#3498DB', fg:WHT }, purple: { bg:'#9B59B6', fg:WHT },
+    },
+  },
+};
+
+const POSTS = [
+  { key:'yellow', avatar:'👩', name:'高橋 美咲', tier:'✨ Icon', handle:'@misaki_t・10分前', text:'今日は朝から全部うまくいく日！こういう日は逃したらあかん☀️', likes:56, comments:4 },
+  { key:'cream',  avatar:'🧑', name:'田中 悠', tier:'🚀 Rising', handle:'@yu_tanaka・25分前', text:'AGIシンポジウム in シンガポール、めちゃくちゃ熱かった🔥', likes:47, comments:6 },
+  { key:'orange', avatar:'📷', name:'高橋 麻耶', tier:'🚀 Rising', handle:'@photo_maya・40分前', text:'夕陽が最高やった。今日という日に感謝。', likes:78, comments:11 },
+  { key:'pink',   avatar:'👩', name:'鈴木 里奈', tier:'🚀 Rising', handle:'@rina_s・1時間前', text:'3年ぶりに母とふたり旅。何気ない会話が一番の贅沢やった。', likes:132, comments:18 },
+  { key:'green',  avatar:'💪', name:'中村 翔', tier:'👤 Human', handle:'@sho_n・2時間前', text:'筋トレ100日目達成！！自分との約束を守れた🌱', likes:23, comments:2 },
+  { key:'blue',   avatar:'🤖', name:'Sarah Chen', tier:'💫 Nova', handle:'@sarah_ai・3時間前', text:'The best AI products feel like magic that respects you.', likes:310, comments:42 },
+  { key:'purple', avatar:'🧑‍💻', name:'佐藤 健太', tier:'✨ Icon', handle:'@kenta_s・5時間前', text:'新しいアイデアが降りてきた夜。眠れる気がしない。', likes:89, comments:9 },
+  { key:'night',  avatar:'🌌', name:'Kenji Ito', tier:'💫 Nova', handle:'@kenji_founder・7時間前', text:'プライドは判断を遅らせる。数字は嘘をつかんけど、解釈は歪む。', likes:421, comments:57 },
+];
+
+// 全パレット共通のニュートラル（現行仕様のまま）
+const COMMON = {
+  cream: { bg:'#F0EEE6', fg:'#292524' },
+  night: { bg:'#1A1B26', fg:'#C0CAF5' },
+};
+
+function band(p, pal) {
+  const c = COMMON[p.key] || pal.colors[p.key];
+  const meta = c.fg + (c.fg === '#FFFFFF' ? 'D9' : 'A6');
+  const line = c.fg + '33';
+  return `
+  <div class="band" style="background:${c.bg};color:${c.fg};">
+    <div style="display:flex;align-items:center;gap:9px;">
+      <span style="font-size:25px;line-height:1;">${p.avatar}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-weight:700;font-size:14.5px;">${p.name}</span>
+          <span style="font-size:12px;">${p.tier}</span>
+        </div>
+        <div style="font-size:12px;color:${meta};">${p.handle}</div>
+      </div>
+    </div>
+    <div style="font-size:15.5px;line-height:1.75;margin:9px 2px 11px;">${p.text}</div>
+    <div style="display:flex;gap:26px;border-top:1px solid ${line};padding-top:8px;font-size:13px;color:${meta};">
+      <span>♡ ${p.likes}</span><span>💬 ${p.comments}</span>
+    </div>
+  </div>`;
+}
+
+function setPal(key) {
+  const pal = PALETTES[key];
+  document.getElementById('tl').innerHTML = POSTS.map(p => band(p, pal)).join('');
+  document.getElementById('palNote').innerHTML = pal.note;
+  ['Oc','Ios','Flat'].forEach(t => document.getElementById('tab'+t).classList.remove('on'));
+  document.getElementById('tab' + key.charAt(0).toUpperCase() + key.slice(1)).classList.add('on');
+}
+setPal('oc');
+</script>
+</body>
+</html>
