@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>明るい既存パレット3種 × レイ</title>
+<title>明るい既存パレット5種 × レイ</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:#E9E9EC; display:flex; justify-content:center; padding:24px 0 60px; }
@@ -21,12 +21,14 @@
 </head>
 <body>
 <div class="stage">
-  <h1>「明るい気分」の背景 × 既存パレット3種</h1>
+  <h1>「明るい気分」の背景 × 既存パレット5種</h1>
   <div class="sub">同じ8投稿（黄・橙・桃・緑・青・紫の気分＋クリーム＋夜）で比較。<br>※文字色は仮（白/墨）。採用パレット決定後に同系トーンへ調整する。</div>
   <div class="tabs">
     <button id="tabOc" class="on" onclick="setPal('oc')">Open Color</button>
     <button id="tabIos" onclick="setPal('ios')">iOS純正</button>
     <button id="tabFlat" onclick="setPal('flat')">Flat UI</button>
+    <button id="tabMat" onclick="setPal('mat')">Material</button>
+    <button id="tabTw" onclick="setPal('tw')">Tailwind</button>
   </div>
   <div class="pal-note" id="palNote"></div>
   <div class="phone">
@@ -63,6 +65,22 @@ const PALETTES = {
       yellow: { bg:'#F1C40F', fg:INK }, orange: { bg:'#E67E22', fg:WHT },
       pink:   { bg:'#E91E63', fg:WHT }, green:  { bg:'#2ECC71', fg:WHT },
       blue:   { bg:'#3498DB', fg:WHT }, purple: { bg:'#9B59B6', fg:WHT },
+    },
+  },
+  mat: {
+    note: '<b>Material Design（Google・500番台）：</b>世界で最も使われたシステム配色。数学的に彩度調整済み。黄はMaterial公式のAmber 500を採用（純Yellow 500 #FFEB3Bは眩しすぎるためMaterial実務でもAmberが常用される）。',
+    colors: {
+      yellow: { bg:'#FFC107', fg:INK }, orange: { bg:'#FF9800', fg:WHT },
+      pink:   { bg:'#E91E63', fg:WHT }, green:  { bg:'#4CAF50', fg:WHT },
+      blue:   { bg:'#2196F3', fg:WHT }, purple: { bg:'#9C27B0', fg:WHT },
+    },
+  },
+  tw: {
+    note: '<b>Tailwind CSS Colors（400-500番台）：</b>いまどきWebのデファクト標準。くすみと抜け感の調整が絶妙。ピンク500 #EC4899は<b>HYPERAYブランドグラデの終点とまったく同じ色</b>＝ブランド親和性は実は最強。',
+    colors: {
+      yellow: { bg:'#FACC15', fg:INK }, orange: { bg:'#F97316', fg:WHT },
+      pink:   { bg:'#EC4899', fg:WHT }, green:  { bg:'#22C55E', fg:WHT },
+      blue:   { bg:'#3B82F6', fg:WHT }, purple: { bg:'#8B5CF6', fg:WHT },
     },
   },
 };
@@ -111,7 +129,7 @@ function setPal(key) {
   const pal = PALETTES[key];
   document.getElementById('tl').innerHTML = POSTS.map(p => band(p, pal)).join('');
   document.getElementById('palNote').innerHTML = pal.note;
-  ['Oc','Ios','Flat'].forEach(t => document.getElementById('tab'+t).classList.remove('on'));
+  ['Oc','Ios','Flat','Mat','Tw'].forEach(t => document.getElementById('tab'+t).classList.remove('on'));
   document.getElementById('tab' + key.charAt(0).toUpperCase() + key.slice(1)).classList.add('on');
 }
 setPal('oc');
