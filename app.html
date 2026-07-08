@@ -2945,6 +2945,11 @@
     .ev-place-loading:hover, .ev-place-empty:hover { background:#fff; }
     .ev-detail-maplink { color:inherit; text-decoration:none; }
     .ev-detail-maplink small { color:var(--primary); font-size:11px; margin-left:6px; white-space:nowrap; }
+    /* 詳細ページのタップできる地図サムネ（押すと地図アプリが開く） */
+    .ev-detail-map { position:relative; width:100%; height:160px; border-radius:14px; overflow:hidden; margin:2px 0 4px; cursor:pointer; border:1px solid rgba(255,255,255,0.15); }
+    .ev-detail-map-inner { width:100%; height:100%; pointer-events:none; }
+    .ev-detail-map .ev-map-centerpin { font-size:30px; }
+    .ev-detail-map-cta { position:absolute; left:0; right:0; bottom:0; background:rgba(0,0,0,0.55); color:#fff; font-size:11.5px; font-weight:700; text-align:center; padding:7px; }
     .ev-create-header, .ev-detail-header {
       position: sticky; top: 0; z-index: 10;
       display: flex; align-items: center; justify-content: space-between;
@@ -16839,6 +16844,28 @@ function setInviteResponseFromFeed(eventId, status) {
   if (document.getElementById('eventsHubList')) buildEventsHub();
 }
 
+// 地図アプリを開く（実機ではGoogle Mapsアプリ／無ければブラウザ・Apple Maps）
+function openMapsApp(lat, lng, q) {
+  const query = (lat != null && lng != null) ? (lat + ',' + lng) : (q || '');
+  window.open('https://www.google.com/maps/search/?api=1&query=' + query, '_blank', 'noopener');
+}
+// 詳細ページの非インタラクティブなミニ地図（クリックは親のonclickで地図アプリへ）
+const _detailMiniMaps = {};
+function initDetailMiniMap(bodyId, lat, lng) {
+  if (typeof L === 'undefined') return;
+  const id = bodyId + '-map';
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (_detailMiniMaps[id]) { _detailMiniMaps[id].remove(); _detailMiniMaps[id] = null; }
+  const map = L.map(id, {
+    zoomControl: false, attributionControl: false, dragging: false, touchZoom: false,
+    scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false
+  }).setView([lat, lng], 16);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+  _detailMiniMaps[id] = map;
+  setTimeout(() => map.invalidateSize(), 100);
+}
+
 function renderEventDetail(ev, opts = {}) {
   const bodyId   = opts.bodyId   || 'evDetailBody';
   const ctaId    = ('ctaId' in opts) ? opts.ctaId : 'evDetailCtaBar';
@@ -16917,6 +16944,13 @@ function renderEventDetail(ev, opts = {}) {
         </div>
       </div>
 
+      ${(ev.lat != null && ev.lng != null) ? `
+      <div class="ev-detail-map" onclick="openMapsApp(${ev.lat},${ev.lng},'${encodeURIComponent(ev.place || '')}')">
+        <div class="ev-detail-map-inner" id="${bodyId}-map"></div>
+        <div class="ev-map-centerpin">📍</div>
+        <div class="ev-detail-map-cta">🗺️ タップで地図アプリを開く</div>
+      </div>` : ''}
+
       ${ev.closed ? `
       <div class="ev-detail-infoblock">
         <div class="ev-detail-infoblock-ico" style="background:rgba(239,68,68,0.2);">✗</div>
@@ -16953,6 +16987,9 @@ function renderEventDetail(ev, opts = {}) {
   `;
 
   document.getElementById(bodyId).innerHTML = html;
+
+  // 座標があればタップできるミニ地図を描画（押すと地図アプリが開く）
+  if (ev.lat != null && ev.lng != null) initDetailMiniMap(bodyId, ev.lat, ev.lng);
 
   // 下部固定CTAバー（プレビュー時は ctaId=null でスキップ）
   const ctaBar = ctaId ? document.getElementById(ctaId) : null;
