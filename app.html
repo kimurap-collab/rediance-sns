@@ -2914,12 +2914,14 @@
 
     /* イベント作成画面 */
     #screen-event-create { background: var(--bg); overflow-y: auto; }
-    .ev-map-picker { width:100%; height:190px; border-radius:12px; overflow:hidden; margin-top:8px; border:1px solid rgba(255,255,255,0.12); background:#1a1a22; }
+    .ev-map-picker { position:relative; width:100%; height:190px; border-radius:12px; overflow:hidden; margin-top:8px; border:1px solid rgba(255,255,255,0.12); background:#1a1a22; }
+    .ev-map-inner { width:100%; height:100%; }
     .ev-map-picker .leaflet-container { background:#1a1a22; }
+    /* 中央固定ピン（地図が動く方式。ピン先端＝地図中心）。ドラッグは地図に通す */
+    .ev-map-centerpin { position:absolute; left:50%; top:50%; transform:translate(-50%,-100%); font-size:30px; line-height:1; pointer-events:none; z-index:450; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.5)); }
     .ev-map-hint { font-size:11px; color:var(--text-light); margin-top:6px; }
-    .ev-place-search { display:flex; gap:8px; }
-    .ev-place-search .ev-input { flex:1; }
-    .ev-place-search-btn { flex-shrink:0; width:46px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-size:17px; cursor:pointer; }
+    .ev-locate-btn { width:100%; padding:12px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-size:14px; font-weight:700; cursor:pointer; }
+    .ev-locate-btn:active { opacity:0.85; }
     /* 住所オートコンプリート：一般的なドロップダウン（Google Places 風・カード＋区切り線＋ホバー） */
     .ev-place-results:not(:empty) { margin-top:6px; background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.12); }
     .ev-place-result { display:flex; align-items:center; gap:9px; padding:12px 14px; font-size:13px; color:var(--text-main); background:#fff; cursor:pointer; line-height:1.4; border-bottom:1px solid var(--border); }
@@ -3111,6 +3113,9 @@
       overflow: hidden;
       border: 1px solid rgba(255,255,255,0.08);
     }
+    /* 背景切替ボタンをプレビュー右下にオーバーレイ（省スペース） */
+    .ev-bg-cycle-fab { position:absolute; right:10px; bottom:10px; z-index:2; box-shadow:0 2px 8px rgba(0,0,0,0.45); }
+    .ev-bg-name-badge { position:absolute; left:12px; bottom:13px; z-index:2; font-size:12px; font-weight:700; color:#fff; text-shadow:0 1px 4px rgba(0,0,0,0.8); }
     .ev-bg-mini-name {
       font-size: 11px;
       font-weight: 600;
@@ -8276,25 +8281,24 @@
           <input type="text" class="ev-input" id="evCreatePlace" placeholder="例: 兵庫県淡路市里1000-1">
         </div>
 
-        <!-- 5. 位置情報（任意）：地名で検索して自分でピンを刺す -->
+        <!-- 5. 位置情報（任意）：住所から地図を表示→中央固定ピンに地図を合わせる -->
         <div class="ev-field">
           <span class="ev-field-label">位置情報 <span class="ev-field-optional">任意</span></span>
-          <div class="ev-place-search">
-            <input type="text" class="ev-input" id="evPinSearch" placeholder="地名で検索してピンを刺す（例: 淡路島）" autocomplete="off"
-                   oninput="onEvPlaceInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();evPlaceSearch();}">
-            <button type="button" class="ev-place-search-btn" onclick="evPlaceSearch()">🔍</button>
-          </div>
+          <button type="button" class="ev-locate-btn" onclick="evLocateFromAddress()">📍 上の住所から地図を表示</button>
           <div class="ev-place-results" id="evPlaceResults"></div>
-          <div class="ev-map-picker" id="evCreateMap"></div>
-          <div class="ev-map-hint">🔍 検索でピンが立ちます。地図をタップ／ピンをドラッグで自由に微調整できます</div>
+          <div class="ev-map-picker">
+            <div id="evCreateMap" class="ev-map-inner"></div>
+            <div class="ev-map-centerpin">📍</div>
+          </div>
+          <div class="ev-map-hint">🧭 地図を動かして、中央のピンを目的地に合わせてください</div>
         </div>
 
-        <!-- 6. ヒーロー画像エリア（写真必須）：選ぶ→プレビュー→アップロード -->
+        <!-- 6. ヒーロー画像エリア（写真必須）：プレビュー→選ぶ→アップロード -->
         <div class="ev-cover-editor">
           <div class="ev-cover-section-title">イベントTOP画を選ぶ</div>
-          <div class="ev-cover-palette" id="evCoverPhotos"></div>
           <div class="ev-cover-preview" id="evCoverPreview"></div>
           <div class="ev-cover-drag-hint" id="evCoverDragHint" style="display:none;">ドラッグで位置調整</div>
+          <div class="ev-cover-palette" id="evCoverPhotos"></div>
           <label class="ev-cover-upload-btn">
             <input type="file" accept="image/*" id="evCoverUploadInput" onchange="handleEvCoverUpload(event)" hidden>
             <span class="ev-cover-upload-ico">📷</span>
@@ -8302,17 +8306,14 @@
           </label>
         </div>
 
-        <!-- 7. イベントページ背景エディタ -->
+        <!-- 7. イベントページ背景エディタ（ボタンはプレビュー右下にオーバーレイ） -->
         <div class="ev-cover-editor ev-bg-editor-block">
           <div class="ev-bg-editor-title">✨ イベントページ背景</div>
-          <div class="ev-bg-editor-hint">下のプレビューに即反映されます</div>
-          <div class="ev-bg-mini-preview" id="evBgMiniPreview"></div>
-          <div class="ev-cover-section-title">背景の光（投稿と同じ光のパレット）</div>
-          <div style="display:flex;align-items:center;gap:12px;padding:2px 0 2px;">
-            <button type="button" class="cp-cycle" onclick="cycleEvBgGradient()" title="背景の光を切り替え（タップで次へ）"><span class="cp-core" id="evBgCycleCore"></span></button>
-            <span id="evBgGradName" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.85);"></span>
+          <div class="ev-bg-editor-hint">右下のボタンをタップするたびに背景の光が変わります</div>
+          <div class="ev-bg-mini-preview" id="evBgMiniPreview">
+            <span class="ev-bg-name-badge" id="evBgGradName"></span>
+            <button type="button" class="cp-cycle ev-bg-cycle-fab" onclick="cycleEvBgGradient()" title="背景の光を切り替え（タップで次へ）"><span class="cp-core" id="evBgCycleCore"></span></button>
           </div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px;">👆 ボタンをタップするたびに色が変わります</div>
         </div>
 
         <!-- 8. 公開範囲 -->
@@ -15758,75 +15759,67 @@ function closeCreateMenu() {
 //   別scriptに置くと初期化時に未定義でReferenceErrorになるため。
 
 // ===== イベント作成: 地図ピン（Leaflet / OpenStreetMap）=====
-let evCreateMapInstance = null, evCreateMarker = null, evCreateLat = null, evCreateLng = null;
+// 中央固定ピン方式（Uber/LINE式）：ピンは画面中央に固定、地図を動かして合わせる。
+// evLocActive=true になってから地図の中心を位置情報として記録する（未操作なら位置情報なし＝任意）。
+let evCreateMapInstance = null, evCreateLat = null, evCreateLng = null, evLocActive = false;
 function initEvCreateMap(lat, lng) {
   if (typeof L === 'undefined') return; // Leaflet未読込（オフライン等）なら地図無しで続行
   const hasPin = (lat != null && lng != null);
   const center = hasPin ? [lat, lng] : [34.36, 134.83]; // 既定: 淡路島付近
-  const zoom = hasPin ? 13 : 9;
+  const zoom = hasPin ? 15 : 9;
   evCreateLat = hasPin ? lat : null;
   evCreateLng = hasPin ? lng : null;
-  const setPin = (la, ln) => { evCreateLat = la; evCreateLng = ln; };
+  evLocActive = hasPin;  // 編集で座標があるなら以後の地図移動を記録
   if (!evCreateMapInstance) {
     evCreateMapInstance = L.map('evCreateMap', { zoomControl: true }).setView(center, zoom);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19, attribution: '© OpenStreetMap'
     }).addTo(evCreateMapInstance);
-    evCreateMarker = L.marker(center, { draggable: true });
-    evCreateMarker.on('dragend', () => { const p = evCreateMarker.getLatLng(); setPin(p.lat, p.lng); });
-    evCreateMapInstance.on('click', (e) => { evCreateMarker.setLatLng(e.latlng).addTo(evCreateMapInstance); setPin(e.latlng.lat, e.latlng.lng); });
+    // ユーザーが地図をドラッグ／ズームしたら位置情報を有効化
+    evCreateMapInstance.on('dragstart zoomstart', () => { evLocActive = true; });
+    // 移動が止まったら中心を位置情報として記録（有効化後のみ）
+    evCreateMapInstance.on('moveend', () => {
+      if (!evLocActive) return;
+      const c = evCreateMapInstance.getCenter();
+      evCreateLat = c.lat; evCreateLng = c.lng;
+    });
   }
   evCreateMapInstance.setView(center, zoom);
-  if (hasPin) { evCreateMarker.setLatLng(center).addTo(evCreateMapInstance); }
-  else if (evCreateMapInstance.hasLayer(evCreateMarker)) { evCreateMapInstance.removeLayer(evCreateMarker); }
   document.getElementById('evPlaceResults').innerHTML = '';
-  // 現在地スタート（LINE方式。許可されれば現在地へ寄せる。拒否なら既定のまま）
-  if (!hasPin && navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      pos => { if (evCreateMapInstance) evCreateMapInstance.setView([pos.coords.latitude, pos.coords.longitude], 14); },
-      () => {}, { timeout: 6000, maximumAge: 300000 }
-    );
-  }
   setTimeout(() => { if (evCreateMapInstance) evCreateMapInstance.invalidateSize(); }, 120);
 }
 
-// 場所検索（Nominatim / OSM・無料）→ 候補タップでピン設置
-let evPlaceSearchTimer = null, evPlaceResultsData = [];
-function onEvPlaceInput() {
-  clearTimeout(evPlaceSearchTimer);
-  const q = document.getElementById('evPinSearch').value.trim();
-  if (q.length < 2) { document.getElementById('evPlaceResults').innerHTML = ''; return; }
-  evPlaceSearchTimer = setTimeout(evPlaceSearch, 600); // 入力が落ち着いたら1回だけ叩く
-}
-function evPlaceSearch() {
-  const q = document.getElementById('evPinSearch').value.trim();
+// 住所（上のテキスト欄）から地図を一気にその地点へ寄せる（Nominatim / OSM・無料）
+let evPlaceResultsData = [];
+function evLocateFromAddress() {
+  const q = document.getElementById('evCreatePlace').value.trim();
   const box = document.getElementById('evPlaceResults');
-  if (!q) { box.innerHTML = ''; return; }
-  box.innerHTML = '<div class="ev-place-result ev-place-loading">検索中…</div>';
+  if (!q) { showToast('先に住所を入力してください'); return; }
+  if (!evCreateMapInstance) { showToast('地図を読み込めませんでした'); return; }
+  box.innerHTML = '<div class="ev-place-result ev-place-loading">住所を検索中…</div>';
   fetch('https://nominatim.openstreetmap.org/search?format=json&accept-language=ja&limit=5&q=' + encodeURIComponent(q))
     .then(r => r.json())
     .then(list => {
       evPlaceResultsData = Array.isArray(list) ? list : [];
       if (!evPlaceResultsData.length) {
-        box.innerHTML = '<div class="ev-place-result ev-place-empty">見つかりませんでした。地図をタップ／ピンをドラッグで指定してください</div>';
+        box.innerHTML = '<div class="ev-place-result ev-place-empty">住所が見つかりませんでした。地図を動かして指定してください</div>';
         return;
       }
+      // 1件目に自動で寄る。複数候補は一覧で選び直せる
+      evJumpToResult(0);
       box.innerHTML = evPlaceResultsData.map((it, i) =>
-        `<div class="ev-place-result" onclick="evSelectPlaceResult(${i})"><span class="evp-pin">📍</span><span class="evp-name">${escapeHtml(it.display_name)}</span><span class="evp-chev">›</span></div>`
+        `<div class="ev-place-result" onclick="evJumpToResult(${i})"><span class="evp-pin">📍</span><span class="evp-name">${escapeHtml(it.display_name)}</span><span class="evp-chev">›</span></div>`
       ).join('');
     })
     .catch(() => { box.innerHTML = '<div class="ev-place-result ev-place-empty">検索に失敗しました（通信環境を確認）</div>'; });
 }
-function evSelectPlaceResult(i) {
+function evJumpToResult(i) {
   const it = evPlaceResultsData[i];
   if (!it || !evCreateMapInstance) return;
   const lat = parseFloat(it.lat), lng = parseFloat(it.lon);
+  evLocActive = true;
   evCreateLat = lat; evCreateLng = lng;
-  evCreateMapInstance.setView([lat, lng], 16);
-  evCreateMarker.setLatLng([lat, lng]).addTo(evCreateMapInstance);
-  // 検索欄に選んだ地名を残す（住所フィールドは上書きしない＝住所とピンは独立）
-  document.getElementById('evPinSearch').value = (it.display_name || '').split(',')[0].trim();
-  document.getElementById('evPlaceResults').innerHTML = '';
+  evCreateMapInstance.setView([lat, lng], 16);  // 中央固定ピンがこの地点に立つ
   setTimeout(() => evCreateMapInstance && evCreateMapInstance.invalidateSize(), 50);
 }
 
@@ -15971,7 +15964,7 @@ function openEventCreate() {
   document.getElementById('evCreateEndDate').value = '';
   document.getElementById('evCreateEndTime').value = '';
   document.getElementById('evCreatePlace').value = '';
-  document.getElementById('evPinSearch').value = '';
+  document.getElementById('evPlaceResults').innerHTML = '';
   document.getElementById('evCreateMessage').value = '';
   document.getElementById('evCreateDeadline').value = '';
   evDateMode = 'fixed';
@@ -16023,7 +16016,7 @@ function openEventEdit(eventId) {
   document.getElementById('evCreateEndDate').value = ev.endDate || '';
   document.getElementById('evCreateEndTime').value = ev.endTime || '';
   document.getElementById('evCreatePlace').value = ev.place || '';
-  document.getElementById('evPinSearch').value = '';
+  document.getElementById('evPlaceResults').innerHTML = '';
   document.getElementById('evCreateMessage').value = ev.message || '';
   document.getElementById('evCreateDeadline').value = ev.deadline || '';
   evDateMode = ev.type === 'poll' ? 'poll' : 'fixed';
