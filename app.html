@@ -8270,42 +8270,49 @@
         </div>
 
 
-        <!-- 4. 場所（検索→ピン→ドラッグ微調整。LINE方式） -->
+        <!-- 4. 住所（テキスト入力・必須） -->
         <div class="ev-field">
-          <span class="ev-field-label">場所</span>
+          <span class="ev-field-label">住所</span>
+          <input type="text" class="ev-input" id="evCreatePlace" placeholder="例: 兵庫県淡路市里1000-1">
+        </div>
+
+        <!-- 5. 位置情報（任意）：地名で検索して自分でピンを刺す -->
+        <div class="ev-field">
+          <span class="ev-field-label">位置情報 <span class="ev-field-optional">任意</span></span>
           <div class="ev-place-search">
-            <input type="text" class="ev-input" id="evCreatePlace" placeholder="場所を検索（例: 淡路島）" autocomplete="off"
+            <input type="text" class="ev-input" id="evPinSearch" placeholder="地名で検索してピンを刺す（例: 淡路島）" autocomplete="off"
                    oninput="onEvPlaceInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();evPlaceSearch();}">
             <button type="button" class="ev-place-search-btn" onclick="evPlaceSearch()">🔍</button>
           </div>
           <div class="ev-place-results" id="evPlaceResults"></div>
           <div class="ev-map-picker" id="evCreateMap"></div>
-          <div class="ev-map-hint">📍 検索でピンが立ちます。ピンをドラッグして微調整できます</div>
+          <div class="ev-map-hint">🔍 検索でピンが立ちます。地図をタップ／ピンをドラッグで自由に微調整できます</div>
         </div>
 
-        <!-- 6. ヒーロー画像エリア（写真必須）：選ぶ→アップロード→プレビュー -->
+        <!-- 6. ヒーロー画像エリア（写真必須）：選ぶ→プレビュー→アップロード -->
         <div class="ev-cover-editor">
-          <div class="ev-cover-section-title">写真を選ぶ</div>
+          <div class="ev-cover-section-title">イベントTOP画を選ぶ</div>
           <div class="ev-cover-palette" id="evCoverPhotos"></div>
+          <div class="ev-cover-preview" id="evCoverPreview"></div>
+          <div class="ev-cover-drag-hint" id="evCoverDragHint" style="display:none;">ドラッグで位置調整</div>
           <label class="ev-cover-upload-btn">
             <input type="file" accept="image/*" id="evCoverUploadInput" onchange="handleEvCoverUpload(event)" hidden>
             <span class="ev-cover-upload-ico">📷</span>
             <span>自分の写真をアップロード</span>
           </label>
-          <div class="ev-cover-preview" id="evCoverPreview"></div>
-          <div class="ev-cover-drag-hint" id="evCoverDragHint" style="display:none;">ドラッグで位置調整</div>
         </div>
 
-        <!-- 7. ページ背景エディタ -->
+        <!-- 7. イベントページ背景エディタ -->
         <div class="ev-cover-editor ev-bg-editor-block">
-          <div class="ev-bg-editor-title">✨ ページ背景</div>
+          <div class="ev-bg-editor-title">✨ イベントページ背景</div>
           <div class="ev-bg-editor-hint">下のプレビューに即反映されます</div>
           <div class="ev-bg-mini-preview" id="evBgMiniPreview"></div>
-          <div class="ev-cover-section-title">背景の光（タップで切替・投稿と同じ光のパレット）</div>
-          <div style="display:flex;align-items:center;gap:12px;padding:2px 0 4px;">
+          <div class="ev-cover-section-title">背景の光（投稿と同じ光のパレット）</div>
+          <div style="display:flex;align-items:center;gap:12px;padding:2px 0 2px;">
             <button type="button" class="cp-cycle" onclick="cycleEvBgGradient()" title="背景の光を切り替え（タップで次へ）"><span class="cp-core" id="evBgCycleCore"></span></button>
             <span id="evBgGradName" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.85);"></span>
           </div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px;">👆 ボタンをタップするたびに色が変わります</div>
         </div>
 
         <!-- 8. 公開範囲 -->
@@ -15323,9 +15330,10 @@ const EV_COVER_GRADIENTS = [
   'linear-gradient(135deg,#0F172A 0%,#334155 100%)',             // Slate
 ];
 
-// イベントページ背景グラデーション＝投稿の「光のパレット」8種と共通（POST_BGSが正）
-// index: 0月光 1暁 2蒼穹 3茜 4星雲 5極光 6深宇宙 7星空
-const EV_BG_GRADIENTS = POST_BGS.map(b => b.bg);
+// イベントページ背景＝投稿の「光のパレット」から月光(ベージュ)を除いた7種（星屑が映えないため）
+// EV_BG_LIST index: 0暁 1蒼穹 2茜 3星雲 4極光 5深宇宙 6星空
+const EV_BG_LIST = POST_BGS.filter(b => b.id !== 'gekko');
+const EV_BG_GRADIENTS = EV_BG_LIST.map(b => b.bg);
 
 // パターン（SVG）10種 - 壁紙風の装飾柄
 // apply=本番適用用(透明背景・控えめな色)、swatch=パレット表示用(ベース色+明るい柄で視認性優先)
@@ -15333,11 +15341,43 @@ const EV_BG_GRADIENTS = POST_BGS.map(b => b.bg);
 // apply: 透過パターンのみ → 下のgradientと重ねる / swatch: 独立した見本
 const EV_BG_PATTERNS = {
   black: { label: '黒', nameEn: 'Solid Black', apply: null, swatch: '#000' },
-  // 宇宙柄（星屑）＝全イベント共通のデフォルト。光グラデの上に淡い星を散らす
+  // 宇宙柄（天の川）＝全イベント共通のデフォルト。光グラデの上に無数の星＋天の川の帯
   cosmos: {
-    label: '星屑', nameEn: '',
-    apply:  'radial-gradient(1.4px 1.4px at 18% 24%, rgba(255,255,255,0.9), transparent), radial-gradient(1px 1px at 68% 58%, rgba(255,255,255,0.7), transparent), radial-gradient(1.6px 1.6px at 42% 82%, rgba(255,255,255,0.85), transparent), radial-gradient(1px 1px at 84% 22%, rgba(255,255,255,0.65), transparent), radial-gradient(1.2px 1.2px at 54% 12%, rgba(255,255,255,0.8), transparent), radial-gradient(1.5px 1.5px at 9% 68%, rgba(255,255,255,0.7), transparent), radial-gradient(1px 1px at 91% 84%, rgba(255,255,255,0.6), transparent), radial-gradient(1.2px 1.2px at 30% 46%, rgba(255,255,255,0.7), transparent)',
-    swatch: 'radial-gradient(1.5px 1.5px at 30% 30%, #fff, transparent), radial-gradient(1.5px 1.5px at 70% 60%, #fff, transparent), radial-gradient(1px 1px at 50% 85%, #fff, transparent), linear-gradient(135deg,#020408 0%,#1E3A5F 70%,#2E1065 100%)',
+    label: '天の川', nameEn: '',
+    apply: [
+      // 大きめの輝星（十字グロー付きの明るい星）
+      'radial-gradient(2px 2px at 18% 24%, rgba(255,255,255,1), transparent)',
+      'radial-gradient(2.4px 2.4px at 42% 82%, rgba(255,255,255,1), transparent)',
+      'radial-gradient(2px 2px at 74% 34%, rgba(214,232,255,1), transparent)',
+      'radial-gradient(1.8px 1.8px at 88% 66%, rgba(255,246,224,1), transparent)',
+      // 中くらいの星
+      'radial-gradient(1.4px 1.4px at 8% 62%, rgba(255,255,255,0.9), transparent)',
+      'radial-gradient(1.4px 1.4px at 30% 46%, rgba(255,255,255,0.85), transparent)',
+      'radial-gradient(1.4px 1.4px at 54% 12%, rgba(255,255,255,0.9), transparent)',
+      'radial-gradient(1.4px 1.4px at 62% 70%, rgba(224,236,255,0.85), transparent)',
+      'radial-gradient(1.4px 1.4px at 91% 20%, rgba(255,255,255,0.85), transparent)',
+      'radial-gradient(1.4px 1.4px at 48% 58%, rgba(255,255,255,0.8), transparent)',
+      // 小さな星屑（密度で天の川感を出す）
+      'radial-gradient(1px 1px at 12% 14%, rgba(255,255,255,0.75), transparent)',
+      'radial-gradient(1px 1px at 24% 72%, rgba(255,255,255,0.7), transparent)',
+      'radial-gradient(1px 1px at 34% 30%, rgba(255,255,255,0.65), transparent)',
+      'radial-gradient(1px 1px at 40% 92%, rgba(255,255,255,0.7), transparent)',
+      'radial-gradient(1px 1px at 52% 40%, rgba(255,255,255,0.7), transparent)',
+      'radial-gradient(1px 1px at 58% 22%, rgba(255,255,255,0.65), transparent)',
+      'radial-gradient(1px 1px at 66% 52%, rgba(255,255,255,0.7), transparent)',
+      'radial-gradient(1px 1px at 70% 88%, rgba(255,255,255,0.65), transparent)',
+      'radial-gradient(1px 1px at 80% 12%, rgba(255,255,255,0.7), transparent)',
+      'radial-gradient(1px 1px at 84% 48%, rgba(255,255,255,0.7), transparent)',
+      'radial-gradient(1px 1px at 94% 78%, rgba(255,255,255,0.7), transparent)',
+      'radial-gradient(1px 1px at 6% 40%, rgba(255,255,255,0.65), transparent)',
+      'radial-gradient(1px 1px at 46% 76%, rgba(255,255,255,0.65), transparent)',
+      'radial-gradient(1px 1px at 76% 64%, rgba(255,255,255,0.65), transparent)',
+      // 天の川の帯（斜めに走る淡い光の川）＋星雲グロー
+      'radial-gradient(ellipse 55% 130% at 68% 30%, rgba(190,170,255,0.16), transparent 60%)',
+      'radial-gradient(ellipse 50% 120% at 30% 75%, rgba(140,200,255,0.14), transparent 60%)',
+      'linear-gradient(118deg, transparent 34%, rgba(255,255,255,0.05) 44%, rgba(214,224,255,0.11) 50%, rgba(255,255,255,0.05) 56%, transparent 66%)',
+    ].join(', '),
+    swatch: 'radial-gradient(1.6px 1.6px at 28% 30%, #fff, transparent), radial-gradient(1.6px 1.6px at 68% 62%, #fff, transparent), radial-gradient(1px 1px at 48% 84%, #fff, transparent), radial-gradient(1px 1px at 82% 24%, #fff, transparent), linear-gradient(135deg,#020408 0%,#1E3A5F 70%,#2E1065 100%)',
   },
   polkadot: {
     label: 'ドット', nameEn: 'Polka Dot',
@@ -15438,7 +15478,7 @@ let eventsData = [
     place: '渋谷 鳥貴族', lat: 35.658, lng: 139.701,
     message: '夏の定例飲み！都合のいい日に○をつけてね', deadline: '2026-07-05',
     coverImage: 'assets/img/u04.jpg', coverGradient: 0, coverPos: { x: 50, y: 50 },
-    bgGradient: 2, bgPattern: 'black',
+    bgGradient: 1, bgPattern: 'black',
     isPublic: false,
     hostId: 'yu_tanaka', hostName: '田中 悠', hostAvatar: '🧑', hostScore: 32100,
     invitees: ['taisho_k','rina_s','kenta_s','daisuke_ito'],
@@ -15462,7 +15502,7 @@ let eventsData = [
     coverGradient: 0,
     coverImage: 'assets/img/u01.jpg',
     coverPos: { x: 50, y: 50 },
-    bgGradient: 4,
+    bgGradient: 3,
     bgPattern: 'seigaiha',
     isPublic: false,
     hostId: EV_SELF_ID,
@@ -15496,7 +15536,7 @@ let eventsData = [
     coverGradient: 2,
     coverImage: 'assets/img/u04.jpg',
     coverPos: { x: 50, y: 50 },
-    bgGradient: 3,
+    bgGradient: 2,
     bgPattern: 'hearts',
     isPublic: true,
     hostId: 'yu_tanaka',
@@ -15676,7 +15716,7 @@ let evCreateScope = 'open';     // 'open' | 'closed'
 let evCreateCoverIdx = 0;
 let evCreateCoverImage = null;  // データURL or Unsplash URL
 let evCreateCoverPos = { x: 50, y: 50 }; // 写真位置（％）
-let evCreateBgGradient = 6;     // デフォルト：深宇宙
+let evCreateBgGradient = 5;     // デフォルト：深宇宙（EV_BG_LIST index）
 let evCreateBgPattern = 'cosmos'; // 固定：宇宙柄（星屑）。ユーザーは光の色だけ選ぶ
 let evEditingEventId = null;    // 編集モード時のみイベントIDが入る（null=新規作成）
 let evDraft = null;             // プレビュー中の下書きイベント（公開前。eventsDataには未登録）
@@ -15754,12 +15794,12 @@ function initEvCreateMap(lat, lng) {
 let evPlaceSearchTimer = null, evPlaceResultsData = [];
 function onEvPlaceInput() {
   clearTimeout(evPlaceSearchTimer);
-  const q = document.getElementById('evCreatePlace').value.trim();
+  const q = document.getElementById('evPinSearch').value.trim();
   if (q.length < 2) { document.getElementById('evPlaceResults').innerHTML = ''; return; }
   evPlaceSearchTimer = setTimeout(evPlaceSearch, 600); // 入力が落ち着いたら1回だけ叩く
 }
 function evPlaceSearch() {
-  const q = document.getElementById('evCreatePlace').value.trim();
+  const q = document.getElementById('evPinSearch').value.trim();
   const box = document.getElementById('evPlaceResults');
   if (!q) { box.innerHTML = ''; return; }
   box.innerHTML = '<div class="ev-place-result ev-place-loading">検索中…</div>';
@@ -15784,7 +15824,8 @@ function evSelectPlaceResult(i) {
   evCreateLat = lat; evCreateLng = lng;
   evCreateMapInstance.setView([lat, lng], 16);
   evCreateMarker.setLatLng([lat, lng]).addTo(evCreateMapInstance);
-  document.getElementById('evCreatePlace').value = (it.display_name || '').split(',')[0].trim();
+  // 検索欄に選んだ地名を残す（住所フィールドは上書きしない＝住所とピンは独立）
+  document.getElementById('evPinSearch').value = (it.display_name || '').split(',')[0].trim();
   document.getElementById('evPlaceResults').innerHTML = '';
   setTimeout(() => evCreateMapInstance && evCreateMapInstance.invalidateSize(), 50);
 }
@@ -15930,6 +15971,7 @@ function openEventCreate() {
   document.getElementById('evCreateEndDate').value = '';
   document.getElementById('evCreateEndTime').value = '';
   document.getElementById('evCreatePlace').value = '';
+  document.getElementById('evPinSearch').value = '';
   document.getElementById('evCreateMessage').value = '';
   document.getElementById('evCreateDeadline').value = '';
   evDateMode = 'fixed';
@@ -15951,7 +15993,7 @@ function openEventCreate() {
   evCreateCoverIdx = 0;
   evCreateCoverImage = null;
   evCreateCoverPos = { x: 50, y: 50 };
-  evCreateBgGradient = 6;
+  evCreateBgGradient = 5;
   evCreateBgPattern = 'cosmos';
   renderEventInviteTargets();
   renderEvCoverEditor();
@@ -15981,6 +16023,7 @@ function openEventEdit(eventId) {
   document.getElementById('evCreateEndDate').value = ev.endDate || '';
   document.getElementById('evCreateEndTime').value = ev.endTime || '';
   document.getElementById('evCreatePlace').value = ev.place || '';
+  document.getElementById('evPinSearch').value = '';
   document.getElementById('evCreateMessage').value = ev.message || '';
   document.getElementById('evCreateDeadline').value = ev.deadline || '';
   evDateMode = ev.type === 'poll' ? 'poll' : 'fixed';
@@ -16240,7 +16283,7 @@ function renderEvBgEditor() {
   const core = document.getElementById('evBgCycleCore');
   const gname = document.getElementById('evBgGradName');
   if (core) core.style.background = EV_BG_GRADIENTS[evCreateBgGradient] || EV_BG_GRADIENTS[0];
-  if (gname) gname.textContent = POST_BGS[evCreateBgGradient] ? POST_BGS[evCreateBgGradient].name : '';
+  if (gname) gname.textContent = EV_BG_LIST[evCreateBgGradient] ? EV_BG_LIST[evCreateBgGradient].name : '';
 }
 
 function cycleEvBgGradient() {
