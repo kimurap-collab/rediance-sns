@@ -3076,6 +3076,8 @@
       background: rgba(168,85,247,0.22);
     }
     .ev-cover-upload-ico { font-size: 16px; }
+    /* タイトルの例文はカーソルを載せたら消す */
+    #evCreateTitle:hover::placeholder, #evCreateTitle:focus::placeholder { color: transparent; }
     /* ページ背景エディタ */
     .ev-bg-editor-block {
       padding: 14px;
@@ -8230,9 +8232,10 @@
         <!-- 3a. 確定モード：カレンダーで日付選択＋開始時刻＋所要時間（終了時刻は自動計算） -->
         <div class="ev-field" id="evDateFixedBlock">
           <span class="ev-field-label">日時</span>
-          <div id="evCalBox" style="margin-top:8px;background:var(--surface,#F5F5F5);border-radius:12px;padding:10px 8px;"></div>
+          <div id="evCalBox" style="margin:8px auto 0;width:100%;max-width:272px;background:var(--surface,#F5F5F5);border-radius:12px;padding:8px;"></div>
           <input type="hidden" id="evCreateDate">
-          <div class="ev-field-row" style="margin-top:10px;align-items:center;gap:8px;">
+          <div id="evSelDateLabel" style="font-size:14.5px;font-weight:700;margin-top:10px;color:var(--text-light,#999);"></div>
+          <div class="ev-field-row" style="margin-top:8px;align-items:center;gap:8px;">
             <select class="ev-input" id="evCreateTime" style="flex:1.1;" onchange="updateEvEndAuto()"></select>
             <span style="color:var(--text-sub,#555);font-size:13px;flex-shrink:0;">から</span>
             <select class="ev-input" id="evCreateDuration" style="flex:1;" onchange="updateEvEndAuto()">
@@ -8292,8 +8295,11 @@
           <div class="ev-bg-mini-preview" id="evBgMiniPreview">
             <div class="ev-bg-mini-name" id="evBgMiniName">Solid Black</div>
           </div>
-          <div class="ev-cover-section-title">グラデーション</div>
-          <div class="ev-cover-palette" id="evBgGradPalette"></div>
+          <div class="ev-cover-section-title">グラデーション（投稿と同じ光のパレット・タップで切替）</div>
+          <div style="display:flex;align-items:center;gap:12px;padding:2px 0 4px;">
+            <button type="button" class="cp-cycle" onclick="cycleEvBgGradient()" title="背景の光を切り替え（タップで次へ）"><span class="cp-core" id="evBgCycleCore"></span></button>
+            <span id="evBgGradName" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.85);"></span>
+          </div>
           <div class="ev-cover-section-title">模様</div>
           <div class="ev-cover-palette" id="evBgPatternPalette"></div>
         </div>
@@ -15313,17 +15319,9 @@ const EV_COVER_GRADIENTS = [
   'linear-gradient(135deg,#0F172A 0%,#334155 100%)',             // Slate
 ];
 
-// イベントページ背景グラデーション（ガラスカード前提で全体華やか）
-const EV_BG_GRADIENTS = [
-  'linear-gradient(180deg, #0A0A0F 0%, #1F1B2E 60%, #2A2340 100%)',                             // 0: ダークナイト（柄が乗るようグラデ化）
-  'linear-gradient(180deg, #E879F9 0%, #A855F7 40%, #6D28D9 80%, #4C1D95 100%)',                // 1: ネオン紫
-  'linear-gradient(180deg, #FB923C 0%, #EF4444 40%, #BE123C 80%, #7F1D1D 100%)',                // 2: サンセット
-  'linear-gradient(180deg, #22D3EE 0%, #3B82F6 40%, #1D4ED8 80%, #1E3A8A 100%)',                // 3: オーシャン
-  'linear-gradient(180deg, #34D399 0%, #10B981 40%, #047857 80%, #064E3B 100%)',                // 4: ミント
-  'radial-gradient(ellipse at 50% 25%, #F9A8D4 0%, #E879F9 30%, #9333EA 65%, #4C1D95 100%)',    // 5: スポット紫ピンク
-  'radial-gradient(ellipse at 50% 25%, #FDE68A 0%, #FB923C 30%, #EA580C 65%, #7C2D12 100%)',    // 6: スポットゴールド
-  'linear-gradient(180deg, #F9A8D4 0%, #EC4899 40%, #BE185D 80%, #831843 100%)',                // 7: ローズ
-];
+// イベントページ背景グラデーション＝投稿の「光のパレット」8種と共通（POST_BGSが正）
+// index: 0月光 1暁 2蒼穹 3茜 4星雲 5極光 6深宇宙 7星空
+const EV_BG_GRADIENTS = POST_BGS.map(b => b.bg);
 
 // パターン（SVG）10種 - 壁紙風の装飾柄
 // apply=本番適用用(透明背景・控えめな色)、swatch=パレット表示用(ベース色+明るい柄で視認性優先)
@@ -15331,6 +15329,7 @@ const EV_BG_GRADIENTS = [
 // apply: 透過パターンのみ → 下のgradientと重ねる / swatch: 独立した見本
 const EV_BG_PATTERNS = {
   black: { label: '黒', nameEn: 'Solid Black', apply: null, swatch: '#000' },
+  plain: { label: 'グラデのみ', nameEn: '', apply: null, swatch: 'linear-gradient(135deg,#512DA8 0%,#9C27B0 100%)' },
   polkadot: {
     label: 'ドット', nameEn: 'Polka Dot',
     apply:  'radial-gradient(rgba(255,255,255,0.22) 15%, transparent 16%) 0 0 / 36px 36px, radial-gradient(rgba(255,255,255,0.22) 15%, transparent 16%) 18px 18px / 36px 36px',
@@ -15430,7 +15429,7 @@ let eventsData = [
     place: '渋谷 鳥貴族', lat: 35.658, lng: 139.701,
     message: '夏の定例飲み！都合のいい日に○をつけてね', deadline: '2026-07-05',
     coverImage: 'assets/img/u04.jpg', coverGradient: 0, coverPos: { x: 50, y: 50 },
-    bgGradient: 3, bgPattern: 'black',
+    bgGradient: 2, bgPattern: 'black',
     isPublic: false,
     hostId: 'yu_tanaka', hostName: '田中 悠', hostAvatar: '🧑', hostScore: 32100,
     invitees: ['taisho_k','rina_s','kenta_s','daisuke_ito'],
@@ -15454,7 +15453,7 @@ let eventsData = [
     coverGradient: 0,
     coverImage: 'assets/img/u01.jpg',
     coverPos: { x: 50, y: 50 },
-    bgGradient: 5,
+    bgGradient: 4,
     bgPattern: 'seigaiha',
     isPublic: false,
     hostId: EV_SELF_ID,
@@ -15488,7 +15487,7 @@ let eventsData = [
     coverGradient: 2,
     coverImage: 'assets/img/u04.jpg',
     coverPos: { x: 50, y: 50 },
-    bgGradient: 2,
+    bgGradient: 3,
     bgPattern: 'hearts',
     isPublic: true,
     hostId: 'yu_tanaka',
@@ -15668,7 +15667,7 @@ let evCreateScope = 'open';     // 'open' | 'closed'
 let evCreateCoverIdx = 0;
 let evCreateCoverImage = null;  // データURL or Unsplash URL
 let evCreateCoverPos = { x: 50, y: 50 }; // 写真位置（％）
-let evCreateBgGradient = 1;     // デフォルト：ディープ紫
+let evCreateBgGradient = 6;     // デフォルト：深宇宙
 let evCreateBgPattern = 'black'; // デフォルト：ブラック
 let evEditingEventId = null;    // 編集モード時のみイベントIDが入る（null=新規作成）
 let evDraft = null;             // プレビュー中の下書きイベント（公開前。eventsDataには未登録）
@@ -15821,7 +15820,19 @@ function renderEvCalendar() {
     let st = '';
     if (ds === sel) st = 'background:var(--primary,#1E3A5F);color:#fff;font-weight:700;';                  // 選択日＝塗り
     else if (ds === todayStr) st = 'box-shadow:inset 0 0 0 1.5px var(--primary,#1E3A5F);color:var(--primary,#1E3A5F);font-weight:700;';  // 今日＝リング
-    cells += `<div onclick="selectEvCalDate('${ds}')" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;font-size:13.5px;${st}">${d}</div>`;
+    cells += `<div onclick="selectEvCalDate('${ds}')" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;font-size:12.5px;${st}">${d}</div>`;
+  }
+  // 確定日をカレンダー下にテキスト表示（例: 7月10日（金））
+  const lbl = document.getElementById('evSelDateLabel');
+  if (lbl) {
+    if (sel) {
+      const sd = new Date(`${sel}T00:00:00`);
+      lbl.textContent = `📅 ${sd.getMonth() + 1}月${sd.getDate()}日（${['日','月','火','水','木','金','土'][sd.getDay()]}）`;
+      lbl.style.color = 'var(--text-main,#1A1A1A)';
+    } else {
+      lbl.textContent = 'カレンダーから日付を選択';
+      lbl.style.color = 'var(--text-light,#999)';
+    }
   }
   const wd = ['日','月','火','水','木','金','土'].map(w => `<div style="text-align:center;font-size:11px;color:var(--text-light,#999);font-weight:700;">${w}</div>`).join('');
   box.innerHTML = `
@@ -15926,7 +15937,7 @@ function openEventCreate() {
   evCreateCoverIdx = 0;
   evCreateCoverImage = null;
   evCreateCoverPos = { x: 50, y: 50 };
-  evCreateBgGradient = 1;
+  evCreateBgGradient = 6;
   evCreateBgPattern = 'black';
   renderEventInviteTargets();
   renderEvCoverEditor();
@@ -16202,9 +16213,8 @@ function attachCoverDragHandlers(el) {
 function renderEvBgEditor() {
   const preview = document.getElementById('evBgMiniPreview');
   const nameEl  = document.getElementById('evBgMiniName');
-  const gradPal = document.getElementById('evBgGradPalette');
   const patPal  = document.getElementById('evBgPatternPalette');
-  if (!preview || !gradPal || !patPal) return;
+  if (!preview || !patPal) return;
 
   // ミニプレビュー反映
   applyEventPageBg(preview, evCreateBgGradient, evCreateBgPattern);
@@ -16215,14 +16225,11 @@ function renderEvBgEditor() {
     nameEl.textContent = (p && p.nameEn) ? p.nameEn : '';
   }
 
-  // グラデパレット
-  gradPal.innerHTML = EV_BG_GRADIENTS.map((g, i) => {
-    return `
-      <div class="ev-cover-swatch ${i === evCreateBgGradient ? 'active' : ''}"
-           style="background:${g};"
-           onclick="selectEvBgGradient(${i})"></div>
-    `;
-  }).join('');
+  // 光サイクルボタン（投稿の⚫︎と同じ連打式）：コアに現在の光、隣に光の名前
+  const core = document.getElementById('evBgCycleCore');
+  const gname = document.getElementById('evBgGradName');
+  if (core) core.style.background = EV_BG_GRADIENTS[evCreateBgGradient] || EV_BG_GRADIENTS[0];
+  if (gname) gname.textContent = POST_BGS[evCreateBgGradient] ? POST_BGS[evCreateBgGradient].name : '';
 
   // パターンパレット（Pure CSSグラデーション・フル彩色で視認性確保）
   patPal.innerHTML = Object.keys(EV_BG_PATTERNS).map(key => {
@@ -16235,8 +16242,9 @@ function renderEvBgEditor() {
   }).join('');
 }
 
-function selectEvBgGradient(idx) {
-  evCreateBgGradient = idx;
+function cycleEvBgGradient() {
+  evCreateBgGradient = (evCreateBgGradient + 1) % EV_BG_GRADIENTS.length;
+  if (evCreateBgPattern === 'black') evCreateBgPattern = 'plain';  // 黒のままだと光が見えない→自動でグラデのみへ
   renderEvBgEditor();
 }
 function selectEvBgPattern(key) {
