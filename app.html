@@ -2920,8 +2920,6 @@
     /* 中央固定ピン（地図が動く方式。ピン先端＝地図中心）。ドラッグは地図に通す */
     .ev-map-centerpin { position:absolute; left:50%; top:50%; transform:translate(-50%,-100%); font-size:30px; line-height:1; pointer-events:none; z-index:450; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.5)); }
     .ev-map-hint { font-size:11px; color:var(--text-light); margin-top:6px; }
-    .ev-locate-btn { width:100%; padding:12px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-size:14px; font-weight:700; cursor:pointer; }
-    .ev-locate-btn:active { opacity:0.85; }
     /* 住所オートコンプリート：一般的なドロップダウン（Google Places 風・カード＋区切り線＋ホバー） */
     .ev-place-results:not(:empty) { margin-top:6px; background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.12); }
     .ev-place-result { display:flex; align-items:center; gap:9px; padding:12px 14px; font-size:13px; color:var(--text-main); background:#fff; cursor:pointer; line-height:1.4; border-bottom:1px solid var(--border); }
@@ -2929,8 +2927,12 @@
     .ev-place-result:hover { background:var(--surface); }
     .ev-place-result:active { background:#ECECEF; }
     .ev-place-result .evp-pin { flex-shrink:0; font-size:15px; }
-    .ev-place-result .evp-name { flex:1; min-width:0; }
+    .ev-place-result .evp-name { flex:1; min-width:0; font-weight:600; }
+    .ev-place-result .evp-name b { font-weight:600; }
+    .ev-place-result .evp-sub { display:block; font-size:11.5px; color:var(--text-light,#8A8A90); font-weight:400; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .ev-place-result .evp-chev { flex-shrink:0; color:var(--text-light); font-size:17px; }
+    .ev-place-result.ev-place-astyped .evp-pin { color:var(--primary); }
+    .ev-place-result.ev-place-astyped .evp-name { color:var(--primary); font-weight:600; }
     .ev-place-loading, .ev-place-empty { color:var(--text-light); cursor:default; }
     .ev-place-loading:hover, .ev-place-empty:hover { background:#fff; }
     .ev-detail-maplink { color:inherit; text-decoration:none; }
@@ -8275,22 +8277,18 @@
         </div>
 
 
-        <!-- 4. 住所（テキスト入力・必須） -->
+        <!-- 4. 場所（Partiful式：検索1つ。候補を選ぶ／打った文字をそのまま使う） -->
         <div class="ev-field">
-          <span class="ev-field-label">住所</span>
-          <input type="text" class="ev-input" id="evCreatePlace" placeholder="例: 兵庫県淡路市里1000-1">
-        </div>
-
-        <!-- 5. 位置情報（任意）：住所から地図を表示→中央固定ピンに地図を合わせる -->
-        <div class="ev-field">
-          <span class="ev-field-label">位置情報 <span class="ev-field-optional">任意</span></span>
-          <button type="button" class="ev-locate-btn" onclick="evLocateFromAddress()">📍 上の住所から地図を表示</button>
+          <span class="ev-field-label">場所</span>
+          <input type="text" class="ev-input" id="evCreatePlace" placeholder="店名・施設・住所で検索" autocomplete="off"
+                 oninput="onEvPlaceInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();clearTimeout(evPlaceSearchTimer);evPlaceSearch();}">
           <div class="ev-place-results" id="evPlaceResults"></div>
-          <div class="ev-map-picker">
+          <!-- 実在スポットを選んだ時だけ地図＋座標が付く（自由テキストなら地図なし） -->
+          <div class="ev-map-picker" id="evCreateMapWrap" style="display:none;">
             <div id="evCreateMap" class="ev-map-inner"></div>
             <div class="ev-map-centerpin">📍</div>
           </div>
-          <div class="ev-map-hint">🧭 地図を動かして、中央のピンを目的地に合わせてください</div>
+          <div class="ev-map-hint" id="evMapHint" style="display:none;">🧭 地図を動かしてピンを微調整（任意）</div>
         </div>
 
         <!-- 6. ヒーロー画像エリア（写真必須）：プレビュー→選ぶ→アップロード -->
@@ -15811,42 +15809,71 @@ function initEvCreateMap(lat, lng) {
     });
   }
   evCreateMapInstance.setView(center, zoom);
-  document.getElementById('evPlaceResults').innerHTML = '';
   setTimeout(() => { if (evCreateMapInstance) evCreateMapInstance.invalidateSize(); }, 120);
 }
 
-// 住所（上のテキスト欄）から地図を一気にその地点へ寄せる（Nominatim / OSM・無料）
-let evPlaceResultsData = [];
-function evLocateFromAddress() {
+// ===== 場所（Partiful式：検索1つ。候補を選ぶ or 打った文字をそのまま使う） =====
+let evPlaceResultsData = [], evPlaceSearchTimer = null;
+function onEvPlaceInput() {
+  clearTimeout(evPlaceSearchTimer);
+  const q = document.getElementById('evCreatePlace').value.trim();
+  hideEvMap();  // 入力を変えたら未確定に戻す（ピン/座標は選び直しで付く）
+  if (q.length < 2) { document.getElementById('evPlaceResults').innerHTML = ''; return; }
+  evPlaceSearchTimer = setTimeout(evPlaceSearch, 500);  // 打ち終わりに1回だけ叩く
+}
+function evPlaceSearch() {
   const q = document.getElementById('evCreatePlace').value.trim();
   const box = document.getElementById('evPlaceResults');
-  if (!q) { showToast('先に住所を入力してください'); return; }
-  if (!evCreateMapInstance) { showToast('地図を読み込めませんでした'); return; }
-  box.innerHTML = '<div class="ev-place-result ev-place-loading">住所を検索中…</div>';
+  if (!q) { box.innerHTML = ''; return; }
+  box.innerHTML = '<div class="ev-place-result ev-place-loading">検索中…</div>';
   fetch('https://nominatim.openstreetmap.org/search?format=json&accept-language=ja&limit=5&q=' + encodeURIComponent(q))
     .then(r => r.json())
     .then(list => {
+      if (document.getElementById('evCreatePlace').value.trim() !== q) return;  // 入力が変わってたら破棄
       evPlaceResultsData = Array.isArray(list) ? list : [];
-      if (!evPlaceResultsData.length) {
-        box.innerHTML = '<div class="ev-place-result ev-place-empty">住所が見つかりませんでした。地図を動かして指定してください</div>';
-        return;
-      }
-      // 1件目に自動で寄る。複数候補は一覧で選び直せる
-      evJumpToResult(0);
-      box.innerHTML = evPlaceResultsData.map((it, i) =>
-        `<div class="ev-place-result" onclick="evJumpToResult(${i})"><span class="evp-pin">📍</span><span class="evp-name">${escapeHtml(it.display_name)}</span><span class="evp-chev">›</span></div>`
-      ).join('');
+      renderEvPlaceResults(q, false);
     })
-    .catch(() => { box.innerHTML = '<div class="ev-place-result ev-place-empty">検索に失敗しました（通信環境を確認）</div>'; });
+    .catch(() => { evPlaceResultsData = []; renderEvPlaceResults(q, true); });
 }
-function evJumpToResult(i) {
+function renderEvPlaceResults(q, failed) {
+  const box = document.getElementById('evPlaceResults');
+  let html = '';
+  if (!failed) {
+    html += evPlaceResultsData.map((it, i) => {
+      const parts = (it.display_name || '').split(',');
+      const nm = parts[0].trim();
+      const ad = parts.slice(1).join(',').trim();
+      return `<div class="ev-place-result" onclick="evSelectPlaceResult(${i})"><span class="evp-pin">📍</span><span class="evp-name">${escapeHtml(nm)}${ad ? `<span class="evp-sub">${escapeHtml(ad)}</span>` : ''}</span><span class="evp-chev">›</span></div>`;
+    }).join('');
+  }
+  // 末尾：打った文字をそのまま場所にする（Partifulの肝。一般住宅の住所など）
+  html += `<div class="ev-place-result ev-place-astyped" onclick="evUsePlaceAsTyped()"><span class="evp-pin">✎</span><span class="evp-name">「${escapeHtml(q)}」をそのまま使う</span></div>`;
+  box.innerHTML = html;
+}
+function evSelectPlaceResult(i) {
   const it = evPlaceResultsData[i];
-  if (!it || !evCreateMapInstance) return;
-  const lat = parseFloat(it.lat), lng = parseFloat(it.lon);
-  evLocActive = true;
-  evCreateLat = lat; evCreateLng = lng;
-  evCreateMapInstance.setView([lat, lng], 16);  // 中央固定ピンがこの地点に立つ
-  setTimeout(() => evCreateMapInstance && evCreateMapInstance.invalidateSize(), 50);
+  if (!it) return;
+  document.getElementById('evCreatePlace').value = (it.display_name || '').split(',')[0].trim();
+  document.getElementById('evPlaceResults').innerHTML = '';
+  showEvMapAt(parseFloat(it.lat), parseFloat(it.lon));  // 実在スポット＝地図＆座標を付ける
+}
+function evUsePlaceAsTyped() {
+  // 打った文字をそのまま場所に。座標なし＝地図は出さない（Partiful式）
+  document.getElementById('evPlaceResults').innerHTML = '';
+  hideEvMap();
+}
+function showEvMapAt(lat, lng) {
+  if (lat == null || lng == null || isNaN(lat) || isNaN(lng)) return;
+  document.getElementById('evCreateMapWrap').style.display = '';
+  document.getElementById('evMapHint').style.display = '';
+  initEvCreateMap(lat, lng);
+}
+function hideEvMap() {
+  const wrap = document.getElementById('evCreateMapWrap');
+  if (wrap) wrap.style.display = 'none';
+  const hint = document.getElementById('evMapHint');
+  if (hint) hint.style.display = 'none';
+  evCreateLat = null; evCreateLng = null; evLocActive = false;
 }
 
 // ===== 日程調整（poll）ヘルパー =====
@@ -16026,7 +16053,7 @@ function openEventCreate() {
   // 冒頭へスクロール
   const screen = document.getElementById('screen-event-create');
   if (screen) screen.scrollTop = 0;
-  initEvCreateMap(null, null);
+  hideEvMap();  // 新規＝地図は非表示（実在スポットを選んだ時だけ出す）
 }
 
 function openEventEdit(eventId) {
@@ -16100,7 +16127,9 @@ function openEventEdit(eventId) {
   // 編集時も冒頭から開始
   const screen = document.getElementById('screen-event-create');
   if (screen) screen.scrollTop = 0;
-  initEvCreateMap(ev.lat != null ? ev.lat : null, ev.lng != null ? ev.lng : null);
+  // 座標があれば地図を出す（実在スポットで作られたイベント）、なければ非表示
+  if (ev.lat != null && ev.lng != null) showEvMapAt(ev.lat, ev.lng);
+  else hideEvMap();
 }
 
 function deleteEventFromDetail(eventId) {
