@@ -8204,6 +8204,12 @@
           <input type="text" class="ev-input ev-input-lg" id="evCreateTitle" placeholder="例: Yogbo淡路島保養所 お泊り会">
         </label>
 
+        <!-- 2. イベント内容 -->
+        <label class="ev-field">
+          <span class="ev-field-label">イベント内容 <span class="ev-field-optional">任意</span></span>
+          <textarea class="ev-input ev-textarea" id="evCreateMessage" placeholder="例: 飯と温泉とサウナあります。2日間のんびりしよう！" rows="4"></textarea>
+        </label>
+
         <!-- 2. 日時の決め方（確定 or 日程調整） -->
         <div class="ev-field">
           <span class="ev-field-label">日時の決め方</span>
@@ -8221,13 +8227,28 @@
           </div>
         </div>
 
-        <!-- 2a. 確定モード：単一の開始日時 -->
+        <!-- 3a. 確定モード：カレンダーで日付選択＋開始時刻＋所要時間（終了時刻は自動計算） -->
         <div class="ev-field" id="evDateFixedBlock">
-          <span class="ev-field-label">開始日時</span>
-          <div class="ev-field-row">
-            <input type="date" class="ev-input" id="evCreateDate" style="flex:1.3;">
-            <select class="ev-input" id="evCreateTime" style="flex:1;"></select>
+          <span class="ev-field-label">日時</span>
+          <div id="evCalBox" style="margin-top:8px;background:var(--surface,#F5F5F5);border-radius:12px;padding:10px 8px;"></div>
+          <input type="hidden" id="evCreateDate">
+          <div class="ev-field-row" style="margin-top:10px;align-items:center;gap:8px;">
+            <select class="ev-input" id="evCreateTime" style="flex:1.1;" onchange="updateEvEndAuto()"></select>
+            <span style="color:var(--text-sub,#555);font-size:13px;flex-shrink:0;">から</span>
+            <select class="ev-input" id="evCreateDuration" style="flex:1;" onchange="updateEvEndAuto()">
+              <option value="1">1時間</option>
+              <option value="1.5">1時間半</option>
+              <option value="2" selected>2時間</option>
+              <option value="3">3時間</option>
+              <option value="4">4時間</option>
+              <option value="5">5時間</option>
+              <option value="6">6時間</option>
+              <option value="8">8時間</option>
+            </select>
           </div>
+          <div id="evEndPreview" style="font-size:12.5px;color:var(--text-sub,#555);margin-top:6px;"></div>
+          <input type="hidden" id="evCreateEndDate">
+          <input type="hidden" id="evCreateEndTime">
         </div>
 
         <!-- 2b. 調整モード：候補日時リスト -->
@@ -8237,14 +8258,6 @@
           <button type="button" class="ev-poll-add-btn" onclick="addEvCandidate()">＋ 候補を追加</button>
         </div>
 
-        <!-- 3. 終了日時 -->
-        <div class="ev-field">
-          <span class="ev-field-label">終了日時 <span class="ev-field-optional">任意</span></span>
-          <div class="ev-field-row">
-            <input type="date" class="ev-input" id="evCreateEndDate" style="flex:1.3;">
-            <select class="ev-input" id="evCreateEndTime" style="flex:1;"></select>
-          </div>
-        </div>
 
         <!-- 4. 場所（検索→ピン→ドラッグ微調整。LINE方式） -->
         <div class="ev-field">
@@ -8258,12 +8271,6 @@
           <div class="ev-map-picker" id="evCreateMap"></div>
           <div class="ev-map-hint">📍 検索でピンが立ちます。ピンをドラッグして微調整できます</div>
         </div>
-
-        <!-- 5. 詳細 -->
-        <label class="ev-field">
-          <span class="ev-field-label">詳細 <span class="ev-field-optional">任意</span></span>
-          <textarea class="ev-input ev-textarea" id="evCreateMessage" placeholder="例: 飯と温泉とサウナあります。2日間のんびりしよう！" rows="4"></textarea>
-        </label>
 
         <!-- 6. ヒーロー画像エリア（写真必須）：選ぶ→アップロード→プレビュー -->
         <div class="ev-cover-editor">
@@ -15791,10 +15798,69 @@ function evTimeOptions(sel) {
   return o;
 }
 function fillFixedTimeSelects(startSel, endSel) {
+  // 終了selectは廃止（所要時間から自動計算）。endSel引数は呼び出し互換のため残置
   const t = document.getElementById('evCreateTime');
-  const e = document.getElementById('evCreateEndTime');
-  if (t) t.innerHTML = evTimeOptions(startSel || '');
-  if (e) e.innerHTML = evTimeOptions(endSel || '');
+  if (t) t.innerHTML = evTimeOptions(startSel || '19:00');   // デフォルト19時
+}
+
+// ===== 確定モード用カレンダー（今月表示・今日をマーク・タップで日付選択） =====
+let evCalYear = null, evCalMonth = null;   // 表示中の年月
+function renderEvCalendar() {
+  const box = document.getElementById('evCalBox');
+  if (!box) return;
+  const today = new Date();
+  if (evCalYear == null) { evCalYear = today.getFullYear(); evCalMonth = today.getMonth(); }
+  const sel = document.getElementById('evCreateDate').value;
+  const pad = new Date(evCalYear, evCalMonth, 1).getDay();
+  const daysInMonth = new Date(evCalYear, evCalMonth + 1, 0).getDate();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  let cells = '';
+  for (let i = 0; i < pad; i++) cells += '<div></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = `${evCalYear}-${String(evCalMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    let st = '';
+    if (ds === sel) st = 'background:var(--primary,#1E3A5F);color:#fff;font-weight:700;';                  // 選択日＝塗り
+    else if (ds === todayStr) st = 'box-shadow:inset 0 0 0 1.5px var(--primary,#1E3A5F);color:var(--primary,#1E3A5F);font-weight:700;';  // 今日＝リング
+    cells += `<div onclick="selectEvCalDate('${ds}')" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;font-size:13.5px;${st}">${d}</div>`;
+  }
+  const wd = ['日','月','火','水','木','金','土'].map(w => `<div style="text-align:center;font-size:11px;color:var(--text-light,#999);font-weight:700;">${w}</div>`).join('');
+  box.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0 6px 8px;">
+      <button type="button" onclick="evCalNav(-1)" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-sub,#555);padding:2px 12px;">‹</button>
+      <div style="font-weight:700;font-size:14px;">${evCalYear}年${evCalMonth + 1}月</div>
+      <button type="button" onclick="evCalNav(1)" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-sub,#555);padding:2px 12px;">›</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">${wd}${cells}</div>`;
+}
+function evCalNav(d) {
+  evCalMonth += d;
+  if (evCalMonth < 0) { evCalMonth = 11; evCalYear--; }
+  if (evCalMonth > 11) { evCalMonth = 0; evCalYear++; }
+  renderEvCalendar();
+}
+function selectEvCalDate(ds) {
+  document.getElementById('evCreateDate').value = ds;
+  renderEvCalendar();
+  updateEvEndAuto();
+}
+// 開始時刻＋所要時間 → 終了を自動計算して従来の隠しフィールドへ（保存コードは無改修）
+function updateEvEndAuto() {
+  const date = document.getElementById('evCreateDate').value;
+  const time = document.getElementById('evCreateTime') ? document.getElementById('evCreateTime').value : '';
+  const durEl = document.getElementById('evCreateDuration');
+  const prev = document.getElementById('evEndPreview');
+  const endD = document.getElementById('evCreateEndDate');
+  const endT = document.getElementById('evCreateEndTime');
+  if (!durEl || !endD || !endT) return;
+  if (!date || !time) { endD.value = ''; endT.value = ''; if (prev) prev.textContent = ''; return; }
+  const dur = parseFloat(durEl.value || '2');
+  const start = new Date(`${date}T${time}:00`);
+  const end = new Date(start.getTime() + dur * 3600 * 1000);
+  const eds = `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, '0')}-${String(end.getDate()).padStart(2, '0')}`;
+  const ets = `${String(end.getHours()).padStart(2, '0')}:${String(end.getMinutes()).padStart(2, '0')}`;
+  endD.value = eds;
+  endT.value = ets;
+  if (prev) prev.textContent = `⏱ ${time} 開始 → ${ets} 終了${eds !== date ? '（翌日）' : ''}`;
 }
 function setEvDateMode(mode) {
   evDateMode = mode;
@@ -15845,7 +15911,13 @@ function openEventCreate() {
   evCandidates = [];
   setEvDateMode('fixed');
   renderEvCandidateList();
-  fillFixedTimeSelects('', '');
+  fillFixedTimeSelects('19:00', '');
+  document.getElementById('evCreateTime').value = '19:00';
+  const durSel = document.getElementById('evCreateDuration');
+  if (durSel) durSel.value = '2';
+  evCalYear = null; evCalMonth = null;   // 今月にリセット
+  renderEvCalendar();
+  updateEvEndAuto();
   const fileInput = document.getElementById('evCoverUploadInput');
   if (fileInput) fileInput.value = '';
   evInviteSelectedTiers = new Set();
@@ -15891,6 +15963,25 @@ function openEventEdit(eventId) {
   setEvDateMode(evDateMode);
   renderEvCandidateList();
   fillFixedTimeSelects(ev.time, ev.endTime);
+  // カレンダーをイベント日の月に合わせ、所要時間を開始/終了差から復元
+  if (ev.date) {
+    const d = new Date(ev.date);
+    evCalYear = d.getFullYear(); evCalMonth = d.getMonth();
+  } else { evCalYear = null; evCalMonth = null; }
+  renderEvCalendar();
+  const durSel2 = document.getElementById('evCreateDuration');
+  if (durSel2) {
+    let dur = 2;
+    if (ev.time && ev.endTime) {
+      const st = new Date(`${ev.date}T${ev.time}:00`);
+      const en = new Date(`${ev.endDate || ev.date}T${ev.endTime}:00`);
+      const h = (en - st) / 3600000;
+      if (h > 0) dur = h;
+    }
+    const opts = [...durSel2.options].map(o => parseFloat(o.value));
+    durSel2.value = String(opts.reduce((a, b) => Math.abs(b - dur) < Math.abs(a - dur) ? b : a));  // 最も近い選択肢
+  }
+  updateEvEndAuto();
   const fileInput = document.getElementById('evCoverUploadInput');
   if (fileInput) fileInput.value = '';
 
