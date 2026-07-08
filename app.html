@@ -2924,6 +2924,9 @@
     .ev-pin-toggle:active { background:#ECECEF; }
     .ev-pin-section { margin-top:8px; }
     .ev-pin-section #evPinSearch { margin-bottom:2px; }
+    .ev-pin-confirm { width:100%; margin-top:10px; padding:13px; border:none; border-radius:11px; background:var(--primary,#1E3A5F); color:#fff; font-size:14.5px; font-weight:800; cursor:pointer; }
+    .ev-pin-confirm:active { opacity:0.85; }
+    .ev-pin-confirm.confirmed { background:#1B8A3A; }
     .ev-pin-address { font-size:12px; color:var(--text-sub,#555); margin-top:8px; line-height:1.5; background:var(--surface,#F5F5F5); border-radius:9px; padding:9px 11px; }
     /* 住所オートコンプリート：一般的なドロップダウン（Google Places 風・カード＋区切り線＋ホバー） */
     .ev-place-results:not(:empty) { margin-top:6px; background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.12); }
@@ -8300,6 +8303,7 @@
               <div class="ev-map-centerpin">📍</div>
             </div>
             <div class="ev-map-hint">🧭 目印を選ぶと地図が寄ります。地図を動かして中央ピンを実際の場所に合わせてください</div>
+            <button type="button" class="ev-pin-confirm" id="evPinConfirm" onclick="confirmEvPin()">✓ この位置に決定</button>
             <div class="ev-pin-address" id="evPinAddress" style="display:none;"></div>
           </div>
         </div>
@@ -15797,30 +15801,25 @@ function closeCreateMenu() {
 
 // ===== イベント作成: 地図ピン（Leaflet / OpenStreetMap）=====
 // 中央固定ピン方式（Uber/LINE式）：ピンは画面中央に固定、地図を動かして合わせる。
-// evLocActive=true になってから地図の中心を位置情報として記録する（未操作なら位置情報なし＝任意）。
+// 座標は「この位置に決定」を押して初めて確定（confirmEvPin）。移動中は中央の住所をプレビュー表示。
 let evCreateMapInstance = null, evCreateLat = null, evCreateLng = null, evLocActive = false;
 function initEvCreateMap(lat, lng) {
   if (typeof L === 'undefined') return; // Leaflet未読込（オフライン等）なら地図無しで続行
   const hasPin = (lat != null && lng != null);
   const center = hasPin ? [lat, lng] : [34.36, 134.83]; // 既定: 淡路島付近
   const zoom = hasPin ? 15 : 9;
-  evCreateLat = hasPin ? lat : null;
+  evCreateLat = hasPin ? lat : null;   // 実在スポット/編集は確定済みで開く
   evCreateLng = hasPin ? lng : null;
-  evLocActive = hasPin;  // 編集で座標があるなら以後の地図移動を記録
+  evLocActive = hasPin;
   if (!evCreateMapInstance) {
     evCreateMapInstance = L.map('evCreateMap', { zoomControl: true }).setView(center, zoom);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19, attribution: '© OpenStreetMap'
     }).addTo(evCreateMapInstance);
-    // ユーザーが地図をドラッグ／ズームしたら位置情報を有効化
-    evCreateMapInstance.on('dragstart zoomstart', () => { evLocActive = true; });
-    // 移動が止まったら中心を位置情報として記録（有効化後のみ）＋逆ジオで住所自動取得
-    evCreateMapInstance.on('moveend', () => {
-      if (!evLocActive) return;
-      const c = evCreateMapInstance.getCenter();
-      evCreateLat = c.lat; evCreateLng = c.lng;
-      evReverseGeocodeSoon();
-    });
+    // ユーザーが地図を動かしたら＝再選択中。確定状態を解除（要再決定）
+    evCreateMapInstance.on('dragstart zoomstart', () => { evLocActive = true; setEvPinConfirmed(false); });
+    // 移動が止まったら中央の住所をプレビュー表示（確定はまだ。confirmEvPinで確定）
+    evCreateMapInstance.on('moveend', () => { updatePinAddressSoon(); });
   }
   evCreateMapInstance.setView(center, zoom);
   // 座標未指定なら現在地からスタート（許可されれば。よく行く店は自分の近くにある）
@@ -15876,8 +15875,7 @@ function evSelectPlaceResult(i) {
   if (!it) return;
   document.getElementById('evCreatePlace').value = (it.display_name || '').split(',')[0].trim();
   document.getElementById('evPlaceResults').innerHTML = '';
-  openEvPinMap(parseFloat(it.lat), parseFloat(it.lon));  // 実在スポット＝地図＆座標を付ける
-  evReverseGeocodeSoon();
+  openEvPinMap(parseFloat(it.lat), parseFloat(it.lon));  // 実在スポット＝地図＆座標を付ける（確定済みで開く）
 }
 function evUsePlaceAsTyped() {
   // 打った文字をそのまま場所に。位置は任意で「地図で指定」ボタンから足せる（bar mosso 等）
@@ -15886,12 +15884,15 @@ function evUsePlaceAsTyped() {
   document.getElementById('evPinToggle').style.display = '';  // 位置追加の導線を出す
 }
 
-// ===== 地図で位置を指定（近くの目印検索→ジャンプ→中央固定ピン→逆ジオ住所） =====
-let evPinSearchTimer = null, evPinResultsData = [], evRevGeoTimer = null, evCreateAddress = '';
+// ===== 地図で位置を指定（近くの目印検索→ジャンプ→中央固定ピン→「この位置に決定」で確定→逆ジオ住所） =====
+let evPinSearchTimer = null, evPinResultsData = [], evRevGeoTimer = null, evCreateAddress = '', evPinPreviewAddr = '';
 function openEvPinMap(lat, lng) {
   document.getElementById('evPinToggle').style.display = 'none';
   document.getElementById('evPinSection').style.display = '';
-  initEvCreateMap(lat != null ? lat : null, lng != null ? lng : null);
+  const has = (lat != null && lng != null && !isNaN(lat) && !isNaN(lng));
+  initEvCreateMap(has ? lat : null, has ? lng : null);
+  setEvPinConfirmed(has);          // 実在スポットは確定済みで開く／自由テキストは未確定
+  if (has) updatePinAddressSoon();  // 住所プレビュー
 }
 function resetEvPinUI() {
   const t = document.getElementById('evPinToggle'); if (t) t.style.display = 'none';
@@ -15899,7 +15900,24 @@ function resetEvPinUI() {
   const pr = document.getElementById('evPinResults'); if (pr) pr.innerHTML = '';
   const ps = document.getElementById('evPinSearch'); if (ps) ps.value = '';
   const pa = document.getElementById('evPinAddress'); if (pa) { pa.textContent = ''; pa.style.display = 'none'; }
-  evCreateLat = null; evCreateLng = null; evLocActive = false; evCreateAddress = '';
+  setEvPinConfirmed(false);
+  evCreateLat = null; evCreateLng = null; evLocActive = false; evCreateAddress = ''; evPinPreviewAddr = '';
+}
+// 「この位置に決定」＝今の地図中央を座標として確定
+function confirmEvPin() {
+  if (!evCreateMapInstance) return;
+  const c = evCreateMapInstance.getCenter();
+  evCreateLat = c.lat; evCreateLng = c.lng; evLocActive = true;
+  evCreateAddress = evPinPreviewAddr;  // 中央プレビュー住所を確定住所として採用
+  setEvPinConfirmed(true);
+  updatePinAddressSoon();
+  showToast('この位置に決定しました');
+}
+function setEvPinConfirmed(on) {
+  const b = document.getElementById('evPinConfirm');
+  if (!b) return;
+  if (on) { b.textContent = '✓ この位置に決定済み（動かすと再設定）'; b.classList.add('confirmed'); }
+  else { b.textContent = '✓ この位置に決定'; b.classList.remove('confirmed'); }
 }
 function onEvPinSearchInput() {
   clearTimeout(evPinSearchTimer);
@@ -15931,25 +15949,26 @@ function evPinSelectResult(i) {
   const it = evPinResultsData[i];
   if (!it || !evCreateMapInstance) return;
   const lat = parseFloat(it.lat), lng = parseFloat(it.lon);
-  evLocActive = true; evCreateLat = lat; evCreateLng = lng;
-  evCreateMapInstance.setView([lat, lng], 17);  // 目印にジャンプ。ここからピンをずらせる
+  evLocActive = true;
+  evCreateMapInstance.setView([lat, lng], 17);  // 目印にジャンプ。ここからピンをずらして「決定」を押す
+  setEvPinConfirmed(false);                     // ジャンプ直後は未確定（決定ボタンで確定）
   document.getElementById('evPinResults').innerHTML = '';
   document.getElementById('evPinSearch').value = '';
-  evReverseGeocodeSoon();
   setTimeout(() => evCreateMapInstance && evCreateMapInstance.invalidateSize(), 50);
 }
-// ピン座標→住所を逆ジオで自動取得（連打防止でデバウンス）
-function evReverseGeocodeSoon() {
+// 地図中央の住所を逆ジオでプレビュー表示（確定はまだ。連打防止でデバウンス）
+function updatePinAddressSoon() {
   clearTimeout(evRevGeoTimer);
   evRevGeoTimer = setTimeout(() => {
-    if (evCreateLat == null || evCreateLng == null) return;
-    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&accept-language=ja&lat=${evCreateLat}&lon=${evCreateLng}`)
+    if (!evCreateMapInstance) return;
+    const c = evCreateMapInstance.getCenter();
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&accept-language=ja&lat=${c.lat}&lon=${c.lng}`)
       .then(r => r.json()).then(d => {
-        evCreateAddress = (d && d.display_name) ? d.display_name : '';
+        evPinPreviewAddr = (d && d.display_name) ? d.display_name : '';
         const el = document.getElementById('evPinAddress');
-        if (el) { el.textContent = evCreateAddress ? `📍 この地点の住所: ${evCreateAddress}` : ''; el.style.display = evCreateAddress ? '' : 'none'; }
+        if (el) { el.textContent = evPinPreviewAddr ? `📍 中央の地点: ${evPinPreviewAddr}` : ''; el.style.display = evPinPreviewAddr ? '' : 'none'; }
       }).catch(() => {});
-  }, 700);
+  }, 600);
 }
 
 // ===== 日程調整（poll）ヘルパー =====
