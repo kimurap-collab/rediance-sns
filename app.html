@@ -8291,6 +8291,21 @@
           <span class="ev-field-label">候補日時（カレンダーをタップして追加・2件以上）</span>
           <div id="evPollEmptyHint" style="font-size:12.5px;color:var(--text-light,#999);padding:6px 2px;">↑ カレンダーの日付をタップすると候補がどんどん増えます</div>
           <div id="evCandidateList"></div>
+          <div class="ev-field-row" style="margin-top:12px;align-items:center;gap:8px;">
+            <span class="ev-field-label" style="margin:0;flex-shrink:0;">所要時間</span>
+            <select class="ev-input" id="evPollDuration" style="flex:1;">
+              <option value="1">1時間</option>
+              <option value="1.5">1時間半</option>
+              <option value="2" selected>2時間</option>
+              <option value="3">3時間</option>
+              <option value="4">4時間</option>
+              <option value="5">5時間</option>
+              <option value="6">6時間</option>
+              <option value="8">8時間</option>
+              <option value="unlimited">無制限</option>
+            </select>
+          </div>
+          <div style="font-size:11.5px;color:var(--text-light,#999);margin-top:5px;">全候補に共通。例: 19:00開始なら21:00終了（2時間）</div>
         </div>
 
 
@@ -15983,6 +15998,16 @@ function updatePinAddressSoon() {
 
 // ===== 日程調整（poll）ヘルパー =====
 function isPoll(ev) { return ev && ev.type === 'poll'; }
+// 開始日時＋所要時間(h or 'unlimited') → 終了 {endDate,endTime}（無制限/未指定はnull）
+function computeEndFromDuration(date, time, durationHours) {
+  if (!date || !time || durationHours == null || durationHours === 'unlimited') return { endDate: null, endTime: null };
+  const start = new Date(`${date}T${time}:00`);
+  const end = new Date(start.getTime() + parseFloat(durationHours) * 3600 * 1000);
+  return {
+    endDate: `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, '0')}-${String(end.getDate()).padStart(2, '0')}`,
+    endTime: `${String(end.getHours()).padStart(2, '0')}:${String(end.getMinutes()).padStart(2, '0')}`,
+  };
+}
 function evMemberName(id) {
   if (id === EV_SELF_ID) return '大将';
   const m = groupCircleMembers.find(x => x.id === id);
@@ -16153,6 +16178,8 @@ function openEventCreate() {
   evDateMode = 'fixed';
   evCandidates = [];
   evPollLastTime = '19:00';   // poll候補のデフォルト時刻もリセット
+  const pollDurSel = document.getElementById('evPollDuration');
+  if (pollDurSel) pollDurSel.value = '2';
   setEvDateMode('fixed');
   renderEvCandidateList();
   fillFixedTimeSelects('19:00', '');
@@ -16208,6 +16235,8 @@ function openEventEdit(eventId) {
   // 候補の最後の時刻を次のデフォルトに（poll編集で日を足す時に引き継ぐ）
   const lastCand = evCandidates[evCandidates.length - 1];
   evPollLastTime = (lastCand && lastCand.time) ? lastCand.time : '19:00';
+  const pollDurSel2 = document.getElementById('evPollDuration');
+  if (pollDurSel2) pollDurSel2.value = ev.durationHours || '2';
   // カレンダーの表示月：確定＝イベント日／調整＝最初の候補日／無ければ今月
   const anchorDate = ev.date || (evCandidates.length ? evCandidates.slice().sort((a, b) => a.date < b.date ? -1 : 1)[0].date : null);
   if (anchorDate) { const d = new Date(anchorDate); evCalYear = d.getFullYear(); evCalMonth = d.getMonth(); }
@@ -16608,6 +16637,7 @@ function previewEventCreate() {
   if (!title) { showToast('タイトルを入力してください'); return; }
   const isPollMode = (evDateMode === 'poll');
   const pollCandidates = isPollMode ? evCandidates.filter(c => c.date && c.time).map(c => ({ ...c })) : null;
+  const pollDuration = isPollMode ? (document.getElementById('evPollDuration').value || '2') : null;  // 全候補共通の所要時間
   if (isPollMode) {
     if (!pollCandidates || pollCandidates.length < 2) { showToast('候補を2件以上入力してください'); return; }
   } else {
@@ -16650,6 +16680,7 @@ function previewEventCreate() {
       endTime: isPollMode ? null : endTime,
       type: isPollMode ? 'poll' : 'fixed',
       candidates: isPollMode ? pollCandidates : undefined,
+      durationHours: isPollMode ? pollDuration : undefined,
       place, lat, lng, address, message, deadline,
       coverGradient: evCreateCoverIdx,
       coverImage: evCreateCoverImage,
@@ -16677,6 +16708,7 @@ function previewEventCreate() {
     endTime: isPollMode ? null : endTime,
     type: isPollMode ? 'poll' : 'fixed',
     candidates: isPollMode ? pollCandidates : undefined,
+      durationHours: isPollMode ? pollDuration : undefined,
     place, lat, lng, address, message, deadline,
     coverGradient: evCreateCoverIdx,
     coverImage: evCreateCoverImage,
@@ -16753,7 +16785,13 @@ function confirmEventPublish() {
 // ===== 日程調整（poll）描画・回答・確定 =====
 function renderPollCandidates(ev, isHost) {
   const weekday = ['日','月','火','水','木','金','土'];
-  const fmt = (d, t) => { const dt = new Date(d); return `${dt.getMonth()+1}月${dt.getDate()}日(${weekday[dt.getDay()]}) ${t||''}`.trim(); };
+  const fmt = (c) => {
+    const dt = new Date(c.date);
+    const base = `${dt.getMonth()+1}月${dt.getDate()}日(${weekday[dt.getDay()]}) ${c.time||''}`.trim();
+    if (!c.time) return base;
+    const { endTime } = computeEndFromDuration(c.date, c.time, ev.durationHours);  // 共通所要時間で終了を算出
+    return endTime ? `${base}〜${endTime}` : base;
+  };
   const candidates = ev.candidates || [];
   const responses = ev.responses || {};
   const ansOf = (uid, cid) => (responses[uid] && typeof responses[uid] === 'object') ? responses[uid][cid] : undefined;
@@ -16779,7 +16817,7 @@ function renderPollCandidates(ev, isHost) {
     const bestBadge = (i === bestIdx && bestCount > 0) ? ' <span class="ev-poll-best">★最多</span>' : '';
     return `
       <div class="ev-poll-card">
-        <div class="ev-poll-card-date">📅 ${fmt(c.date, c.time)}${bestBadge}</div>
+        <div class="ev-poll-card-date">📅 ${fmt(c)}${bestBadge}</div>
         <div class="ev-poll-results">
           ${resultRow('going','○','行ける',goingNames)}
           ${resultRow('maybe','△','微妙',maybeNames)}
@@ -16817,11 +16855,14 @@ function finalizePollDate(eventId, candidateId) {
   if (!ev || ev.hostId !== EV_SELF_ID) return;
   const cand = (ev.candidates || []).find(c => c.id === candidateId);
   if (!cand) return;
-  if (!confirm(`「${cand.date} ${cand.time}」で日程を確定しますか？\n確定すると候補は締め切られ、通常の出欠に切り替わります。`)) return;
+  const end = computeEndFromDuration(cand.date, cand.time, ev.durationHours);  // 共通所要時間で終了を算出
+  const rangeLabel = end.endTime ? `${cand.time}〜${end.endTime}` : cand.time;
+  if (!confirm(`「${cand.date} ${rangeLabel}」で日程を確定しますか？\n確定すると候補は締め切られ、通常の出欠に切り替わります。`)) return;
   ev.type = 'fixed';
   ev.date = cand.date;
   ev.time = cand.time;
-  ev.endDate = null; ev.endTime = null;
+  ev.endDate = end.endDate;
+  ev.endTime = end.endTime;
   delete ev.candidates;
   ev.responses = {};
   showToast('日程を確定しました');
