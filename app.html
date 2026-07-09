@@ -16082,19 +16082,15 @@ function selectEvCalDate(ds) {
   renderEvCalendar();
   updateEvEndAuto();
 }
-// カレンダーの日タップ：確定＝1日選択／調整＝候補のトグル
+// カレンダーの日タップ：確定＝1日選択／調整＝タップするたびに候補を追加（同じ日を時間帯別に何個でも）
 function onEvCalDayClick(ds) {
-  if (evDateMode === 'poll') toggleEvPollDate(ds);
+  if (evDateMode === 'poll') addEvPollCandidate(ds);
   else selectEvCalDate(ds);
 }
-function toggleEvPollDate(ds) {
-  const exists = evCandidates.some(c => c.date === ds);
-  if (exists) {
-    evCandidates = evCandidates.filter(c => c.date !== ds);        // 再タップで解除
-  } else {
-    evCandidates.push({ id: 'c' + Date.now() + '_' + evCandidates.length, date: ds, time: evPollLastTime });  // デフォは直前の時刻
-    evCandidates.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
-  }
+function addEvPollCandidate(ds) {
+  // 同じ日付でも毎回追加（時間帯別に質問できる）。削除は候補行の✕で行う
+  evCandidates.push({ id: 'c' + Date.now() + '_' + evCandidates.length, date: ds, time: evPollLastTime });  // デフォは直前の時刻
+  evCandidates.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : (a.time < b.time ? -1 : a.time > b.time ? 1 : 0)));  // 日付→時刻順
   renderEvCalendar();
   renderEvCandidateList();
 }
