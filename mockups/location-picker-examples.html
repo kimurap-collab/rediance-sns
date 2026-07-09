@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>場所ピッカー・主要サービス5式の完コピ</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",Roboto,sans-serif; background:#E6E6EA; padding:26px 0 70px; }
+  .wrap { display:flex; flex-wrap:wrap; gap:26px; justify-content:center; align-items:flex-start; max-width:1180px; margin:0 auto; }
+  h1 { text-align:center; font-size:18px; margin-bottom:4px; }
+  .sub { text-align:center; font-size:12px; color:#666; margin-bottom:22px; }
+  .col { width:330px; }
+  .lab { font-size:13px; font-weight:800; margin:0 2px 8px; color:#1A1A2E; }
+  .lab small { display:block; font-weight:400; color:#777; font-size:11px; margin-top:2px; line-height:1.5; }
+  .phone { width:330px; height:640px; background:#fff; border-radius:30px; overflow:hidden; box-shadow:0 14px 44px rgba(0,0,0,.24); position:relative; }
+  .map { position:absolute; inset:0; background:
+      linear-gradient(0deg, rgba(0,0,0,.04), rgba(0,0,0,.04)),
+      repeating-linear-gradient(90deg,#E8EDE4 0 38px,#E3E9DF 38px 40px),
+      repeating-linear-gradient(0deg,#E8EDE4 0 38px,#E3E9DF 38px 40px);
+  }
+  .map .road { position:absolute; background:#fff; }
+  .map .rvh { width:12px; top:0; bottom:0; }
+  .map .rhz { height:12px; left:0; right:0; }
+  .map .water { position:absolute; background:#BFE0EA; }
+  .centerpin { position:absolute; left:50%; top:50%; transform:translate(-50%,-100%); font-size:34px; z-index:6; filter:drop-shadow(0 3px 3px rgba(0,0,0,.35)); }
+  .row { display:flex; align-items:center; gap:12px; padding:13px 16px; cursor:pointer; }
+  .row:hover { background:#F5F6F8; }
+  .divider { height:1px; background:#EDEDF0; margin:0 16px; }
+  .ic { width:34px; height:34px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:17px; }
+  .nm { font-size:14.5px; font-weight:600; color:#1A1A1A; }
+  .ad { font-size:12px; color:#8A8A90; margin-top:1px; }
+  .field { display:flex; align-items:center; gap:10px; background:#F1F2F4; border-radius:12px; padding:11px 13px; font-size:14px; color:#333; }
+  .field .ph { color:#9A9AA0; }
+  .hdr { display:flex; align-items:center; gap:12px; padding:14px 14px 10px; }
+  .back { font-size:20px; color:#333; }
+  .htitle { font-size:16px; font-weight:700; }
+  .btn { position:absolute; left:16px; right:16px; bottom:20px; height:52px; border-radius:14px; border:none; font-size:15.5px; font-weight:700; color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; z-index:8; }
+  .sheet { position:absolute; left:0; right:0; bottom:0; background:#fff; border-radius:20px 20px 0 0; padding:18px 18px 92px; box-shadow:0 -8px 26px rgba(0,0,0,.14); z-index:7; }
+</style>
+</head>
+<body>
+<h1>「タップ→場所ピッカー」主要サービス5式・完コピ</h1>
+<div class="sub">どの流儀を丸パクリするか選ぶ用。イベント想定：場所名「六甲山天文台」／住所「兵庫県神戸市灘区六甲山町」</div>
+
+<div class="wrap">
+
+  <!-- 1. Google Maps / Calendar 式 -->
+  <div class="col">
+    <div class="lab">① Googleマップ／カレンダー式 <small>検索バー＋オートコンプリート候補（名前太字＋住所グレー）。世界標準・一番無難。</small></div>
+    <div class="phone">
+      <div class="hdr" style="border-bottom:1px solid #EDEDF0;padding-bottom:12px;">
+        <span class="back">←</span>
+        <div class="field" style="flex:1;background:#F1F2F4;">
+          <span style="color:#4285F4;">🔍</span><span>六甲山</span><span style="margin-left:auto;color:#9A9AA0;">✕</span>
+        </div>
+      </div>
+      <div class="row"><div class="ic" style="background:#EAF1FE;">📍</div><div><div class="nm">六甲山天文台</div><div class="ad">兵庫県神戸市灘区六甲山町</div></div></div>
+      <div class="divider"></div>
+      <div class="row"><div class="ic" style="background:#EAF1FE;">📍</div><div><div class="nm">六甲山ホテル</div><div class="ad">兵庫県神戸市灘区六甲山町１</div></div></div>
+      <div class="divider"></div>
+      <div class="row"><div class="ic" style="background:#EAF1FE;">📍</div><div><div class="nm">六甲ガーデンテラス</div><div class="ad">兵庫県神戸市灘区六甲山町五介山</div></div></div>
+      <div class="divider"></div>
+      <div class="row"><div class="ic" style="background:#EAF1FE;">🚏</div><div><div class="nm">六甲山上駅</div><div class="ad">六甲ケーブル線</div></div></div>
+      <div class="divider"></div>
+      <div class="row" style="color:#1A73E8;font-weight:600;"><div class="ic" style="background:#E8F0FE;color:#1A73E8;">🗺️</div><div class="nm" style="color:#1A73E8;">地図で選択</div></div>
+    </div>
+  </div>
+
+  <!-- 2. Uber 式（地図＋中央固定ピン＋下部確定） -->
+  <div class="col">
+    <div class="lab">② Uber式 <small>地図メイン＋中央固定ピン。下のシートに住所が出て「確定」。ピン差しが主役。</small></div>
+    <div class="phone">
+      <div class="map">
+        <div class="road rvh" style="left:80px;"></div>
+        <div class="road rvh" style="left:210px;"></div>
+        <div class="road rhz" style="top:150px;"></div>
+        <div class="road rhz" style="top:330px;"></div>
+        <div class="water" style="right:0;bottom:200px;width:120px;height:150px;border-radius:40px 0 0 0;"></div>
+      </div>
+      <div class="centerpin">📍</div>
+      <div class="hdr" style="position:absolute;top:0;left:0;right:0;">
+        <span class="back" style="background:#fff;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.18);">←</span>
+      </div>
+      <div class="sheet">
+        <div style="font-size:12px;color:#8A8A90;font-weight:700;margin-bottom:6px;">ピンの位置</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:20px;">📍</span>
+          <div><div class="nm" style="font-size:15px;">六甲山天文台</div><div class="ad">兵庫県神戸市灘区六甲山町</div></div>
+        </div>
+      </div>
+      <button class="btn" style="background:#000;">この位置に決定</button>
+    </div>
+  </div>
+
+  <!-- 3. Airbnb 式 -->
+  <div class="col">
+    <div class="lab">③ Airbnb式 <small>全画面・大きな検索フィールド＋「最近の検索」＋角丸サムネ候補。リッチで探す気にさせる。</small></div>
+    <div class="phone" style="padding:20px 18px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <span style="width:34px;height:34px;border:1px solid #DDD;border-radius:50%;display:flex;align-items:center;justify-content:center;">✕</span>
+      </div>
+      <div style="font-size:26px;font-weight:800;line-height:1.3;margin-bottom:16px;">場所は<br>どこにする？</div>
+      <div class="field" style="border:1px solid #222;background:#fff;border-radius:14px;padding:15px 15px;box-shadow:0 4px 14px rgba(0,0,0,.08);">
+        <span>🔍</span><span class="ph">場所名・住所で検索</span>
+      </div>
+      <div style="font-size:15px;font-weight:800;margin:22px 2px 12px;">最近の検索</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+        <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#6D28D9,#EC4899);"></div>
+        <div><div class="nm">六甲山天文台</div><div class="ad">兵庫県神戸市灘区</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+        <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#0EA5E9,#22D3EE);"></div>
+        <div><div class="nm">神戸ハーバーランド</div><div class="ad">兵庫県神戸市中央区</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="width:52px;height:52px;border-radius:14px;background:#EFEFF2;display:flex;align-items:center;justify-content:center;font-size:22px;">🗺️</div>
+        <div><div class="nm">地図で場所を指定</div><div class="ad">ピンをドラッグして選ぶ</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Instagram 式 -->
+  <div class="col">
+    <div class="lab">④ Instagram式 <small>「場所を追加」。極ミニマルな検索＋リスト（名前＋薄い補足だけ）。一番シンプル。</small></div>
+    <div class="phone">
+      <div class="hdr" style="justify-content:space-between;padding:16px 16px 8px;">
+        <span class="back">✕</span><span class="htitle">場所を追加</span><span style="width:20px;"></span>
+      </div>
+      <div style="padding:4px 14px 10px;">
+        <div class="field" style="border-radius:10px;"><span>🔍</span><span>六甲山</span></div>
+      </div>
+      <div class="row" style="padding:12px 16px;"><div><div class="nm">六甲山天文台</div><div class="ad">神戸市灘区 · 観光スポット</div></div></div>
+      <div class="row" style="padding:12px 16px;"><div><div class="nm">六甲山</div><div class="ad">山</div></div></div>
+      <div class="row" style="padding:12px 16px;"><div><div class="nm">六甲ガーデンテラス</div><div class="ad">神戸市灘区 · 展望スポット</div></div></div>
+      <div class="row" style="padding:12px 16px;"><div><div class="nm">六甲山フィールドアスレチック</div><div class="ad">神戸市灘区 · レジャー施設</div></div></div>
+      <div class="row" style="padding:12px 16px;"><div><div class="nm">六甲山上駅</div><div class="ad">駅</div></div></div>
+    </div>
+  </div>
+
+  <!-- 5. LINE 位置情報共有 式 -->
+  <div class="col">
+    <div class="lab">⑤ LINE位置情報共有式 <small>上半分が地図（中央ピン）、下に近くのスポット候補を選ぶ。地図＋リストの合わせ技。</small></div>
+    <div class="phone">
+      <div style="position:absolute;top:0;left:0;right:0;height:300px;overflow:hidden;">
+        <div class="map">
+          <div class="road rvh" style="left:120px;"></div>
+          <div class="road rhz" style="top:170px;"></div>
+          <div class="water" style="left:0;top:0;width:90px;height:120px;border-radius:0 0 40px 0;"></div>
+        </div>
+        <div class="centerpin" style="top:150px;">📍</div>
+        <div class="hdr" style="position:absolute;top:0;left:0;right:0;">
+          <span class="back" style="background:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.18);">←</span>
+          <span class="htitle" style="background:#fff;padding:6px 12px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,.14);font-size:13px;">位置情報</span>
+        </div>
+      </div>
+      <div style="position:absolute;top:300px;left:0;right:0;bottom:0;background:#fff;">
+        <div class="row" style="background:#EDF7EE;"><div class="ic" style="background:#06C755;color:#fff;">✓</div><div><div class="nm">六甲山天文台</div><div class="ad">兵庫県神戸市灘区六甲山町</div></div></div>
+        <div class="divider"></div>
+        <div class="row"><div class="ic" style="background:#F0F0F2;">📍</div><div><div class="nm">六甲ガーデンテラス</div><div class="ad">200m</div></div></div>
+        <div class="divider"></div>
+        <div class="row"><div class="ic" style="background:#F0F0F2;">📍</div><div><div class="nm">六甲山上駅</div><div class="ad">450m</div></div></div>
+      </div>
+      <button class="btn" style="background:#06C755;">この位置を送信</button>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

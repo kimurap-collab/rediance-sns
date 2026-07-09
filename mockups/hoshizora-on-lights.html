@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星空柄 × 投稿カラー7色</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:#EAEAEE; display:flex; justify-content:center; padding:24px 0 70px; }
+  .stage { width: 480px; }
+  h1 { font-size:17px; text-align:center; margin-bottom:4px; }
+  .sub { text-align:center; font-size:11.5px; color:#666; margin-bottom:18px; line-height:1.7; }
+  .cap { font-size:12.5px; font-weight:800; padding:10px 4px 4px; color:#1A1A2E; }
+  .card { border-radius:16px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.25); margin-bottom:16px; }
+  .frame { position:relative; width:100%; aspect-ratio:16/8; overflow:hidden; }
+  .frame .base { position:absolute; inset:0; }
+  .frame svg { position:absolute; inset:0; width:100%; height:100%; }
+  .overlay { position:absolute; inset:0; padding:20px; display:flex; flex-direction:column; justify-content:flex-end; pointer-events:none; }
+  .t-title { color:#fff; font-weight:800; font-size:20px; text-shadow:0 2px 12px rgba(0,0,0,.55); }
+  .t-meta { color:rgba(255,255,255,.9); font-size:12px; margin-top:4px; text-shadow:0 1px 8px rgba(0,0,0,.6); }
+  .name { position:absolute; left:13px; top:12px; color:#fff; font-size:11px; font-weight:700; letter-spacing:1px; text-shadow:0 1px 6px rgba(0,0,0,.7); z-index:5; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <h1>星空柄 × 投稿カラー7色（ベージュ抜き）</h1>
+  <div class="sub">同じ星空柄（天の川＋星の軌跡＋星座線＋輝星）を、選んだ光の色の上に重ねる。<br>柄はSVGの透明オーバーレイ＝どの色でも共通で乗る。</div>
+  <div id="list"></div>
+</div>
+
+<script>
+function rng(seed){ let s=9301+seed*233; return ()=>{ s=(s*9301+49297)%233280; return s/233280; }; }
+const W=1600, H=800;
+
+function starTrails(seed){
+  const cx=1680, cy=-120; let s=''; const rnd=rng(seed);
+  for(let R=360; R<1700; R+=28){
+    const a0=62*Math.PI/180, a1=(206+rnd()*6)*Math.PI/180;
+    const x0=(cx+R*Math.cos(a0)).toFixed(1), y0=(cy+R*Math.sin(a0)).toFixed(1);
+    const x1=(cx+R*Math.cos(a1)).toFixed(1), y1=(cy+R*Math.sin(a1)).toFixed(1);
+    s+=`<path d="M${x0} ${y0} A ${R} ${R} 0 0 1 ${x1} ${y1}" fill="none" stroke="#fff" stroke-width="1" opacity="${(0.05+rnd()*0.11).toFixed(2)}"/>`;
+  }
+  return s;
+}
+function constellations(seed){
+  const r=rng(seed); let s=''; const labels=['Ursa Major','Canes Venatici','Boötes','Lyra','Draco'];
+  for(let k=0;k<5;k++){
+    const n=3+Math.floor(r()*3); let pts=[]; let x=r()*W*0.8+W*0.05, y=r()*H*0.6+H*0.05;
+    for(let j=0;j<n;j++){ x+=(r()-0.5)*260; y+=(r()-0.5)*180; pts.push([Math.max(20,Math.min(W-20,x)).toFixed(0), Math.max(20,Math.min(H*0.85,y)).toFixed(0)]); }
+    s+=`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#eef3ff" stroke-width="1" opacity="0.16"/>`;
+    pts.forEach(p=> s+=`<circle cx="${p[0]}" cy="${p[1]}" r="1.6" fill="#fff" opacity="0.7"/>`);
+    s+=`<text x="${pts[0][0]}" y="${(+pts[0][1]+16)}" fill="#eef3ff" opacity="0.24" font-size="15" font-style="italic" font-family="Georgia,serif">${labels[k]}</text>`;
+  }
+  return s;
+}
+function starDots(seed){
+  const r=rng(seed); let s='';
+  for(let i=0;i<440;i++){
+    const x=(r()*W).toFixed(0), y=(r()*H).toFixed(0), t=r();
+    const rad=t>0.96?1.7:(t>0.74?1.05:0.6);
+    s+=`<circle cx="${x}" cy="${y}" r="${rad}" fill="#fff" opacity="${(0.32+t*0.6).toFixed(2)}"/>`;
+  }
+  return s;
+}
+function bright(){
+  return [[1490,70,6],[300,150,4],[880,110,3.4],[120,430,3],[1180,280,3]].map(([x,y,sz])=>{
+    const g=sz*3.2; return `<g opacity="0.95"><circle cx="${x}" cy="${y}" r="${sz}" fill="#fff"/><circle cx="${x}" cy="${y}" r="${sz*1.9}" fill="#cfe0ff" opacity="0.35"/><path d="M${x-g} ${y} H${x+g} M${x} ${y-g} V${y+g}" stroke="#eef4ff" stroke-width="${(sz*0.5).toFixed(2)}" stroke-linecap="round" opacity="0.7"/></g>`;
+  }).join('');
+}
+// 星空柄オーバーレイ（透明背景・どの色にも共通で乗る）
+function starOverlay(seed){
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs><filter id="mwb" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="26"/></filter></defs>
+    <g transform="translate(1060,270) rotate(-30)" filter="url(#mwb)">
+      <ellipse cx="0" cy="0" rx="620" ry="140" fill="#fff" opacity="0.09"/>
+      <ellipse cx="60" cy="-20" rx="230" ry="90" fill="#efe6d6" opacity="0.30"/>
+    </g>
+    ${starTrails(seed)} ${constellations(seed+1)} ${starDots(seed+2)} ${bright()}
+  </svg>`;
+}
+
+const LIGHTS = [
+  { name:'星空',   bg:'linear-gradient(135deg,#020408 0%,#1E3A5F 70%,#2E1065 100%)' },
+  { name:'深宇宙', bg:'linear-gradient(135deg,#512DA8 0%,#9C27B0 100%)' },
+  { name:'星雲',   bg:'linear-gradient(135deg,#9C27B0 0%,#E91E63 100%)' },
+  { name:'極光',   bg:'linear-gradient(135deg,#00695C 0%,#4CAF50 100%)' },
+  { name:'蒼穹',   bg:'linear-gradient(135deg,#3949AB 0%,#03A9F4 100%)' },
+  { name:'茜',     bg:'linear-gradient(135deg,#E91E63 0%,#FF9800 100%)' },
+  { name:'暁',     bg:'linear-gradient(135deg,#F4511E 0%,#FFC107 100%)' },
+];
+
+document.getElementById('list').innerHTML = LIGHTS.map((l,i)=>`
+  <div class="cap">${l.name}</div>
+  <div class="card"><div class="frame">
+    <div class="base" style="background:${l.bg};"></div>
+    ${starOverlay(5+i)}
+    <div class="name">${l.name}</div>
+    <div class="overlay">
+      <div class="t-title">星降る夜のイベント</div>
+      <div class="t-meta">🗓 8月12日(火) 20:00 ・ 📍 六甲山</div>
+    </div>
+  </div></div>`).join('');
+</script>
+</body>
+</html>

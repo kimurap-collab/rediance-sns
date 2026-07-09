@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>デフォルメ星空 × ベース色</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:#EAEAEE; display:flex; justify-content:center; padding:24px 0 70px; }
+  .stage { width: 470px; }
+  h1 { font-size:17px; text-align:center; margin-bottom:4px; }
+  .sub { text-align:center; font-size:11.5px; color:#666; margin-bottom:16px; line-height:1.7; }
+  h2 { font-size:13.5px; margin:26px 2px 10px; color:#1A1A2E; border-left:4px solid #7C3AED; padding-left:8px; }
+  .cap { font-size:12.5px; font-weight:800; padding:8px 4px 3px; color:#1A1A2E; }
+  .cap small { display:block; font-weight:400; color:#666; font-size:11px; margin-top:2px; line-height:1.55; }
+  .card { border-radius:16px; overflow:hidden; box-shadow:0 6px 20px rgba(0,0,0,.2); margin-bottom:16px; }
+  .bg { position:relative; width:100%; aspect-ratio:16/9; overflow:hidden; }
+  .bg .content { position:absolute; inset:0; padding:20px; display:flex; flex-direction:column; justify-content:flex-end; }
+  .bg .title { color:#fff; font-weight:800; font-size:20px; text-shadow:0 2px 10px rgba(0,0,0,.55); }
+  .bg .meta { color:rgba(255,255,255,.85); font-size:12px; margin-top:5px; text-shadow:0 1px 6px rgba(0,0,0,.6); }
+  .name { position:absolute; left:13px; top:12px; color:#fff; font-size:11px; font-weight:700; letter-spacing:1px; text-shadow:0 1px 5px rgba(0,0,0,.7); z-index:5; }
+  /* 星レイヤー（デフォルメ＝記号・大きめ・少なめ・霞なし） */
+  .starlayer { position:absolute; inset:0; }
+  .dot { position:absolute; border-radius:50%; background:#fff; }
+  .spk { position:absolute; color:#fff; line-height:1; transform:translate(-50%,-50%); }
+  .moon { position:absolute; border-radius:50%; }
+  .swatchgrid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <h1>デフォルメ星空 × ベース色が選べる案</h1>
+  <div class="sub">前回の「リアル寄り（霞＋点描）」をやめ、記号的でフラットな星に。<br>星スタイルを決めたら、夜空のベース色は6色から選べる想定。</div>
+
+  <h2>① まず"デフォルメ度"を選ぶ（同じ紺ベース）</h2>
+  <div id="styles"></div>
+
+  <h2>② ベース色バリエーション（★キラキラ混在スタイルで）</h2>
+  <div class="swatchgrid" id="bases"></div>
+</div>
+
+<script>
+// 決定的乱数
+function rng(seed){ let s=9301+seed*233; return ()=>{ s=(s*9301+49297)%233280; return s/233280; }; }
+
+// フラットドット星（離散サイズ・霞なし）
+function flatDots(n, seed, opts){
+  opts=opts||{}; const r=rng(seed); let h='';
+  for(let i=0;i<n;i++){
+    const x=(r()*96+2).toFixed(1), y=(r()*92+4).toFixed(1);
+    const t=r();
+    const size = t>0.82 ? 4.5 : (t>0.5 ? 3 : 1.8);
+    const op = t>0.82 ? 1 : (t>0.5 ? 0.9 : 0.75);
+    const glow = size>=4.5 ? 'box-shadow:0 0 6px 1px rgba(255,255,255,.7);' : '';
+    h+=`<div class="dot" style="left:${x}%;top:${y}%;width:${size}px;height:${size}px;opacity:${op};${glow}"></div>`;
+  }
+  return h;
+}
+// ✦キラキラ（4方向の光条を持つ記号星）
+function sparkles(n, seed){
+  const r=rng(seed); let h='';
+  for(let i=0;i<n;i++){
+    const x=(r()*94+3).toFixed(1), y=(r()*88+6).toFixed(1);
+    const sz=(12+r()*16).toFixed(0);
+    const op=(0.7+r()*0.3).toFixed(2);
+    h+=`<div class="spk" style="left:${x}%;top:${y}%;font-size:${sz}px;opacity:${op};text-shadow:0 0 8px rgba(255,255,255,.55);">✦</div>`;
+  }
+  return h;
+}
+// 三日月
+function crescent(x,y,size){
+  return `<div class="moon" style="left:${x}%;top:${y}%;width:${size}px;height:${size}px;
+    background:radial-gradient(circle at 68% 42%, #FFF7DC 0%, #FCE9A8 55%, #E8C766 100%);
+    box-shadow:inset -${size*0.28}px 0 0 rgba(0,0,0,0.55), 0 0 14px rgba(255,240,190,.5);"></div>`;
+}
+
+const NAVY = 'linear-gradient(160deg,#141E4A 0%,#1E2A63 100%)';
+
+// ① デフォルメ度3種
+const STYLES = [
+  { key:'A：フラットドット', note:'離散サイズの丸だけ。霞なし。いちばんスッキリ・記号的。',
+    stars: flatDots(26, 11) },
+  { key:'B：★キラキラ混在（推し）', note:'丸ドット＋✦の光る星をミックス。可愛くて"星空"の記号性が高い。',
+    stars: flatDots(20, 12) + sparkles(9, 12) },
+  { key:'C：三日月＋星（絵本風）', note:'✦星に三日月を1つ。いちばんデフォルメ・イラスト寄り。',
+    stars: flatDots(16, 13) + sparkles(7, 13) + crescent(78, 24, 34) },
+];
+document.getElementById('styles').innerHTML = STYLES.map(s=>`
+  <div class="cap">${s.key}<small>${s.note}</small></div>
+  <div class="card"><div class="bg" style="background:${NAVY};">
+    <div class="starlayer">${s.stars}</div>
+    <div class="name">星空</div>
+    <div class="content"><div class="title">夏の天体観測ナイト</div>
+      <div class="meta">🗓 8月12日(火) 20:00 ・ 📍 六甲山</div></div>
+  </div></div>`).join('');
+
+// ② ベース色6種（Bスタイル固定）
+const BASES = [
+  { name:'紺（デフォ）', bg:'linear-gradient(160deg,#141E4A 0%,#1E2A63 100%)' },
+  { name:'藍紫',       bg:'linear-gradient(160deg,#1E1145 0%,#3A1D6E 100%)' },
+  { name:'群青',       bg:'linear-gradient(160deg,#07173F 0%,#123A72 100%)' },
+  { name:'深緑夜',     bg:'linear-gradient(160deg,#062A2A 0%,#0E4A44 100%)' },
+  { name:'ワイン',     bg:'linear-gradient(160deg,#2A0A28 0%,#5A1740 100%)' },
+  { name:'漆黒紫',     bg:'linear-gradient(160deg,#0A0612 0%,#241035 100%)' },
+];
+document.getElementById('bases').innerHTML = BASES.map((b,i)=>`
+  <div>
+    <div class="cap" style="padding-bottom:5px;">${b.name}</div>
+    <div class="card"><div class="bg" style="background:${b.bg};">
+      <div class="starlayer">${flatDots(16, 30+i) + sparkles(7, 30+i)}</div>
+      <div class="content"><div class="title" style="font-size:15px;">星空の夜</div></div>
+    </div></div>
+  </div>`).join('');
+</script>
+</body>
+</html>

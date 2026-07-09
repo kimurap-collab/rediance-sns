@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星空背景 改善案5種 × イベント背景</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:#E9E9EC; display:flex; justify-content:center; padding:24px 0 60px; }
+  .stage { width: 460px; }
+  h1 { font-size:17px; text-align:center; margin-bottom:4px; }
+  .sub { text-align:center; font-size:11.5px; color:#666; margin-bottom:18px; line-height:1.7; }
+  .card { border-radius:18px; overflow:hidden; box-shadow:0 8px 26px rgba(0,0,0,.22); margin-bottom:22px; }
+  .cap { font-size:13px; font-weight:800; padding:10px 4px 3px; color:#1A1A2E; }
+  .cap small { display:block; font-weight:400; color:#666; font-size:11px; margin-top:2px; line-height:1.6; }
+  /* イベント背景プレビュー（実アプリの ev-bg-mini-preview 相当・16:7 より少し縦長にして見応え） */
+  .bg { position:relative; width:100%; aspect-ratio:16/9; overflow:hidden; }
+  .bg .content { position:absolute; inset:0; padding:22px 22px; display:flex; flex-direction:column; justify-content:flex-end; }
+  .bg .title { color:#fff; font-weight:800; font-size:21px; text-shadow:0 2px 10px rgba(0,0,0,.6); letter-spacing:.5px; }
+  .bg .meta { color:rgba(255,255,255,.82); font-size:12.5px; margin-top:5px; text-shadow:0 1px 6px rgba(0,0,0,.7); }
+  .name { position:absolute; left:14px; top:13px; color:#fff; font-size:11.5px; font-weight:700; letter-spacing:1px; text-shadow:0 1px 5px rgba(0,0,0,.8); z-index:5; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <h1>星空背景・改善案5種（＋現行）</h1>
+  <div class="sub">実アプリのイベント背景プレビュー相当で比較。同じ「星空」を選んだ想定。<br>文字（イベント名）を乗せて可読性も見る。</div>
+  <div id="list"></div>
+</div>
+
+<script>
+// 星のレイヤーを生成（percentベースの radial-gradient を大量に）
+function stars(n, seedShift, opts) {
+  opts = opts || {};
+  const bigN = opts.bigN != null ? opts.bigN : 4;
+  const list = [];
+  // 疑似乱数（決定的）
+  let s = 9301 + seedShift * 233;
+  const rnd = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+  for (let i = 0; i < n; i++) {
+    const x = (rnd() * 100).toFixed(1);
+    const y = (rnd() * 100).toFixed(1);
+    const big = i < bigN;
+    const r = big ? (1.6 + rnd() * 1.1).toFixed(2) : (0.6 + rnd() * 0.7).toFixed(2);
+    const a = big ? 1 : (0.5 + rnd() * 0.45).toFixed(2);
+    const tint = rnd();
+    const col = tint > 0.85 ? '214,232,255' : (tint < 0.12 ? '255,246,224' : '255,255,255');
+    list.push(`radial-gradient(${r}px ${r}px at ${x}% ${y}%, rgba(${col},${a}), transparent)`);
+  }
+  return list;
+}
+
+// 天の川の帯
+const MILKY_SOFT = 'linear-gradient(118deg, transparent 34%, rgba(255,255,255,0.05) 44%, rgba(214,224,255,0.11) 50%, rgba(255,255,255,0.05) 56%, transparent 66%)';
+const MILKY_STRONG = 'linear-gradient(116deg, transparent 28%, rgba(255,255,255,0.10) 40%, rgba(210,220,255,0.22) 50%, rgba(190,170,255,0.16) 58%, rgba(255,255,255,0.08) 66%, transparent 76%)';
+const NEBULA1 = 'radial-gradient(ellipse 55% 130% at 68% 30%, rgba(190,170,255,0.16), transparent 60%)';
+const NEBULA2 = 'radial-gradient(ellipse 50% 120% at 30% 75%, rgba(140,200,255,0.14), transparent 60%)';
+
+const VARIANTS = [
+  {
+    key: '現行',
+    note: 'いまアプリに入ってる星空。青紫のベタ暗グラデ＋共通の天の川柄。奥行きが薄い。',
+    grad: 'linear-gradient(135deg,#020408 0%,#1E3A5F 70%,#2E1065 100%)',
+    layers: [ ...stars(24, 1), NEBULA1, NEBULA2, MILKY_SOFT ],
+  },
+  {
+    key: 'A：天の川を濃く',
+    note: '星空の時だけ天の川の帯を太く明るく＋星の密度を倍。グラデは現行のまま。',
+    grad: 'linear-gradient(135deg,#020408 0%,#1E3A5F 70%,#2E1065 100%)',
+    layers: [ ...stars(46, 2, {bigN:7}), NEBULA1, NEBULA2, MILKY_STRONG ],
+  },
+  {
+    key: 'B：深い夜空グラデ',
+    note: '黒すぎる起点をやめ、紺〜菫の"夜空"に。青みを残して奥行きを出す。星は現行量。',
+    grad: 'linear-gradient(150deg,#0B1026 0%,#1A1A3A 45%,#3B1E5E 100%)',
+    layers: [ ...stars(26, 3), NEBULA1, NEBULA2, MILKY_SOFT ],
+  },
+  {
+    key: 'B＋A（おすすめ）',
+    note: '夜空を紺寄りにしつつ天の川を強調。王道の"きれいな星空"。宇宙観も壊さない。',
+    grad: 'linear-gradient(150deg,#0B1026 0%,#1A1A3A 45%,#3B1E5E 100%)',
+    layers: [ ...stars(46, 4, {bigN:7}), NEBULA1, NEBULA2, MILKY_STRONG ],
+  },
+  {
+    key: 'C：オーロラ入り',
+    note: '下部に緑〜シアンの淡い光を融合（極光を星空に混ぜる）。華やかだが"純star感"は減る。',
+    grad: 'linear-gradient(150deg,#050814 0%,#122040 55%,#2A1550 100%)',
+    layers: [
+      ...stars(38, 5, {bigN:6}),
+      'radial-gradient(ellipse 90% 60% at 40% 118%, rgba(80,250,123,0.22), transparent 60%)',
+      'radial-gradient(ellipse 80% 55% at 75% 122%, rgba(139,233,253,0.20), transparent 60%)',
+      MILKY_SOFT,
+    ],
+  },
+  {
+    key: 'E：放射状ビネット',
+    note: '中央やや上に淡い銀河のコア（radial）＋周辺を締める。写真的な奥行き・文字が乗せやすい。',
+    grad: 'radial-gradient(ellipse 90% 75% at 50% 32%, #24244A 0%, #14183A 45%, #05060F 100%)',
+    layers: [
+      ...stars(40, 6, {bigN:6}),
+      'radial-gradient(ellipse 60% 45% at 50% 30%, rgba(180,190,255,0.20), transparent 65%)',
+      NEBULA1,
+      MILKY_SOFT,
+    ],
+  },
+];
+
+document.getElementById('list').innerHTML = VARIANTS.map(v => {
+  const bg = v.layers.join(', ') + ', ' + v.grad;
+  return `
+    <div class="cap">${v.key}<small>${v.note}</small></div>
+    <div class="card">
+      <div class="bg" style="background:${bg};">
+        <div class="name">星空</div>
+        <div class="content">
+          <div class="title">夏の天体観測ナイト</div>
+          <div class="meta">🗓 8月12日(火) 20:00 ・ 📍 六甲山天文台</div>
+        </div>
+      </div>
+    </div>`;
+}).join('');
+</script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>朝・昼・夜 シネマティック（SVG）</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:#EAEAEE; display:flex; justify-content:center; padding:24px 0 70px; }
+  .stage { width: 480px; }
+  h1 { font-size:17px; text-align:center; margin-bottom:4px; }
+  .sub { text-align:center; font-size:11.5px; color:#666; margin-bottom:18px; line-height:1.7; }
+  .cap { font-size:12.5px; font-weight:800; padding:10px 4px 4px; color:#1A1A2E; }
+  .cap small { font-weight:400; color:#666; }
+  .card { border-radius:16px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.25); margin-bottom:20px; }
+  .frame { position:relative; width:100%; aspect-ratio:16/9; }
+  .frame svg { display:block; width:100%; height:100%; }
+  .overlay { position:absolute; inset:0; padding:22px; display:flex; flex-direction:column; justify-content:flex-end; pointer-events:none; }
+  .t-title { font-weight:800; font-size:21px; letter-spacing:.5px; }
+  .t-meta { font-size:12.5px; margin-top:5px; }
+  .name { position:absolute; left:14px; top:13px; font-size:11.5px; font-weight:700; letter-spacing:1px; z-index:5; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <h1>朝・昼・夜 ＝ 1日のサイクル（SVG）</h1>
+  <div class="sub">山と雲海の骨格は共通。空・天体（太陽/星）・光だけ時間帯で変える。<br>星空（夜）と地続きの世界観。全部SVG描画＝画像素材なし。</div>
+  <div id="list"></div>
+</div>
+
+<script>
+function rng(seed){ let s=9301+seed*233; return ()=>{ s=(s*9301+49297)%233280; return s/233280; }; }
+const W=1600, H=900;
+
+// 共通：山＋雲海
+function scenery(cloudColor, cloudOp){
+  return `
+    <ellipse cx="820" cy="1000" rx="1150" ry="150" fill="${cloudColor}" opacity="${cloudOp}" filter="url(#blurBig)"/>
+    <path d="M0 900 L0 812 L180 838 L360 786 L520 828 L720 770 L900 820 L1120 762 L1340 812 L1600 772 L1600 900 Z" fill="#04060E"/>
+    <path d="M0 900 L0 858 L240 872 L470 842 L760 872 L1040 846 L1330 872 L1600 844 L1600 900 Z" fill="#02030A"/>`;
+}
+// 太陽＋グロー＋光条
+function sun(cx,cy,rad,core,glow,rays,rayOp){
+  let beams='';
+  const n=16;
+  for(let i=0;i<n;i++){
+    const a=(i/n)*Math.PI*2;
+    const len=rad*(3.4+ (i%2?0.9:0));
+    const x2=(cx+Math.cos(a)*len).toFixed(0), y2=(cy+Math.sin(a)*len).toFixed(0);
+    const w=(rad*0.5).toFixed(0);
+    const px=(cx+Math.cos(a+0.09)*rad).toFixed(0), py=(cy+Math.sin(a+0.09)*rad).toFixed(0);
+    const qx=(cx+Math.cos(a-0.09)*rad).toFixed(0), qy=(cy+Math.sin(a-0.09)*rad).toFixed(0);
+    beams+=`<path d="M${px} ${py} L${x2} ${y2} L${qx} ${qy} Z" fill="${rays}" opacity="${rayOp}"/>`;
+  }
+  return `
+    <g>${beams}</g>
+    <circle cx="${cx}" cy="${cy}" r="${rad*3.2}" fill="${glow}" opacity="0.5" filter="url(#blurBig)"/>
+    <circle cx="${cx}" cy="${cy}" r="${rad*1.7}" fill="${glow}" opacity="0.7" filter="url(#blurMid)"/>
+    <circle cx="${cx}" cy="${cy}" r="${rad}" fill="${core}"/>`;
+}
+// 昼の雲（ふわっと白いかたまり）
+function cumulus(list){
+  return list.map(([x,y,s,op])=>`
+    <g opacity="${op}" filter="url(#blurMid)">
+      <ellipse cx="${x}" cy="${y}" rx="${s*1.6}" ry="${s*0.7}" fill="#ffffff"/>
+      <ellipse cx="${x-s*0.7}" cy="${y+s*0.2}" rx="${s}" ry="${s*0.55}" fill="#ffffff"/>
+      <ellipse cx="${x+s*0.8}" cy="${y+s*0.15}" rx="${s*0.9}" ry="${s*0.5}" fill="#f4f8ff"/>
+    </g>`).join('');
+}
+// 星（夜／朝の残り星）
+function stars(seed,count,maxY){
+  const r=rng(seed); let s='';
+  for(let i=0;i<count;i++){
+    const x=(r()*W).toFixed(0), y=(r()*maxY).toFixed(0), t=r();
+    const rad = t>0.95 ? 1.7 : (t>0.7?1.05:0.6);
+    s+=`<circle cx="${x}" cy="${y}" r="${rad}" fill="#fff" opacity="${(0.3+t*0.6).toFixed(2)}"/>`;
+  }
+  return s;
+}
+
+const CARDS = [
+  {
+    key:'朝（暁）', note:'日の出。低い太陽＋暖色グロー＋光条。上空に残り星。',
+    txt:'#3A1D10', meta:'rgba(60,30,10,.85)', name:'#5A2A12',
+    sky:[['0','#20336E'],['0.4','#6B4C8A'],['0.66','#C56E7C'],['0.85','#F0A15C'],['1','#FBD285']],
+    body:(s)=> stars(s,60,340) + sun(1180,600,70,'#FFF3D0','#FFC876','#FFE3A8',0.16),
+    cloud:'#E9A56B', cloudOp:0.55,
+  },
+  {
+    key:'昼（蒼穹）', note:'快晴。高い太陽＋白い積雲。抜ける青空。',
+    txt:'#0C2340', meta:'rgba(12,35,64,.8)', name:'#0C2A50',
+    sky:[['0','#1C63C8'],['0.45','#3E8FE0'],['0.75','#7FBEF0'],['1','#CDEBFF']],
+    body:(s)=> sun(1270,220,64,'#FFFDF2','#FFF0B0','#FFF6D0',0.10) + cumulus([[360,300,90,0.9],[720,210,70,0.85],[1050,360,80,0.8],[560,470,60,0.7]]),
+    cloud:'#FFFFFF', cloudOp:0.8,
+  },
+  {
+    key:'夜（星空）', note:'参考「天空の楽園」。天の川＋星の軌跡＋星座線。',
+    txt:'#FFFFFF', meta:'rgba(255,255,255,.88)', name:'#FFFFFF',
+    sky:[['0','#060B24'],['0.45','#0E2158'],['0.72','#123A6E'],['0.88','#16506A'],['1','#0C2A2E']],
+    body:(s)=> nightSky(s),
+    cloud:'#0a1420', cloudOp:0.5,
+  },
+];
+
+function starTrails(seed){
+  const cx=1680, cy=-140; let s=''; const rnd=rng(seed);
+  for(let R=380; R<1750; R+=26){
+    const a0=60*Math.PI/180, a1=(205+rnd()*6)*Math.PI/180;
+    const x0=(cx+R*Math.cos(a0)).toFixed(1), y0=(cy+R*Math.sin(a0)).toFixed(1);
+    const x1=(cx+R*Math.cos(a1)).toFixed(1), y1=(cy+R*Math.sin(a1)).toFixed(1);
+    s+=`<path d="M${x0} ${y0} A ${R} ${R} 0 0 1 ${x1} ${y1}" fill="none" stroke="${rnd()>0.7?'#bcd4ff':'#fff'}" stroke-width="1" opacity="${(0.05+rnd()*0.13).toFixed(2)}"/>`;
+  }
+  return s;
+}
+function constellations(seed){
+  const r=rng(seed); let s=''; const labels=['Ursa Major','Canes Venatici','Boötes','Lyra','Draco'];
+  for(let k=0;k<5;k++){
+    const n=3+Math.floor(r()*3); let pts=[]; let x=r()*W*0.8+W*0.05, y=r()*H*0.6+H*0.05;
+    for(let j=0;j<n;j++){ x+=(r()-0.5)*260; y+=(r()-0.5)*200; pts.push([Math.max(20,Math.min(W-20,x)).toFixed(0), Math.max(20,Math.min(H*0.8,y)).toFixed(0)]); }
+    s+=`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#dfe8ff" stroke-width="1" opacity="0.18"/>`;
+    pts.forEach(p=> s+=`<circle cx="${p[0]}" cy="${p[1]}" r="1.6" fill="#fff" opacity="0.7"/>`);
+    s+=`<text x="${pts[0][0]}" y="${(+pts[0][1]+16)}" fill="#cdd8ff" opacity="0.28" font-size="15" font-style="italic" font-family="Georgia,serif">${labels[k]}</text>`;
+  }
+  return s;
+}
+function nightSky(seed){
+  const bright=[[1490,70,6],[300,150,4],[880,120,3.4],[120,470,3],[1180,300,3]].map(([x,y,sz])=>{
+    const g=sz*3.2; return `<g opacity="0.95"><circle cx="${x}" cy="${y}" r="${sz}" fill="#fff"/><circle cx="${x}" cy="${y}" r="${sz*1.9}" fill="#cfe0ff" opacity="0.35"/><path d="M${x-g} ${y} H${x+g} M${x} ${y-g} V${y+g}" stroke="#eef4ff" stroke-width="${(sz*0.5).toFixed(2)}" stroke-linecap="round" opacity="0.7"/></g>`;
+  }).join('');
+  return `
+    <g transform="translate(1060,300) rotate(-32)" filter="url(#blurBig)">
+      <ellipse cx="0" cy="0" rx="640" ry="150" fill="#fff" opacity="0.10"/>
+      <ellipse cx="60" cy="-20" rx="240" ry="95" fill="#d8c9b0" opacity="0.35"/>
+    </g>
+    ${starTrails(seed)} ${constellations(seed+1)} ${stars(seed+2,520,H*0.9)} ${bright}`;
+}
+
+document.getElementById('list').innerHTML = CARDS.map((c,idx)=>{
+  const stops=c.sky.map(([o,col])=>`<stop offset="${o}" stop-color="${col}"/>`).join('');
+  const svg=`
+  <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="sky${idx}" x1="0" y1="0" x2="0.15" y2="1">${stops}</linearGradient>
+      <filter id="blurBig" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="30"/></filter>
+      <filter id="blurMid" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14"/></filter>
+    </defs>
+    <rect width="${W}" height="${H}" fill="url(#sky${idx})"/>
+    ${c.body(7+idx*5)}
+    ${scenery(c.cloud, c.cloudOp)}
+  </svg>`;
+  return `
+    <div class="cap">${c.key} <small>— ${c.note}</small></div>
+    <div class="card"><div class="frame">
+      ${svg}
+      <div class="name" style="color:${c.name};text-shadow:0 1px 6px rgba(0,0,0,.4);">星空パレット</div>
+      <div class="overlay">
+        <div class="t-title" style="color:${c.txt};text-shadow:0 2px 12px rgba(0,0,0,.35);">朝活・山の上ヨガ</div>
+        <div class="t-meta" style="color:${c.meta};text-shadow:0 1px 8px rgba(0,0,0,.3);">🗓 8月12日(火) ・ 📍 六甲山</div>
+      </div>
+    </div></div>`;
+}).join('');
+</script>
+</body>
+</html>

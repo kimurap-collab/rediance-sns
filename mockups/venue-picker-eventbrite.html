@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>イベント会場ピッカー（Eventbrite/Peatix式）</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:#E6E6EA; padding:26px 0 70px; }
+  h1 { text-align:center; font-size:18px; margin-bottom:4px; }
+  .sub { text-align:center; font-size:12px; color:#666; margin-bottom:24px; line-height:1.6; }
+  .wrap { display:flex; flex-wrap:wrap; gap:34px; justify-content:center; align-items:flex-start; }
+  .col { width:340px; }
+  .lab { font-size:13px; font-weight:800; margin:0 2px 10px; color:#1A1A2E; }
+  .lab small { display:block; font-weight:400; color:#777; font-size:11px; margin-top:2px; line-height:1.5; }
+  .phone { width:340px; height:680px; background:#fff; border-radius:32px; overflow:hidden; box-shadow:0 14px 44px rgba(0,0,0,.24); position:relative; }
+  .hdr { display:flex; align-items:center; justify-content:space-between; padding:16px 16px 12px; border-bottom:1px solid #EEE; }
+  .hdr .x { font-size:19px; color:#333; width:24px; }
+  .hdr .ttl { font-size:16px; font-weight:800; }
+  .hdr .done { font-size:14.5px; font-weight:700; color:#B0B0B6; width:auto; }
+  .hdr .done.on { color:#7C3AED; }
+  .body { padding:16px; }
+  .flabel { font-size:12px; font-weight:700; color:#555; margin:0 2px 6px; }
+  .flabel .opt { color:#AAA; font-weight:400; margin-left:5px; }
+  .search { display:flex; align-items:center; gap:10px; background:#F1F2F4; border-radius:12px; padding:13px 14px; font-size:15px; }
+  .search .ph { color:#9A9AA0; }
+  .inp { width:100%; border:1.5px solid #E3E3E8; border-radius:11px; padding:12px 13px; font-size:14.5px; color:#1A1A1A; background:#fff; }
+  .inp.filled { border-color:#CDBEF5; background:#FBFAFF; }
+  .ac { border:1px solid #E7E7EC; border-radius:14px; margin-top:8px; overflow:hidden; box-shadow:0 8px 22px rgba(0,0,0,.10); }
+  .acrow { display:flex; align-items:center; gap:12px; padding:13px 15px; cursor:pointer; border-bottom:1px solid #F0F0F3; }
+  .acrow:last-child { border-bottom:none; }
+  .acrow:hover { background:#F7F5FF; }
+  .ic { width:34px; height:34px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:16px; background:#EFEAFD; }
+  .nm { font-size:14.5px; font-weight:600; color:#1A1A1A; }
+  .ad { font-size:12px; color:#8A8A90; margin-top:1px; }
+  .map { position:relative; width:100%; height:150px; border-radius:13px; overflow:hidden; margin-top:6px; border:1px solid #E3E3E8;
+    background:
+      repeating-linear-gradient(90deg,#E8EDE4 0 34px,#E3E9DF 34px 36px),
+      repeating-linear-gradient(0deg,#E8EDE4 0 34px,#E3E9DF 34px 36px); }
+  .map .road { position:absolute; background:#fff; }
+  .centerpin { position:absolute; left:50%; top:50%; transform:translate(-50%,-100%); font-size:30px; filter:drop-shadow(0 3px 3px rgba(0,0,0,.35)); }
+  .maphint { font-size:11px; color:#999; margin-top:6px; }
+  .btn { position:absolute; left:16px; right:16px; bottom:20px; height:52px; border-radius:14px; border:none; font-size:15.5px; font-weight:800; color:#fff; background:#7C3AED; }
+  .btn.off { background:#D9D3EC; }
+  .hint { font-size:11.5px; color:#8A8A90; margin-top:14px; line-height:1.6; text-align:center; }
+</style>
+</head>
+<body>
+<h1>イベント会場ピッカー（Eventbrite／Peatix式・完コピ）</h1>
+<div class="sub">検索で自動入力しつつ、会場名・住所は文字で編集できるハイブリッド。<br>店名あり／ホール＋住所／住所だけ／ピンだけ、全部これ1つでいける。</div>
+
+<div class="wrap">
+
+  <!-- ① 検索中（オートコンプリート） -->
+  <div class="col">
+    <div class="lab">① 検索中 — オートコンプリート <small>会場名・店名・住所どれで打っても候補。選べば下の欄が全部埋まる。</small></div>
+    <div class="phone">
+      <div class="hdr"><span class="x">✕</span><span class="ttl">場所を設定</span><span class="done">完了</span></div>
+      <div class="body">
+        <div class="flabel">会場を検索</div>
+        <div class="search"><span style="color:#7C3AED;">🔍</span><span>スターバックス 渋谷</span><span style="margin-left:auto;color:#B0B0B6;">✕</span></div>
+        <div class="ac">
+          <div class="acrow"><div class="ic">☕️</div><div><div class="nm">スターバックス 渋谷スカイ店</div><div class="ad">東京都渋谷区渋谷2-24-12</div></div></div>
+          <div class="acrow"><div class="ic">☕️</div><div><div class="nm">スターバックス 渋谷マークシティ店</div><div class="ad">東京都渋谷区道玄坂1-12-1</div></div></div>
+          <div class="acrow"><div class="ic">☕️</div><div><div class="nm">スターバックス TSUTAYA 渋谷店</div><div class="ad">東京都渋谷区宇田川町21-6</div></div></div>
+          <div class="acrow" style="color:#7C3AED;"><div class="ic" style="background:#EDE9FE;">✎</div><div class="nm" style="color:#7C3AED;">「スターバックス 渋谷」を手入力で使う</div></div>
+        </div>
+        <div class="hint">リストに無い会場（貸し切りスペース・友人宅・新規ホール等）は<br>「手入力で使う」でそのまま登録できる</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② 選択後（自動入力＋手編集可＋地図ピン） -->
+  <div class="col">
+    <div class="lab">② 選択後 — 自動入力＆手編集OK <small>会場名・住所が埋まる。どちらも文字で直せる。地図はピンで微調整（任意）。</small></div>
+    <div class="phone">
+      <div class="hdr"><span class="x">✕</span><span class="ttl">場所を設定</span><span class="done on">完了</span></div>
+      <div class="body">
+        <div class="flabel">会場を検索</div>
+        <div class="search"><span style="color:#7C3AED;">🔍</span><span class="ph">別の会場を探す…</span></div>
+
+        <div style="height:16px;"></div>
+        <div class="flabel">会場名</div>
+        <div class="inp filled">スターバックス 渋谷スカイ店</div>
+
+        <div style="height:12px;"></div>
+        <div class="flabel">住所 <span class="opt">・タップで編集</span></div>
+        <div class="inp filled">東京都渋谷区渋谷2-24-12 渋谷スクランブルスクエア45F</div>
+
+        <div style="height:14px;"></div>
+        <div class="flabel">地図 <span class="opt">任意・ピンで微調整</span></div>
+        <div class="map">
+          <div class="road" style="left:90px;top:0;bottom:0;width:11px;"></div>
+          <div class="road" style="left:0;right:0;top:80px;height:11px;"></div>
+          <div class="centerpin">📍</div>
+        </div>
+        <div class="maphint">🧭 地図を動かして中央のピンを合わせる</div>
+      </div>
+      <button class="btn">この場所に決定</button>
+    </div>
+  </div>
+
+  <!-- ③ 手入力ケース（住所だけ／ピンだけ） -->
+  <div class="col">
+    <div class="lab">③ 手入力ケース <small>店名が無いイベント。会場名は空でOK、住所だけ or 地図ピンだけでも成立。</small></div>
+    <div class="phone">
+      <div class="hdr"><span class="x">✕</span><span class="ttl">場所を設定</span><span class="done on">完了</span></div>
+      <div class="body">
+        <div class="flabel">会場を検索</div>
+        <div class="search"><span style="color:#7C3AED;">🔍</span><span class="ph">会場名・店名・住所で検索</span></div>
+
+        <div style="height:16px;"></div>
+        <div class="flabel">会場名 <span class="opt">任意</span></div>
+        <div class="inp" style="color:#B7B7BE;">（例）淡路島の別荘</div>
+
+        <div style="height:12px;"></div>
+        <div class="flabel">住所</div>
+        <div class="inp filled">兵庫県淡路市里1000-1</div>
+
+        <div style="height:14px;"></div>
+        <div class="flabel">地図 <span class="opt">任意</span></div>
+        <div class="map">
+          <div class="road" style="left:200px;top:0;bottom:0;width:11px;"></div>
+          <div class="road" style="left:0;right:0;top:100px;height:11px;"></div>
+          <div class="centerpin">📍</div>
+        </div>
+        <div class="maphint">🧭 住所から地図へ／地図を動かしてピン調整</div>
+      </div>
+      <button class="btn">この場所に決定</button>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

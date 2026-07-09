@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星空・シネマティック（SVG）</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:#EAEAEE; display:flex; justify-content:center; padding:24px 0 70px; }
+  .stage { width: 480px; }
+  h1 { font-size:17px; text-align:center; margin-bottom:4px; }
+  .sub { text-align:center; font-size:11.5px; color:#666; margin-bottom:18px; line-height:1.7; }
+  .cap { font-size:12.5px; font-weight:800; padding:10px 4px 4px; color:#1A1A2E; }
+  .cap small { display:block; font-weight:400; color:#666; font-size:11px; margin-top:2px; line-height:1.55; }
+  .card { border-radius:16px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.25); margin-bottom:20px; }
+  .frame { position:relative; width:100%; aspect-ratio:16/9; }
+  .frame svg { display:block; width:100%; height:100%; }
+  .overlay { position:absolute; inset:0; padding:22px; display:flex; flex-direction:column; justify-content:flex-end; pointer-events:none; }
+  .t-title { color:#fff; font-weight:800; font-size:21px; text-shadow:0 2px 12px rgba(0,0,0,.6); letter-spacing:.5px; }
+  .t-meta { color:rgba(255,255,255,.88); font-size:12.5px; margin-top:5px; text-shadow:0 1px 8px rgba(0,0,0,.7); }
+  .name { position:absolute; left:14px; top:13px; color:#fff; font-size:11.5px; font-weight:700; letter-spacing:1px; text-shadow:0 1px 6px rgba(0,0,0,.8); z-index:5; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <h1>星空・シネマティック案（SVG）</h1>
+  <div class="sub">参考「天空の楽園」に寄せて。天の川コア＋星の軌跡（同心円）＋星座線＋地平線グロー。<br>全部SVGで描画＝画像素材なしで軽い。色は下に3バリエーション。</div>
+  <div id="list"></div>
+</div>
+
+<script>
+function rng(seed){ let s=9301+seed*233; return ()=>{ s=(s*9301+49297)%233280; return s/233280; }; }
+const W=1600, H=900;
+
+// 星の点描（密）
+function starDots(seed){
+  const r=rng(seed); let s='';
+  for(let i=0;i<520;i++){
+    const x=(r()*W).toFixed(0), y=(r()*H*0.92).toFixed(0);
+    const t=r();
+    const rad = t>0.965 ? (1.8+r()*1.6) : (t>0.75 ? 1.1 : 0.6);
+    const op = (0.35 + t*0.6).toFixed(2);
+    s+=`<circle cx="${x}" cy="${y}" r="${rad.toFixed(2)}" fill="#fff" opacity="${op}"/>`;
+  }
+  return s;
+}
+// 明るい輝星（十字グレア）
+function brightStars(pts){
+  return pts.map(([x,y,sz])=>{
+    const g=sz*3.2;
+    return `<g opacity="0.95">
+      <circle cx="${x}" cy="${y}" r="${sz}" fill="#fff"/>
+      <circle cx="${x}" cy="${y}" r="${sz*1.9}" fill="#cfe0ff" opacity="0.35"/>
+      <path d="M${x-g} ${y} H${x+g} M${x} ${y-g} V${y+g}" stroke="#eef4ff" stroke-width="${(sz*0.5).toFixed(2)}" stroke-linecap="round" opacity="0.7"/>
+    </g>`;
+  }).join('');
+}
+// 星の軌跡（右上を極とした同心円アーク）
+function starTrails(seed){
+  const cx=1680, cy=-140; const r0=380, r1=1750;
+  let s=''; const rnd=rng(seed);
+  for(let R=r0; R<r1; R+=26){
+    // 可視域（下～左）に出る角度帯だけ描く：60°→205°
+    const a0=60*Math.PI/180, a1=(205+rnd()*6)*Math.PI/180;
+    const x0=(cx+R*Math.cos(a0)).toFixed(1), y0=(cy+R*Math.sin(a0)).toFixed(1);
+    const x1=(cx+R*Math.cos(a1)).toFixed(1), y1=(cy+R*Math.sin(a1)).toFixed(1);
+    const op=(0.05+rnd()*0.13).toFixed(2);
+    const tint = rnd()>0.7 ? '#bcd4ff' : '#ffffff';
+    s+=`<path d="M${x0} ${y0} A ${R} ${R} 0 0 1 ${x1} ${y1}" fill="none" stroke="${tint}" stroke-width="1" opacity="${op}"/>`;
+  }
+  return s;
+}
+// 星座線＋ラベル（うっすら）
+function constellations(seed){
+  const r=rng(seed); let s='';
+  const labels=['Ursa Major','Canes Venatici','Boötes','Lyra','Draco'];
+  for(let k=0;k<5;k++){
+    const n=3+Math.floor(r()*3);
+    let pts=[]; let x=r()*W*0.8+W*0.05, y=r()*H*0.6+H*0.05;
+    for(let j=0;j<n;j++){ x+=(r()-0.5)*260; y+=(r()-0.5)*200; pts.push([Math.max(20,Math.min(W-20,x)).toFixed(0), Math.max(20,Math.min(H*0.8,y)).toFixed(0)]); }
+    s+=`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#dfe8ff" stroke-width="1" opacity="0.18"/>`;
+    pts.forEach(p=> s+=`<circle cx="${p[0]}" cy="${p[1]}" r="1.6" fill="#fff" opacity="0.7"/>`);
+    s+=`<text x="${pts[0][0]}" y="${(+pts[0][1]+16)}" fill="#cdd8ff" opacity="0.28" font-size="15" font-style="italic" font-family="Georgia,serif">${labels[k]}</text>`;
+  }
+  return s;
+}
+
+const VARIANTS=[
+  { key:'紺〜藍（参考に近い）', seed:7,
+    sky:[['0','#060B24'],['0.45','#0E2158'],['0.72','#123A6E'],['0.88','#16506A'],['1','#0C2A2E']],
+    glow:'#7FE0C0', glow2:'#F2E9A0', milkyTint:'#d8c9b0' },
+  { key:'藍紫（幻想寄り）', seed:14,
+    sky:[['0','#0A0620'],['0.45','#241056'],['0.75','#3A1E74'],['0.9','#5A2E7A'],['1','#241040']],
+    glow:'#C9A8FF', glow2:'#FFC9E6', milkyTint:'#e0d0e6' },
+  { key:'群青×薄明（爽やか）', seed:21,
+    sky:[['0','#03102E'],['0.5','#0B3170'],['0.78','#1667A8'],['0.9','#2A93C4'],['1','#0E3A4A']],
+    glow:'#BFF0FF', glow2:'#EAF6C8', milkyTint:'#cfe0f0' },
+];
+
+document.getElementById('list').innerHTML = VARIANTS.map((v,idx)=>{
+  const stops = v.sky.map(([o,c])=>`<stop offset="${o}" stop-color="${c}"/>`).join('');
+  const bright = brightStars([[1490,70,6],[300,150,4],[880,120,3.4],[120,470,3],[1360,760,3.6],[1180,300,3]]);
+  const svg = `
+  <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="sky${idx}" x1="0" y1="0" x2="0.2" y2="1">${stops}</linearGradient>
+      <radialGradient id="mw${idx}" cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0" stop-color="${v.milkyTint}" stop-opacity="0.55"/>
+        <stop offset="0.35" stop-color="#ffffff" stop-opacity="0.16"/>
+        <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="hz${idx}" x1="0" y1="1" x2="1" y2="0.7">
+        <stop offset="0" stop-color="${v.glow}" stop-opacity="0.55"/>
+        <stop offset="0.55" stop-color="${v.glow2}" stop-opacity="0.35"/>
+        <stop offset="1" stop-color="${v.glow2}" stop-opacity="0.05"/>
+      </linearGradient>
+      <filter id="soft${idx}" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="26"/></filter>
+      <filter id="softh${idx}" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="34"/></filter>
+    </defs>
+
+    <rect width="${W}" height="${H}" fill="url(#sky${idx})"/>
+
+    <!-- 天の川：斜めのソフトな帯＋明るいコア -->
+    <g transform="translate(1060,300) rotate(-32)" filter="url(#soft${idx})">
+      <ellipse cx="0" cy="0" rx="640" ry="150" fill="#ffffff" opacity="0.10"/>
+      <ellipse cx="60" cy="-20" rx="240" ry="95" fill="url(#mw${idx})"/>
+    </g>
+
+    <!-- 星の軌跡（右上を極とした同心円） -->
+    <g>${starTrails(v.seed)}</g>
+    <!-- 星座線 -->
+    <g>${constellations(v.seed+1)}</g>
+    <!-- 点描の星 -->
+    <g>${starDots(v.seed+2)}</g>
+    <!-- 輝星 -->
+    ${bright}
+
+    <!-- 地平線グロー -->
+    <ellipse cx="1200" cy="960" rx="900" ry="220" fill="url(#hz${idx})" filter="url(#softh${idx})"/>
+    <!-- 雲海 -->
+    <ellipse cx="800" cy="1000" rx="1100" ry="150" fill="#0a1420" opacity="0.5" filter="url(#softh${idx})"/>
+    <!-- 山のシルエット -->
+    <path d="M0 900 L0 812 L180 838 L360 786 L520 828 L720 770 L900 820 L1120 762 L1340 812 L1600 772 L1600 900 Z" fill="#04060E"/>
+    <path d="M0 900 L0 858 L240 872 L470 842 L760 872 L1040 846 L1330 872 L1600 844 L1600 900 Z" fill="#02030A"/>
+  </svg>`;
+  return `
+    <div class="cap">${v.key}</div>
+    <div class="card">
+      <div class="frame">
+        ${svg}
+        <div class="name">星空</div>
+        <div class="overlay">
+          <div class="t-title">夏の天体観測ナイト</div>
+          <div class="t-meta">🗓 8月12日(火) 20:00 ・ 📍 六甲山天文台</div>
+        </div>
+      </div>
+    </div>`;
+}).join('');
+</script>
+</body>
+</html>
