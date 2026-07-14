@@ -41,6 +41,11 @@
       --tab-height: 68px;
       --header-height: 56px;
       --status-height: 44px;
+      /* ===== MOTION TOKENS (画面遷移の文法統一) ===== */
+      --mo-push: 300ms cubic-bezier(0.32, 0.72, 0, 1);   /* iOS UINavigationController相当 */
+      --mo-sheet: 300ms cubic-bezier(0.32, 0.72, 0, 1);
+      --mo-action: 250ms ease-out;
+      --mo-modal: 200ms ease;
     }
 
     * {
@@ -122,13 +127,42 @@
       background: var(--bg);
       opacity: 0;
       pointer-events: none;
-      transform: translateX(20px);
-      transition: opacity 0.25s ease, transform 0.25s ease;
     }
+    /* タブ切替＝即時・アニメ無し（インスタ/TikTok標準） */
     .screen.active {
       opacity: 1;
       pointer-events: auto;
+    }
+    /* 深掘り＝右からフルスライドのプッシュ */
+    /* 閉状態は visibility:hidden 併用（transition終了後に隠す）：フレーム外への描画漏れ防止 */
+    .screen.push {
+      opacity: 1;
+      transform: translateX(100%);
+      visibility: hidden;
+      transition: transform var(--mo-push), visibility 0s 300ms;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .screen.push.active {
       transform: translateX(0);
+      visibility: visible;
+      transition: transform var(--mo-push), visibility 0s;
+      pointer-events: auto;
+    }
+    /* 作成・編集タスク＝下から全画面シート */
+    .screen.sheet {
+      opacity: 1;
+      transform: translateY(100%);
+      visibility: hidden;
+      transition: transform var(--mo-sheet), visibility 0s 300ms;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .screen.sheet.active {
+      transform: translateY(0);
+      visibility: visible;
+      transition: transform var(--mo-sheet), visibility 0s;
+      pointer-events: auto;
     }
 
     /* ===== HEADER ===== */
@@ -471,12 +505,16 @@
       top: 0; left: 0; right: 0; bottom: 0;
       background: var(--bg);
       z-index: 2000;
-      display: none;
+      display: flex;
       flex-direction: column;
       max-width: 430px;
       margin: 0 auto;
+      transform: translateY(100%);
+      visibility: hidden;
+      transition: transform var(--mo-sheet), visibility 0s 300ms;
+      pointer-events: none;
     }
-    .msg-overlay.open { display: flex; }
+    .msg-overlay.open { transform: translateY(0); visibility: visible; transition: transform var(--mo-sheet), visibility 0s; pointer-events: auto; }
     .msg-header {
       display: flex;
       align-items: center;
@@ -543,12 +581,16 @@
       top: 0; left: 0; right: 0; bottom: 0;
       background: var(--bg);
       z-index: 3000;
-      display: none;
+      display: flex;
       flex-direction: column;
       max-width: 430px;
       margin: 0 auto;
+      transform: translateY(100%);
+      visibility: hidden;
+      transition: transform var(--mo-sheet), visibility 0s 300ms;
+      pointer-events: none;
     }
-    .nm-overlay.open { display: flex; }
+    .nm-overlay.open { transform: translateY(0); visibility: visible; transition: transform var(--mo-sheet), visibility 0s; pointer-events: auto; }
 
     .nm-header {
       display: flex;
@@ -792,6 +834,252 @@
       opacity: 0.38;
       cursor: not-allowed;
     }
+    .nm-next-btn.tier-confirm {
+      background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+      color: #fff;
+    }
+
+    /* ===== BCC宛先カゴ：下部固定バー（案A・黒フロート） ===== */
+    .basket-bar {
+      position: fixed;
+      left: 10px; right: 10px;
+      bottom: calc(var(--tab-height) + 10px + env(safe-area-inset-bottom, 0px));
+      max-width: 410px;
+      margin: 0 auto;
+      background: #1A1A2E;
+      border: none;
+      border-radius: 16px;
+      padding: 10px 14px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      z-index: 500;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,.25);
+    }
+    .basket-bar.show { display: flex; }
+    .basket-avatars { display: flex; flex-shrink: 0; }
+    .basket-avatars .basket-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: #333;
+      border: 2px solid #1A1A2E;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      margin-left: -8px;
+    }
+    .basket-avatars .basket-avatar:first-child { margin-left: 0; }
+    .basket-avatars .basket-avatar-more {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .basket-count-text {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .basket-send-btn {
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .basket-clear-btn {
+      font-size: 15px;
+      color: rgba(255,255,255,0.55);
+      padding: 4px 2px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    /* 内訳シート */
+    .basket-sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      max-width: 430px;
+      margin: 0 auto;
+      background: rgba(0,0,0,0.35);
+      z-index: 1900;
+      display: none;
+    }
+    .basket-sheet-backdrop.show { display: block; }
+    .basket-sheet {
+      position: fixed;
+      left: 0; right: 0;
+      bottom: 0;
+      max-width: 430px;
+      margin: 0 auto;
+      background: var(--bg);
+      border-radius: 18px 18px 0 0;
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.18);
+      z-index: 2000;
+      max-height: 65vh;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform var(--mo-action);
+    }
+    .basket-sheet.open { transform: translateY(0); }
+    .basket-sheet-handle {
+      width: 36px; height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 10px auto 6px;
+      flex-shrink: 0;
+    }
+    .basket-sheet-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      padding: 2px 18px 10px;
+      flex-shrink: 0;
+    }
+    .basket-sheet-list {
+      overflow-y: auto;
+      padding: 0 18px;
+      flex: 1;
+    }
+    .basket-sheet-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .basket-sheet-row-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+      border: 1.5px solid var(--border);
+      flex-shrink: 0;
+    }
+    .basket-sheet-row-name { font-size: 13px; font-weight: 700; color: var(--text-main); flex: 1; }
+    .basket-sheet-row-badge {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      background: var(--primary-bg);
+      border-radius: 6px;
+      padding: 2px 7px;
+      flex-shrink: 0;
+    }
+    .basket-sheet-row-remove {
+      color: var(--text-light);
+      font-size: 15px;
+      padding: 0 4px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .basket-sheet-send-btn {
+      margin: 12px 18px 18px;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    /* ===== 新しい配信 作成画面（LINE式・案A） ===== */
+    #screen-broadcast-create { display: flex; flex-direction: column; }
+    .bcn-header {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .bcn-back-btn { font-size: 19px; cursor: pointer; flex-shrink: 0; width: 20px; background: none; border: none; color: var(--text-main); }
+    .bcn-header-title { font-size: 15.5px; font-weight: 800; flex: 1; text-align: center; }
+    .bcn-create-btn { font-size: 14px; font-weight: 800; color: var(--primary); background: none; border: none; cursor: pointer; padding: 4px 2px; flex-shrink: 0; }
+    .bcn-body { flex: 1; overflow-y: auto; padding: 22px 20px 40px; }
+    .bcn-icon-wrap { display: flex; justify-content: center; margin-bottom: 22px; }
+    .bcn-icon-badge-wrap { position: relative; width: 76px; height: 76px; margin: 0 auto; }
+    .bcn-icon {
+      width: 76px; height: 76px; border-radius: 50%; background: var(--primary-bg); display: flex; align-items: center;
+      justify-content: center; font-size: 34px; cursor: pointer; border: 1px solid var(--border);
+    }
+    .bcn-cam-badge {
+      position: absolute; right: -2px; bottom: -2px; width: 26px; height: 26px; border-radius: 50%; background: var(--bg);
+      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.15); cursor: pointer;
+    }
+    .bcn-name-input {
+      width: 100%; border: none; border-bottom: 1.5px solid var(--border); padding: 10px 2px; font-size: 15px;
+      font-weight: 700; color: var(--text-main); outline: none; text-align: center; background: none;
+    }
+    /* 名前の例文はカーソルを載せたら消す（evCreateTitleと同じ流儀） */
+    #bcnNameInput:hover::placeholder, #bcnNameInput:focus::placeholder { color: transparent; }
+    .bcn-name-note { font-size: 10.5px; color: var(--text-light); text-align: center; margin-top: 8px; line-height: 1.7; }
+    .bcn-avatars-label { font-size: 11.5px; font-weight: 800; color: var(--text-light); margin: 22px 0 10px; }
+    .bcn-avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px 4px; }
+    .bcn-av-item { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+    .bcn-av-circle {
+      width: 40px; height: 40px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0;
+    }
+    .bcn-av-circle.bcn-av-more { background: var(--primary-bg); color: var(--primary-dark); font-weight: 800; font-size: 13px; }
+    .bcn-av-name { font-size: 10px; color: var(--text-sub); text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+
+    /* ===== TIER PAGE（階層メンバーページ：案B閲覧＋案C選択モード） ===== */
+    .tp-header { padding: 12px 16px 8px; flex-shrink: 0; }
+    .tp-row1 { display: flex; align-items: center; gap: 8px; }
+    .tp-back { font-size: 18px; cursor: pointer; }
+    .tp-title { font-size: 16.5px; font-weight: 800; flex: 1; }
+    .tp-count { font-size: 11.5px; color: var(--text-light); font-weight: 700; }
+    .tp-actions { display: flex; gap: 6px; margin-top: 8px; }
+    .tp-btn-outline {
+      font-size: 11.5px; font-weight: 700; color: #7C3AED; border: 1px solid #D9C7FF; border-radius: 8px;
+      padding: 6px 12px; background: #fff; cursor: pointer;
+    }
+    .tp-cancel { font-size: 12px; font-weight: 700; color: var(--text-light); background: none; border: none; cursor: pointer; }
+    .tp-search-input {
+      margin-top: 10px; width: 100%; background: var(--surface); border: none; border-radius: 10px; padding: 9px 12px;
+      font-size: 12.5px; color: var(--text-main); outline: none;
+    }
+    .tp-search-input::placeholder { color: var(--text-light); }
+    .tp-list-wrap { position: relative; flex: 1; overflow: hidden; display: flex; }
+    .tp-list { flex: 1; overflow-y: auto; padding: 2px 0 16px 0; }
+    .tp-empty { text-align: center; color: var(--text-light); font-size: 12px; padding: 30px 0; }
+    .tp-row { display: flex; align-items: center; gap: 12px; padding: 10px 16px; min-height: 64px; }
+    .tp-chk { width: 18px; height: 18px; flex-shrink: 0; accent-color: #7C3AED; }
+    .tp-av {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--surface); display: flex; align-items: center;
+      justify-content: center; font-size: 20px; flex-shrink: 0;
+    }
+    .tp-mid { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+    .tp-name { align-self: stretch; font-size: 14px; font-weight: 700; color: var(--text-main); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tp-mid .contacts-tier-badge-small { font-size: 11px; padding: 2px 8px; border-radius: 10px; width: fit-content; }
+    .tp-msg-btn {
+      border: 1px solid #DBDBDB; background: #fff; color: #262626;
+      font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 8px; flex-shrink: 0; cursor: pointer; white-space: nowrap;
+    }
+    .tp-footer { border-top: 1px solid var(--border); padding: 10px 16px 14px; background: var(--bg); flex-shrink: 0; }
+    .tp-sel-avatars { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; min-height: 34px; }
+    .tp-sel-av {
+      width: 30px; height: 30px; border-radius: 50%; background: var(--surface); display: flex; align-items: center;
+      justify-content: center; font-size: 16px; flex-shrink: 0; box-shadow: 0 0 0 1px var(--border);
+    }
+    .tp-decide-btn {
+      width: 100%; font-size: 13.5px; font-weight: 800; color: #fff; border: none; border-radius: 12px; padding: 12px;
+      background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899); cursor: pointer;
+    }
+    .tp-decide-btn:disabled { opacity: .45; cursor: not-allowed; }
 
     /* ===== NEW MESSAGE STEP2 OVERLAY ===== */
     .nm2-overlay {
@@ -799,12 +1087,16 @@
       top: 0; left: 0; right: 0; bottom: 0;
       background: var(--bg);
       z-index: 3100;
-      display: none;
+      display: flex;
       flex-direction: column;
       max-width: 430px;
       margin: 0 auto;
+      transform: translateY(100%);
+      visibility: hidden;
+      transition: transform var(--mo-sheet), visibility 0s 300ms;
+      pointer-events: none;
     }
-    .nm2-overlay.open { display: flex; }
+    .nm2-overlay.open { transform: translateY(0); visibility: visible; transition: transform var(--mo-sheet), visibility 0s; pointer-events: auto; }
 
     .nm2-header {
       display: flex;
@@ -959,12 +1251,16 @@
       top: 0; left: 0; right: 0; bottom: 0;
       background: var(--bg);
       z-index: 2000;
-      display: none;
+      display: flex;
       flex-direction: column;
       max-width: 430px;
       margin: 0 auto;
+      transform: translateX(100%);
+      visibility: hidden;
+      transition: transform var(--mo-push), visibility 0s 300ms;
+      pointer-events: none;
     }
-    .chat-overlay.open { display: flex; }
+    .chat-overlay.open { transform: translateX(0); visibility: visible; transition: transform var(--mo-push), visibility 0s; pointer-events: auto; }
     .chat-header {
       display: flex;
       align-items: center;
@@ -1006,34 +1302,71 @@
     .chat-bubble.mine .chat-bubble-meta { text-align: right; color: rgba(255,255,255,0.6); }
     .chat-input-bar {
       display: flex;
-      gap: 8px;
       padding: 10px 16px;
       border-top: 1px solid var(--border);
       flex-shrink: 0;
       background: var(--bg);
     }
+    .chat-input-wrap { position: relative; flex: 1; display: flex; align-items: center; }
     .chat-input {
-      flex: 1;
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      border-radius: 20px;
+      width: 100%;
+      padding: 10px 44px 10px 16px;
+      border: none;
+      background: #F0F0F0;
+      border-radius: 22px;
       font-size: 14px;
       outline: none;
       font-family: inherit;
     }
-    .chat-input:focus { border-color: var(--primary); }
     .chat-send-btn {
-      width: 40px;
-      height: 40px;
+      position: absolute;
+      right: 4px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
-      background: var(--primary);
+      background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
       border: none;
       color: #fff;
-      font-size: 16px;
+      font-size: 15px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
+      opacity: .35;
+      transition: opacity .15s;
+    }
+    .chat-input:not(:placeholder-shown) + .chat-send-btn { opacity: 1; }
+    /* Broadcast destination row (dmChatOverlay broadcast mode only) */
+    .dm-broadcast-dest {
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .dm-broadcast-dest-label { font-size: 12px; color: var(--text-light); font-weight: 700; flex-shrink: 0; }
+    .dm-broadcast-dest-chips { display: flex; gap: 6px; overflow-x: auto; flex: 1; }
+    .dm-dest-chip {
+      display: flex; align-items: center; gap: 4px; background: var(--surface); border-radius: 16px;
+      padding: 4px 10px 4px 4px; font-size: 12px; font-weight: 600; color: var(--text-main); flex-shrink: 0; white-space: nowrap;
+    }
+    .dm-dest-chip-av {
+      width: 22px; height: 22px; border-radius: 50%; background: var(--bg); display: flex; align-items: center;
+      justify-content: center; font-size: 12px; flex-shrink: 0;
+    }
+    .dm-broadcast-note { text-align: center; color: var(--text-light); font-size: 12px; padding: 10px 0; }
+    /* Broadcast name row (配信名入力・dmChatOverlay broadcast mode only) */
+    .dm-broadcast-name-row {
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .dm-broadcast-name-label { font-size: 12px; color: var(--text-light); font-weight: 700; flex-shrink: 0; }
+    .dm-broadcast-name-input {
+      flex: 1; border: none; background: none; font-size: 14px; font-weight: 600; color: var(--text-main); outline: none;
     }
     /* Broadcast dashboard */
     .broadcast-member-row {
@@ -1898,7 +2231,7 @@
       z-index: 2000;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s;
+      transition: opacity var(--mo-modal);
     }
     .stat-info-overlay.show { opacity: 1; pointer-events: auto; }
     .stat-info-box {
@@ -1909,8 +2242,8 @@
       padding: 24px 22px 20px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.4);
       text-align: center;
-      transform: scale(0.92);
-      transition: transform 0.2s;
+      transform: scale(0.95);
+      transition: transform var(--mo-modal);
     }
     .stat-info-overlay.show .stat-info-box { transform: scale(1); }
     .stat-info-icon {
@@ -1956,14 +2289,6 @@
       border: 1px solid rgba(255,255,255,0.12);
     }
 
-    @keyframes slideInRight {
-      from { transform: translateX(100%); }
-      to { transform: translateX(0); }
-    }
-    @keyframes slideInLeft {
-      from { transform: translateX(-100%); }
-      to { transform: translateX(0); }
-    }
     .settings-menu-item {
       padding: 14px 20px;
       font-size: 14px;
@@ -2317,7 +2642,7 @@
       transform: translateX(-50%) translateY(100%);
       z-index: 800;
       background: #000;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform var(--mo-sheet);
       pointer-events: none;
     }
     .post-fs-overlay.open {
@@ -3175,60 +3500,38 @@
     .ev-scope-icon { font-size: 20px; margin-bottom: 4px; }
     .ev-scope-label { font-size: 13px; font-weight: 700; }
     .ev-scope-desc { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
-    .ev-scope-detail {
-      margin-top: 12px;
-      padding: 12px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-    }
-    .ev-scope-detail-title {
-      font-size: 12px; font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 8px;
-    }
-    .ev-invite-targets {
-      display: flex; flex-direction: column; gap: 6px;
-      background: transparent;
-      border: none;
-      padding: 0;
-    }
-    .ev-invite-target {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      background: #FFFFFF;
-      border: 1.5px solid var(--border);
-    }
-    .ev-invite-target:active { background: #F5F5F5; }
-    .ev-invite-target.checked {
-      background: rgba(168,85,247,0.08);
-      border-color: #A855F7;
-    }
-    .ev-invite-check {
-      width: 22px; height: 22px;
-      border: 2px solid #CFD4DC;
-      background: #FFFFFF;
-      border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; color: #fff; font-weight: 800;
+    /* 「🌐一般公開する」トグル行（宛先選択画面／イベント設定シートで共用） */
+    .ev-open-toggle-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
       flex-shrink: 0;
     }
-    .ev-invite-target.checked .ev-invite-check {
-      background: #A855F7; border-color: #A855F7;
+    .ev-open-toggle-ico { font-size: 20px; flex-shrink: 0; }
+    .ev-open-toggle-body { flex: 1; min-width: 0; }
+    .ev-open-toggle-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
+    .ev-open-toggle-desc { font-size: 11.5px; color: var(--text-sub); margin-top: 2px; }
+    .ev-open-switch {
+      width: 44px; height: 26px;
+      border-radius: 13px;
+      border: none;
+      background: #CFD4DC;
+      position: relative;
+      cursor: pointer;
+      flex-shrink: 0;
+      padding: 0;
+      transition: background 0.15s;
     }
-    .ev-invite-target-body { flex: 1; min-width: 0; }
-    .ev-invite-target-name { font-size: 14px; font-weight: 700; color: var(--text-main); }
-    .ev-invite-target-meta { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
-    .ev-invite-summary {
-      margin-top: 10px; padding: 10px 14px;
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      font-size: 13px; color: var(--text-main); font-weight: 700;
-      text-align: center;
+    .ev-open-switch.on { background: #22C55E; }
+    .ev-open-switch-knob {
+      position: absolute; top: 2px; left: 2px;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      transition: left 0.15s;
     }
+    .ev-open-switch.on .ev-open-switch-knob { left: 20px; }
     .ev-send-btn {
       width: 100%;
       padding: 14px 16px;
@@ -3833,7 +4136,7 @@
       border-left: 1px solid rgba(255,255,255,0.08);
       z-index: 9000;
       transform: translateX(100%);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform var(--mo-push);
       display: flex;
       flex-direction: column;
       box-shadow: -8px 0 32px rgba(0,0,0,0.5);
@@ -3848,7 +4151,7 @@
       z-index: 8999;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s;
+      transition: opacity var(--mo-push);
     }
     #evAttendeesSheetOverlay.open {
       opacity: 1;
@@ -3987,7 +4290,7 @@
       border-top: 1px solid rgba(255,255,255,0.1);
       z-index: 8999;
       padding: 0 0 32px;
-      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      transition: transform var(--mo-action);
       box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
     }
     #evAddHistorySheet.open {
@@ -4054,6 +4357,155 @@
       transition: opacity 0.15s;
     }
     .ev-add-history-send:active { opacity: 0.8; }
+
+    /* ===== イベント×BCC統合：招待・連絡 ===== */
+    /* 主催者の控えめ2ボタン（Partiful式・詳細ページ上部） */
+    .ev-host-admin-row {
+      display: flex; gap: 8px; margin: 10px 0 4px;
+    }
+    .ev-host-admin-btn {
+      flex: 1; padding: 9px 8px;
+      border-radius: 11px;
+      border: 1.5px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      color: #fff; font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .ev-host-admin-btn:active { transform: scale(0.97); }
+    .ev-host-admin-btn.primary {
+      background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+      border-color: transparent;
+    }
+
+    /* 招待・連絡シート（追加連絡シートと同グラマー） */
+    #evInviteSheetOverlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 8998; opacity: 0; pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    #evInviteSheetOverlay.open { opacity: 1; pointer-events: auto; }
+    #evInviteSheet {
+      position: fixed; bottom: 0; left: 50%;
+      transform: translateX(-50%) translateY(100%);
+      width: 100%; max-width: 430px;
+      background: #111216;
+      border-radius: 20px 20px 0 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      z-index: 8999; padding: 0 0 32px;
+      transition: transform var(--mo-action);
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
+    }
+    #evInviteSheet.open { transform: translateX(-50%) translateY(0); }
+    .ev-inv-sheet-body { padding: 12px 16px 4px; }
+    .ev-inv-choice {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 12px; margin-bottom: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 14px; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .ev-inv-choice:active { background: rgba(255,255,255,0.1); }
+    .ev-inv-choice-ico {
+      width: 40px; height: 40px; flex: 0 0 auto;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; border-radius: 50%;
+      background: rgba(124,58,237,0.22);
+    }
+    .ev-inv-choice-txt { flex: 1; min-width: 0; }
+    .ev-inv-choice-main { font-size: 14.5px; font-weight: 700; color: #fff; }
+    .ev-inv-choice-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+    .ev-inv-choice-arrow { color: rgba(255,255,255,0.4); font-size: 20px; flex: 0 0 auto; }
+    .ev-filter-chips { display: flex; flex-direction: column; gap: 10px; padding: 4px 0 8px; }
+    .ev-filter-chip {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 14px; color: #fff;
+      font-size: 14.5px; font-weight: 700; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .ev-filter-chip:active { transform: scale(0.98); background: rgba(124,58,237,0.2); }
+    .ev-filter-chip span {
+      font-size: 13px; font-weight: 800;
+      background: rgba(255,255,255,0.12);
+      border-radius: 999px; padding: 2px 10px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* 一団スレッド：入力欄上の添付バナー */
+    .gt-attach-banner {
+      flex-shrink: 0;
+      padding: 8px 12px;
+      background: rgba(124,58,237,0.1);
+      border-top: 1px solid rgba(124,58,237,0.3);
+    }
+    .gt-attach-label {
+      font-size: 11.5px; font-weight: 700;
+      color: #C4B5FD; margin-bottom: 6px;
+    }
+    .gt-attach-audience {
+      font-size: 12.5px; font-weight: 700; color: #C4B5FD;
+    }
+
+    /* 招待ミニカード（DM＋添付バナー共用） */
+    .ev-invite-minicard {
+      background: linear-gradient(135deg,#020408 0%,#1E3A5F 42%,#5B21B6 78%,#9D174D 100%);
+      border-radius: 12px; padding: 11px 13px; cursor: pointer;
+      color: #F8FAFC; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .ev-invite-minicard:active { transform: scale(0.99); }
+    .ev-invite-minicard-badge { font-size: 11px; font-weight: 700; color: rgba(248,250,252,0.75); }
+    .ev-invite-minicard-title { font-size: 14.5px; font-weight: 800; margin: 5px 0 3px; line-height: 1.4; }
+    .ev-invite-minicard-when { font-size: 12.5px; color: rgba(248,250,252,0.72); }
+    .ev-invite-minicard-cta {
+      font-size: 12px; font-weight: 700; margin-top: 7px;
+      padding-top: 7px; border-top: 1px solid rgba(255,255,255,0.16);
+    }
+    .dm-invite-card-wrap { margin: 4px 0 2px auto; max-width: 74%; }
+
+    /* 一団カードの宛先/招待タグ */
+    .gt-thread-tags { display: flex; gap: 6px; margin-bottom: 5px; flex-wrap: wrap; }
+    .gt-thread-tag {
+      font-size: 10.5px; font-weight: 700; border-radius: 999px;
+      padding: 2px 9px;
+    }
+    .gt-thread-tag.invite { background: rgba(124,58,237,0.28); color: #DDD6FE; }
+    .gt-thread-tag.aud { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.75); }
+
+    /* ===== 副アクション共通：アウトラインピル（.tp-msg-btn相当・白地/1px枠/角丸8px） ===== */
+    .btn-pill-outline {
+      display: inline-flex; align-items: center;
+      border: 1px solid #DBDBDB;
+      background: #fff;
+      color: #262626;
+      font-size: 12px; font-weight: 700;
+      border-radius: 8px; padding: 6px 12px;
+      cursor: pointer; white-space: nowrap;
+    }
+
+    /* 一団ヘッダー：イベントを見る導線 */
+    .group-thread-event-btn {
+      margin-right: 4px;
+    }
+
+    /* nmピッカー：招待フローのスキップ／選択不可（招待済み） */
+    .nm-footer.has-skip { display: flex; gap: 10px; }
+    .nm-footer.has-skip .nm-next-btn { flex: 1; }
+    .nm-skip-btn {
+      display: none;
+      flex: 0 0 auto;
+      padding: 14px 20px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg);
+      color: var(--text-sub);
+      font-size: 15px; font-weight: 700; cursor: pointer;
+    }
+    .nm-footer.has-skip .nm-skip-btn { display: block; }
+    .nm-member-row.nm-locked { opacity: 0.42; pointer-events: none; }
 
     /* ===== CONTACTS TAB (連絡先) ===== */
     .contacts-wrap { padding: 0 0 100px; }
@@ -4326,6 +4778,18 @@
     .contacts-action-btn:active {
       opacity: 0.7;
     }
+    .contacts-action-btn.tp-primary-btn,
+    .tp-btn-outline.tp-primary-btn {
+      background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+      border: 1px solid transparent;
+      color: #fff;
+    }
+    .contacts-action-btn.tp-primary-btn:hover,
+    .contacts-action-btn.tp-primary-btn:active,
+    .tp-btn-outline.tp-primary-btn:active {
+      opacity: 0.85;
+      background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+    }
 
     /* ===== DISCOVER SCREEN ===== */
     .discover-search {
@@ -4441,7 +4905,7 @@
     /* ===== TOAST ===== */
     .toast {
       position: fixed;
-      bottom: calc(var(--tab-height) + 20px);
+      bottom: calc(var(--tab-height) + 78px);
       left: 50%;
       transform: translateX(-50%) translateY(20px);
       background: rgba(17,24,39,0.9);
@@ -4452,7 +4916,7 @@
       font-weight: 600;
       z-index: 1000;
       opacity: 0;
-      transition: opacity 0.2s, transform 0.2s;
+      transition: opacity var(--mo-modal), transform var(--mo-modal);
       pointer-events: none;
       white-space: nowrap;
       max-width: 320px;
@@ -4471,7 +4935,7 @@
       z-index: 500;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s;
+      transition: opacity var(--mo-action);
     }
     .action-sheet-overlay.show { opacity: 1; pointer-events: auto; }
     .action-sheet {
@@ -4484,7 +4948,7 @@
       background: var(--bg);
       border-radius: var(--radius-xl) var(--radius-xl) 0 0;
       padding: 20px 16px 36px;
-      transition: transform 0.25s ease;
+      transition: transform var(--mo-action);
     }
     .action-sheet-overlay.show .action-sheet { transform: translateX(-50%) translateY(0); }
     .action-sheet-handle {
@@ -4688,11 +5152,14 @@
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       transform: translateX(100%);
-      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      visibility: hidden;
+      transition: transform var(--mo-push), visibility 0s 300ms;
       pointer-events: none;
     }
     .user-profile-overlay.open {
       transform: translateX(0);
+      visibility: visible;
+      transition: transform var(--mo-push), visibility 0s;
       pointer-events: auto;
     }
 
@@ -4845,7 +5312,7 @@
       z-index: 4000;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s ease;
+      transition: opacity var(--mo-action);
     }
     .add-member-overlay.show {
       opacity: 1;
@@ -4863,7 +5330,7 @@
       border-radius: 20px 20px 0 0;
       display: flex;
       flex-direction: column;
-      transition: transform 0.3s ease-out;
+      transition: transform var(--mo-action);
       overflow: hidden;
     }
     .add-member-overlay.show .add-member-sheet {
@@ -5787,18 +6254,25 @@
       inset: 0;
       background: rgba(0,0,0,0.6);
       z-index: 4500;
-      display: none;
+      display: flex;
       align-items: flex-end;
       justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity var(--mo-action), visibility 0s 250ms;
     }
-    .cmp-url-modal-overlay.open { display: flex; }
+    .cmp-url-modal-overlay.open { opacity: 1; visibility: visible; transition: opacity var(--mo-action), visibility 0s; pointer-events: auto; }
     .cmp-url-modal {
       width: 100%;
       max-width: 430px;
       background: var(--bg);
       border-radius: 20px 20px 0 0;
       padding: 20px 20px 36px;
+      transform: translateY(100%);
+      transition: transform var(--mo-action);
     }
+    .cmp-url-modal-overlay.open .cmp-url-modal { transform: translateY(0); }
     .cmp-url-modal-title {
       font-size: 16px;
       font-weight: 700;
@@ -5867,11 +6341,15 @@
       inset: 0;
       background: rgba(0,0,0,0.55);
       z-index: 5000;
-      display: none;
+      display: flex;
       align-items: flex-end;
       justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity var(--mo-action), visibility 0s 250ms;
     }
-    .cmp-publish-overlay.open { display: flex; }
+    .cmp-publish-overlay.open { opacity: 1; visibility: visible; transition: opacity var(--mo-action), visibility 0s; pointer-events: auto; }
     .cmp-publish-modal {
       width: 100%;
       max-width: 430px;
@@ -5881,7 +6359,10 @@
       border-top: 1px solid var(--border);
       max-height: 90vh;
       overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform var(--mo-action);
     }
+    .cmp-publish-overlay.open .cmp-publish-modal { transform: translateY(0); }
     .cmp-publish-handle {
       width: 36px;
       height: 4px;
@@ -6174,11 +6655,15 @@
       inset: 0;
       background: rgba(0,0,0,0.45);
       z-index: 6000;
-      display: none;
+      display: flex;
       align-items: center;
       justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity var(--mo-modal), visibility 0s 200ms;
     }
-    .cmp-identity-create-overlay.open { display: flex; }
+    .cmp-identity-create-overlay.open { opacity: 1; visibility: visible; transition: opacity var(--mo-modal), visibility 0s; pointer-events: auto; }
     .cmp-identity-create-dialog {
       background: var(--bg);
       border-radius: 20px;
@@ -6186,7 +6671,10 @@
       width: calc(100% - 48px);
       max-width: 320px;
       box-shadow: var(--shadow-lg);
+      transform: scale(0.95);
+      transition: transform var(--mo-modal);
     }
+    .cmp-identity-create-overlay.open .cmp-identity-create-dialog { transform: scale(1); }
     .cmp-identity-create-title {
       font-size: 15px;
       font-weight: 700;
@@ -6341,7 +6829,7 @@
       background: var(--bg);
       border-radius: 20px 20px 0 0;
       z-index: 1100;
-      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+      transition: transform var(--mo-action);
       max-height: 80vh;
       display: flex;
       flex-direction: column;
@@ -6431,13 +6919,17 @@
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.5);
       z-index: 5500;
-      display: none;
+      display: flex;
       align-items: flex-end;
       justify-content: center;
       max-width: 430px;
       margin: 0 auto;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity var(--mo-action), visibility 0s 250ms;
     }
-    .group-create-overlay.open { display: flex; }
+    .group-create-overlay.open { opacity: 1; visibility: visible; transition: opacity var(--mo-action), visibility 0s; pointer-events: auto; }
     .group-create-sheet {
       width: 100%;
       background: var(--bg);
@@ -6445,7 +6937,10 @@
       max-height: 85vh;
       display: flex;
       flex-direction: column;
+      transform: translateY(100%);
+      transition: transform var(--mo-action);
     }
+    .group-create-overlay.open .group-create-sheet { transform: translateY(0); }
     .group-create-handle {
       width: 36px;
       height: 4px;
@@ -6732,6 +7227,7 @@
       align-items: center;
       gap: 8px;
       flex: 1;
+      cursor: pointer;
     }
     .group-thread-emoji {
       font-size: 20px;
@@ -6755,65 +7251,175 @@
       overflow-y: auto;
       padding: 12px 0 90px;
     }
+    .group-thread-promo-banner {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--primary-bg);
+      color: var(--primary);
+      font-size: 11.5px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .group-thread-bcc-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 28px;
+      font-size: 11px;
+      color: var(--text-light);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    /* ===== グループ昇格：命名モーダル（中央フェード＋スケール、cmp-identity-create-overlayと同じ流儀） ===== */
+    .group-promote-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 6000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity var(--mo-modal), visibility 0s 200ms;
+    }
+    .group-promote-modal-overlay.open { opacity: 1; visibility: visible; transition: opacity var(--mo-modal), visibility 0s; pointer-events: auto; }
+    .group-promote-modal-dialog {
+      background: var(--bg);
+      border-radius: 20px;
+      padding: 24px 20px 20px;
+      width: calc(100% - 48px);
+      max-width: 320px;
+      box-shadow: var(--shadow-lg);
+      transform: scale(0.95);
+      transition: transform var(--mo-modal);
+    }
+    .group-promote-modal-overlay.open .group-promote-modal-dialog { transform: scale(1); }
+    .group-promote-modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      text-align: center;
+    }
+    .group-promote-modal-desc {
+      font-size: 12px;
+      color: var(--text-sub);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .group-promote-modal-input {
+      width: 100%;
+      height: 40px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 0 12px;
+      font-size: 14px;
+      background: var(--surface);
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
+    .group-promote-modal-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .group-promote-modal-cancel {
+      flex: 1;
+      padding: 10px 0;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-sub);
+    }
+    .group-promote-modal-confirm {
+      flex: 2;
+      padding: 10px 0;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .group-promote-modal-confirm:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .group-thread-date-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 4px 0 14px;
+    }
+    .group-thread-date-divider span {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-light);
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 3px 12px;
+    }
     .group-thread-card {
-      margin: 0 12px 16px;
+      margin: 0 14px 18px;
+    }
+    .group-thread-bubble-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .group-thread-summary-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: flex-end;
+      cursor: pointer;
+      padding: 2px 2px;
+    }
+    .group-thread-summary-text {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+    }
+    .group-thread-summary-text .unread-num {
+      color: #EF4444;
+      font-weight: 800;
+    }
+    .group-thread-summary-arrow {
+      font-size: 10px;
+      color: var(--text-light);
+      transition: transform 0.18s;
+    }
+    .group-thread-card.open .group-thread-summary-arrow {
+      transform: rotate(180deg);
+    }
+    .group-thread-replies {
+      display: none;
+      margin-top: 8px;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 12px;
       overflow: hidden;
     }
-    .group-thread-card-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border);
-    }
-    .group-thread-card-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: var(--primary-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-    .group-thread-card-sender {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-main);
-      flex: 1;
-    }
-    .group-thread-card-time {
-      font-size: 11px;
-      color: var(--text-light);
-    }
-    .group-thread-card-count-badge {
-      font-size: 11px;
-      font-weight: 700;
-      background: var(--primary-bg);
-      color: var(--primary);
-      padding: 2px 8px;
-      border-radius: 20px;
-    }
-    .group-thread-card-body {
-      padding: 12px 14px;
-      font-size: 15px;
-      color: var(--text-main);
-      line-height: 1.5;
-      white-space: pre-wrap;
-      border-bottom: 1px solid var(--border);
-    }
-    .group-thread-card-replies {
-      background: var(--surface);
+    .group-thread-card.open .group-thread-replies {
+      display: block;
     }
     .group-thread-reply-row {
       display: flex;
       align-items: flex-start;
       gap: 8px;
-      padding: 9px 14px 9px 24px;
+      padding: 9px 12px;
       border-bottom: 1px solid var(--border);
       cursor: pointer;
       transition: background 0.12s;
@@ -6860,18 +7466,6 @@
       padding: 1px 6px;
       margin-left: 6px;
       vertical-align: middle;
-    }
-    .group-thread-expand-btn {
-      width: 100%;
-      padding: 8px 14px;
-      background: none;
-      border: none;
-      border-top: 1px solid var(--border);
-      font-size: 12px;
-      color: var(--primary);
-      font-weight: 600;
-      text-align: center;
-      cursor: pointer;
     }
     .group-thread-no-reply {
       padding: 10px 14px;
@@ -6925,14 +7519,25 @@
     .group-thread-empty {
       display: flex;
       flex-direction: column;
+      padding: 20px 16px 8px;
+      gap: 10px;
+    }
+    .group-thread-empty-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    .group-thread-empty-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface);
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: 60px 32px;
-      gap: 12px;
-      text-align: center;
+      font-size: 16px;
+      flex-shrink: 0;
     }
-    .group-thread-empty-icon { font-size: 44px; opacity: 0.4; }
-    .group-thread-empty-text { font-size: 14px; color: var(--text-sub); line-height: 1.6; }
 
     /* ===== GROUP AVATAR UI (作成/編集シート) ===== */
     .group-avatar-ui {
@@ -7007,13 +7612,17 @@
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.5);
       z-index: 6000;
-      display: none;
+      display: flex;
       align-items: flex-end;
       justify-content: center;
       max-width: 430px;
       margin: 0 auto;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity var(--mo-action), visibility 0s 250ms;
     }
-    .group-edit-overlay.open { display: flex; }
+    .group-edit-overlay.open { opacity: 1; visibility: visible; transition: opacity var(--mo-action), visibility 0s; pointer-events: auto; }
     .group-edit-sheet {
       width: 100%;
       background: var(--bg);
@@ -7021,7 +7630,10 @@
       max-height: 90vh;
       display: flex;
       flex-direction: column;
+      transform: translateY(100%);
+      transition: transform var(--mo-action);
     }
+    .group-edit-overlay.open .group-edit-sheet { transform: translateY(0); }
     .group-edit-handle {
       width: 36px;
       height: 4px;
@@ -7263,13 +7875,17 @@
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.5);
       z-index: 5500;
-      display: none;
+      display: flex;
       align-items: flex-end;
       justify-content: center;
       max-width: 430px;
       margin: 0 auto;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity var(--mo-action), visibility 0s 250ms;
     }
-    .circle-settings-overlay.open { display: flex; }
+    .circle-settings-overlay.open { opacity: 1; visibility: visible; transition: opacity var(--mo-action), visibility 0s; pointer-events: auto; }
     .circle-settings-sheet {
       width: 100%;
       background: #1a0800;
@@ -7277,7 +7893,10 @@
       max-height: 90vh;
       display: flex;
       flex-direction: column;
+      transform: translateY(100%);
+      transition: transform var(--mo-action);
     }
+    .circle-settings-overlay.open .circle-settings-sheet { transform: translateY(0); }
     .circle-settings-handle {
       width: 36px;
       height: 4px;
@@ -7329,6 +7948,41 @@
         ),
         #0a0005;
     }
+
+    /* ===== レイ・ストーリービューア：中央フェード＋スケール（--mo-modal） ===== */
+    #cpStoryViewer {
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity var(--mo-modal), transform var(--mo-modal);
+    }
+    #cpStoryViewer.open { opacity: 1; transform: scale(1); }
+
+    /* ===== ＋メニュー / 設定メニュー：下から部分シート（インスタ準拠） ===== */
+    /* アニメ系プロパティはインラインに置かない（インラインが .open ルールに勝ってしまうため） */
+    #createMenuOverlay {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity var(--mo-action), visibility 0s 300ms;
+    }
+    #createMenuOverlay.open { opacity: 1; visibility: visible; transition: opacity var(--mo-action), visibility 0s; pointer-events: auto; }
+    #createMenuPanel {
+      transform: translateY(100%);
+      transition: transform var(--mo-sheet);
+    }
+    #createMenuOverlay.open #createMenuPanel { transform: translateY(0); }
+    #settingsMenuOverlay {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity var(--mo-action), visibility 0s 300ms;
+    }
+    #settingsMenuOverlay.open { opacity: 1; visibility: visible; transition: opacity var(--mo-action), visibility 0s; pointer-events: auto; }
+    #settingsMenuPanel {
+      transform: translateY(100%);
+      transition: transform var(--mo-sheet);
+    }
+    #settingsMenuOverlay.open #settingsMenuPanel { transform: translateY(0); }
   </style>
 </head>
 <body>
@@ -7375,7 +8029,7 @@
     <!-- ===== X型カラー投稿コンポーザー（POST_UI_MODE='color'時に使用）=====
          レイアウトはXの投稿画面に完全準拠（オリジナリティ不要ルール）：
          ✕左上／アバター＋入力欄／メディアプレビュー／下部ツールバー（メディアボタン左・投稿ボタン右下） -->
-    <div class="screen" id="screen-color-post">
+    <div class="screen sheet" id="screen-color-post">
       <style>
         #colorPostText::placeholder { color: inherit; opacity: 0.45; }
         /* 色サイクルボタン（インスタ背景切替方式）：HYPERAYグラデのリング＝「色を変えられるボタン」のアピール。
@@ -7420,10 +8074,10 @@
     </div>
 
     <!-- ===== カラー投稿の全画面詳細（X準拠・中身はopenColorPostDetailが動的生成） ===== -->
-    <div class="screen" id="screen-color-detail" style="overflow-y:auto;"></div>
+    <div class="screen push" id="screen-color-detail" style="overflow-y:auto;"></div>
 
     <!-- ===== POST COMPOSER SCREEN (簡易版) ===== -->
-    <div class="screen" id="screen-post">
+    <div class="screen sheet" id="screen-post">
       <div class="cmp-wrap" id="cmpWrap">
 
         <!-- hidden file input -->
@@ -7647,7 +8301,7 @@
         <div class="header-logo">🔔 通知</div>
       </div>
       <div>
-        <div class="notif-item">
+        <div class="notif-item" onclick="openUserProfile('yu_tanaka')" style="cursor:pointer;">
           <div class="notif-avatar">🔥</div>
           <div class="notif-body">
             <div class="notif-text"><strong>田中 悠</strong>さんがあなたの投稿に⚡反応しました</div>
@@ -7655,7 +8309,7 @@
           </div>
           <div class="notif-dot"></div>
         </div>
-        <div class="notif-item">
+        <div class="notif-item" onclick="openUserProfile('kenta_s')" style="cursor:pointer;">
           <div class="notif-avatar">💎</div>
           <div class="notif-body">
             <div class="notif-text"><strong>佐藤 健太</strong>さんがあなたをOrbitに追加しました</div>
@@ -7663,7 +8317,7 @@
           </div>
           <div class="notif-dot"></div>
         </div>
-        <div class="notif-item">
+        <div class="notif-item" onclick="openUserProfile('sarah_ai')" style="cursor:pointer;">
           <div class="notif-avatar">✨</div>
           <div class="notif-body">
             <div class="notif-text"><strong>Sarah Chen</strong>の投稿があなたに届きました 💎 DiamondStar</div>
@@ -7671,14 +8325,14 @@
           </div>
           <div class="notif-dot"></div>
         </div>
-        <div class="notif-item">
+        <div class="notif-item" onclick="openUserProfile('ayaka_y')" style="cursor:pointer;">
           <div class="notif-avatar">⭐</div>
           <div class="notif-body">
             <div class="notif-text"><strong>山田 彩香</strong>さんがストーリーズに返信しました</div>
             <div class="notif-time">1時間前</div>
           </div>
         </div>
-        <div class="notif-item">
+        <div class="notif-item" onclick="openUserProfile('sho_n')" style="cursor:pointer;">
           <div class="notif-avatar">🤝</div>
           <div class="notif-body">
             <div class="notif-text"><strong>中村 翔</strong>さんがあなたをGalaxyに追加しました</div>
@@ -8021,171 +8675,76 @@
           </div>
 
           <!-- Core -->
-          <div class="contacts-tier-section open" id="ctier-core">
-            <div class="contacts-tier-row" onclick="toggleContactsTier('ctier-core')">
+          <div class="contacts-tier-section" id="ctier-core">
+            <div class="contacts-tier-row" onclick="openTierPage('core')">
               <div class="contacts-tier-left">
                 <span>🔥</span>
                 <span class="contacts-tier-label">Core</span>
                 <span class="contacts-tier-count">2人</span>
               </div>
               <div style="display:flex;align-items:center;gap:6px;">
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'},{id:'rina_s',name:'鈴木 里奈',avatar:'👩'}])">Send to All</button>
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'yu_tanaka',name:'田中 悠',avatar:'🧑'},{id:'rina_s',name:'鈴木 里奈',avatar:'👩'}])">Edit & Send</button>
-                <span class="contacts-tier-chevron">▾</span>
-              </div>
-            </div>
-            <div class="contacts-member-list">
-              <div class="contacts-member-row" onclick="openDmChat('yu_tanaka','田中 悠','🧑')">
-                <div class="contacts-member-avatar">🧑</div>
-                <span class="contacts-member-name">田中 悠</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="yu_tanaka"></span>
-              </div>
-              <div class="contacts-member-row" onclick="openDmChat('rina_s','鈴木 里奈','👩')">
-                <div class="contacts-member-avatar">👩</div>
-                <span class="contacts-member-name">鈴木 里奈</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="rina_s"></span>
+                <button class="contacts-action-btn" data-sel-all="core" onclick="event.stopPropagation();tierSelectAll('core')">全員選択</button>
+                <button class="contacts-action-btn" data-sel-ind="core" onclick="event.stopPropagation();openTierPage('core',{selection:true})">個別選択</button>
               </div>
             </div>
           </div>
 
           <!-- Orbit -->
           <div class="contacts-tier-section" id="ctier-orbit">
-            <div class="contacts-tier-row" onclick="toggleContactsTier('ctier-orbit')">
+            <div class="contacts-tier-row" onclick="openTierPage('orbit')">
               <div class="contacts-tier-left">
                 <span>💎</span>
                 <span class="contacts-tier-label">Orbit</span>
                 <span class="contacts-tier-count">5人</span>
               </div>
               <div style="display:flex;align-items:center;gap:6px;">
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'kenta_s',name:'佐藤 健太',avatar:'🧑'},{id:'daisuke_ito',name:'伊藤 大輔',avatar:'👨'},{id:'misaki_t',name:'高橋 美咲',avatar:'👱‍♀️'},{id:'ryo_k',name:'小林 亮',avatar:'🧔'},{id:'aya_w',name:'渡辺 彩',avatar:'🙍'}])">全員に送信</button>
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'kenta_s',name:'佐藤 健太',avatar:'🧑'},{id:'daisuke_ito',name:'伊藤 大輔',avatar:'👨'},{id:'misaki_t',name:'高橋 美咲',avatar:'👱‍♀️'},{id:'ryo_k',name:'小林 亮',avatar:'🧔'},{id:'aya_w',name:'渡辺 彩',avatar:'🙍'}])">編集して送信</button>
-                <span class="contacts-tier-chevron">▾</span>
-              </div>
-            </div>
-            <div class="contacts-member-list">
-              <div class="contacts-member-row" onclick="openDmChat('kenta_s','佐藤 健太','🧑')">
-                <div class="contacts-member-avatar">🧑</div>
-                <span class="contacts-member-name">佐藤 健太</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="kenta_s"></span>
-              </div>
-              <div class="contacts-member-row" onclick="openDmChat('daisuke_ito','伊藤 大輔','👨')">
-                <div class="contacts-member-avatar">👨</div>
-                <span class="contacts-member-name">伊藤 大輔</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="daisuke_ito"></span>
-              </div>
-              <div class="contacts-member-row" onclick="openDmChat('misaki_t','高橋 美咲','👱‍♀️')">
-                <div class="contacts-member-avatar">👱‍♀️</div>
-                <span class="contacts-member-name">高橋 美咲</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="misaki_t"></span>
-              </div>
-              <div class="contacts-member-row" onclick="openDmChat('ryo_k','小林 亮','🧔')">
-                <div class="contacts-member-avatar">🧔</div>
-                <span class="contacts-member-name">小林 亮</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="ryo_k"></span>
-              </div>
-              <div class="contacts-member-row" onclick="openDmChat('aya_w','渡辺 彩','🙍')">
-                <div class="contacts-member-avatar">🙍</div>
-                <span class="contacts-member-name">渡辺 彩</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="aya_w"></span>
+                <button class="contacts-action-btn" data-sel-all="orbit" onclick="event.stopPropagation();tierSelectAll('orbit')">全員選択</button>
+                <button class="contacts-action-btn" data-sel-ind="orbit" onclick="event.stopPropagation();openTierPage('orbit',{selection:true})">個別選択</button>
               </div>
             </div>
           </div>
 
           <!-- Halo -->
           <div class="contacts-tier-section" id="ctier-halo">
-            <div class="contacts-tier-row" onclick="toggleContactsTier('ctier-halo')">
+            <div class="contacts-tier-row" onclick="openTierPage('halo')">
               <div class="contacts-tier-left">
                 <span>⭐</span>
                 <span class="contacts-tier-label">Halo</span>
-                <span class="contacts-tier-count">3人</span>
+                <span class="contacts-tier-count" id="ctierHaloCount">3人</span>
               </div>
               <div style="display:flex;align-items:center;gap:6px;">
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'ayaka_y',name:'山田 彩香',avatar:'👩'},{id:'sho_n',name:'中村 花',avatar:'👩'},{id:'kato_sho',name:'加藤 翔',avatar:'👨'}])">全員に送信</button>
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'ayaka_y',name:'山田 彩香',avatar:'👩'},{id:'sho_n',name:'中村 花',avatar:'👩'},{id:'kato_sho',name:'加藤 翔',avatar:'👨'}])">編集して送信</button>
-                <span class="contacts-tier-chevron">▾</span>
-              </div>
-            </div>
-            <div class="contacts-member-list">
-              <div class="contacts-member-row" onclick="openDmChat('ayaka_y','山田 彩香','👩')">
-                <div class="contacts-member-avatar">👩</div>
-                <span class="contacts-member-name">山田 彩香</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="ayaka_y"></span>
-              </div>
-              <div class="contacts-member-row" onclick="openDmChat('sho_n','中村 花','👩')">
-                <div class="contacts-member-avatar">👩</div>
-                <span class="contacts-member-name">中村 花</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="sho_n"></span>
-              </div>
-              <div class="contacts-member-row" onclick="openDmChat('kato_sho','加藤 翔','👨')">
-                <div class="contacts-member-avatar">👨</div>
-                <span class="contacts-member-name">加藤 翔</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="kato_sho"></span>
+                <button class="contacts-action-btn" data-sel-all="halo" onclick="event.stopPropagation();tierSelectAll('halo')">全員選択</button>
+                <button class="contacts-action-btn" data-sel-ind="halo" onclick="event.stopPropagation();openTierPage('halo',{selection:true})">個別選択</button>
               </div>
             </div>
           </div>
 
           <!-- Galaxy -->
           <div class="contacts-tier-section" id="ctier-galaxy">
-            <div class="contacts-tier-row" onclick="toggleContactsTier('ctier-galaxy')">
+            <div class="contacts-tier-row" onclick="openTierPage('galaxy')">
               <div class="contacts-tier-left">
                 <span>🌌</span>
                 <span class="contacts-tier-label">Galaxy</span>
                 <span class="contacts-tier-count">3人</span>
               </div>
               <div style="display:flex;align-items:center;gap:6px;">
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'matsuda_e',name:'松田 恵',avatar:'👩'},{id:'fujii_m',name:'藤井 誠',avatar:'🧑'},{id:'kinoshita_a',name:'木下 彩',avatar:'👩'}])">全員に送信</button>
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'matsuda_e',name:'松田 恵',avatar:'👩'},{id:'fujii_m',name:'藤井 誠',avatar:'🧑'},{id:'kinoshita_a',name:'木下 彩',avatar:'👩'}])">編集して送信</button>
-                <span class="contacts-tier-chevron">▾</span>
-              </div>
-            </div>
-            <div class="contacts-member-list">
-              <div class="contacts-member-row" onclick="openDmChat('matsuda_e','松田 恵','👩')">
-                <div class="contacts-member-avatar">👩</div>
-                <span class="contacts-member-name">松田 恵</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="matsuda_e"></span>
-              </div>
-              <div class="contacts-member-row" onclick="openDmChat('fujii_m','藤井 誠','🧑')">
-                <div class="contacts-member-avatar">🧑</div>
-                <span class="contacts-member-name">藤井 誠</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="fujii_m"></span>
-              </div>
-              <div class="contacts-member-row" onclick="openDmChat('kinoshita_a','木下 彩','👩')">
-                <div class="contacts-member-avatar">👩</div>
-                <span class="contacts-member-name">木下 彩</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="kinoshita_a"></span>
+                <button class="contacts-action-btn" data-sel-all="galaxy" onclick="event.stopPropagation();tierSelectAll('galaxy')">全員選択</button>
+                <button class="contacts-action-btn" data-sel-ind="galaxy" onclick="event.stopPropagation();openTierPage('galaxy',{selection:true})">個別選択</button>
               </div>
             </div>
           </div>
 
           <!-- Connect -->
           <div class="contacts-tier-section" id="ctier-connect">
-            <div class="contacts-tier-row" onclick="toggleContactsTier('ctier-connect')">
+            <div class="contacts-tier-row" onclick="openTierPage('connect')">
               <div class="contacts-tier-left">
                 <span>🤝</span>
                 <span class="contacts-tier-label">Connect</span>
                 <span class="contacts-tier-count">3人</span>
               </div>
               <div style="display:flex;align-items:center;gap:6px;">
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openDirectThread([{id:'ishikawa_t',name:'石川 拓',avatar:'🧑'},{id:'shimizu_m',name:'清水 美穂',avatar:'👩'},{id:'noda_k',name:'野田 健一',avatar:'👨'}])">全員に送信</button>
-                <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset([{id:'ishikawa_t',name:'石川 拓',avatar:'🧑'},{id:'shimizu_m',name:'清水 美穂',avatar:'👩'},{id:'noda_k',name:'野田 健一',avatar:'👨'}])">編集して送信</button>
-                <span class="contacts-tier-chevron">▾</span>
-              </div>
-            </div>
-            <div class="contacts-member-list">
-              <div class="contacts-member-row" onclick="openDmChat('ishikawa_t','石川 拓','🧑')">
-                <div class="contacts-member-avatar">🧑</div>
-                <span class="contacts-member-name">石川 拓</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="ishikawa_t"></span>
-              </div>
-              <div class="contacts-member-row" onclick="openDmChat('shimizu_m','清水 美穂','👩')">
-                <div class="contacts-member-avatar">👩</div>
-                <span class="contacts-member-name">清水 美穂</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="shimizu_m"></span>
-              </div>
-              <div class="contacts-member-row" onclick="openDmChat('noda_k','野田 健一','👨')">
-                <div class="contacts-member-avatar">👨</div>
-                <span class="contacts-member-name">野田 健一</span>
-                <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="noda_k"></span>
+                <button class="contacts-action-btn" data-sel-all="connect" onclick="event.stopPropagation();tierSelectAll('connect')">全員選択</button>
+                <button class="contacts-action-btn" data-sel-ind="connect" onclick="event.stopPropagation();openTierPage('connect',{selection:true})">個別選択</button>
               </div>
             </div>
           </div>
@@ -8207,6 +8766,33 @@
       <!-- ===== タブ③：イベント ===== -->
     </div>
 
+    <!-- ===== TIER PAGE SCREEN（階層メンバーページ：案B閲覧＋案C選択モード） ===== -->
+    <div class="screen push" id="screen-tier-page" style="overflow-y:hidden;display:flex;flex-direction:column;">
+      <div class="tp-header">
+        <div class="tp-row1" id="tpViewRow1">
+          <span class="tp-back" onclick="closeTierPage()">←</span>
+          <span class="tp-title" id="tpHeaderTitle"></span>
+          <span class="tp-count" id="tpHeaderCount"></span>
+        </div>
+        <div class="tp-row1" id="tpSelectRow1" style="display:none;">
+          <span class="tp-title" id="tpSelectTitle"></span>
+          <button class="tp-cancel" onclick="tpCancelSelection()">✕ キャンセル</button>
+        </div>
+        <div class="tp-actions" id="tpActionsRow">
+          <button class="tp-btn-outline" id="tpBtnSelectAll" onclick="tierSelectAll(tpCurrentTier)">全員選択</button>
+          <button class="tp-btn-outline" id="tpBtnIndividual" onclick="tpEnterSelectionMode()">個別選択</button>
+        </div>
+        <input type="text" class="tp-search-input" id="tpSearchInput" placeholder="🔍 連絡先を検索" oninput="tpOnSearch(this.value)">
+      </div>
+      <div class="tp-list-wrap">
+        <div class="tp-list" id="tpList"></div>
+      </div>
+      <div class="tp-footer" id="tpFooter" style="display:none;">
+        <div class="tp-sel-avatars" id="tpSelAvatars"></div>
+        <button class="tp-decide-btn" id="tpDecideBtn" onclick="tpDecide()">この0名に決定</button>
+      </div>
+    </div>
+
     <!-- ===== EVENTS SCREEN（専用ページ・フッターの音符から） ===== -->
     <div class="screen" id="screen-events">
       <div class="events-page-header"><div class="events-page-title">イベント</div></div>
@@ -8220,7 +8806,7 @@
     </div>
 
     <!-- ===== EVENT CREATE SCREEN ===== -->
-    <div class="screen" id="screen-event-create">
+    <div class="screen sheet" id="screen-event-create">
       <div class="ev-create-header">
         <button class="ev-back-btn" onclick="closeEventCreate()">←</button>
         <div class="ev-create-title" id="evCreateScreenTitle">イベント作成</div>
@@ -8355,28 +8941,6 @@
           </div>
         </div>
 
-        <!-- 8. 公開範囲 -->
-        <div class="ev-field">
-          <span class="ev-field-label">公開範囲</span>
-          <div class="ev-scope-toggle">
-            <button type="button" class="ev-scope-btn active" id="evScopeOpen" onclick="setEventScope('open')">
-              <div class="ev-scope-icon">🌐</div>
-              <div class="ev-scope-label">オープン</div>
-              <div class="ev-scope-desc">誰でも参加可能</div>
-            </button>
-            <button type="button" class="ev-scope-btn" id="evScopeClosed" onclick="setEventScope('closed')">
-              <div class="ev-scope-icon">🔒</div>
-              <div class="ev-scope-label">クローズド</div>
-              <div class="ev-scope-desc">指定した仲間のみ</div>
-            </button>
-          </div>
-          <div class="ev-scope-detail" id="evScopeDetail" style="display:none;">
-            <div class="ev-scope-detail-title">招待する相手を選択</div>
-            <div class="ev-invite-targets" id="evInviteTargets"></div>
-            <div class="ev-invite-summary" id="evInviteSummary">まだ選択されていません</div>
-          </div>
-        </div>
-
         <!-- 9. 回答締切 -->
         <label class="ev-field">
           <span class="ev-field-label">回答締切 <span class="ev-field-optional">任意</span></span>
@@ -8388,13 +8952,13 @@
     </div>
 
     <!-- ===== EVENT DETAIL SCREEN ===== -->
-    <div class="screen" id="screen-event-detail">
+    <div class="screen push" id="screen-event-detail">
       <div class="ev-detail-body" id="evDetailBody"></div>
       <div class="ev-detail-cta-bar" id="evDetailCtaBar"></div>
     </div>
 
     <!-- ===== EVENT PREVIEW SCREEN（公開前の確認） ===== -->
-    <div class="screen" id="screen-event-preview">
+    <div class="screen push" id="screen-event-preview">
       <div class="ev-preview-draft-banner">プレビュー（下書き）― 公開前の確認</div>
       <div class="ev-detail-body" id="evPreviewBody"></div>
       <div class="ev-preview-action-bar">
@@ -8418,6 +8982,17 @@
         <button class="ev-attendees-sheet-close" onclick="closeAttendeesSheet()">✕</button>
       </div>
       <div class="ev-attendees-sheet-body" id="evAttendeesSheetBody"></div>
+    </div>
+
+    <!-- ===== 招待・連絡 ボトムシート（主催者・部分シート） ===== -->
+    <div id="evInviteSheetOverlay" onclick="closeEventInviteSheet()"></div>
+    <div id="evInviteSheet">
+      <div class="ev-add-history-handle"></div>
+      <div class="ev-add-history-header">
+        <div class="ev-add-history-title" id="evInviteSheetTitle">招待・連絡</div>
+        <button class="ev-add-history-close" onclick="closeEventInviteSheet()">✕</button>
+      </div>
+      <div class="ev-inv-sheet-body" id="evInviteSheetBody"></div>
     </div>
 
     <!-- ===== 追加連絡 ボトムシート ===== -->
@@ -8460,7 +9035,7 @@
     </div>
 
     <!-- ===== GROUP LIST SCREEN ===== -->
-    <div class="screen" id="screen-group-list" style="overflow-y:auto;display:flex;flex-direction:column;">
+    <div class="screen push" id="screen-group-list" style="overflow-y:auto;display:flex;flex-direction:column;">
       <div class="group-list-header">
         <button class="group-list-back-btn" onclick="closeGroupListScreen()">&#8592;</button>
         <span class="group-list-title">Groups</span>
@@ -8470,19 +9045,47 @@
     </div>
 
     <!-- ===== GROUP THREAD SCREEN ===== -->
-    <div class="screen" id="screen-group-thread" style="overflow-y:hidden;display:flex;flex-direction:column;">
+    <div class="screen push" id="screen-group-thread" style="overflow-y:hidden;display:flex;flex-direction:column;">
       <div class="group-thread-header">
         <button class="group-thread-back-btn" onclick="closeGroupThreadScreen()">&#8592;</button>
-        <div class="group-thread-title-area">
+        <div class="group-thread-title-area" onclick="openGroupMembersSheet()">
           <div class="group-thread-avatar-wrap" id="groupThreadAvatarWrap"></div>
           <span class="group-thread-name" id="groupThreadName"></span>
         </div>
+        <button class="btn-pill-outline group-thread-event-btn" id="groupThreadEventBtn" style="display:none;" onclick="">📅 イベントを見る</button>
         <button class="group-thread-menu-btn" id="groupThreadMenuBtn" onclick="openGroupEditFromThread()">&#8942;</button>
       </div>
+      <div class="group-thread-promo-banner" id="groupThreadPromoBanner" style="display:none;" onclick="promoteBroadcastToGroup()">⭐ このメンバーでグループを作る</div>
+      <div class="group-thread-bcc-note">📢 ParaDM｜このトークの送信は、メンバーそれぞれに1対1のメッセージとして届きます</div>
       <div class="group-thread-body" id="groupThreadBody" style="flex:1;overflow-y:auto;padding-bottom:72px;"></div>
+      <div class="gt-attach-banner" id="groupThreadAttachBanner" style="display:none;"></div>
       <div class="group-thread-input-bar">
         <input type="text" class="group-thread-input" id="groupThreadInputField" placeholder="メッセージを入力..." oninput="onGroupThreadInputChange()" onkeydown="onGroupThreadInputKeydown(event)">
         <button class="group-thread-send-btn" id="groupThreadSendBtn" onclick="sendGroupThreadMessage()" disabled>送信</button>
+      </div>
+    </div>
+
+    <!-- ===== BROADCAST CREATE SCREEN（新しい配信・LINE式案A） ===== -->
+    <div class="screen sheet" id="screen-broadcast-create">
+      <div class="bcn-header">
+        <button class="bcn-back-btn" onclick="closeBroadcastCreate()">&#8592;</button>
+        <div class="bcn-header-title">新しいParaDM</div>
+        <button class="bcn-create-btn" id="bcnCreateBtn" onclick="submitBroadcastCreate()">作成</button>
+      </div>
+      <div class="bcn-body">
+        <div class="bcn-icon-wrap">
+          <div class="bcn-icon-badge-wrap">
+            <div class="bcn-icon" onclick="bcnIconTap()">📢</div>
+            <span class="bcn-cam-badge" onclick="bcnIconTap()">📷</span>
+          </div>
+        </div>
+        <input type="text" class="bcn-name-input" id="bcnNameInput" maxlength="30">
+        <div class="bcn-name-note">
+          ※この名前は自分の整理用。相手には伝わりません<br>
+          ParaDM（パラダイム）＝メンバーそれぞれに"1対1のメッセージ"として届く送信方法です
+        </div>
+        <div class="bcn-avatars-label" id="bcnAvatarsLabel">メンバー 0人</div>
+        <div class="bcn-avatar-grid" id="bcnAvatarGrid"></div>
       </div>
     </div>
 
@@ -8695,6 +9298,16 @@
       </div>
     </div>
 
+    <!-- 🌐一般公開する（イベント招待モード限定・リスト最上部固定） -->
+    <div class="ev-open-toggle-row" id="nmEventScopeRow" style="display:none;">
+      <div class="ev-open-toggle-ico">🌐</div>
+      <div class="ev-open-toggle-body">
+        <div class="ev-open-toggle-title">一般公開する</div>
+        <div class="ev-open-toggle-desc">フォロワーや一般の人もこのイベントを見て参加できます</div>
+      </div>
+      <button type="button" class="ev-open-switch" id="nmEventScopeSwitch" onclick="toggleEvInviteScope()" aria-pressed="false"><span class="ev-open-switch-knob"></span></button>
+    </div>
+
     <!-- セクション一覧 -->
     <div class="nm-body" id="nmBody">
       <!-- Core -->
@@ -8772,7 +9385,7 @@
           <div class="nm-section-header-left">
             <span>⭐</span>
             <span class="nm-section-label">Halo</span>
-            <span class="nm-section-count">4人</span>
+            <span class="nm-section-count">3人</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
             <button class="nm-select-all-btn" id="nmAllBtn-halo" onclick="event.stopPropagation();nmToggleSelectAll('halo')">全選択</button>
@@ -8780,11 +9393,6 @@
           </div>
         </div>
         <div class="nm-member-list" id="nmList-halo">
-          <div class="nm-member-row" data-id="sarah_ai" data-section="halo" onclick="nmToggleMember('sarah_ai','halo')">
-            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
-            <div class="nm-member-avatar">👩</div>
-            <div class="nm-member-name">Sarah Chen</div>
-          </div>
           <div class="nm-member-row" data-id="ayaka_y" data-section="halo" onclick="nmToggleMember('ayaka_y','halo')">
             <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
             <div class="nm-member-avatar">👩</div>
@@ -8795,10 +9403,10 @@
             <div class="nm-member-avatar">👨</div>
             <div class="nm-member-name">中村 翔</div>
           </div>
-          <div class="nm-member-row" data-id="kenji_founder" data-section="halo" onclick="nmToggleMember('kenji_founder','halo')">
+          <div class="nm-member-row" data-id="kato_sho" data-section="halo" onclick="nmToggleMember('kato_sho','halo')">
             <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
-            <div class="nm-member-avatar">🎙</div>
-            <div class="nm-member-name">Kenji Ito</div>
+            <div class="nm-member-avatar">👨</div>
+            <div class="nm-member-name">加藤 翔</div>
           </div>
         </div>
       </div>
@@ -8817,20 +9425,20 @@
           </div>
         </div>
         <div class="nm-member-list" id="nmList-galaxy">
-          <div class="nm-member-row" data-id="masa_o" data-section="galaxy" onclick="nmToggleMember('masa_o','galaxy')">
-            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
-            <div class="nm-member-avatar">🧑</div>
-            <div class="nm-member-name">岡田 雅也</div>
-          </div>
-          <div class="nm-member-row" data-id="yuki_f" data-section="galaxy" onclick="nmToggleMember('yuki_f','galaxy')">
+          <div class="nm-member-row" data-id="matsuda_e" data-section="galaxy" onclick="nmToggleMember('matsuda_e','galaxy')">
             <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
             <div class="nm-member-avatar">👩</div>
-            <div class="nm-member-name">藤井 雪</div>
+            <div class="nm-member-name">松田 恵</div>
           </div>
-          <div class="nm-member-row" data-id="tom_b" data-section="galaxy" onclick="nmToggleMember('tom_b','galaxy')">
+          <div class="nm-member-row" data-id="fujii_m" data-section="galaxy" onclick="nmToggleMember('fujii_m','galaxy')">
             <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
-            <div class="nm-member-avatar">👨</div>
-            <div class="nm-member-name">Tom Baker</div>
+            <div class="nm-member-avatar">🧑</div>
+            <div class="nm-member-name">藤井 誠</div>
+          </div>
+          <div class="nm-member-row" data-id="kinoshita_a" data-section="galaxy" onclick="nmToggleMember('kinoshita_a','galaxy')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">👩</div>
+            <div class="nm-member-name">木下 彩</div>
           </div>
         </div>
       </div>
@@ -8849,20 +9457,20 @@
           </div>
         </div>
         <div class="nm-member-list" id="nmList-connect">
-          <div class="nm-member-row" data-id="haruka_m" data-section="connect" onclick="nmToggleMember('haruka_m','connect')">
+          <div class="nm-member-row" data-id="ishikawa_t" data-section="connect" onclick="nmToggleMember('ishikawa_t','connect')">
+            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
+            <div class="nm-member-avatar">🧑</div>
+            <div class="nm-member-name">石川 拓</div>
+          </div>
+          <div class="nm-member-row" data-id="shimizu_m" data-section="connect" onclick="nmToggleMember('shimizu_m','connect')">
             <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
             <div class="nm-member-avatar">👩</div>
-            <div class="nm-member-name">松本 遥</div>
+            <div class="nm-member-name">清水 美穂</div>
           </div>
-          <div class="nm-member-row" data-id="jin_l" data-section="connect" onclick="nmToggleMember('jin_l','connect')">
+          <div class="nm-member-row" data-id="noda_k" data-section="connect" onclick="nmToggleMember('noda_k','connect')">
             <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
             <div class="nm-member-avatar">👨</div>
-            <div class="nm-member-name">Jin Lee</div>
-          </div>
-          <div class="nm-member-row" data-id="nao_h" data-section="connect" onclick="nmToggleMember('nao_h','connect')">
-            <div class="nm-checkbox"><span class="nm-checkbox-check">✓</span></div>
-            <div class="nm-member-avatar">👩</div>
-            <div class="nm-member-name">林 奈緒</div>
+            <div class="nm-member-name">野田 健一</div>
           </div>
         </div>
       </div>
@@ -8972,7 +9580,8 @@
 
     <!-- 次へボタン -->
     <div class="nm-footer">
-      <button class="nm-next-btn" id="nmNextBtn" disabled onclick="openNewMessageStep2()">Next</button>
+      <button class="nm-skip-btn" id="nmSkipBtn" onclick="nmSkipBtnClick()">スキップ</button>
+      <button class="nm-next-btn" id="nmNextBtn" disabled onclick="nmNextBtnClick()">Next</button>
     </div>
   </div><!-- /nmOverlay -->
 
@@ -8996,14 +9605,15 @@
   </div><!-- /nm2Overlay -->
 
   <!-- CREATE MENU OVERLAY -->
-  <div id="createMenuOverlay" style="display:none;position:fixed;inset:0;z-index:9990;">
-    <div id="createMenuPanel" style="position:absolute;inset:0;background:rgba(10,12,20,0.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:flex;flex-direction:column;animation:slideInLeft 0.25s ease;">
+  <div id="createMenuOverlay" style="position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,0.5);" onclick="closeCreateMenu()">
+    <div id="createMenuPanel" onclick="event.stopPropagation()" style="position:absolute;left:0;right:0;bottom:0;max-width:430px;margin:0 auto;background:rgba(16,18,28,0.98);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:22px 22px 0 0;padding:8px 20px calc(28px + env(safe-area-inset-bottom,0px));">
+      <div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.25);margin:8px auto 6px;"></div>
       <!-- 閉じるボタン -->
-      <div style="display:flex;justify-content:flex-end;padding:16px 20px 0;">
+      <div style="display:flex;justify-content:flex-end;padding:0 0 4px;">
         <button onclick="closeCreateMenu()" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);border-radius:50%;width:36px;height:36px;cursor:pointer;color:#fff;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;">✕</button>
       </div>
-      <!-- カード群：画面中央〜やや上に配置 -->
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:0 28px 60px;">
+      <!-- カード群：ボトムシート内に縦積み -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:2px 0 6px;">
         <button onclick="closeCreateMenu(); openPostComposer();" style="display:flex;align-items:center;gap:16px;width:100%;max-width:340px;padding:22px 24px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:16px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;text-align:left;transition:background 0.18s,border-color 0.18s,box-shadow 0.18s;" onmouseover="this.style.background='rgba(var(--primary-rgb,100,80,255),0.22)';this.style.borderColor='var(--primary-light,#a78bfa)';this.style.boxShadow='0 0 18px rgba(var(--primary-rgb,100,80,255),0.35)';" onmouseout="this.style.background='rgba(255,255,255,0.08)';this.style.borderColor='rgba(255,255,255,0.18)';this.style.boxShadow='none';">
           <span style="font-size:32px;line-height:1;flex-shrink:0;">📝</span>
           <div>
@@ -9021,6 +9631,23 @@
       </div>
     </div>
   </div><!-- /createMenuOverlay -->
+
+  <!-- ===== BCC宛先カゴ：下部固定バー（案A） ===== -->
+  <div class="basket-bar" id="basketBar" onclick="openBasketSheet()">
+    <div class="basket-avatars" id="basketBarAvatars"></div>
+    <div class="basket-count-text" id="basketBarCountText">0人を選択中</div>
+    <button class="basket-send-btn" onclick="event.stopPropagation();basketSendFromBar()">ParaDMを送る→</button>
+    <span class="basket-clear-btn" onclick="event.stopPropagation();basketClearAll()">✕</span>
+  </div>
+
+  <!-- カゴ内訳シート -->
+  <div class="basket-sheet-backdrop" id="basketSheetBackdrop" onclick="closeBasketSheet()"></div>
+  <div class="basket-sheet" id="basketSheet">
+    <div class="basket-sheet-handle"></div>
+    <div class="basket-sheet-title" id="basketSheetTitle">送信先（0人）</div>
+    <div class="basket-sheet-list" id="basketSheetList"></div>
+    <button class="basket-sheet-send-btn" onclick="basketSendFromSheet()">このメンバーに送信する</button>
+  </div>
 
   <!-- TAB BAR -->
   <div class="tab-bar">
@@ -9045,9 +9672,10 @@
 </div>
 
 <!-- SETTINGS MENU OVERLAY -->
-<div id="settingsMenuOverlay" style="display:none;position:fixed;inset:0;z-index:9999;">
+<div id="settingsMenuOverlay" style="position:fixed;inset:0;z-index:9999;">
   <div onclick="closeSettingsMenu()" style="position:absolute;inset:0;background:rgba(0,0,0,0.4);"></div>
-  <div style="position:absolute;right:0;top:0;bottom:0;width:80%;max-width:320px;background:var(--bg);box-shadow:-4px 0 20px rgba(0,0,0,0.15);padding:60px 0 0;overflow-y:auto;animation:slideInRight 0.25s ease;">
+  <div id="settingsMenuPanel" style="position:absolute;left:0;right:0;bottom:0;max-width:430px;margin:0 auto;background:var(--bg);box-shadow:0 -8px 24px rgba(0,0,0,0.18);border-radius:22px 22px 0 0;padding:8px 0 calc(20px + env(safe-area-inset-bottom,0px));max-height:80vh;overflow-y:auto;">
+    <div style="width:36px;height:4px;border-radius:2px;background:var(--border);margin:2px auto 12px;"></div>
     <div style="padding:0 20px 20px;border-bottom:1px solid var(--border);">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
         <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#64748B,#94A3B8);display:flex;align-items:center;justify-content:center;font-size:20px;">🧔</div>
@@ -9152,9 +9780,9 @@
     <button class="chat-back" onclick="closeDmChat()">←</button>
     <!-- 1:1 mode header -->
     <div id="dmHeaderNormal" style="display:flex;align-items:center;gap:10px;">
-      <div class="chat-header-avatar" id="dmChatAvatar"></div>
+      <div class="chat-header-avatar" id="dmChatAvatar" onclick="openDmChatHeaderProfile()" style="cursor:pointer;"></div>
       <div>
-        <div class="chat-header-name" id="dmChatName"></div>
+        <div class="chat-header-name" id="dmChatName" onclick="openDmChatHeaderProfile()" style="cursor:pointer;"></div>
       </div>
     </div>
     <!-- Broadcast mode header -->
@@ -9162,13 +9790,22 @@
       <div>
         <div class="chat-header-name" id="dmBroadcastLabel"></div>
       </div>
-      <button class="nm2-edit-members-btn" onclick="openMemberEditFromThread()" style="margin-left:auto;">メンバーを確認する</button>
     </div>
+  </div>
+  <div class="dm-broadcast-dest" id="dmBroadcastDest" style="display:none;" onclick="openMemberEditFromThread()">
+    <span class="dm-broadcast-dest-label">宛先:</span>
+    <div class="dm-broadcast-dest-chips" id="dmBroadcastDestChips"></div>
+  </div>
+  <div class="dm-broadcast-name-row" id="dmBroadcastNameRow" style="display:none;">
+    <span class="dm-broadcast-name-label">配信名:</span>
+    <input type="text" class="dm-broadcast-name-input" id="dmBroadcastNameInput" placeholder="配信名">
   </div>
   <div class="chat-messages" id="dmChatMessages"></div>
   <div class="chat-input-bar">
-    <input class="chat-input" placeholder="メッセージを入力..." id="dmChatInput">
-    <button class="chat-send-btn" onclick="sendDmMsg()">↑</button>
+    <div class="chat-input-wrap">
+      <input class="chat-input" placeholder="メッセージを入力..." id="dmChatInput">
+      <button class="chat-send-btn" onclick="sendDmMsg()">↑</button>
+    </div>
   </div>
 </div>
 
@@ -10047,12 +10684,18 @@
     const user = storiesData.find(u => u.id === userId);
     if (!user) return;
     const _ov = document.getElementById('storiesOverlay');
-    _ov.classList.remove('pop-mode'); // 全画面ビューアは pop-mode を使わない（下から上がる従来挙動）
+    const _bd = document.getElementById('storyPopBackdrop');
+    if (_ov.classList.contains('open')) return;
+    // インスタ準拠：ストーリー起動は中央スケール（pop-mode）に一本化
+    _ov.classList.add('pop-mode');
+    if (_bd) _bd.classList.add('open');
     currentStoriesUserId = userId;
     currentStoriesIdx = 0;
-    _ov.classList.add('open');
     renderStorySlide();
     startStoriesTimer();
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => { _ov.classList.add('open'); });
+    });
   }
 
   // 共通後始末（タイマー停止・seen記録・状態リセット）
@@ -10279,6 +10922,7 @@
     document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
     const tabEl = document.getElementById('tab-' + tab);
     if (tabEl) tabEl.classList.add('active');
+    renderBasketBar();
     if (tab === 'events' && typeof buildEventsHub === 'function') buildEventsHub();
     if (tab === 'my' && typeof switchMyTab === 'function') switchMyTab('posts');
     // コンポーザーを開いたら空レイヤーが無ければ作る（初回用）
@@ -10325,8 +10969,8 @@
     return `
       <div class="search-post-card" style="${bgStyle}border:1px solid rgba(255,255,255,0.12);" onclick="openSearchPostFs('${encodeURIComponent(JSON.stringify(p))}')">
         <div class="search-post-top">
-          <div class="search-post-avatar" style="background:rgba(255,255,255,0.2);">${p.avatar}</div>
-          <span class="search-post-name">${p.name}</span>
+          <div class="search-post-avatar" style="background:rgba(255,255,255,0.2);cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${p.userId}')">${p.avatar}</div>
+          <span class="search-post-name" style="cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${p.userId}')">${p.name}</span>
           <span style="font-size:10px;font-weight:700;color:${titleInfo.color};text-shadow:0 1px 3px rgba(0,0,0,0.5);margin-left:2px;">${titleInfo.emoji} ${titleInfo.name} <span style="opacity:0.7;font-weight:600;">(${scoreDisp})</span></span>
         </div>
         <div class="search-post-body">${bodyTruncated}</div>
@@ -10370,10 +11014,10 @@
 
   // ===== SETTINGS MENU =====
   function openSettingsMenu() {
-    document.getElementById('settingsMenuOverlay').style.display = 'block';
+    document.getElementById('settingsMenuOverlay').classList.add('open');
   }
   function closeSettingsMenu() {
-    document.getElementById('settingsMenuOverlay').style.display = 'none';
+    document.getElementById('settingsMenuOverlay').classList.remove('open');
   }
 
   // ===== CIRCLE TOGGLE =====
@@ -11804,7 +12448,7 @@
   const cmpTierMembers = {
     core:   [{id:'yu_tanaka', name:'田中 悠', avatar:'🧑'}, {id:'rina_s', name:'鈴木 里奈', avatar:'👩'}],
     orbit:  [{id:'kenta_s', name:'佐藤 健太', avatar:'🧑'}, {id:'daisuke_ito', name:'伊藤 大輔', avatar:'👨'}, {id:'misaki_t', name:'高橋 美咲', avatar:'👱‍♀️'}, {id:'ryo_k', name:'小林 亮', avatar:'🧔'}, {id:'aya_w', name:'渡辺 彩', avatar:'🙍'}],
-    halo:   [{id:'ayaka_y', name:'山田 彩香', avatar:'👩'}, {id:'sho_n', name:'中村 花', avatar:'👩'}, {id:'kato_sho', name:'加藤 翔', avatar:'👨'}, {id:'m_nakajima', name:'中島 誠', avatar:'🧑'}],
+    halo:   [{id:'ayaka_y', name:'山田 彩香', avatar:'👩'}, {id:'sho_n', name:'中村 翔', avatar:'👨'}, {id:'kato_sho', name:'加藤 翔', avatar:'👨'}, {id:'m_nakajima', name:'中島 誠', avatar:'🧑'}],
     galaxy: [{id:'n_sho', name:'中村 翔', avatar:'👨'}, {id:'m_aoi', name:'松本 葵', avatar:'👩'}, {id:'f_yuto', name:'藤田 悠斗', avatar:'🧑'}],
   };
   const cmpGroupMembers = {
@@ -12743,10 +13387,10 @@
       return `
       <div onclick="openColorPostDetail('${p.id}')" style="background:${c.bg};color:${c.fg};padding:15px 18px 11px;border-bottom:1px solid rgba(0,0,0,0.10);cursor:pointer;">
         <div style="display:flex;align-items:center;gap:9px;">
-          <span style="font-size:26px;line-height:1;">${u.avatar}</span>
+          <span style="font-size:26px;line-height:1;cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${p.uid}')">${u.avatar}</span>
           <div style="flex:1;min-width:0;">
             <div style="display:flex;align-items:center;gap:6px;">
-              <span style="font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name}</span>
+              <span style="font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${p.uid}')">${u.name}</span>
               <span style="font-size:12px;white-space:nowrap;">${tier.emoji} ${tier.name}</span>
             </div>
             <div style="font-size:12px;color:${meta};">${u.handle || ''}・${p.time}</div>
@@ -12781,9 +13425,9 @@
         </div>
         <div style="padding:6px 18px 110px;">
           <div style="display:flex;align-items:center;gap:11px;">
-            <span style="font-size:38px;line-height:1;">${u.avatar}</span>
+            <span style="font-size:38px;line-height:1;cursor:pointer;" onclick="openUserProfile('${p.uid}')">${u.avatar}</span>
             <div style="flex:1;min-width:0;">
-              <div style="font-weight:700;font-size:15.5px;">${u.name} <span style="font-size:12.5px;font-weight:600;">${tier.emoji} ${tier.name}</span></div>
+              <div style="font-weight:700;font-size:15.5px;cursor:pointer;" onclick="openUserProfile('${p.uid}')">${u.name} <span style="font-size:12.5px;font-weight:600;">${tier.emoji} ${tier.name}</span></div>
               <div style="font-size:13px;color:${meta};">${u.handle || ''}</div>
             </div>
           </div>
@@ -12857,11 +13501,19 @@
     cpStoryQueue = uids.map(uid => ({ uid, posts: cpUnreadOf(uid) }));
     cpStoryUserIdx = start;
     cpStoryPostIdx = 0;
-    document.getElementById('cpStoryViewer').style.display = 'block';
+    const _v = document.getElementById('cpStoryViewer');
+    _v.style.display = 'block';
     cpStoryRender();
+    // 1フレーム後に .open（中央スケール 0.95→1・--mo-modal）
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => { _v.classList.add('open'); });
+    });
   }
   function closeCpStories() {
-    document.getElementById('cpStoryViewer').style.display = 'none';
+    const _v = document.getElementById('cpStoryViewer');
+    _v.classList.remove('open');
+    // 逆再生（scale1→0.95・フェード）完了後に display:none
+    setTimeout(() => { _v.style.display = 'none'; }, 200);
     buildCpStoryRow();       // 見終わった人を列から消す
     buildColorTimeline();    // タイムラインのいいね数等も同期
   }
@@ -12948,9 +13600,7 @@
       const n = (ev.candidates || []).length;
       whenLine = `🗓 候補日 ${n}件・あなたの回答待ち`;
     } else {
-      const weekdayArr = ['日','月','火','水','木','金','土'];
-      const d = new Date(ev.date);
-      whenLine = `🗓 ${d.getMonth() + 1}/${d.getDate()}(${weekdayArr[d.getDay()]}) ${ev.time || ''}`;
+      whenLine = `🗓 ${evWhenRange(ev, { compact: true })}`;
     }
     const goingCount = !isPollEv && ev.responses
       ? Object.values(ev.responses).filter(r => r === 'going').length : 0;
@@ -12959,10 +13609,10 @@
     <div onclick="openEventDetail('${ev.id}', 'home')" style="background:linear-gradient(135deg,#020408 0%,#1E3A5F 40%,#5B21B6 75%,#9D174D 100%);color:${fg};padding:14px 18px 11px;border-bottom:1px solid rgba(0,0,0,0.10);cursor:pointer;">
       <div style="font-size:12.5px;font-weight:700;color:${meta};margin-bottom:9px;">${ctx}</div>
       <div style="display:flex;align-items:center;gap:9px;">
-        <span style="font-size:26px;line-height:1;">${host.avatar}</span>
+        <span style="font-size:26px;line-height:1;cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${ev.hostId}')">${host.avatar}</span>
         <div style="flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(ev.hostName || host.name)}</span>
+            <span style="font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${ev.hostId}')">${escapeHtml(ev.hostName || host.name)}</span>
             <span style="font-size:12px;white-space:nowrap;">${tier.emoji} ${tier.name}</span>
           </div>
           <div style="font-size:12px;color:${meta};">${host.handle || ''}・主催</div>
@@ -12973,7 +13623,9 @@
       ${ev.message ? `<div style="font-size:14px;line-height:1.7;margin:7px 2px 2px;white-space:pre-wrap;word-break:break-word;">${escapeHtml(ev.message.length > 70 ? ev.message.slice(0, 70) + '…' : ev.message)}</div>` : ''}
       ${ev.coverImage ? `<img src="${ev.coverImage}" alt="" style="display:block;width:100%;border-radius:10px;max-height:220px;object-fit:cover;object-position:${coverPos};margin:9px 0 2px;">` : ''}
       <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid ${line};margin-top:10px;padding-top:8px;font-size:13px;color:${meta};">
-        <span>${isPollEv ? '⏰ ' + (ev.deadline ? '締切 ' + ev.deadline : '回答受付中') : (goingCount ? '✓ ' + goingCount + '人が参加予定' : '参加受付中')}</span>
+        <span>${isPollEv
+          ? '⏰ ' + (ev.deadline ? '締切 ' + ev.deadline : '回答受付中')
+          : (goingCount ? '✓ ' + goingCount + '人が参加予定' : '参加受付中') + (ev.deadline ? '　' + evDeadlineLabel(ev) : '')}</span>
         <span style="font-weight:700;">詳細を見る ›</span>
       </div>
     </div>`;
@@ -13166,10 +13818,14 @@
     ],
   };
 
+  let currentDmUserId = null;
   function openDmChat(userId, name, avatar) {
     dmBroadcastMode = false;
+    currentDmUserId = userId;
     document.getElementById('dmHeaderNormal').style.display = 'flex';
     document.getElementById('dmHeaderBroadcast').style.display = 'none';
+    document.getElementById('dmBroadcastDest').style.display = 'none';
+    document.getElementById('dmBroadcastNameRow').style.display = 'none';
     document.getElementById('dmChatAvatar').textContent = avatar;
     document.getElementById('dmChatName').textContent = name;
     const container = document.getElementById('dmChatMessages');
@@ -13189,10 +13845,16 @@
       userGroups.forEach(group => {
         if (!group.memberIds.includes(userId)) return;
         (group.threads || []).forEach(thread => {
+          // 宛先スナップショット尊重：対象を絞ったスレッドは対象外のDMには出さない
+          if (thread.audienceIds && !thread.audienceIds.includes(userId)) return;
+          // 招待スレッドは招待ミニカードを添えて描画
+          const invEv = (thread.eventInvite && thread.eventId && typeof eventsData !== 'undefined')
+            ? eventsData.find(e => e.id === thread.eventId) : null;
           // 自分→相手: スレッド本文
           groupMessages.push({
             from: 'me',
             text: thread.text,
+            card: (invEv && typeof evInviteMiniCardHtml === 'function') ? evInviteMiniCardHtml(invEv) : null,
             time: relativeTime(thread.sentAt),
             _ts: new Date(thread.sentAt).getTime()
           });
@@ -13215,6 +13877,14 @@
     const merged = [...baseConvo, ...groupMessages].sort((a, b) => a._ts - b._ts);
 
     merged.forEach(msg => {
+      // 招待ミニカード（吹き出しの前に全幅で）
+      if (msg.card) {
+        const cardWrap = document.createElement('div');
+        cardWrap.className = 'dm-invite-card-wrap';
+        cardWrap.innerHTML = msg.card;
+        container.appendChild(cardWrap);
+      }
+      if (!msg.text) return;
       const bubble = document.createElement('div');
       bubble.className = 'chat-bubble ' + (msg.from === 'me' ? 'mine' : 'theirs');
       bubble.innerHTML = msg.text + '<div class="chat-bubble-meta">' + msg.time + '</div>';
@@ -13226,20 +13896,67 @@
   }
   function closeDmChat() {
     document.getElementById('dmChatOverlay').classList.remove('open');
+    // 送信せず閉じた場合はカゴを保持したままフラグだけ解除
+    dmBroadcastFromBasket = false;
+  }
+  function openDmChatHeaderProfile() {
+    // broadcastモード（宛先複数）ではプロフィール導線を出さない
+    if (dmBroadcastMode || !currentDmUserId) return;
+    if (typeof userProfiles !== 'undefined' && userProfiles[currentDmUserId]) {
+      openUserProfile(currentDmUserId);
+    }
+    // プロフィール未登録の相手はDMに既にいるのでフォールバックなし
   }
   function sendDmMsg() {
     const input = document.getElementById('dmChatInput');
-    if (!input.value.trim()) return;
+    const text = input.value.trim();
+    if (!text) return;
+
+    if (dmBroadcastMode) {
+      // BCC配信＝📢フラグ付きの軽量グループとしてuserGroupsに積む（Messages一覧・スレッド画面・再配信・
+      // 個別DMへのステルスマージを既存のグループ機構にそのまま乗せるため）
+      const nameInput = document.getElementById('dmBroadcastNameInput');
+      const bcName = nameInput.value.trim() || nmDefaultBroadcastName();
+      const memberIds = Array.from(nmSelected.keys());
+      const count = memberIds.length;
+      const newGroup = {
+        id: 'bc_' + Date.now(),
+        name: bcName,
+        emoji: '📢',
+        broadcast: true,
+        photoDataUrl: null,
+        colorIdx: userGroups.length % 10,
+        createdAt: new Date().toISOString(),
+        memberIds: memberIds,
+        order: 0,
+        threads: [{
+          id: 't_' + Date.now(),
+          sentAt: new Date().toISOString(),
+          text: text,
+          replies: []
+        }]
+      };
+      userGroups.unshift(newGroup);
+      userGroups.forEach((g, i) => { g.order = i; });
+      input.value = '';
+      document.getElementById('dmChatOverlay').classList.remove('open');
+      showToast(count + '人にメッセージを送信しました！');
+      if (dmBroadcastFromBasket) {
+        dmBroadcastFromBasket = false;
+        basketClearAll();
+      }
+      openGroupThread(newGroup.id);
+      renderTalkMessagesList();
+      return;
+    }
+
     const container = document.getElementById('dmChatMessages');
     const bubble = document.createElement('div');
     bubble.className = 'chat-bubble mine';
-    bubble.innerHTML = input.value + '<div class="chat-bubble-meta">今</div>';
+    bubble.innerHTML = text + '<div class="chat-bubble-meta">今</div>';
     container.appendChild(bubble);
     input.value = '';
     container.scrollTop = container.scrollHeight;
-    if (dmBroadcastMode) {
-      showToast(nmSelected.size + '人にメッセージを送信しました！');
-    }
   }
 
   // ===== BROADCAST CHAT =====
@@ -13827,13 +14544,14 @@
             </div>
           </div>`;
       } else {
-        // グループ行
+        // グループ行（配信スレッドは📢バッジ、通常グループは👥バッジ）
         const avatarHtml = renderGroupAvatar(item.group, 44);
+        const badgeIcon = item.group.eventId ? '📅' : (item.group.broadcast ? '📢' : '👥');
         return `
           <div class="tl-row" onclick="openGroupThread('${item.groupId}')">
             <div class="tl-avatar-wrap" style="position:relative;">
               ${avatarHtml}
-              <div class="tl-group-badge-icon">👥</div>
+              <div class="tl-group-badge-icon">${badgeIcon}</div>
             </div>
             <div class="tl-body">
               <div class="tl-top">
@@ -13858,6 +14576,7 @@
       if (segTab)  segTab.classList.toggle('active', t === tab);
     });
     if (tab === 'dm') renderTalkMessagesList();
+    renderBasketBar();
   }
 
   // ===== CONTACTS: Circle折りたたみ =====
@@ -13883,6 +14602,12 @@
   // selectedMembers: id → { name, avatar } のMap（同一人物はどのセクションでも共通）
   const nmSelected = new Map();
   let dmBroadcastMode = false;
+  var _evInviteCtx = null;   // イベント招待フロー中のコンテキスト（script2から代入）。nullなら通常のBCCフロー
+  var _evInviteScopeOpen = false;   // イベント招待フロー中の「🌐一般公開する」トグル状態（script2から初期化）
+  // ===== BCC宛先カゴ：状態 =====
+  let nmTierMode = null; // 'core'|'orbit'|'halo'|'galaxy'|'connect'|null（階層編集モード中か）
+  const nmBasket = {};   // 階層キー → [{id,name,avatar}, ...]
+  let dmBroadcastFromBasket = false;
 
   // 各IDに対応するデータ（avatar emoji）
   const nmMemberData = {
@@ -13897,34 +14622,61 @@
     'ayaka_y':      { name: '山田 彩香', avatar: '👩' },
     'sho_n':        { name: '中村 翔',   avatar: '👨' },
     'kenji_founder':{ name: 'Kenji Ito', avatar: '🎙' },
-    'masa_o':       { name: '岡田 雅也', avatar: '🧑' },
-    'yuki_f':       { name: '藤井 雪',   avatar: '👩' },
-    'tom_b':        { name: 'Tom Baker', avatar: '👨' },
-    'haruka_m':     { name: '松本 遥',   avatar: '👩' },
-    'jin_l':        { name: 'Jin Lee',   avatar: '👨' },
-    'nao_h':        { name: '林 奈緒',   avatar: '👩' },
+    'kato_sho':     { name: '加藤 翔',   avatar: '👨' },
+    'matsuda_e':    { name: '松田 恵',   avatar: '👩' },
+    'fujii_m':      { name: '藤井 誠',   avatar: '🧑' },
+    'kinoshita_a':  { name: '木下 彩',   avatar: '👩' },
+    'ishikawa_t':   { name: '石川 拓',   avatar: '🧑' },
+    'shimizu_m':    { name: '清水 美穂', avatar: '👩' },
+    'noda_k':       { name: '野田 健一', avatar: '👨' },
   };
 
   function openNewMessage() {
     // 状態リセット
     nmSelected.clear();
+    nmTierMode = null;
     nmRenderChips();
     nmUpdateNextBtn();
     // 全checkboxをリセット
-    document.querySelectorAll('.nm-member-row').forEach(r => r.classList.remove('checked'));
+    document.querySelectorAll('.nm-member-row').forEach(r => r.classList.remove('checked', 'nm-locked'));
     nmUpdateAllSelectBtns();
     document.getElementById('nmSearchInput').value = '';
     nmFilterMembers('');
+    // セクション表示を全て戻す（openNewMsgPresetのonlySection絞り込みを解除）
+    document.querySelectorAll('#nmOverlay .nm-section, #nmOverlay .nm-divider').forEach(el => { el.style.display = ''; });
+    // 「🌐一般公開する」行：イベント招待モード限定で表示（_evInviteCtxはstartEventInviteFlowでopenNewMessage呼び出し前に設定済み）
+    const scopeRow = document.getElementById('nmEventScopeRow');
+    if (scopeRow) scopeRow.style.display = _evInviteCtx ? 'flex' : 'none';
+    nmSetEventScopeSwitch(_evInviteCtx ? !!_evInviteScopeOpen : false);
     document.getElementById('nmOverlay').classList.add('open');
+  }
+
+  // イベント招待モードの「🌐一般公開する」トグル
+  function toggleEvInviteScope() {
+    _evInviteScopeOpen = !_evInviteScopeOpen;
+    nmSetEventScopeSwitch(_evInviteScopeOpen);
+  }
+  function nmSetEventScopeSwitch(on) {
+    const sw = document.getElementById('nmEventScopeSwitch');
+    if (!sw) return;
+    sw.classList.toggle('on', on);
+    sw.setAttribute('aria-pressed', on ? 'true' : 'false');
   }
 
   // プリセットメンバーを選択状態で新規メッセージを開く
   // members = [{id, name, avatar}, ...]
-  function openNewMsgPreset(members) {
+  // onlySection: 'core'|'orbit'|'halo'|'galaxy'|'connect' を指定すると発信元階層のセクションだけ表示する
+  function openNewMsgPreset(members, onlySection) {
     // まず通常のopenNewMessageでリセット
     openNewMessage();
+    nmTierMode = onlySection || null;
+    // カゴに既存の選択があればプリセット全員よりカゴを優先する
+    const basketMembers = (onlySection && nmBasket[onlySection] && nmBasket[onlySection].length > 0)
+      ? nmBasket[onlySection]
+      : null;
+    const effectiveMembers = basketMembers || members;
     // 指定メンバーをチェック状態にする
-    members.forEach(m => {
+    effectiveMembers.forEach(m => {
       // nmMemberDataに存在しないIDはスキップ（連絡先タブ独自メンバーも対応）
       const data = nmMemberData[m.id] || { name: m.name, avatar: m.avatar };
       // nmMemberDataにない場合でも一時的に登録
@@ -13933,6 +14685,16 @@
       // 全セクションのこのIDのrowをchecked
       document.querySelectorAll(`.nm-member-row[data-id="${m.id}"]`).forEach(r => r.classList.add('checked'));
     });
+    if (onlySection) {
+      document.querySelectorAll('#nmOverlay .nm-section').forEach(sec => {
+        if (sec.id === 'nmSec-' + onlySection) {
+          sec.classList.add('open');
+        } else {
+          sec.style.display = 'none';
+        }
+      });
+      document.querySelectorAll('#nmOverlay .nm-divider').forEach(el => { el.style.display = 'none'; });
+    }
     nmRenderChips();
     nmUpdateNextBtn();
     nmUpdateAllSelectBtns();
@@ -13958,21 +14720,44 @@
     openDmBroadcast();
   }
 
+  // 配信名のデフォルト生成：「◯人にparaDM YY年M月D日」形式で統一
+  function nmDefaultBroadcastName() {
+    const now = new Date();
+    const yy = String(now.getFullYear()).slice(-2);
+    const dateStr = `${yy}年${now.getMonth() + 1}月${now.getDate()}日`;
+    return `${nmSelected.size}人にparaDM ${dateStr}`;
+  }
+
   function openDmBroadcast() {
     const count = nmSelected.size;
     if (count === 0) return;
     dmBroadcastMode = true;
     document.getElementById('dmHeaderNormal').style.display = 'none';
     document.getElementById('dmHeaderBroadcast').style.display = 'flex';
-    document.getElementById('dmBroadcastLabel').textContent = 'Send to ' + count;
+    document.getElementById('dmBroadcastLabel').textContent = '新規メッセージ';
+    document.getElementById('dmBroadcastDestChips').innerHTML = Array.from(nmSelected, ([id, data]) =>
+      `<span class="dm-dest-chip"><span class="dm-dest-chip-av">${data.avatar}</span>${data.name}</span>`
+    ).join('');
+    document.getElementById('dmBroadcastDest').style.display = 'flex';
+    document.getElementById('dmBroadcastNameInput').value = nmDefaultBroadcastName();
+    document.getElementById('dmBroadcastNameRow').style.display = 'flex';
     const container = document.getElementById('dmChatMessages');
-    container.innerHTML = '';
+    container.innerHTML = '<div class="dm-broadcast-note">✉️ それぞれに個別のメッセージとして届きます</div>';
     document.getElementById('dmChatInput').value = '';
     document.getElementById('dmChatOverlay').classList.add('open');
   }
 
   function closeNewMessage() {
     document.getElementById('nmOverlay').classList.remove('open');
+    // イベント招待フローの後始末（通常フローでもnull安全）
+    _evInviteCtx = null;
+    const footer = document.querySelector('#nmOverlay .nm-footer');
+    if (footer) footer.classList.remove('has-skip');
+    const title = document.querySelector('#nmOverlay .nm-header-title');
+    if (title) title.textContent = 'New Message';
+    document.querySelectorAll('#nmOverlay .nm-member-row.nm-locked').forEach(r => r.classList.remove('nm-locked'));
+    const scopeRow = document.getElementById('nmEventScopeRow');
+    if (scopeRow) scopeRow.style.display = 'none';
   }
 
   function openMemberEditFromThread() {
@@ -14016,7 +14801,7 @@
       {id:'ryo_k', name:'小林 亮', avatar:'🧔', label:'💎 Orbit'},
       {id:'aya_w', name:'渡辺 彩', avatar:'🙍', label:'💎 Orbit'},
       {id:'ayaka_y', name:'山田 彩香', avatar:'👩', label:'⭐ Halo'},
-      {id:'sho_n', name:'中村 花', avatar:'👩', label:'⭐ Halo'},
+      {id:'sho_n', name:'中村 翔', avatar:'👨', label:'⭐ Halo'},
       {id:'kato_sho', name:'加藤 翔', avatar:'👨', label:'⭐ Halo'},
       {id:'matsuda_e', name:'松田 恵', avatar:'👩', label:'🌌 Galaxy'},
       {id:'fujii_m', name:'藤井 誠', avatar:'🧑', label:'🌌 Galaxy'},
@@ -14045,7 +14830,7 @@
     }
 
     resultsEl.innerHTML = hits.map(m => `
-      <div class="contacts-member-row" onclick="openDmChat('${m.id}','${m.name}','${m.avatar}')" style="background:var(--bg);">
+      <div class="contacts-member-row" onclick="contactsOpenProfileOrDm('${m.id}','${m.name}','${m.avatar}')" style="background:var(--bg);">
         <div class="contacts-member-avatar">${m.avatar}</div>
         <span class="contacts-member-name">${m.name}</span>
         <span class="contacts-tier-badge-small" style="background:var(--primary-bg);color:var(--primary-dark);font-size:10px;">${m.label}</span>
@@ -14053,15 +14838,32 @@
     `).join('');
   }
 
+  // 連絡先検索の行タップ：プロフィールがあれば表示、無ければDMへ（メンバーページのtpOpenProfileOrDmと同じ判定基準）
+  // ※ tpOpenProfileOrDmはtpCurrentMembers（開いた階層ページ限定の配列）に依存するため、
+  //   階層ページを一度も開かず検索だけ使った場合にヒットせず無反応になる。検索結果はm.id/name/avatarを直接持っているため、それを使う。
+  function contactsOpenProfileOrDm(id, name, avatar) {
+    if (typeof userProfiles !== 'undefined' && userProfiles[id]) {
+      openUserProfile(id);
+    } else {
+      openDmChat(id, name, avatar);
+    }
+  }
+
   function nmToggleMember(id, section) {
     const row = document.querySelector(`.nm-member-row[data-id="${id}"][data-section="${section}"]`);
+    if (row && row.classList.contains('nm-locked')) return;   // 招待済み＝選択不可
     const isChecked = row && row.classList.contains('checked');
 
     if (isChecked) {
       // このsectionのrowだけuncheck
       row.classList.remove('checked');
-      // 同じidが他sectionでもcheckedでなければselectedから削除
-      const otherChecked = document.querySelector(`.nm-member-row[data-id="${id}"].checked`);
+      // 同じidが他section（onlySectionで隠されていない）でもcheckedでなければselectedから削除
+      // ※ openNewMsgPresetのonlySectionで非表示化されたsectionのcheckedは無視する
+      const otherChecked = Array.from(document.querySelectorAll(`.nm-member-row[data-id="${id}"].checked`))
+        .find(r => {
+          const sec = r.closest('.nm-section');
+          return !sec || sec.style.display !== 'none';
+        });
       if (!otherChecked) nmSelected.delete(id);
     } else {
       // check
@@ -14112,7 +14914,262 @@
     const btn = document.getElementById('nmNextBtn');
     const count = nmSelected.size;
     btn.disabled = count === 0;
-    btn.textContent = count > 0 ? `Next (${count} selected)` : 'Next';
+    if (_evInviteCtx) {
+      btn.textContent = _evInviteCtx.mode === 'add' ? `${count}人を招待` : `この${count}人に招待`;
+      btn.classList.remove('tier-confirm');
+      return;
+    }
+    if (nmTierMode) {
+      btn.textContent = `この${count}名に決定`;
+      btn.classList.add('tier-confirm');
+    } else {
+      btn.textContent = count > 0 ? `Next (${count} selected)` : 'Next';
+      btn.classList.remove('tier-confirm');
+    }
+  }
+
+  // ===== BCC宛先カゴ =====
+  const nmTierBadges = {
+    core: '🔥 Core',
+    orbit: '💎 Orbit',
+    halo: '⭐ Halo',
+    galaxy: '🌌 Galaxy',
+    connect: '🤝 Connect',
+  };
+
+  // 階層モードのNextボタン押下 → カゴへ保存 / 通常モード → 従来のStep2へ
+  function nmNextBtnClick() {
+    if (_evInviteCtx) {
+      if (typeof evInviteConfirmDest === 'function') evInviteConfirmDest();
+      return;
+    }
+    if (nmTierMode) {
+      nmConfirmTierSelection();
+    } else {
+      openNewMessageStep2();
+    }
+  }
+  // イベント招待フローの「スキップ」（公開だけ）
+  function nmSkipBtnClick() {
+    if (typeof evInviteSkip === 'function') evInviteSkip();
+  }
+
+  function nmConfirmTierSelection() {
+    if (!nmTierMode) return;
+    nmBasket[nmTierMode] = Array.from(nmSelected, ([id, data]) => ({ id, name: data.name, avatar: data.avatar }));
+    closeNewMessage();
+    renderBasketBar();
+  }
+
+  // カゴ全体（全キー・重複除去）をフラットな配列で返す。tier（キー）も付与
+  // 同じ人が複数キー（例：Coreと酒好き）から入っても1人としてカウント。バッジは最初に見つかったキーのもの
+  function nmBasketAllMembers() {
+    const map = new Map();
+    Object.keys(nmBasket).forEach(tier => {
+      (nmBasket[tier] || []).forEach(m => {
+        if (!map.has(m.id)) map.set(m.id, { id: m.id, name: m.name, avatar: m.avatar, tier });
+      });
+    });
+    return Array.from(map.values());
+  }
+
+  function isContactsTabVisible() {
+    const talkScreen = document.getElementById('screen-talk');
+    const contactsTab = document.getElementById('talkContent-contacts');
+    return !!(talkScreen && talkScreen.classList.contains('active') &&
+              contactsTab && contactsTab.classList.contains('active'));
+  }
+
+  // 階層ページを閲覧モード（選択モードではない）で開いている間もカゴバーを出す
+  function isTierPageViewVisible() {
+    const tp = document.getElementById('screen-tier-page');
+    return !!(tp && tp.classList.contains('active') && !tpSelectionMode);
+  }
+
+  function renderBasketBar() {
+    // カゴの状態が変わる全経路がここを通るため、選択ボタンの状態色もここで一括再計算する
+    renderSelectionStates();
+    const bar = document.getElementById('basketBar');
+    const sheet = document.getElementById('basketSheet');
+    const backdrop = document.getElementById('basketSheetBackdrop');
+    if (!bar || !sheet || !backdrop) return;
+    const members = nmBasketAllMembers();
+
+    if (members.length === 0 || !(isContactsTabVisible() || isTierPageViewVisible())) {
+      bar.classList.remove('show');
+      sheet.classList.remove('open');
+      backdrop.classList.remove('show');
+      return;
+    }
+
+    bar.classList.add('show');
+    const avatarsEl = document.getElementById('basketBarAvatars');
+    const shown = members.slice(0, 4);
+    let html = shown.map(m => `<span class="basket-avatar">${m.avatar}</span>`).join('');
+    if (members.length > 4) {
+      html += `<span class="basket-avatar basket-avatar-more">+${members.length - 4}</span>`;
+    }
+    avatarsEl.innerHTML = html;
+    document.getElementById('basketBarCountText').textContent = `${members.length}人を選択中`;
+
+    if (sheet.classList.contains('open')) {
+      renderBasketSheet();
+    }
+  }
+
+  function renderBasketSheet() {
+    const members = nmBasketAllMembers();
+    document.getElementById('basketSheetTitle').textContent = `送信先（${members.length}人）`;
+    document.getElementById('basketSheetList').innerHTML = members.map(m => `
+      <div class="basket-sheet-row">
+        <div class="basket-sheet-row-avatar">${m.avatar}</div>
+        <div class="basket-sheet-row-name">${m.name}</div>
+        <span class="basket-sheet-row-badge">${basketKeyBadge(m.tier)}</span>
+        <span class="basket-sheet-row-remove" onclick="basketRemoveMember('${m.tier}','${m.id}')">✕</span>
+      </div>
+    `).join('');
+  }
+
+  function openBasketSheet() {
+    if (nmBasketAllMembers().length === 0) return;
+    renderBasketSheet();
+    document.getElementById('basketSheet').classList.add('open');
+    document.getElementById('basketSheetBackdrop').classList.add('show');
+  }
+
+  function closeBasketSheet() {
+    document.getElementById('basketSheet').classList.remove('open');
+    document.getElementById('basketSheetBackdrop').classList.remove('show');
+  }
+
+  // シートの個人✕は全キーからその人を削除（重複登録でも一発で消える）
+  function basketRemoveMember(tier, id) {
+    Object.keys(nmBasket).forEach(k => {
+      nmBasket[k] = (nmBasket[k] || []).filter(m => m.id !== id);
+      if (nmBasket[k].length === 0) delete nmBasket[k];
+    });
+    if (nmBasketAllMembers().length === 0) {
+      closeBasketSheet();
+      renderBasketBar();
+      return;
+    }
+    renderBasketSheet();
+    renderBasketBar();
+  }
+
+  function basketClearAll() {
+    Object.keys(nmBasket).forEach(k => delete nmBasket[k]);
+    closeBasketSheet();
+    renderBasketBar();
+  }
+
+  // カゴが1人だけなら配信を作らず、その人との普通の1:1 DMを開く（2人以上は従来どおり配信作成へ）
+  function basketSendFromBar() {
+    const members = nmBasketAllMembers();
+    if (members.length === 1) {
+      const m = members[0];
+      basketClearAll();
+      openDmChat(m.id, m.name, m.avatar);
+      return;
+    }
+    openBroadcastCreate();
+  }
+
+  function basketSendFromSheet() {
+    const members = nmBasketAllMembers();
+    if (members.length === 1) {
+      const m = members[0];
+      basketClearAll();
+      openDmChat(m.id, m.name, m.avatar);
+      return;
+    }
+    openBroadcastCreate();
+  }
+
+  // ===== 「新しい配信」作成画面（LINE式・案A・カゴ経路専用） =====
+  let _prevScreenBeforeBroadcastCreate = null;
+
+  function openBroadcastCreate() {
+    const members = nmBasketAllMembers();
+    if (members.length === 0) return;
+    closeBasketSheet();
+    document.getElementById('basketBar').classList.remove('show');
+    // nmDefaultBroadcastName()の階層全員判定はnmSelectedを見るため、カゴの中身と同期させる
+    // （basketOpenBroadcast()が担っていた前処理。旧basketOpenBroadcast削除に伴いここへ移設）
+    nmSelected.clear();
+    members.forEach(m => nmSelected.set(m.id, { name: m.name, avatar: m.avatar }));
+    _prevScreenBeforeBroadcastCreate = document.querySelector('.screen.active');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-broadcast-create').classList.add('active');
+    const nameInput = document.getElementById('bcnNameInput');
+    nameInput.value = '';
+    nameInput.placeholder = nmDefaultBroadcastName();
+    renderBcnAvatarGrid(members);
+  }
+
+  // 開閉対称：閉じる時はカゴ・選択状態を一切いじらず、元の画面へ戻すだけ
+  function closeBroadcastCreate() {
+    document.getElementById('screen-broadcast-create').classList.remove('active');
+    if (_prevScreenBeforeBroadcastCreate) {
+      _prevScreenBeforeBroadcastCreate.classList.add('active');
+    } else {
+      document.getElementById('screen-talk').classList.add('active');
+    }
+    _prevScreenBeforeBroadcastCreate = null;
+    renderBasketBar();
+  }
+
+  function bcnIconTap() {
+    showToast('アイコン変更（開発中）');
+  }
+
+  // 折り返しメンバーグリッド（1行5人）。16人以上は先頭15人＋「+N」丸タイル
+  function renderBcnAvatarGrid(members) {
+    const list = members || nmBasketAllMembers();
+    document.getElementById('bcnAvatarsLabel').textContent = `メンバー ${list.length}人`;
+    const shown = list.slice(0, 15);
+    let html = shown.map(m => `
+      <div class="bcn-av-item">
+        <div class="bcn-av-circle">${m.avatar}</div>
+        <div class="bcn-av-name">${m.name}</div>
+      </div>
+    `).join('');
+    if (list.length > 15) {
+      html += `
+        <div class="bcn-av-item">
+          <div class="bcn-av-circle bcn-av-more">+${list.length - 15}</div>
+          <div class="bcn-av-name">&nbsp;</div>
+        </div>`;
+    }
+    document.getElementById('bcnAvatarGrid').innerHTML = html;
+  }
+
+  // 「作成」：空欄でもデフォルト名を採用。broadcast:trueのuserGroupsエントリを空スレッドで作り、
+  // カゴをクリアしてスレッド画面（空状態）へ。本文はスレッド画面の入力欄からsendGroupThreadMessageで送る
+  function submitBroadcastCreate() {
+    const members = nmBasketAllMembers();
+    if (members.length === 0) { closeBroadcastCreate(); return; }
+    const nameInput = document.getElementById('bcnNameInput');
+    const name = nameInput.value.trim() || nmDefaultBroadcastName();
+    const newGroup = {
+      id: 'bc_' + Date.now(),
+      name: name,
+      emoji: '📢',
+      broadcast: true,
+      photoDataUrl: null,
+      colorIdx: userGroups.length % 10,
+      createdAt: new Date().toISOString(),
+      memberIds: members.map(m => m.id),
+      order: 0,
+      threads: []
+    };
+    userGroups.unshift(newGroup);
+    userGroups.forEach((g, i) => { g.order = i; });
+    basketClearAll();
+    closeBroadcastCreate();
+    openGroupThread(newGroup.id);
+    renderTalkMessagesList();
+    showToast(`配信「${name}」を作成しました`);
   }
 
   function nmToggleSection(secId) {
@@ -14123,7 +15180,7 @@
   function nmToggleSelectAll(secId) {
     const list = document.getElementById('nmList-' + secId);
     if (!list) return;
-    const rows = list.querySelectorAll('.nm-member-row:not(.hidden)');
+    const rows = list.querySelectorAll('.nm-member-row:not(.hidden):not(.nm-locked)');
     const allChecked = Array.from(rows).every(r => r.classList.contains('checked'));
 
     rows.forEach(row => {
@@ -14152,7 +15209,7 @@
       const list = document.getElementById('nmList-' + secId);
       const btn = document.getElementById('nmAllBtn-' + secId);
       if (!list || !btn) return;
-      const rows = list.querySelectorAll('.nm-member-row:not(.hidden)');
+      const rows = list.querySelectorAll('.nm-member-row:not(.hidden):not(.nm-locked)');
       if (rows.length === 0) return;
       const allChecked = Array.from(rows).every(r => r.classList.contains('checked'));
       btn.classList.toggle('all-selected', allChecked);
@@ -14188,6 +15245,350 @@
     document.getElementById('nmOverlay').classList.remove('open');
     showToast(`${count}人にメッセージを送信しました！`);
   }
+
+  // ===== TIER PAGE（階層メンバーページ：案B閲覧＋案C選択モード） =====
+  const TIER_META = {
+    core:    { emoji: '🔥', label: 'Core' },
+    orbit:   { emoji: '💎', label: 'Orbit' },
+    halo:    { emoji: '⭐', label: 'Halo' },
+    galaxy:  { emoji: '🌌', label: 'Galaxy' },
+    connect: { emoji: '🤝', label: 'Connect' },
+  };
+
+  // 階層キー → メンバー配列。id/name/avatarは既存の連絡先タブと同じもの、kana/rs/relはページ用に付与
+  const TIER_MEMBERS_DATA = {
+    core: [
+      { id: 'yu_tanaka',    name: '田中 悠',   avatar: '🧑',  kana: 'たなか ゆう' },
+      { id: 'rina_s',       name: '鈴木 里奈', avatar: '👩',  kana: 'すずき りな' },
+    ],
+    orbit: [
+      { id: 'kenta_s',      name: '佐藤 健太', avatar: '🧑',  kana: 'さとう けんた' },
+      { id: 'daisuke_ito',  name: '伊藤 大輔', avatar: '👨',  kana: 'いとう だいすけ' },
+      { id: 'misaki_t',     name: '高橋 美咲', avatar: '👱‍♀️', kana: 'たかはし みさき' },
+      { id: 'ryo_k',        name: '小林 亮',   avatar: '🧔',  kana: 'こばやし りょう' },
+      { id: 'aya_w',        name: '渡辺 彩',   avatar: '🙍',  kana: 'わたなべ あや' },
+    ],
+    halo: [
+      { id: 'ayaka_y',      name: '山田 彩香', avatar: '👩',  kana: 'やまだ あやか' },
+      { id: 'sho_n',        name: '中村 翔',   avatar: '👨',  kana: 'なかむら しょう' },
+      { id: 'kato_sho',     name: '加藤 翔',   avatar: '👨',  kana: 'かとう しょう' },
+    ],
+    galaxy: [
+      { id: 'matsuda_e',    name: '松田 恵',   avatar: '👩',  kana: 'まつだ めぐみ' },
+      { id: 'fujii_m',      name: '藤井 誠',   avatar: '🧑',  kana: 'ふじい まこと' },
+      { id: 'kinoshita_a',  name: '木下 彩',   avatar: '👩',  kana: 'きのした あや' },
+    ],
+    connect: [
+      { id: 'ishikawa_t',   name: '石川 拓',   avatar: '🧑',  kana: 'いしかわ たく' },
+      { id: 'shimizu_m',    name: '清水 美穂', avatar: '👩',  kana: 'しみず みほ' },
+      { id: 'noda_k',       name: '野田 健一', avatar: '👨',  kana: 'のだ けんいち' },
+    ],
+  };
+
+  let _prevScreenBeforeTierPage = null;
+  let tpCurrentTier = null;
+  let tpSelectionMode = false;
+  let tpQuery = '';
+  let tpSelectedIds = new Set();
+  let tpCurrentMembers = [];   // 現在開いているキー（階層 or グループ）のページ用メンバー配列
+
+  // キー（階層 or グループid）→ 表示メタ（絵文字・名前）
+  function getTierPageMeta(key) {
+    if (TIER_META[key]) return TIER_META[key];
+    const g = (typeof userGroups !== 'undefined') ? userGroups.find(x => x.id === key) : null;
+    return g ? { emoji: g.emoji || '👥', label: g.name } : { emoji: '', label: key };
+  }
+
+  // キー → ページ用メンバー配列（kana/rs/rel付き）。グループはuserGroupsから動的生成
+  function tpResolveMembers(key) {
+    if (TIER_MEMBERS_DATA[key]) return TIER_MEMBERS_DATA[key];
+    const g = (typeof userGroups !== 'undefined') ? userGroups.find(x => x.id === key) : null;
+    if (!g || typeof getGroupMembersData !== 'function') return [];
+    return getGroupMembersData(g.memberIds).map(m => {
+      // 既存TIER_MEMBERS_DATAにいる人はkana/rs/relを流用
+      let known = null;
+      Object.keys(TIER_MEMBERS_DATA).some(t => {
+        known = TIER_MEMBERS_DATA[t].find(x => x.id === m.id);
+        return !!known;
+      });
+      if (known) return known;
+      const profile = (typeof userProfiles !== 'undefined') ? userProfiles[m.id] : null;
+      return {
+        id: m.id, name: m.name, avatar: m.avatar,
+        kana: m.name, // いない人は名前先頭文字でバケツ分け（英字はAバケツ）
+        rs: profile ? profile.score : 0,
+        rel: Math.floor(Math.random() * (60 - 5 + 1)) + 5,
+      };
+    });
+  }
+
+  // ===== 選択ボタン状態インジケータ（カゴの状態を色で示す） =====
+  function getSelectionKeyMembers(key) {
+    return tpResolveMembers(key);
+  }
+
+  // 'none'（未登録）| 'all'（全員入ってる）| 'partial'（一部入ってる）
+  function getSelectionState(key) {
+    const basket = nmBasket[key] || [];
+    if (basket.length === 0) return 'none';
+    const total = getSelectionKeyMembers(key).length;
+    return basket.length >= total ? 'all' : 'partial';
+  }
+
+  // data-sel-all / data-sel-ind の付いた全ボタンの状態色を再計算
+  function renderSelectionStates() {
+    document.querySelectorAll('[data-sel-all]').forEach(btn => {
+      btn.classList.toggle('tp-primary-btn', getSelectionState(btn.dataset.selAll) === 'all');
+    });
+    document.querySelectorAll('[data-sel-ind]').forEach(btn => {
+      btn.classList.toggle('tp-primary-btn', getSelectionState(btn.dataset.selInd) === 'partial');
+    });
+  }
+
+  // 内訳シートのバッジ：階層は従来表記、グループは絵文字＋グループ名（例 🍺酒好き）
+  function basketKeyBadge(key) {
+    if (nmTierBadges[key]) return nmTierBadges[key];
+    const g = (typeof userGroups !== 'undefined') ? userGroups.find(x => x.id === key) : null;
+    return g ? (g.emoji || '') + g.name : '';
+  }
+
+  // Haloダミー30人の名前生成（五十音プール）で使う頭文字キー一覧。表示用の五十音インデックスではない
+  const TP_INDEX_KEYS = ['あ','か','さ','た','な','は','ま','や','ら','わ','A'];
+
+  function tpBadgeHTML(rs) {
+    const t = getTitle(rs);
+    return `<span class="contacts-tier-badge-small" style="background:rgba(0,0,0,.06);color:${t.color};">${t.emoji} ${t.name}</span>`;
+  }
+
+  function tpFindMember(id) {
+    return tpCurrentMembers.find(m => m.id === id);
+  }
+
+  // 💬ボタン：常に1to1 DMを開く（アドレス帳機能）
+  function tpOpenDm(id) {
+    const m = tpFindMember(id);
+    if (!m) return;
+    openDmChat(m.id, m.name, m.avatar);
+  }
+
+  // 行タップ：プロフィールがあれば表示、無ければDMにフォールバック
+  function tpOpenProfileOrDm(id) {
+    const m = tpFindMember(id);
+    if (!m) return;
+    if (typeof userProfiles !== 'undefined' && userProfiles[m.id]) {
+      openUserProfile(m.id);
+    } else {
+      openDmChat(m.id, m.name, m.avatar);
+    }
+  }
+
+  function tpRowHTML(m, opts) {
+    const badge = tpBadgeHTML(m.rs);
+    const leftControl = opts.select
+      ? `<input type="checkbox" class="tp-chk" data-id="${m.id}" ${tpSelectedIds.has(m.id) ? 'checked' : ''}>`
+      : '';
+    const rightControl = opts.select ? '' : `<button class="tp-msg-btn" data-tp-dm="${m.id}">メッセージ</button>`;
+    const tag = opts.select ? 'label' : 'div';
+    return `<${tag} class="tp-row" data-id="${m.id}">${leftControl}<span class="tp-av">${m.avatar}</span><span class="tp-mid"><span class="tp-name">${m.name}</span>${badge}</span>${rightControl}</${tag}>`;
+  }
+
+  function tpApplySearch(list) {
+    const q = tpQuery.trim().toLowerCase();
+    const qKana = tpQuery.trim();
+    if (!q) return list;
+    return list.filter(m => m.name.toLowerCase().includes(q) || (m.kana || '').includes(qKana));
+  }
+
+  // 並び順は常に関係値（rel）の高い順固定。relは表示せず並び替えにのみ使う
+  function tpRenderList() {
+    const listEl = document.getElementById('tpList');
+    let list = tpApplySearch(tpCurrentMembers);
+    list = list.slice().sort((a, b) => (b.rel || 0) - (a.rel || 0));
+    listEl.innerHTML = list.length
+      ? list.map(m => tpRowHTML(m, { select: tpSelectionMode })).join('')
+      : `<div class="tp-empty">該当するメンバーがいません</div>`;
+  }
+
+  function tpUpdateFooter() {
+    const ids = Array.from(tpSelectedIds);
+    const btn = document.getElementById('tpDecideBtn');
+    btn.textContent = `この${ids.length}名に決定`;
+    btn.disabled = ids.length === 0;
+    document.getElementById('tpSelAvatars').innerHTML = ids.map(id => {
+      const m = tpFindMember(id);
+      return m ? `<span class="tp-sel-av" title="${m.name}">${m.avatar}</span>` : '';
+    }).join('');
+  }
+
+  function tpWireListEvents() {
+    const listEl = document.getElementById('tpList');
+    if (!listEl) return;
+    listEl.addEventListener('click', e => {
+      const msgBtn = e.target.closest('.tp-msg-btn');
+      if (msgBtn) { tpOpenDm(msgBtn.dataset.tpDm); return; }
+      if (tpSelectionMode) return; // 選択モードはlabel＋checkboxのネイティブ挙動に任せる
+      const row = e.target.closest('.tp-row');
+      if (row) tpOpenProfileOrDm(row.dataset.id);
+    });
+    listEl.addEventListener('change', e => {
+      if (!e.target.classList.contains('tp-chk')) return;
+      const id = e.target.dataset.id;
+      if (e.target.checked) tpSelectedIds.add(id); else tpSelectedIds.delete(id);
+      tpUpdateFooter();
+    });
+  }
+
+  // 初期チェック：カゴ（nmBasket）があればその中身、無ければ未チェック
+  function tpComputeInitialSelection() {
+    tpSelectedIds = new Set();
+    if (nmBasket[tpCurrentTier] && nmBasket[tpCurrentTier].length > 0) {
+      nmBasket[tpCurrentTier].forEach(m => tpSelectedIds.add(m.id));
+    }
+  }
+
+  function tpSyncHeaderDisplay() {
+    document.getElementById('tpViewRow1').style.display = tpSelectionMode ? 'none' : 'flex';
+    document.getElementById('tpSelectRow1').style.display = tpSelectionMode ? 'flex' : 'none';
+    document.getElementById('tpActionsRow').style.display = tpSelectionMode ? 'none' : 'flex';
+    document.getElementById('tpFooter').style.display = tpSelectionMode ? 'flex' : 'none';
+  }
+
+  // 連絡先タブの階層/グループ行タップ／「個別選択」ボタンから呼ぶ入口
+  // tierKey: 'core'等の階層キー or 'g_sake'等のグループid
+  function openTierPage(tierKey, opts) {
+    opts = opts || {};
+    tpCurrentTier = tierKey;
+    tpCurrentMembers = tpResolveMembers(tierKey);
+    tpSelectionMode = !!opts.selection;
+    tpQuery = '';
+    const searchInput = document.getElementById('tpSearchInput');
+    if (searchInput) searchInput.value = '';
+    tpComputeInitialSelection();
+
+    const meta = getTierPageMeta(tierKey);
+    document.getElementById('tpHeaderTitle').textContent = meta.emoji + ' ' + meta.label;
+    document.getElementById('tpHeaderCount').textContent = tpCurrentMembers.length + '人';
+    document.getElementById('tpSelectTitle').textContent = '宛先を選択 — ' + meta.emoji + meta.label;
+    // ヘッダーのボタンにも状態インジケータ用のキーを張り替える
+    document.getElementById('tpBtnSelectAll').dataset.selAll = tierKey;
+    document.getElementById('tpBtnIndividual').dataset.selInd = tierKey;
+
+    tpSyncHeaderDisplay();
+    tpRenderList();
+    tpUpdateFooter();
+
+    _prevScreenBeforeTierPage = document.querySelector('.screen.active');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-tier-page').classList.add('active');
+    renderBasketBar();
+  }
+
+  function closeTierPage() {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    if (_prevScreenBeforeTierPage) {
+      _prevScreenBeforeTierPage.classList.add('active');
+    } else {
+      document.getElementById('screen-talk').classList.add('active');
+    }
+    _prevScreenBeforeTierPage = null;
+    renderBasketBar();
+  }
+
+  // 「個別選択」：ページ内で選択モードに切替（画面遷移はしない）
+  function tpEnterSelectionMode() {
+    tpSelectionMode = true;
+    tpComputeInitialSelection();
+    tpSyncHeaderDisplay();
+    tpRenderList();
+    tpUpdateFooter();
+    renderBasketBar();
+  }
+
+  // ✕キャンセル：閲覧モードに戻る（ページ内切替のみ、画面遷移はしない）
+  function tpCancelSelection() {
+    tpSelectionMode = false;
+    tpSyncHeaderDisplay();
+    tpRenderList();
+    renderBasketBar();
+  }
+
+  function tpOnSearch(v) {
+    tpQuery = v;
+    tpRenderList();
+  }
+
+  function tpDecide() {
+    if (tpSelectedIds.size === 0) return;
+    nmBasket[tpCurrentTier] = Array.from(tpSelectedIds).map(id => {
+      const m = tpFindMember(id);
+      return { id: m.id, name: m.name, avatar: m.avatar };
+    });
+    closeTierPage();
+  }
+
+  // 「全員選択」トグル：未登録/一部→全員をカゴへ上書き、既に全員→カゴからそのキーを削除
+  // 連絡先タブ（階層・グループ）とページヘッダーの両方から共通で呼ぶ
+  // フィードバックはボタンのグラデ点灯＋カゴバーの人数変化で伝えるため、トーストは出さない
+  function tierSelectAll(tierKey) {
+    if (getSelectionState(tierKey) === 'all') {
+      delete nmBasket[tierKey];
+      renderBasketBar();
+      return;
+    }
+    const list = getSelectionKeyMembers(tierKey);
+    nmBasket[tierKey] = list.map(m => ({ id: m.id, name: m.name, avatar: m.avatar }));
+    renderBasketBar();
+  }
+
+  // Haloダミーメンバー約30人（五十音に散らした日本人名・検索の「見きれない量」デモ用）を生成し、
+  // 実メンバーにはrs（userProfilesのscore・宇宙階級バッジ用）と架空の関係値rel（並び順専用・非表示）を付与する
+  // rel帯：Core=85〜100／Orbit=65〜84／Halo実=45〜64／Galaxy=25〜44／Connect=5〜24（階層順に自然と並ぶよう段階付け）
+  const TP_REL_RANGE = { core: [85, 100], orbit: [65, 84], halo: [45, 64], galaxy: [25, 44], connect: [5, 24] };
+  (function initTierPageData() {
+    Object.keys(TIER_MEMBERS_DATA).forEach(tier => {
+      const range = TP_REL_RANGE[tier] || [5, 60];
+      TIER_MEMBERS_DATA[tier].forEach(m => {
+        const profile = (typeof userProfiles !== 'undefined') ? userProfiles[m.id] : null;
+        m.rs = profile ? profile.score : 0;
+        m.rel = Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
+      });
+    });
+
+    const HX_POOL = {
+      'あ': [['青木','あおき'],['浅野','あさの'],['秋山','あきやま']],
+      'か': [['河野','かわの'],['菊池','きくち'],['黒田','くろだ']],
+      'さ': [['斎藤','さいとう'],['島田','しまだ'],['瀬川','せがわ']],
+      'た': [['塚田','つかだ'],['寺田','てらだ'],['遠山','とおやま']],
+      'な': [['西村','にしむら'],['沼田','ぬまた'],['野口','のぐち']],
+      'は': [['橋本','はしもと'],['平野','ひらの'],['藤田','ふじた']],
+      'ま': [['松本','まつもと'],['三浦','みうら'],['村上','むらかみ']],
+      'や': [['山口','やまぐち'],['湯浅','ゆあさ'],['横山','よこやま']],
+      'ら': [['六角','ろっかく'],['龍崎','りゅうざき'],['冷泉','れいぜい']],
+      'わ': [['和田','わだ'],['鷲尾','わしお'],['涌井','わくい']],
+    };
+    const HX_GIVEN = ['悠斗','陽菜','大和','結衣','直樹','由美','智子','海斗','愛','雄一','恵美','隆','由紀','舞','健二','優子','大樹','朋美','和也','千尋','拓海','沙織','康平','麻衣','陸','奈々','翼','春香','健','美穂'];
+    const HX_AVATARS = ['🧑','👩','👨','🧔','👱‍♀️','👱‍♂️','🧓','👴','👵','👩‍🦰','👨‍🦰','🧑‍🦱','🧑‍🦳','👩‍💼','👨‍💼'];
+    let n = 0;
+    TP_INDEX_KEYS.forEach(key => {
+      (HX_POOL[key] || []).forEach(([sei, seiKana]) => {
+        n++;
+        const given = HX_GIVEN[Math.floor(Math.random() * HX_GIVEN.length)];
+        TIER_MEMBERS_DATA.halo.push({
+          id: 'halo_x_' + n,
+          name: sei + ' ' + given,
+          avatar: HX_AVATARS[Math.floor(Math.random() * HX_AVATARS.length)],
+          kana: seiKana,
+          rs: Math.floor(Math.random() * (80000 - 500 + 1)) + 500,
+          rel: Math.floor(Math.random() * (60 - 5 + 1)) + 5,
+        });
+      });
+    });
+
+    const haloCountEl = document.getElementById('ctierHaloCount');
+    if (haloCountEl) haloCountEl.textContent = TIER_MEMBERS_DATA.halo.length + '人';
+
+    tpWireListEvents();
+  })();
 
   // ===== FOOTPRINT DATA =====
   const footprintData = {
@@ -14496,6 +15897,31 @@
   </div>
 </div>
 
+<!-- ===== GROUP THREAD MEMBERS SHEET（ヘッダー名前タップ） ===== -->
+<div class="group-edit-overlay" id="groupMembersSheetOverlay" onclick="if(event.target===this) closeGroupMembersSheet()">
+  <div class="group-edit-sheet">
+    <div class="group-edit-handle"></div>
+    <div class="group-edit-header">
+      <div class="group-edit-title" id="groupMembersSheetTitle">メンバー 0人</div>
+      <button class="group-edit-cancel" onclick="closeGroupMembersSheet()">閉じる</button>
+    </div>
+    <div class="group-edit-body" id="groupMembersSheetBody"></div>
+  </div>
+</div>
+
+<!-- ===== グループ昇格：命名モーダル ===== -->
+<div class="group-promote-modal-overlay" id="groupPromoteModalOverlay">
+  <div class="group-promote-modal-dialog">
+    <div class="group-promote-modal-title">グループを作成</div>
+    <div class="group-promote-modal-desc">このメンバー構成で新しいグループを作成します（この配信はこのまま残ります）</div>
+    <input type="text" class="group-promote-modal-input" id="groupPromoteNameInput" placeholder="グループ名" maxlength="30" oninput="onGroupPromoteNameInput()">
+    <div class="group-promote-modal-actions">
+      <button class="group-promote-modal-cancel" onclick="closeGroupPromoteModal()">キャンセル</button>
+      <button class="group-promote-modal-confirm" id="groupPromoteConfirmBtn" onclick="confirmPromoteBroadcastToGroup()" disabled>作成</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ===== GROUP CREATE =====
 const groupCircleMembers = [
@@ -14507,7 +15933,7 @@ const groupCircleMembers = [
   {id:'ryo_k',       name:'小林 亮',    avatar:'🧔',    tier:'Orbit'},
   {id:'aya_w',       name:'渡辺 彩',    avatar:'🙍',    tier:'Orbit'},
   {id:'ayaka_y',     name:'山田 彩香',  avatar:'👩',    tier:'Halo'},
-  {id:'sho_n',       name:'中村 花',    avatar:'👩',    tier:'Halo'},
+  {id:'sho_n',       name:'中村 翔',    avatar:'👨',    tier:'Halo'},
   {id:'kato_sho',    name:'加藤 翔',    avatar:'👨',    tier:'Halo'},
   {id:'matsuda_e',   name:'松田 恵',    avatar:'👩',    tier:'Galaxy'},
   {id:'fujii_m',     name:'藤井 誠',    avatar:'🧑',    tier:'Galaxy'},
@@ -14680,6 +16106,53 @@ function renderGroupAvatar(group, size = 48) {
 // ===== USER GROUPS DATA MODEL =====
 let userGroups = [
   {
+    id: 'bc_seed_core',
+    name: 'Core 2026/7/12',
+    emoji: '📢',
+    broadcast: true,
+    photoDataUrl: null,
+    colorIdx: 3,
+    createdAt: '2026-07-11T09:00:00',
+    memberIds: ['yu_tanaka','rina_s'],
+    order: 0,
+    threads: [
+      {
+        id: 't_bc_seed_1',
+        sentAt: '2026-07-11T09:00:00',
+        text: '明日の朝活ですが、集合は7時渋谷ハチ公前でお願いします！',
+        replies: [
+          { userId: 'yu_tanaka', text: '了解です！参加します', sentAt: '2026-07-11T09:15:00', readByMe: true },
+          { userId: 'rina_s', text: '楽しみにしてます！', sentAt: '2026-07-11T09:30:00', readByMe: false },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'evb_ev-demo-1',
+    name: 'Yogbo淡路島保養所 お泊り会',
+    emoji: '📅',
+    broadcast: true,
+    eventId: 'ev-demo-1',
+    photoDataUrl: null,
+    colorIdx: 5,
+    createdAt: '2026-07-11T10:00:00',
+    memberIds: ['yu_tanaka','rina_s','kenta_s'],
+    order: 4,
+    threads: [
+      {
+        id: 't_evb_demo_1',
+        sentAt: '2026-07-11T10:05:00',
+        text: '淡路島お泊り会やります！ぜひ来てな🌊 招待送っとくで',
+        eventInvite: true,
+        eventId: 'ev-demo-1',
+        audienceIds: ['yu_tanaka','rina_s','kenta_s'],
+        replies: [
+          { userId: 'yu_tanaka', text: '行きます！楽しみ', sentAt: '2026-07-11T11:20:00', readByMe: false },
+        ]
+      }
+    ]
+  },
+  {
     id: 'g_sake',
     name: '酒好き',
     emoji: '🍺',
@@ -14687,7 +16160,7 @@ let userGroups = [
     colorIdx: 0,
     createdAt: '2026-04-10T10:00:00',
     memberIds: ['yu_tanaka','kenta_s','daisuke_ito'],
-    order: 0,
+    order: 1,
     threads: [
       {
         id: 't1',
@@ -14716,7 +16189,7 @@ let userGroups = [
     colorIdx: 1,
     createdAt: '2026-04-12T09:00:00',
     memberIds: ['rina_s','kenji_founder','sarah_ai'],
-    order: 1,
+    order: 2,
     threads: [
       {
         id: 't3',
@@ -14738,7 +16211,7 @@ let userGroups = [
     colorIdx: 2,
     createdAt: '2026-04-14T08:00:00',
     memberIds: ['kenta_s','ryo_k','misaki_t','yu_tanaka'],
-    order: 2,
+    order: 3,
     threads: [
       {
         id: 't4',
@@ -14765,7 +16238,18 @@ function getGroupMembersData(memberIds) {
       'kenji_founder': { id: 'kenji_founder', name: 'Kenji Ito', avatar: '🎙' },
       'sarah_ai': { id: 'sarah_ai', name: 'Sarah Chen', avatar: '👩' },
     };
-    return extras[id] || { id: id, name: id, avatar: '👤' };
+    if (extras[id]) return extras[id];
+    // groupCircleMembersにいないid（Haloダミーhalo_x_N等、配信の宛先に含まれ得る）はTIER_MEMBERS_DATA→nmMemberDataの順で探す
+    if (typeof TIER_MEMBERS_DATA !== 'undefined') {
+      for (const tier of Object.keys(TIER_MEMBERS_DATA)) {
+        const tm = TIER_MEMBERS_DATA[tier].find(x => x.id === id);
+        if (tm) return { id: tm.id, name: tm.name, avatar: tm.avatar };
+      }
+    }
+    if (typeof nmMemberData !== 'undefined' && nmMemberData[id]) {
+      return { id: id, name: nmMemberData[id].name, avatar: nmMemberData[id].avatar };
+    }
+    return { id: id, name: id, avatar: '👤' };
   });
 }
 
@@ -14827,7 +16311,8 @@ function closeGroupListScreen() {
 function renderGroupList() {
   const container = document.getElementById('groupListContent');
   if (!container) return;
-  const sorted = [...userGroups].sort((a, b) => a.order - b.order);
+  // broadcast:trueの配信スレッドは正式グループに昇格するまで一覧に表示しない（renderContactsGroupsと同じ扱い）
+  const sorted = userGroups.filter(g => !g.broadcast).sort((a, b) => a.order - b.order);
   if (sorted.length === 0) {
     container.innerHTML = `
       <div class="group-list-empty">
@@ -14928,7 +16413,10 @@ function openGroupThread(groupId) {
   document.getElementById('screen-group-thread').classList.add('active');
   const avatarEl = document.getElementById('groupThreadAvatarWrap');
   if (avatarEl) avatarEl.innerHTML = renderGroupAvatar(group, 36);
-  document.getElementById('groupThreadName').textContent = group.name;
+  document.getElementById('groupThreadName').textContent = groupThreadHeaderName(group);
+  renderGroupThreadPromoBanner(group);
+  renderGroupThreadEventLink(group);
+  renderGroupThreadAttachBanner(group);
   // 入力欄リセット
   const inp = document.getElementById('groupThreadInputField');
   if (inp) inp.value = '';
@@ -14940,6 +16428,8 @@ function openGroupThread(groupId) {
 function closeGroupThreadScreen() {
   document.getElementById('screen-group-thread').classList.remove('active');
   _currentGroupThreadId = null;
+  _groupThreadPending = null;   // 送らずに離脱したら添付予定は破棄
+  renderGroupThreadAttachBanner(null);
   if (_prevScreenBeforeGroupThread) {
     _prevScreenBeforeGroupThread.classList.add('active');
     _prevScreenBeforeGroupThread = null;
@@ -14948,48 +16438,131 @@ function closeGroupThreadScreen() {
   }
 }
 
+// スレッドヘッダーの表示名：「名前（メンバー数）」形式
+function groupThreadHeaderName(group) {
+  return `${group.name}（${group.memberIds.length}）`;
+}
+
+// ヘッダーの名前/アバタータップ→メンバー一覧シート
+function openGroupMembersSheet() {
+  if (!_currentGroupThreadId) return;
+  const group = userGroups.find(g => g.id === _currentGroupThreadId);
+  if (!group) return;
+  const members = getGroupMembersData(group.memberIds);
+  document.getElementById('groupMembersSheetTitle').textContent = `メンバー ${members.length}人`;
+  document.getElementById('groupMembersSheetBody').innerHTML = members.map(m => {
+    const profile = (typeof userProfiles !== 'undefined') ? userProfiles[m.id] : null;
+    const badge = profile ? tpBadgeHTML(profile.score) : '';
+    return `
+    <div class="tp-row" data-id="${m.id}" onclick="groupMembersSheetRowTap('${m.id}')">
+      <span class="tp-av">${m.avatar}</span>
+      <span class="tp-mid"><span class="tp-name">${escapeHtml(m.name)}</span>${badge}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('groupMembersSheetOverlay').classList.add('open');
+}
+
+function closeGroupMembersSheet() {
+  document.getElementById('groupMembersSheetOverlay').classList.remove('open');
+}
+
+// 行タップ：プロフィールがあれば表示、無ければDMにフォールバック（tpOpenProfileOrDmと同じ挙動）
+function groupMembersSheetRowTap(id) {
+  closeGroupMembersSheet();
+  if (typeof userProfiles !== 'undefined' && userProfiles[id]) {
+    openUserProfile(id);
+    return;
+  }
+  const m = getGroupMembersData([id])[0];
+  openDmChat(m.id, m.name, m.avatar);
+}
+
+// 送信日時 → 日付ディバイダー表記（今日／昨日／M/D）
+function groupThreadDateLabel(isoStr) {
+  const d = new Date(isoStr);
+  const now = new Date();
+  const startOfDay = dt => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()).getTime();
+  const diffDays = Math.round((startOfDay(now) - startOfDay(d)) / 86400000);
+  if (diffDays === 0) return '今日';
+  if (diffDays === 1) return '昨日';
+  return `${d.getMonth() + 1}/${d.getDate()}`;
+}
+
+// broadcast:trueかつ未昇格（spawnedGroupId未設定）のスレッドだけグループ作成バナーを出す
+function renderGroupThreadPromoBanner(group) {
+  const banner = document.getElementById('groupThreadPromoBanner');
+  if (!banner) return;
+  banner.style.display = (group.broadcast && !group.spawnedGroupId) ? 'flex' : 'none';
+}
+
 function renderGroupThread(groupOrId) {
   const group = (typeof groupOrId === 'string') ? userGroups.find(g => g.id === groupOrId) : groupOrId;
   if (!group) return;
+  renderGroupThreadPromoBanner(group);
   const body = document.getElementById('groupThreadBody');
   if (!group.threads || group.threads.length === 0) {
+    const emptyAvatar = group.emoji || '📢';
     body.innerHTML = `
       <div class="group-thread-empty">
-        <div class="group-thread-empty-icon">${renderGroupAvatar(group, 56)}</div>
-        <div class="group-thread-empty-text">まだ送信履歴がありません<br>下の入力欄から最初のメッセージを送ろう</div>
+        <div class="group-thread-empty-row">
+          <div class="group-thread-empty-avatar">${emptyAvatar}</div>
+          <div class="chat-bubble theirs">👋 ここはParaDMのトークルームです。送ったメッセージは、メンバーそれぞれに個別のDMとして届きます。グループトークとは違って、メンバー同士はお互いが見えません</div>
+        </div>
+        <div class="group-thread-empty-row">
+          <div class="group-thread-empty-avatar">${emptyAvatar}</div>
+          <div class="chat-bubble theirs">まずは最初のメッセージを送ってみよう</div>
+        </div>
       </div>`;
     return;
   }
-  const sorted = [...group.threads].sort((a, b) => new Date(b.sentAt) - new Date(a.sentAt));
-  body.innerHTML = sorted.map(thread => {
+  // 古い配信が上・新しいのが下（チャット慣習）
+  const sorted = [...group.threads].sort((a, b) => new Date(a.sentAt) - new Date(b.sentAt));
+  const newestId = sorted[sorted.length - 1].id;
+  let lastDateLabel = null;
+  let html = '';
+  sorted.forEach(thread => {
+    const dateLabel = groupThreadDateLabel(thread.sentAt);
+    if (dateLabel !== lastDateLabel) {
+      html += `<div class="group-thread-date-divider"><span>${dateLabel}</span></div>`;
+      lastDateLabel = dateLabel;
+    }
+    const replyCount = thread.replies.length;
     const unreadCount = thread.replies.filter(r => !r.readByMe).length;
-    const noReplyCount = group.memberIds.length - (new Set(thread.replies.map(r => r.userId))).size;
-    const countBadge = `<span class="group-thread-card-count-badge">${group.memberIds.length}人に送信</span>`;
-    const repliesHtml = renderThreadReplies(thread, group);
-    return `
-      <div class="group-thread-card">
-        <div class="group-thread-card-header">
-          <div class="group-thread-card-avatar">🧑‍💻</div>
-          <span class="group-thread-card-sender">あなた</span>
-          ${countBadge}
-          <span class="group-thread-card-time">${relativeTime(thread.sentAt)}</span>
+    const unreadPart = unreadCount > 0 ? `<span class="unread-num">未読${unreadCount}</span>` : '未読0';
+    const recCount = thread.audienceIds ? thread.audienceIds.length : group.memberIds.length;
+    const summaryText = `📨 ${recCount}人に送信・返信 ${replyCount}（${unreadPart}）`;
+    // 配信カードの宛先/招待タグ
+    let tagHtml = '';
+    if (thread.eventInvite) tagHtml += `<span class="gt-thread-tag invite">📅 招待</span>`;
+    if (thread.audienceLabel) tagHtml += `<span class="gt-thread-tag aud">→ ${escapeHtml(thread.audienceLabel)}の${recCount}人</span>`;
+    // 招待送信スレッドは受信者DM側と同じ招待ミニカードを送信済みメッセージとして添える
+    const invEv = (thread.eventInvite && thread.eventId && typeof eventsData !== 'undefined')
+      ? eventsData.find(e => e.id === thread.eventId) : null;
+    const cardHtml = (invEv && typeof evInviteMiniCardHtml === 'function') ? evInviteMiniCardHtml(invEv) : '';
+    const isOpen = thread.id === newestId;
+    html += `
+      <div class="group-thread-card${isOpen ? ' open' : ''}" data-thread-id="${thread.id}">
+        ${tagHtml ? `<div class="gt-thread-tags">${tagHtml}</div>` : ''}
+        <div class="group-thread-bubble-row">
+          ${cardHtml ? `<div class="dm-invite-card-wrap">${cardHtml}</div>` : ''}
+          ${thread.text ? `<div class="chat-bubble mine">${thread.text}</div>` : ''}
         </div>
-        <div class="group-thread-card-body">${thread.text}</div>
-        <div class="group-thread-card-replies">
-          ${repliesHtml}
+        <div class="group-thread-summary-row" onclick="toggleGroupThreadCard(this)">
+          <span class="group-thread-summary-text">${summaryText}</span>
+          <span class="group-thread-summary-arrow">▼</span>
         </div>
+        <div class="group-thread-replies">${renderThreadReplyRows(thread)}</div>
       </div>`;
-  }).join('');
+  });
+  body.innerHTML = html;
+  body.scrollTop = body.scrollHeight;
 }
 
-function renderThreadReplies(thread, group) {
+function renderThreadReplyRows(thread) {
   if (!thread.replies || thread.replies.length === 0) {
     return '<div class="group-thread-no-reply">まだ返信はありません</div>';
   }
-  const SHOW_LIMIT = 3;
-  const visible = thread.replies.slice(0, SHOW_LIMIT);
-  const rest = thread.replies.slice(SHOW_LIMIT);
-  const rowsHtml = visible.map(r => {
+  return thread.replies.map(r => {
     const m = groupCircleMembers.find(x => x.id === r.userId) ||
       { id: r.userId, name: r.userId, avatar: '👤' };
     const avatar = (r.userId === 'kenji_founder') ? '🎙' : (r.userId === 'sarah_ai') ? '👩' : m.avatar;
@@ -14997,7 +16570,7 @@ function renderThreadReplies(thread, group) {
     const unreadBadge = !r.readByMe ? '<span class="group-thread-unread-badge">未読</span>' : '';
     return `
       <div class="group-thread-reply-row" onclick="openDmChat('${r.userId}','${name}','${avatar}')">
-        <div class="group-thread-reply-avatar">${avatar}</div>
+        <div class="group-thread-reply-avatar" style="cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${r.userId}')">${avatar}</div>
         <div class="group-thread-reply-body">
           <div class="group-thread-reply-sender">${name}${unreadBadge}</div>
           <div class="group-thread-reply-text">${r.text}</div>
@@ -15005,33 +16578,59 @@ function renderThreadReplies(thread, group) {
         </div>
       </div>`;
   }).join('');
-
-  const expandBtn = rest.length > 0
-    ? `<button class="group-thread-expand-btn" onclick="expandThreadReplies(this, '${thread.id}', '${group.id}')">他${rest.length}人の返信を見る ▼</button>`
-    : '';
-  const restHtml = rest.map(r => {
-    const m = groupCircleMembers.find(x => x.id === r.userId) ||
-      { id: r.userId, name: r.userId, avatar: '👤' };
-    const avatar = (r.userId === 'kenji_founder') ? '🎙' : (r.userId === 'sarah_ai') ? '👩' : m.avatar;
-    const name = (r.userId === 'kenji_founder') ? 'Kenji Ito' : (r.userId === 'sarah_ai') ? 'Sarah Chen' : m.name;
-    const unreadBadge = !r.readByMe ? '<span class="group-thread-unread-badge">未読</span>' : '';
-    return `
-      <div class="group-thread-reply-row" style="display:none" data-extra-reply onclick="openDmChat('${r.userId}','${name}','${avatar}')">
-        <div class="group-thread-reply-avatar">${avatar}</div>
-        <div class="group-thread-reply-body">
-          <div class="group-thread-reply-sender">${name}${unreadBadge}</div>
-          <div class="group-thread-reply-text">${r.text}</div>
-          <div class="group-thread-reply-time">${relativeTime(r.sentAt)}</div>
-        </div>
-      </div>`;
-  }).join('');
-  return rowsHtml + restHtml + expandBtn;
 }
 
-function expandThreadReplies(btn, threadId, groupId) {
-  const card = btn.closest('.group-thread-card-replies');
-  card.querySelectorAll('[data-extra-reply]').forEach(el => el.style.display = 'flex');
-  btn.remove();
+// サマリー行タップで返信アコーディオン開閉
+function toggleGroupThreadCard(el) {
+  const card = el.closest('.group-thread-card');
+  if (card) card.classList.toggle('open');
+}
+
+// broadcast配信スレッド → 正式グループへ昇格（連絡先タブのGroupsに現れるようになる）
+// タップ即昇格ではなく命名モーダルを挟む（グループ名は配信名と切り離す）
+function promoteBroadcastToGroup() {
+  const group = userGroups.find(g => g.id === _currentGroupThreadId);
+  if (!group || !group.broadcast) return;
+  document.getElementById('groupPromoteNameInput').value = '';
+  document.getElementById('groupPromoteConfirmBtn').disabled = true;
+  document.getElementById('groupPromoteModalOverlay').classList.add('open');
+}
+
+function closeGroupPromoteModal() {
+  document.getElementById('groupPromoteModalOverlay').classList.remove('open');
+}
+
+function onGroupPromoteNameInput() {
+  const name = document.getElementById('groupPromoteNameInput').value.trim();
+  document.getElementById('groupPromoteConfirmBtn').disabled = name.length === 0;
+}
+
+function confirmPromoteBroadcastToGroup() {
+  // 配信エントリ自体は変換せず、同じメンバー構成の新規グループを別途作る（配信の履歴は残す）
+  const broadcastGroup = userGroups.find(g => g.id === _currentGroupThreadId);
+  if (!broadcastGroup || !broadcastGroup.broadcast) { closeGroupPromoteModal(); return; }
+  const name = document.getElementById('groupPromoteNameInput').value.trim();
+  if (!name) return;
+  const newGroup = {
+    id: 'g_' + Date.now(),
+    name: name,
+    emoji: '👥',
+    photoDataUrl: null,
+    colorIdx: userGroups.length % 10,
+    createdAt: new Date().toISOString(),
+    memberIds: [...broadcastGroup.memberIds],
+    order: 0,
+    threads: []
+  };
+  userGroups.unshift(newGroup);
+  userGroups.forEach((g, i) => { g.order = i; });
+  broadcastGroup.spawnedGroupId = newGroup.id;
+  closeGroupPromoteModal();
+  renderGroupThreadPromoBanner(broadcastGroup);
+  showToast(`グループ「${newGroup.name}」を作成しました`);
+  renderContactsGroups();
+  renderGroupList();
+  renderTalkMessagesList();
 }
 
 // 下部固定入力欄：送信
@@ -15048,13 +16647,24 @@ function sendGroupThreadMessage() {
     text: text,
     replies: [],
   };
+  // 添付予定（招待カード or 宛先フィルタ）をスレッドに焼き込む
+  const p = (_groupThreadPending && _groupThreadPending.eventId === g.eventId) ? _groupThreadPending : null;
+  if (p) {
+    if (p.eventInvite) newThread.eventInvite = true;
+    if (p.eventId) newThread.eventId = p.eventId;
+    if (p.audienceIds) newThread.audienceIds = p.audienceIds.slice();
+    if (p.audienceLabel) newThread.audienceLabel = p.audienceLabel;
+  }
   g.threads.unshift(newThread);
+  _groupThreadPending = null;
+  renderGroupThreadAttachBanner(g);
   input.value = '';
   const btn = document.getElementById('groupThreadSendBtn');
   if (btn) btn.disabled = true;
   renderGroupThread(g.id);
   renderTalkMessagesList();
-  showToast(`${g.memberIds.length}人に送信しました`);
+  const cnt = (p && p.audienceIds) ? p.audienceIds.length : g.memberIds.length;
+  showToast(p && p.eventInvite ? `${cnt}人に招待を送りました` : `${cnt}人に送信しました`);
 }
 
 function onGroupThreadInputChange() {
@@ -15245,41 +16855,28 @@ function confirmDeleteGroup() {
 function renderContactsGroups() {
   const container = document.getElementById('contactsGroupsContainer');
   if (!container) return;
-  const sorted = [...userGroups].sort((a, b) => a.order - b.order);
+  // broadcast:trueの配信スレッドは正式グループに昇格するまでGroupsには表示しない
+  const sorted = userGroups.filter(g => !g.broadcast).sort((a, b) => a.order - b.order);
   if (sorted.length === 0) {
     container.innerHTML = '<div style="padding:16px;font-size:13px;color:var(--text-light);text-align:center;">グループがありません</div>';
     return;
   }
-  container.innerHTML = sorted.map(g => {
-    const members = getGroupMembersData(g.memberIds);
-    const memberRows = members.map(m => `
-      <div class="contacts-member-row" onclick="openDmChat('${m.id}','${m.name}','${m.avatar}')">
-        <div class="contacts-member-avatar">${m.avatar}</div>
-        <span class="contacts-member-name">${m.name}</span>
-        <span class="contacts-tier-badge-small member-cosmic-badge" data-userid="${m.id}"></span>
-      </div>`).join('');
-    const memberDataStr = JSON.stringify(members.map(m => ({id:m.id, name:m.name, avatar:m.avatar})))
-      .replace(/"/g, '&quot;');
-    return `
+  // グループも階層と同じメンバーページ＋カゴフロー（行タップ→openTierPage・ボタンは状態インジケータ）
+  container.innerHTML = sorted.map(g => `
       <div class="contacts-tier-section" id="cgrp-${g.id}">
-        <div class="contacts-tier-row" onclick="toggleContactsTier('cgrp-${g.id}')">
+        <div class="contacts-tier-row" onclick="openTierPage('${g.id}')">
           <div class="contacts-tier-left">
             <span class="contacts-group-tier-avatar">${renderGroupAvatar(g, 24)}</span>
             <span class="contacts-tier-label">${g.name}</span>
             <span class="contacts-tier-count">${g.memberIds.length}人</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
-            <button class="contacts-action-btn" onclick="event.stopPropagation();openGroupThread('${g.id}')">全員に送信</button>
-            <button class="contacts-action-btn" onclick="event.stopPropagation();openNewMsgPreset(${memberDataStr})">編集して送信</button>
-            <span class="contacts-tier-chevron">▾</span>
+            <button class="contacts-action-btn" data-sel-all="${g.id}" onclick="event.stopPropagation();tierSelectAll('${g.id}')">全員選択</button>
+            <button class="contacts-action-btn" data-sel-ind="${g.id}" onclick="event.stopPropagation();openTierPage('${g.id}',{selection:true})">個別選択</button>
           </div>
         </div>
-        <div class="contacts-member-list">
-          ${memberRows}
-        </div>
-      </div>`;
-  }).join('');
-  if (typeof initCosmicBadges === 'function') initCosmicBadges();
+      </div>`).join('');
+  if (typeof renderSelectionStates === 'function') renderSelectionStates();
 }
 
 // 後方互換：旧来の sendAll/editSend 関数は openGroupThread にリダイレクト
@@ -15342,19 +16939,6 @@ function initCosmicBadges() {
 // ===== EVENT (招待) 機能 =====
 // ============================================================
 
-// 階級定義（groupCircleMembersから逆引き）
-const EV_TIERS = [
-  { key: 'Core',    label: '🔥 Core',    desc: '最も近しい仲間' },
-  { key: 'Orbit',   label: '💎 Orbit',   desc: '信頼できる仲間' },
-  { key: 'Halo',    label: '⭐ Halo',    desc: 'よく会う仲間' },
-  { key: 'Galaxy',  label: '🌌 Galaxy',  desc: '知り合いの仲間' },
-  { key: 'Connect', label: '🤝 Connect', desc: 'つながっている人' },
-];
-// グループ定義（連絡先タブに登場するもの）
-const EV_GROUPS = [
-  { key: 'sake', label: '🍺 酒好き',    memberIds: ['yu_tanaka','kenta_s','daisuke_ito'] },
-  { key: 'toshi', label: '📈 投資仲間', memberIds: ['rina_s','kenji_founder','sarah_ai'] },
-];
 // 自分のID（主催者視点）
 const EV_SELF_ID = 'taisho_k';
 
@@ -15571,6 +17155,7 @@ let eventsData = [
     bgGradient: 3,
     bgPattern: 'cosmos',
     isPublic: false,
+    threadId: 'evb_ev-demo-1',
     hostId: EV_SELF_ID,
     hostName: '大将',
     hostAvatar: '🧔',
@@ -15776,9 +17361,7 @@ function escapeHtml(s) {
 }
 
 // ===== 作成画面 =====
-let evInviteSelectedTiers = new Set();
-let evInviteSelectedGroups = new Set();
-let evCreateScope = 'open';     // 'open' | 'closed'
+let evCreateScope = 'closed';   // 'open' | 'closed'（公開範囲は宛先選択画面／イベント設定で決める。作成フォームでは常にclosedスタート）
 let evCreateCoverIdx = 0;
 let evCreateCoverImage = null;  // データURL or Unsplash URL
 let evCreateCoverPos = { x: 50, y: 50 }; // 写真位置（％）
@@ -15801,7 +17384,7 @@ function updateEventCreateUI(isEditMode) {
 function openCreateMenu() {
   const overlay = document.getElementById('createMenuOverlay');
   if (!overlay) return;
-  overlay.style.display = 'block';
+  overlay.classList.add('open');
   // カラー投稿モードでは作成メニューの文言を差し替え
   if (POST_UI_MODE === 'color') {
     const t = document.getElementById('createMenuPostTitle');
@@ -15818,7 +17401,7 @@ function openCreateMenu() {
 function closeCreateMenu() {
   const overlay = document.getElementById('createMenuOverlay');
   if (!overlay) return;
-  overlay.style.display = 'none';
+  overlay.classList.remove('open');
 }
 
 // ※X型カラー投稿UIの関数群は buildHomeStories と同じscriptブロック内（buildHomeStories直前）に定義。
@@ -16187,18 +17770,14 @@ function openEventCreate() {
   updateEvEndAuto();
   const fileInput = document.getElementById('evCoverUploadInput');
   if (fileInput) fileInput.value = '';
-  evInviteSelectedTiers = new Set();
-  evInviteSelectedGroups = new Set();
-  evCreateScope = 'open';
+  evCreateScope = 'closed';
   evCreateCoverIdx = 0;
-  evCreateCoverImage = null;
+  evCreateCoverImage = EV_COVER_PHOTOS[Math.floor(Math.random() * EV_COVER_PHOTOS.length)];  // サンプルTOP画からランダムに初期設定
   evCreateCoverPos = { x: 50, y: 50 };
   evCreateBgGradient = 5;
   evCreateBgPattern = 'cosmos';
-  renderEventInviteTargets();
   renderEvCoverEditor();
   renderEvBgEditor();
-  setEventScope('open');
   updateEventCreateUI(false);
 
   // 画面切替
@@ -16260,9 +17839,7 @@ function openEventEdit(eventId) {
   if (fileInput) fileInput.value = '';
 
   // 招待者の再選択UIは今回スコープ外。保存時に空なら旧inviteesを維持する
-  evInviteSelectedTiers = new Set();
-  evInviteSelectedGroups = new Set();
-
+  // 公開範囲（オープン/クローズド）も作成フォームでは編集不可。既存値をそのまま保持する
   evCreateScope = ev.isPublic ? 'open' : 'closed';
   evCreateCoverIdx = ev.coverGradient || 0;
   evCreateCoverImage = ev.coverImage || null;
@@ -16271,10 +17848,8 @@ function openEventEdit(eventId) {
   // 旧 'none' は 'black' にマイグレーション
   // 柄ピッカーは廃止。旧「黒/none/なし」は宇宙柄に読み替え、既存の模様はそのまま保持
   evCreateBgPattern = (!ev.bgPattern || ev.bgPattern === 'none' || ev.bgPattern === 'black') ? 'cosmos' : ev.bgPattern;
-  renderEventInviteTargets();
   renderEvCoverEditor();
   renderEvBgEditor();
-  setEventScope(evCreateScope);
   updateEventCreateUI(true);
 
   // 画面切替
@@ -16314,6 +17889,8 @@ function openHostActionSheet(eventId) {
   document.getElementById('actionSheetTitle').textContent = 'イベント主催者メニュー';
   const body = document.getElementById('actionSheetBody');
   const items = [];
+  items.push(`<div class="action-sheet-item" onclick="openEventSettingsSheet('${eventId}')">
+    <span class="action-icon">⚙️</span><span>イベント設定</span></div>`);
   if (ev.closed) {
     items.push(`<div class="action-sheet-item" onclick="reopenEventFromSheet('${eventId}')">
       <span class="action-icon">🔓</span><span>受付を再開する</span></div>`);
@@ -16346,6 +17923,35 @@ function reopenEventFromSheet(eventId) {
 function deleteEventFromSheet(eventId) {
   closeActionSheet();
   setTimeout(() => deleteEventFromDetail(eventId), 150);
+}
+
+// イベント設定（⋯メニューから）：公開範囲を後から変更する部分シート
+function openEventSettingsSheet(eventId) {
+  const ev = eventsData.find(e => e.id === eventId);
+  if (!ev || ev.hostId !== EV_SELF_ID) return;
+  document.getElementById('actionSheetTitle').textContent = 'イベント設定';
+  const body = document.getElementById('actionSheetBody');
+  body.innerHTML = `
+    <div class="ev-open-toggle-row">
+      <div class="ev-open-toggle-ico">🌐</div>
+      <div class="ev-open-toggle-body">
+        <div class="ev-open-toggle-title">一般公開する</div>
+        <div class="ev-open-toggle-desc">フォロワーや一般の人もこのイベントを見て参加できます</div>
+      </div>
+      <button type="button" class="ev-open-switch ${ev.isPublic ? 'on' : ''}" id="evSettingsScopeSwitch" onclick="toggleEventSettingsScope('${eventId}')" aria-pressed="${ev.isPublic ? 'true' : 'false'}"><span class="ev-open-switch-knob"></span></button>
+    </div>
+    <div class="action-sheet-item" onclick="closeActionSheet()" style="justify-content:center;">
+      <span>閉じる</span></div>`;
+  document.getElementById('actionSheet').classList.add('show');
+}
+function toggleEventSettingsScope(eventId) {
+  const ev = eventsData.find(e => e.id === eventId);
+  if (!ev || ev.hostId !== EV_SELF_ID) return;
+  ev.isPublic = !ev.isPublic;
+  const sw = document.getElementById('evSettingsScopeSwitch');
+  if (sw) { sw.classList.toggle('on', ev.isPublic); sw.setAttribute('aria-pressed', ev.isPublic ? 'true' : 'false'); }
+  showToast(ev.isPublic ? 'オープンに変更しました' : 'クローズドに変更しました');
+  if (evDetailCurrentId === eventId) renderEventDetail(ev);
 }
 
 // ===== イベントシェア機能 =====
@@ -16518,16 +18124,6 @@ function handleEvCoverUpload(event) {
   reader.readAsDataURL(file);
 }
 
-function setEventScope(scope) {
-  evCreateScope = scope;
-  const openBtn = document.getElementById('evScopeOpen');
-  const closedBtn = document.getElementById('evScopeClosed');
-  const detail = document.getElementById('evScopeDetail');
-  if (openBtn) openBtn.classList.toggle('active', scope === 'open');
-  if (closedBtn) closedBtn.classList.toggle('active', scope === 'closed');
-  if (detail) detail.style.display = (scope === 'closed') ? 'block' : 'none';
-}
-
 function closeEventCreate() {
   // 編集モードから閉じる場合、元の詳細画面に戻す
   const editingId = evEditingEventId;
@@ -16537,84 +18133,6 @@ function closeEventCreate() {
     openEventDetail(editingId);
   } else {
     document.getElementById('screen-talk').classList.add('active');
-  }
-}
-
-function renderEventInviteTargets() {
-  const container = document.getElementById('evInviteTargets');
-  let html = '';
-
-  // 階級セクション
-  EV_TIERS.forEach(tier => {
-    const count = groupCircleMembers.filter(m => m.tier === tier.key).length;
-    const checked = evInviteSelectedTiers.has(tier.key);
-    html += `
-      <div class="ev-invite-target ${checked ? 'checked' : ''}" onclick="toggleEvInviteTier('${tier.key}')">
-        <div class="ev-invite-check">${checked ? '✓' : ''}</div>
-        <div class="ev-invite-target-body">
-          <div class="ev-invite-target-name">${tier.label}</div>
-          <div class="ev-invite-target-meta">${tier.desc} · ${count}人</div>
-        </div>
-      </div>
-    `;
-  });
-
-  // グループセクション
-  EV_GROUPS.forEach(g => {
-    const checked = evInviteSelectedGroups.has(g.key);
-    html += `
-      <div class="ev-invite-target ${checked ? 'checked' : ''}" onclick="toggleEvInviteGroup('${g.key}')">
-        <div class="ev-invite-check">${checked ? '✓' : ''}</div>
-        <div class="ev-invite-target-body">
-          <div class="ev-invite-target-name">${g.label}</div>
-          <div class="ev-invite-target-meta">グループ · ${g.memberIds.length}人</div>
-        </div>
-      </div>
-    `;
-  });
-
-  container.innerHTML = html;
-  updateEvInviteSummary();
-}
-
-function toggleEvInviteTier(key) {
-  if (evInviteSelectedTiers.has(key)) evInviteSelectedTiers.delete(key);
-  else evInviteSelectedTiers.add(key);
-  renderEventInviteTargets();
-}
-
-function toggleEvInviteGroup(key) {
-  if (evInviteSelectedGroups.has(key)) evInviteSelectedGroups.delete(key);
-  else evInviteSelectedGroups.add(key);
-  renderEventInviteTargets();
-}
-
-function resolveEvInviteeIds() {
-  const ids = new Set();
-  // 階級から
-  evInviteSelectedTiers.forEach(tier => {
-    groupCircleMembers.forEach(m => {
-      if (m.tier === tier) ids.add(m.id);
-    });
-  });
-  // グループから
-  evInviteSelectedGroups.forEach(key => {
-    const g = EV_GROUPS.find(x => x.key === key);
-    if (g) g.memberIds.forEach(id => ids.add(id));
-  });
-  // 自分は除外
-  ids.delete(EV_SELF_ID);
-  return [...ids];
-}
-
-function updateEvInviteSummary() {
-  const ids = resolveEvInviteeIds();
-  const el = document.getElementById('evInviteSummary');
-  if (!el) return;
-  if (ids.length === 0) {
-    el.textContent = 'まだ選択されていません';
-  } else {
-    el.textContent = `合計 ${ids.length}人（重複排除済み）`;
   }
 }
 
@@ -16643,23 +18161,13 @@ function previewEventCreate() {
   if (!place) { showToast('場所を入力してください'); return; }
   if (!evCreateCoverImage) { showToast('カバー写真を選択してください'); return; }
 
+  // 招待者の選択・公開範囲の決定は公開後の宛先選択フロー（nmOverlay）／イベント設定に一本化。
+  // ここでは編集モード時のみ、既存の招待者・公開範囲をそのまま維持する
   const isPublic = (evCreateScope === 'open');
   let invitees = [];
-  if (!isPublic) {
-    invitees = resolveEvInviteeIds();
-    if (invitees.length === 0) {
-      // 編集モードで旧inviteesがある場合はそれを維持
-      if (evEditingEventId) {
-        const oldEv = eventsData.find(e => e.id === evEditingEventId);
-        if (oldEv && Array.isArray(oldEv.invitees) && oldEv.invitees.length > 0) {
-          invitees = oldEv.invitees;
-        } else {
-          showToast('招待する相手を選んでください'); return;
-        }
-      } else {
-        showToast('招待する相手を選んでください'); return;
-      }
-    }
+  if (!isPublic && evEditingEventId) {
+    const oldEv = eventsData.find(e => e.id === evEditingEventId);
+    if (oldEv && Array.isArray(oldEv.invitees)) invitees = oldEv.invitees;
   }
 
   // 編集モード：プレビューを挟まず即保存（従来挙動を維持）
@@ -16730,15 +18238,9 @@ function openEventPreview() {
   // 詳細画面と同じレンダラを流用（CTAバーはプレビュー用に確認バーを使うのでスキップ）
   renderEventDetail(evDraft, { bodyId: 'evPreviewBody', ctaId: null, screenId: 'screen-event-preview' });
 
+  // 旧・招待メッセージ欄は廃止（招待は公開後の宛先選択→一団スレッドで送る新フローに一本化）
   const inviteSection = document.getElementById('evPreviewInviteSection');
-  const inviteCount   = document.getElementById('evPreviewInviteCount');
-  if (evDraft.isPublic) {
-    inviteSection.style.display = 'none';
-  } else {
-    inviteSection.style.display = 'block';
-    inviteCount.textContent = `招待した ${evDraft.invitees.length}人 のトークに届きます`;
-    document.getElementById('evPreviewInviteMsg').value = '';
-  }
+  if (inviteSection) inviteSection.style.display = 'none';
 
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-event-preview').classList.add('active');
@@ -16752,30 +18254,14 @@ function backToEventCreate() {
 
 function confirmEventPublish() {
   if (!evDraft) return;
-  const isPublic = evDraft.isPublic;
-  if (!isPublic) {
-    const msg = (document.getElementById('evPreviewInviteMsg').value || '').trim();
-    if (msg) evDraft.inviteMessage = msg;
-  }
   eventsData.unshift(evDraft);
   const publishedId = evDraft.id;
-  const count = evDraft.invitees.length;
-  const hadMsg = !!evDraft.inviteMessage;
-  const isPollType = evDraft.type === 'poll';
   evDraft = null;
 
-  if (isPollType) {
-    showToast(isPublic ? '日程調整イベントを作成しました！' : `${count}人に日程調整の招待を送りました`);
-  } else if (isPublic) {
-    showToast('イベントを作成し、タイムラインに流しました！');
-  } else if (hadMsg) {
-    showToast(`${count}人に招待メッセージを送りました`);
-  } else {
-    showToast(`${count}人に招待を送りました！`);
-  }
-
+  // 公開直後 → 宛先選択ステップへ直行（招待→一団自動生成のワンフロー）。スキップで公開だけも可
+  showToast('公開しました！招待する相手を選びましょう');
   closeEventCreate();
-  setTimeout(() => openEventDetail(publishedId, 'events'), 100);
+  setTimeout(() => startEventInviteFlow(publishedId, 'create'), 120);
 }
 
 // ===== 日程調整（poll）描画・回答・確定 =====
@@ -16934,6 +18420,36 @@ function initDetailMiniMap(bodyId, lat, lng) {
   setTimeout(() => map.invalidateSize(), 100);
 }
 
+// 日時レンジ整形（詳細・プレビュー・カード共通）。同日は「7月21日(火) 19:00〜21:00」、
+// 複数日は「5月15日(金) 18:00 〜 5月17日(日) 12:00」、endTimeなし（無制限）は開始のみ。
+// compact:trueでカード向けの短縮日付「7/21(火)」表記にする
+const EV_WEEKDAY = ['日','月','火','水','木','金','土'];
+function evWhenRange(ev, opts = {}) {
+  const compact = !!opts.compact;
+  const fmtDate = (dateStr) => {
+    const d = new Date(dateStr);
+    const mon = d.getMonth() + 1;
+    const day = d.getDate();
+    const wd = EV_WEEKDAY[d.getDay()];
+    return compact ? `${mon}/${day}(${wd})` : `${mon}月${day}日(${wd})`;
+  };
+  let str = `${fmtDate(ev.date)} ${ev.time || ''}`.trim();
+  if (!ev.endTime) return str;
+  if (ev.endDate && ev.endDate !== ev.date) {
+    str += ` 〜 ${fmtDate(ev.endDate)} ${ev.endTime}`;
+  } else {
+    str += `〜${ev.endTime}`;
+  }
+  return str;
+}
+
+// 確定日程イベントの回答締切ラベル（例「回答締切 5/10」）。ev.deadline未設定なら空文字
+function evDeadlineLabel(ev) {
+  if (!ev.deadline) return '';
+  const d = new Date(ev.deadline + 'T00:00:00');
+  return `回答締切 ${d.getMonth() + 1}/${d.getDate()}`;
+}
+
 function renderEventDetail(ev, opts = {}) {
   const bodyId   = opts.bodyId   || 'evDetailBody';
   const ctaId    = ('ctaId' in opts) ? opts.ctaId : 'evDetailCtaBar';
@@ -16949,21 +18465,8 @@ function renderEventDetail(ev, opts = {}) {
   const goingIds = Object.keys(ev.responses).filter(id => ev.responses[id] === 'going');
   const goingCount = goingIds.length;
 
-  // 日時整形
-  const weekday = ['日','月','火','水','木','金','土'];
-  const fmtDate = (dateStr, timeStr) => {
-    const d = new Date(dateStr);
-    const mon = d.getMonth() + 1;
-    const day = d.getDate();
-    const wd = weekday[d.getDay()];
-    return `${mon}月${day}日(${wd}) ${timeStr || ''}`.trim();
-  };
-  let dateStr = fmtDate(ev.date, ev.time);
-  if (ev.endDate && ev.endDate !== ev.date) {
-    dateStr += ` 〜 ${fmtDate(ev.endDate, ev.endTime)}`;
-  } else if (ev.endTime && !ev.endDate) {
-    dateStr += ` 〜 ${ev.endTime}`;
-  }
+  // 日時整形（詳細・プレビュー・カード共通のevWhenRangeを使用）
+  let dateStr = evWhenRange(ev);
 
   // カバー（写真必須・位置適用。万一画像ない旧データはカバー非表示）
   const coverPos = ev.coverPos ? `${ev.coverPos.x}% ${ev.coverPos.y}%` : 'center';
@@ -16994,6 +18497,12 @@ function renderEventDetail(ev, opts = {}) {
         <span class="ev-detail-host-name">${escapeHtml(ev.hostName)}</span>
         ${hostBadge}
       </div>
+
+      ${isHost ? `
+      <div class="ev-host-admin-row">
+        <button class="ev-host-admin-btn" onclick="openEventEdit('${ev.id}')">✎ 編集</button>
+        <button class="ev-host-admin-btn primary" onclick="openEventInviteContactSheet('${ev.id}')">📨 招待・連絡</button>
+      </div>` : ''}
 
       ${isPoll(ev) ? renderPollCandidates(ev, isHost) : `
       <div class="ev-detail-infoblock">
@@ -17063,21 +18572,18 @@ function renderEventDetail(ev, opts = {}) {
   const ctaBar = ctaId ? document.getElementById(ctaId) : null;
   if (!ctaBar) return;
   if (isHost) {
-    // 主催者メニュー：編集・追加連絡・シェア・⋯
+    // Partiful式一本化：編集・招待/連絡は上部の控えめ2ボタンへ集約。下部はシェア＋その他のみ
     if (ev.closed) {
-      ctaBar.className = 'ev-detail-cta-bar four-btn';
+      ctaBar.className = 'ev-detail-cta-bar';
       ctaBar.innerHTML = `
-        <button class="ev-cta-pill" onclick="openEventEdit('${ev.id}')">✏️ 編集</button>
         <div style="flex:1;text-align:center;padding:12px 4px;color:rgba(255,255,255,0.5);font-weight:600;font-size:12px;">受付終了</div>
-        <button class="ev-cta-pill" onclick="openEvShareSheet('${ev.id}')">📤 シェア</button>
+        <button class="ev-cta-pill" style="flex:0 0 auto;" onclick="openEvShareSheet('${ev.id}')">📤 シェア</button>
         <button class="ev-cta-pill more-btn" onclick="openHostActionSheet('${ev.id}')" title="その他">⋯</button>
       `;
     } else {
-      ctaBar.className = 'ev-detail-cta-bar four-btn';
+      ctaBar.className = 'ev-detail-cta-bar';
       ctaBar.innerHTML = `
-        <button class="ev-cta-pill" onclick="openEventEdit('${ev.id}')">✏️ 編集</button>
-        <button class="ev-cta-pill primary" onclick="openEventAddHistory()">📢 追加連絡</button>
-        <button class="ev-cta-pill" onclick="openEvShareSheet('${ev.id}')">📤 シェア</button>
+        <button class="ev-cta-pill" style="flex:1;" onclick="openEvShareSheet('${ev.id}')">📤 シェア</button>
         <button class="ev-cta-pill more-btn" onclick="openHostActionSheet('${ev.id}')" title="その他">⋯</button>
       `;
     }
@@ -17299,6 +18805,225 @@ function openEventHostDm() {
     openDmChat(ev.hostId, ev.hostName, ev.hostAvatar);
   } else {
     showToast(`${ev.hostName}へDM`);
+  }
+}
+
+// ============================================================
+// ===== イベント × BCC配信（一団）統合 =====
+// イベント公開→宛先選択→イベント一団(broadcast:true, eventId付き)を自動生成し、
+// 招待カードをその一団スレッドで配信する。招待者のDMには招待カード＋本文がマージ表示される。
+// ============================================================
+let _groupThreadPending = null;   // 一団スレッド入力欄に添付される「送信予定の招待/宛先」情報
+let _evSheetEventId = null;       // 招待・連絡シートが対象にしているイベントID
+
+// イベント一団を用意（無ければ作成、あればメンバーをマージ）。ev.threadIdで相互リンク
+function evbEnsureBroadcast(ev, memberIds) {
+  const evbId = 'evb_' + ev.id;
+  const ids = Array.from(new Set((memberIds || []).filter(id => id && id !== EV_SELF_ID)));
+  let g = userGroups.find(x => x.id === evbId);
+  if (!g) {
+    g = {
+      id: evbId,
+      name: ev.title,
+      emoji: '📅',
+      broadcast: true,
+      eventId: ev.id,
+      photoDataUrl: null,
+      colorIdx: userGroups.length % 10,
+      createdAt: new Date().toISOString(),
+      memberIds: ids,
+      order: 0,
+      threads: []
+    };
+    userGroups.unshift(g);
+    userGroups.forEach((x, i) => { x.order = i; });
+  } else {
+    ids.forEach(id => { if (!g.memberIds.includes(id)) g.memberIds.push(id); });
+    g.name = ev.title;
+  }
+  ev.threadId = evbId;
+  return g;
+}
+
+// DM/一団スレッドで使う招待ミニカード（タップでイベント詳細へ）
+function evInviteMiniCardHtml(ev) {
+  let when = '';
+  if (ev.type === 'poll') {
+    when = '🗓 日程調整中';
+  } else if (ev.date) {
+    when = `🗓 ${evWhenRange(ev, { compact: true })}`;
+  }
+  const place = ev.place ? `　📍 ${escapeHtml(ev.place)}` : '';
+  return `
+    <div class="ev-invite-minicard" onclick="evOpenDetailFromCard('${ev.id}')">
+      <div class="ev-invite-minicard-badge">📅 イベント招待</div>
+      <div class="ev-invite-minicard-title">${escapeHtml(ev.title)}</div>
+      <div class="ev-invite-minicard-when">${when}${place}</div>
+      <div class="ev-invite-minicard-cta">タップして詳細を見る ›</div>
+    </div>`;
+}
+function evOpenDetailFromCard(eventId) {
+  if (typeof closeDmChat === 'function') closeDmChat();
+  openEventDetail(eventId, 'events');
+}
+
+// 宛先選択フロー開始（nmOverlayを流用）。mode: 'create'（公開直後）| 'add'（招待を追加）
+function startEventInviteFlow(eventId, mode) {
+  const ev = eventsData.find(e => e.id === eventId);
+  if (!ev) return;
+  const existing = (mode === 'add' && ev.threadId)
+    ? ((userGroups.find(g => g.id === ev.threadId) || {}).memberIds || [])
+    : [];
+  _evInviteCtx = { eventId, mode };
+  _evInviteScopeOpen = !!ev.isPublic;   // 現在のスコープを初期値に（新規イベントは常にfalse＝クローズド）
+  openNewMessage();   // nmSelectedリセット・全チェック解除
+  if (mode === 'add') {
+    // 既に招待済みの人は選択済み/選択不可グレー表示（nmSelectedには入れず、確定時の差分は新規のみ）
+    existing.forEach(id => {
+      document.querySelectorAll(`.nm-member-row[data-id="${id}"]`).forEach(r => r.classList.add('checked', 'nm-locked'));
+    });
+  }
+  evConfigureNmFooter(mode);
+  nmUpdateNextBtn();
+}
+
+function evConfigureNmFooter(mode) {
+  const footer = document.querySelector('#nmOverlay .nm-footer');
+  if (footer) footer.classList.toggle('has-skip', mode === 'create');
+  const title = document.querySelector('#nmOverlay .nm-header-title');
+  if (title) title.textContent = (mode === 'add') ? '招待を追加' : '招待する相手を選ぶ';
+}
+
+// nmOverlayの「決定」→ イベント一団作成/追加＋招待カード添付
+function evInviteConfirmDest() {
+  const ctx = _evInviteCtx;
+  if (!ctx) return;
+  const ev = eventsData.find(e => e.id === ctx.eventId);
+  if (!ev) { _evInviteCtx = null; closeNewMessage(); return; }
+  const selectedIds = Array.from(nmSelected.keys()).filter(id => id !== EV_SELF_ID);
+  if (selectedIds.length === 0) { showToast('招待する相手を選んでください'); return; }
+  _evInviteCtx = null;
+  ev.isPublic = !!_evInviteScopeOpen;
+  const existing = (ev.threadId ? (userGroups.find(x => x.id === ev.threadId) || {}).memberIds : []) || [];
+  const g = evbEnsureBroadcast(ev, existing.concat(selectedIds));
+  ev.invitees = Array.from(new Set([...(ev.invitees || []), ...g.memberIds]));
+  closeNewMessage();
+  // 送信すると招待として届く（新規の宛先だけを対象にする）
+  _groupThreadPending = { eventId: ev.id, eventInvite: true, audienceIds: selectedIds.slice(), audienceLabel: '' };
+  openGroupThread(g.id);
+}
+
+// nmOverlayの「スキップ」→ 招待なしで公開だけ
+function evInviteSkip() {
+  const ctx = _evInviteCtx;
+  _evInviteCtx = null;
+  closeNewMessage();
+  if (ctx && ctx.eventId) {
+    const ev = eventsData.find(e => e.id === ctx.eventId);
+    if (ev) ev.isPublic = !!_evInviteScopeOpen;
+    showToast('招待なしで公開しました');
+    openEventDetail(ctx.eventId, 'events');
+  }
+}
+
+// 出欠フィルタで対象メンバーを算出
+function evComputeAudience(ev, filter) {
+  const g = ev.threadId ? userGroups.find(x => x.id === ev.threadId) : null;
+  let base = g ? g.memberIds.slice()
+    : Array.from(new Set([...(ev.invitees || []), ...Object.keys(ev.responses || {})]));
+  base = base.filter(id => id !== EV_SELF_ID);
+  if (filter === 'going')   return base.filter(id => ev.responses[id] === 'going');
+  if (filter === 'noreply') return base.filter(id => !ev.responses[id]);
+  return base;
+}
+
+// 主催者：招待・連絡シート（下から部分シート・2択）
+function openEventInviteContactSheet(eventId) {
+  _evSheetEventId = eventId;
+  document.getElementById('evInviteSheetTitle').textContent = '招待・連絡';
+  document.getElementById('evInviteSheetBody').innerHTML = `
+    <div class="ev-inv-choice" onclick="evAddInvitees()">
+      <div class="ev-inv-choice-ico">➕</div>
+      <div class="ev-inv-choice-txt">
+        <div class="ev-inv-choice-main">招待を追加する</div>
+        <div class="ev-inv-choice-sub">新しい人にイベント招待を送る</div>
+      </div>
+      <div class="ev-inv-choice-arrow">›</div>
+    </div>
+    <div class="ev-inv-choice" onclick="openEventContactFilter()">
+      <div class="ev-inv-choice-ico">💬</div>
+      <div class="ev-inv-choice-txt">
+        <div class="ev-inv-choice-main">参加者に連絡する</div>
+        <div class="ev-inv-choice-sub">出欠でしぼって一斉連絡</div>
+      </div>
+      <div class="ev-inv-choice-arrow">›</div>
+    </div>`;
+  document.getElementById('evInviteSheetOverlay').classList.add('open');
+  document.getElementById('evInviteSheet').classList.add('open');
+}
+function closeEventInviteSheet() {
+  document.getElementById('evInviteSheetOverlay').classList.remove('open');
+  document.getElementById('evInviteSheet').classList.remove('open');
+}
+function evAddInvitees() {
+  const id = _evSheetEventId;
+  closeEventInviteSheet();
+  if (id) startEventInviteFlow(id, 'add');
+}
+// 出欠フィルタ選択（同じシートの本文を差し替え）
+function openEventContactFilter() {
+  const ev = eventsData.find(e => e.id === _evSheetEventId);
+  if (!ev) return;
+  const nAll     = evComputeAudience(ev, 'all').length;
+  const nGoing   = evComputeAudience(ev, 'going').length;
+  const nNoreply = evComputeAudience(ev, 'noreply').length;
+  document.getElementById('evInviteSheetTitle').textContent = '誰に連絡する？';
+  document.getElementById('evInviteSheetBody').innerHTML = `
+    <div class="ev-filter-chips">
+      <button class="ev-filter-chip" onclick="evStartContact('all')">全員 <span>${nAll}</span></button>
+      <button class="ev-filter-chip" onclick="evStartContact('going')">✅ 参加予定 <span>${nGoing}</span></button>
+      <button class="ev-filter-chip" onclick="evStartContact('noreply')">⏳ 未回答 <span>${nNoreply}</span></button>
+    </div>`;
+}
+function evStartContact(filter) {
+  const ev = eventsData.find(e => e.id === _evSheetEventId);
+  if (!ev) return;
+  const ids = evComputeAudience(ev, filter);
+  if (ids.length === 0) { showToast('対象の相手がいません'); return; }
+  const g = evbEnsureBroadcast(ev, evComputeAudience(ev, 'all'));
+  closeEventInviteSheet();
+  const label = filter === 'going' ? '参加予定' : filter === 'noreply' ? '未回答' : '';
+  _groupThreadPending = { eventId: ev.id, eventInvite: false, audienceIds: ids.slice(), audienceLabel: label };
+  openGroupThread(g.id);
+}
+
+// 一団スレッド：入力欄の上の添付バナー（招待カード or 宛先バッジ）
+function renderGroupThreadAttachBanner(group) {
+  const el = document.getElementById('groupThreadAttachBanner');
+  if (!el) return;
+  const p = _groupThreadPending;
+  if (!p || !group || p.eventId !== group.eventId) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  const ev = eventsData.find(e => e.id === p.eventId);
+  if (!ev) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  if (p.eventInvite) {
+    el.innerHTML = `<div class="gt-attach-label">📎 招待カードを添付済み・招待として送信されます</div>${evInviteMiniCardHtml(ev)}`;
+  } else {
+    const label = p.audienceLabel ? `${p.audienceLabel}の${(p.audienceIds || group.memberIds).length}人` : `全員${(p.audienceIds || group.memberIds).length}人`;
+    el.innerHTML = `<div class="gt-attach-audience">📤 宛先: ${label}</div>`;
+  }
+  el.style.display = 'block';
+}
+
+// 一団ヘッダー：イベントを見る導線
+function renderGroupThreadEventLink(group) {
+  const btn = document.getElementById('groupThreadEventBtn');
+  if (!btn) return;
+  if (group && group.eventId && eventsData.find(e => e.id === group.eventId)) {
+    btn.style.display = 'flex';
+    btn.onclick = () => openEventDetail(group.eventId, 'events');
+  } else {
+    btn.style.display = 'none';
+    btn.onclick = null;
   }
 }
 

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCC宛先カゴ 見せ方比較</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:#ECECEF; padding:26px 0 70px; color:#1A1A2E; }
+  h1 { text-align:center; font-size:18px; margin-bottom:4px; }
+  .sub { text-align:center; font-size:12px; color:#666; margin-bottom:22px; max-width:640px; margin-left:auto; margin-right:auto; padding:0 16px; line-height:1.6; }
+
+  .brandgrad { background:linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899); }
+
+  /* タブ切替 */
+  .tabs { display:flex; justify-content:center; gap:8px; margin-bottom:8px; }
+  .tab-btn {
+    font-size:13px; font-weight:700; padding:8px 18px; border-radius:20px; border:1px solid #ddd;
+    background:#fff; color:#555; cursor:pointer;
+  }
+  .tab-btn.active { color:#fff; border-color:transparent; background:linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899); }
+
+  .caption {
+    max-width:390px; margin:0 auto 14px; padding:10px 14px; background:#fff; border-radius:10px;
+    font-size:12px; line-height:1.7; color:#444; box-shadow:0 2px 8px rgba(0,0,0,.06);
+  }
+  .caption b { color:#1A1A2E; }
+
+  .panel { display:none; }
+  .panel.active { display:block; }
+
+  /* iPhoneフレーム */
+  .frame-wrap { display:flex; justify-content:center; }
+  .frame {
+    width:390px; height:760px; background:#fff; border-radius:44px; border:8px solid #111;
+    overflow:hidden; position:relative; box-shadow:0 14px 34px rgba(0,0,0,.28);
+  }
+  .notch {
+    position:absolute; top:0; left:50%; transform:translateX(-50%); width:130px; height:26px;
+    background:#111; border-radius:0 0 16px 16px; z-index:50;
+  }
+  .screen { height:100%; display:flex; flex-direction:column; padding-top:26px; }
+
+  /* ヘッダー */
+  .app-header { padding:12px 16px 8px; }
+  .app-header h2 { font-size:17px; font-weight:800; }
+  .search-bar {
+    margin-top:10px; background:#F2F2F5; border-radius:10px; padding:9px 12px; font-size:12.5px; color:#999;
+  }
+
+  /* 宛先バー（案C専用の固定領域。案A/Bでは非表示） */
+  .dest-bar { padding:10px 16px; border-bottom:1px solid #EEE; display:none; }
+  .dest-bar.show { display:block; }
+  .dest-bar .dl { font-size:11px; font-weight:800; color:#888; margin-bottom:6px; display:flex; align-items:center; gap:4px; }
+  .dest-chips { display:flex; flex-wrap:wrap; align-items:center; gap:6px; }
+  .chip {
+    display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700;
+    background:#F5F0FF; color:#5B21B6; border:1px solid #E4D6FF; border-radius:14px; padding:5px 10px;
+  }
+  .chip .x { cursor:pointer; color:#9333EA; font-weight:900; }
+  .send-chip-btn {
+    margin-left:auto; font-size:12px; font-weight:800; color:#fff; border:none; border-radius:14px;
+    padding:6px 14px; background:linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899); cursor:pointer;
+  }
+
+  /* 階層リスト */
+  .tier-list { flex:1; overflow-y:auto; padding:4px 16px 16px; }
+  .tier-row { border:1px solid #EEE; border-radius:12px; padding:12px 14px; margin-bottom:10px; }
+  .tier-top { display:flex; align-items:center; justify-content:space-between; }
+  .tier-name { font-size:14.5px; font-weight:800; }
+  .tier-count { font-size:11.5px; color:#999; font-weight:600; }
+  .tier-btns { display:flex; gap:6px; margin-top:9px; }
+  .tier-btn {
+    font-size:11px; font-weight:700; border-radius:8px; padding:6px 10px; border:1px solid #ddd; background:#fff; color:#555;
+  }
+  .tier-btn.primary { border:none; color:#fff; background:linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899); }
+  .selected-indicator {
+    margin-top:8px; font-size:11.5px; font-weight:700; color:#7C3AED; background:#F5F0FF; border-radius:8px;
+    padding:5px 9px; display:inline-block;
+  }
+
+  /* タブバー */
+  .tabbar {
+    height:56px; border-top:1px solid #EEE; display:flex; align-items:center; justify-content:space-around;
+    font-size:19px; position:relative;
+  }
+
+  /* ===== 案A：下部固定バー ===== */
+  .a-bar {
+    position:absolute; left:10px; right:10px; bottom:66px; background:#1A1A2E; border-radius:16px;
+    padding:9px 12px; display:flex; align-items:center; gap:10px; cursor:pointer;
+    box-shadow:0 8px 20px rgba(0,0,0,.25); z-index:20;
+  }
+  .avatar-stack { display:flex; }
+  .avatar-stack span {
+    width:26px; height:26px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center;
+    font-size:14px; border:2px solid #1A1A2E; margin-left:-8px;
+  }
+  .avatar-stack span:first-child { margin-left:0; }
+  .a-bar .count-text { color:#fff; font-size:12.5px; font-weight:700; flex:1; }
+  .a-bar .clear-x { color:#888; font-size:15px; padding:2px 4px; }
+  .a-send-btn {
+    font-size:12px; font-weight:800; color:#fff; border:none; border-radius:10px; padding:7px 12px;
+    background:linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+  }
+
+  .a-sheet {
+    position:absolute; left:0; right:0; bottom:0; background:#fff; border-radius:20px 20px 0 0;
+    box-shadow:0 -8px 24px rgba(0,0,0,.18); transform:translateY(100%); transition:transform .25s ease;
+    z-index:30; max-height:70%; display:flex; flex-direction:column;
+  }
+  .a-sheet.open { transform:translateY(0); }
+  .a-sheet .handle { width:36px; height:4px; background:#ddd; border-radius:2px; margin:10px auto 6px; }
+  .a-sheet h3 { font-size:14px; font-weight:800; padding:2px 18px 10px; }
+  .a-sheet-list { overflow-y:auto; padding:0 18px; }
+  .a-member-row { display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid #F2F2F5; }
+  .a-member-row .av { width:32px; height:32px; border-radius:50%; background:#F2F2F5; display:flex; align-items:center; justify-content:center; font-size:17px; }
+  .a-member-row .name { font-size:13px; font-weight:700; flex:1; }
+  .a-member-row .tierbadge { font-size:10px; font-weight:700; color:#7C3AED; background:#F5F0FF; border-radius:6px; padding:2px 7px; }
+  .a-member-row .rm { color:#bbb; font-size:15px; padding:0 4px; }
+  .a-sheet-send { margin:12px 18px 18px; font-size:13.5px; font-weight:800; color:#fff; border:none; border-radius:12px; padding:12px; background:linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899); }
+  .a-overlay { position:absolute; inset:0; background:rgba(0,0,0,.25); opacity:0; pointer-events:none; transition:opacity .2s; z-index:25; }
+  .a-overlay.show { opacity:1; pointer-events:auto; }
+
+  /* ===== 案B：FAB＋バッジ ===== */
+  .b-fab {
+    position:absolute; right:16px; bottom:74px; width:54px; height:54px; border-radius:50%;
+    background:linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899); display:flex; align-items:center; justify-content:center;
+    font-size:23px; box-shadow:0 8px 18px rgba(124,58,237,.4); cursor:pointer; z-index:20; border:3px solid #fff;
+  }
+  .b-badge {
+    position:absolute; top:-4px; right:-4px; background:#EC4899; color:#fff; font-size:10.5px; font-weight:800;
+    width:19px; height:19px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #fff;
+  }
+  .b-popup {
+    position:absolute; right:16px; bottom:136px; width:230px; background:#fff; border-radius:14px;
+    box-shadow:0 10px 26px rgba(0,0,0,.2); padding:14px; z-index:30; display:none;
+  }
+  .b-popup.open { display:block; }
+  .b-popup h4 { font-size:12.5px; font-weight:800; margin-bottom:8px; color:#1A1A2E; }
+  .b-popup .line { font-size:12px; color:#555; padding:3px 0; display:flex; justify-content:space-between; }
+  .b-popup .total { font-size:12.5px; font-weight:800; color:#1A1A2E; border-top:1px solid #EEE; margin-top:6px; padding-top:8px; display:flex; justify-content:space-between; }
+  .b-popup-send { width:100%; margin-top:10px; font-size:12.5px; font-weight:800; color:#fff; border:none; border-radius:10px; padding:10px; background:linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899); }
+</style>
+</head>
+<body>
+<h1>BCCメッセージ「宛先カゴ」見せ方比較</h1>
+<div class="sub">連絡先タブで階層ごとに「編集して送信」→選んだ人をカゴに積み上げ→最後に一括送信（BCC・受信者からは個別DMに見える）。積み上げた宛先をどう見せるか3案で比較。デモ状態：Core 2人＋Orbit 3人＝計5人選択済み固定。</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="a">案A 下部固定バー</button>
+  <button class="tab-btn" data-tab="b">案B FAB＋バッジ</button>
+  <button class="tab-btn" data-tab="c">案C ヘッダー宛先チップ</button>
+</div>
+
+<!-- 案A -->
+<div class="panel active" id="panel-a">
+  <div class="caption">
+    <b>由来：</b>LINEの複数選択転送・ECのカート方式。<br>
+    <b>長所：</b>常に視界に入り視認性最強。タップ一発で内訳シートが開く。<br>
+    <b>短所：</b>画面下部（タブバー直上）を常時占有し、リスト最後尾の行が隠れやすい。
+  </div>
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="app-header">
+          <h2>Circle & Groups</h2>
+          <div class="search-bar">🔍 連絡先を検索</div>
+        </div>
+        <div class="tier-list" id="tierlist-a"></div>
+        <div class="a-overlay" id="a-overlay"></div>
+        <div class="a-sheet" id="a-sheet">
+          <div class="handle"></div>
+          <h3>送信先（5人）</h3>
+          <div class="a-sheet-list" id="a-sheet-list"></div>
+          <button class="a-sheet-send">このメンバーに送信する</button>
+        </div>
+        <div class="a-bar" id="a-bar">
+          <div class="avatar-stack"><span>🧑</span><span>👩</span><span>🧑</span><span>👱‍♀️</span><span>🧔</span></div>
+          <div class="count-text">5人を選択中</div>
+          <span class="clear-x" title="カゴをクリア">✕</span>
+          <button class="a-send-btn">送信する →</button>
+        </div>
+        <div class="tabbar">🏠🔍➕💬👤</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 案B -->
+<div class="panel" id="panel-b">
+  <div class="caption">
+    <b>由来：</b>Gmailの作成ボタン（FAB）＋通知バッジ。<br>
+    <b>長所：</b>リストを一切隠さない。階層の内訳をポップアップで確認してから送信できる。<br>
+    <b>短所：</b>選択中である事実に気づきにくい（バッジが小さい）。誤タップでポップアップが閉じやすい。
+  </div>
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="app-header">
+          <h2>Circle & Groups</h2>
+          <div class="search-bar">🔍 連絡先を検索</div>
+        </div>
+        <div class="tier-list" id="tierlist-b"></div>
+        <div class="b-popup" id="b-popup">
+          <h4>送信先の内訳</h4>
+          <div class="line"><span>🔥 Core</span><span>2人</span></div>
+          <div class="line"><span>💎 Orbit</span><span>3人</span></div>
+          <div class="total"><span>計</span><span>5人</span></div>
+          <button class="b-popup-send">このメンバーに送信する</button>
+        </div>
+        <div class="b-fab" id="b-fab">📨<span class="b-badge">5</span></div>
+        <div class="tabbar">🏠🔍➕💬👤</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 案C -->
+<div class="panel" id="panel-c">
+  <div class="caption">
+    <b>由来：</b>メールクライアントのTo欄。<br>
+    <b>長所：</b>階層単位の内訳が常時見えるので「誰に送るか」の全体像を把握しやすい。チップ単位で外せる。<br>
+    <b>短所：</b>チップが増えると横に伸びて画面を圧迫し、検索バー下のスペースを常に消費する。
+  </div>
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="app-header">
+          <h2>Circle & Groups</h2>
+          <div class="search-bar">🔍 連絡先を検索</div>
+        </div>
+        <div class="dest-bar show">
+          <div class="dl">📨 宛先</div>
+          <div class="dest-chips">
+            <span class="chip">🔥Core 2 <span class="x">✕</span></span>
+            <span class="chip">💎Orbit 3 <span class="x">✕</span></span>
+            <button class="send-chip-btn">送信（5）→</button>
+          </div>
+        </div>
+        <div class="tier-list" id="tierlist-c"></div>
+        <div class="tabbar">🏠🔍➕💬👤</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const tiers = [
+    { name:'🔥 Core', count:2, selected:2 },
+    { name:'💎 Orbit', count:5, selected:3 },
+    { name:'⭐ Halo', count:3, selected:0 },
+    { name:'🌌 Galaxy', count:3, selected:0 },
+  ];
+
+  function renderTierList(containerId) {
+    const el = document.getElementById(containerId);
+    el.innerHTML = tiers.map(t => `
+      <div class="tier-row">
+        <div class="tier-top">
+          <span class="tier-name">${t.name}</span>
+          <span class="tier-count">${t.count}人</span>
+        </div>
+        <div class="tier-btns">
+          <button class="tier-btn primary">全員に送信</button>
+          <button class="tier-btn">編集して送信</button>
+        </div>
+        ${t.selected > 0 ? `<div class="selected-indicator">✓ ${t.selected}人選択済み</div>` : ''}
+      </div>
+    `).join('');
+  }
+  ['tierlist-a','tierlist-b','tierlist-c'].forEach(renderTierList);
+
+  const selectedMembers = [
+    { av:'🧑', name:'田中 悠', tier:'Core' },
+    { av:'👩', name:'鈴木 里奈', tier:'Core' },
+    { av:'🧑', name:'佐藤 健太', tier:'Orbit' },
+    { av:'👱‍♀️', name:'高橋 美咲', tier:'Orbit' },
+    { av:'🧔', name:'小林 亮', tier:'Orbit' },
+  ];
+  document.getElementById('a-sheet-list').innerHTML = selectedMembers.map(m => `
+    <div class="a-member-row">
+      <span class="av">${m.av}</span>
+      <span class="name">${m.name}</span>
+      <span class="tierbadge">${m.tier}</span>
+      <span class="rm">✕</span>
+    </div>
+  `).join('');
+
+  // タブ切替
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // 案A：シート開閉
+  const aBar = document.getElementById('a-bar');
+  const aSheet = document.getElementById('a-sheet');
+  const aOverlay = document.getElementById('a-overlay');
+  function toggleASheet() {
+    aSheet.classList.toggle('open');
+    aOverlay.classList.toggle('show');
+  }
+  aBar.addEventListener('click', toggleASheet);
+  aOverlay.addEventListener('click', toggleASheet);
+
+  // 案B：ポップアップ開閉
+  const bFab = document.getElementById('b-fab');
+  const bPopup = document.getElementById('b-popup');
+  bFab.addEventListener('click', (e) => {
+    e.stopPropagation();
+    bPopup.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if (bPopup.classList.contains('open') && !bPopup.contains(e.target) && e.target !== bFab) {
+      bPopup.classList.remove('open');
+    }
+  });
+</script>
+</body>
+</html>

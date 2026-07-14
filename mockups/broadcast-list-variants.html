@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCC配信 見せ方比較（Messages一覧／配信スレッド）</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:#ECECEF; padding:26px 0 70px; color:#1A1A2E; }
+  h1 { text-align:center; font-size:18px; margin-bottom:4px; }
+  .sub { text-align:center; font-size:12px; color:#666; margin-bottom:22px; max-width:640px; margin-left:auto; margin-right:auto; padding:0 16px; line-height:1.6; }
+
+  /* タブ切替 */
+  .tabs { display:flex; justify-content:center; gap:8px; margin-bottom:8px; flex-wrap:wrap; padding:0 12px; }
+  .tab-btn {
+    font-size:13px; font-weight:700; padding:8px 18px; border-radius:20px; border:1px solid #ddd;
+    background:#fff; color:#555; cursor:pointer;
+  }
+  .tab-btn.active { color:#fff; border-color:transparent; background:linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899); }
+
+  .caption {
+    max-width:390px; margin:0 auto 14px; padding:10px 14px; background:#fff; border-radius:10px;
+    font-size:12px; line-height:1.7; color:#444; box-shadow:0 2px 8px rgba(0,0,0,.06);
+  }
+  .caption b { color:#1A1A2E; }
+
+  .panel { display:none; }
+  .panel.active { display:block; }
+
+  /* iPhoneフレーム */
+  .frame-wrap { display:flex; justify-content:center; }
+  .frame {
+    width:390px; height:760px; background:#fff; border-radius:44px; border:8px solid #111;
+    overflow:hidden; position:relative; box-shadow:0 14px 34px rgba(0,0,0,.28);
+  }
+  .notch {
+    position:absolute; top:0; left:50%; transform:translateX(-50%); width:130px; height:26px;
+    background:#111; border-radius:0 0 16px 16px; z-index:50;
+  }
+  .screen { height:100%; display:flex; flex-direction:column; padding-top:26px; position:relative; background:#fff; }
+
+  /* ===== 共通トークン（app.html準拠） ===== */
+  :root {
+    --primary:#1E3A5F; --primary-bg:#EEF3FB; --bg:#FFFFFF; --surface:#F5F5F5; --border:#E8E8E8;
+    --text-main:#000000; --text-sub:#555555; --text-light:#999999; --danger:#EF4444;
+    --grad: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+  }
+
+  /* ===== Talk画面ヘッダー（app.html .talk-screen-header 準拠） ===== */
+  .talk-screen-header {
+    height:56px; background:var(--bg); border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between; padding:0 16px; flex-shrink:0;
+  }
+  .talk-screen-title { font-size:18px; font-weight:800; color:var(--text-main); }
+  .talk-seg-bar { display:flex; border-bottom:1.5px solid var(--border); flex-shrink:0; }
+  .talk-seg-tab {
+    flex:1; padding:11px 0; text-align:center; font-size:13px; font-weight:600; color:var(--text-sub);
+    border:none; background:none; border-bottom:2px solid transparent; margin-bottom:-1.5px;
+  }
+  .talk-seg-tab.active { color:var(--primary); border-bottom-color:var(--primary); }
+
+  /* ===== トーク一覧行（app.html .tl-row 準拠） ===== */
+  .tl-list { flex:1; overflow-y:auto; padding:0 0 12px; }
+  .tl-row { display:flex; gap:12px; padding:13px 16px; border-bottom:1px solid var(--border); align-items:center; }
+  .tl-avatar-wrap { position:relative; flex-shrink:0; }
+  .tl-avatar {
+    width:50px; height:50px; border-radius:50%; background:var(--surface); display:flex; align-items:center;
+    justify-content:center; font-size:24px; border:1.5px solid var(--border);
+  }
+  .tl-avatar.broadcast { background:var(--grad); color:#fff; border-color:transparent; }
+  .tl-group-badge-icon {
+    position:absolute; bottom:-2px; right:-4px; font-size:12px; background:var(--bg); border-radius:50%;
+    line-height:1; padding:1px;
+  }
+  .tl-body { flex:1; min-width:0; }
+  .tl-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:3px; }
+  .tl-name { font-size:14px; font-weight:600; color:var(--text-main); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .tl-name.unread { font-weight:800; }
+  .tl-time { font-size:11px; color:var(--text-light); flex-shrink:0; margin-left:6px; }
+  .tl-bottom { display:flex; justify-content:space-between; align-items:center; }
+  .tl-preview { font-size:13px; color:var(--text-sub); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; min-width:0; }
+  .tl-preview.unread { font-weight:600; color:var(--text-main); }
+  .tl-badge {
+    flex-shrink:0; min-width:20px; height:20px; border-radius:10px; background:var(--danger); color:#fff;
+    font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; padding:0 5px; margin-left:8px;
+  }
+  .tl-bc-tag {
+    font-size:9.5px; font-weight:800; color:#7C3AED; background:#F5F0FF; border-radius:5px; padding:1px 5px; margin-right:5px; flex-shrink:0;
+  }
+
+  /* ===== 配信スレッド画面（app.html .group-thread-* 準拠） ===== */
+  .gt-header {
+    display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid var(--border);
+    background:var(--bg); flex-shrink:0;
+  }
+  .gt-back { font-size:20px; cursor:pointer; padding:4px 8px 4px 0; }
+  .gt-title-area { display:flex; align-items:center; gap:8px; flex:1; min-width:0; }
+  .gt-avatar {
+    width:34px; height:34px; border-radius:50%; background:var(--grad); color:#fff; display:flex; align-items:center;
+    justify-content:center; font-size:16px; flex-shrink:0;
+  }
+  .gt-name { font-size:16px; font-weight:700; color:var(--text-main); }
+  .gt-count { font-size:11.5px; color:var(--text-light); font-weight:700; margin-left:2px; }
+  .gt-menu { font-size:20px; color:var(--text-sub); cursor:pointer; padding:4px; }
+
+  .gt-promo-banner {
+    display:flex; align-items:center; gap:6px; padding:8px 16px; background:#F5F0FF; color:#7C3AED;
+    font-size:11.5px; font-weight:700; border-bottom:1px solid var(--border); flex-shrink:0; cursor:pointer;
+  }
+
+  .gt-body { flex:1; overflow-y:auto; padding:14px 0 90px; background:var(--surface); }
+
+  .gt-date-divider { display:flex; align-items:center; justify-content:center; margin:4px 0 14px; }
+  .gt-date-divider span {
+    font-size:11px; font-weight:700; color:var(--text-light); background:#EAEAEA; border-radius:20px; padding:3px 12px;
+  }
+
+  .gt-card { margin:0 14px 18px; }
+  .gt-bubble-row { display:flex; justify-content:flex-end; margin-bottom:6px; }
+  .gt-bubble {
+    max-width:82%; background:linear-gradient(135deg,rgba(30,58,95,0.12),rgba(124,58,237,0.12),rgba(236,72,153,0.12));
+    border:1px solid rgba(124,58,237,0.18); color:var(--text-main); font-size:14.5px; line-height:1.55;
+    padding:11px 14px; border-radius:16px 16px 4px 16px; white-space:pre-wrap;
+  }
+  .gt-summary-row {
+    display:flex; align-items:center; gap:6px; justify-content:flex-end; cursor:pointer; padding:2px 2px;
+  }
+  .gt-summary-text { font-size:12px; color:var(--text-sub); font-weight:600; }
+  .gt-summary-text .unread-num { color:var(--danger); font-weight:800; }
+  .gt-summary-arrow { font-size:10px; color:var(--text-light); transition:transform .18s; }
+  .gt-card.open .gt-summary-arrow { transform:rotate(180deg); }
+
+  .gt-replies { display:none; margin-top:8px; background:var(--bg); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+  .gt-card.open .gt-replies { display:block; }
+  .gt-reply-row { display:flex; align-items:flex-start; gap:8px; padding:9px 12px; border-bottom:1px solid var(--border); }
+  .gt-reply-row:last-child { border-bottom:none; }
+  .gt-reply-avatar {
+    width:26px; height:26px; border-radius:50%; background:#fff; border:1px solid var(--border); display:flex;
+    align-items:center; justify-content:center; font-size:13px; flex-shrink:0;
+  }
+  .gt-reply-body { flex:1; min-width:0; }
+  .gt-reply-sender { font-size:12px; font-weight:700; color:var(--text-main); margin-bottom:2px; }
+  .gt-reply-unread {
+    display:inline-block; background:var(--danger); color:#fff; font-size:9.5px; font-weight:700; border-radius:50px;
+    padding:1px 6px; margin-left:6px; vertical-align:middle;
+  }
+  .gt-reply-text { font-size:13px; color:var(--text-sub); line-height:1.45; }
+  .gt-reply-time { font-size:10px; color:var(--text-light); margin-top:2px; }
+
+  .gt-input-bar {
+    display:flex; align-items:center; gap:8px; padding:10px 12px; background:var(--bg); border-top:1px solid var(--border);
+    flex-shrink:0; position:absolute; left:0; right:0; bottom:0;
+  }
+  .gt-input {
+    flex:1; background:var(--surface); border:1px solid var(--border); border-radius:22px; padding:10px 16px;
+    font-size:13px; color:var(--text-light);
+  }
+  .gt-send-btn { background:var(--primary); color:#fff; border:none; border-radius:20px; padding:9px 16px; font-size:13px; font-weight:700; opacity:.35; flex-shrink:0; }
+</style>
+</head>
+<body>
+<h1>BCC配信 — Messages一覧・スレッド 見せ方比較</h1>
+<div class="sub">
+  BCC一斉送信（受信者には個別DMに見える）を、送信者側のMessages一覧にどう積むかの意思決定用モック。
+  シナリオ：昨日🔥Core（10人）に配信済み・今日もCoreに配信・さらに「Core＋Orbitの田中1人」の混成配信もした状態。
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="1">案1：1送信=1行</button>
+  <button class="tab-btn" data-tab="2">案2：宛先セット=1スレッド（推し）</button>
+  <button class="tab-btn" data-tab="3">案2の中身：配信スレッド画面</button>
+</div>
+
+<!-- ===== タブ1 ===== -->
+<div class="panel active" id="panel-1">
+  <div class="caption">
+    <b>由来：</b>メルマガ配信履歴のように、送信のたびに1行を積む発想。<br>
+    <b>長所：</b>1配信=1行なので管理が明快。いつ誰に何を送ったか一覧ですぐ追える。<br>
+    <b>短所：</b>毎日Core配信すると一覧が配信行だらけになり、通常のDM・グループが埋もれる。
+  </div>
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="talk-screen-header">
+          <div class="talk-screen-title">Talk</div>
+          <div style="font-size:16px;">✏️</div>
+        </div>
+        <div class="talk-seg-bar">
+          <button class="talk-seg-tab active">Messages</button>
+          <button class="talk-seg-tab">Circle &amp; Groups</button>
+        </div>
+        <div class="tl-list">
+          <div class="tl-row">
+            <div class="tl-avatar-wrap"><div class="tl-avatar">🧑</div></div>
+            <div class="tl-body">
+              <div class="tl-top"><div class="tl-name unread">田中 悠</div><div class="tl-time">今日 10:02</div></div>
+              <div class="tl-bottom"><div class="tl-preview unread">了解です、また連絡しますー</div><div class="tl-badge">1</div></div>
+            </div>
+          </div>
+          <div class="tl-row">
+            <div class="tl-avatar-wrap"><div class="tl-avatar broadcast">📢</div></div>
+            <div class="tl-body">
+              <div class="tl-top"><div class="tl-name">🔥Core（10人）</div><div class="tl-time">今日 9:12</div></div>
+              <div class="tl-bottom"><div class="tl-preview">明日の朝活ですが、集合は7時渋谷ハチ公前で…</div></div>
+            </div>
+          </div>
+          <div class="tl-row">
+            <div class="tl-avatar-wrap"><div class="tl-avatar">👩</div></div>
+            <div class="tl-body">
+              <div class="tl-top"><div class="tl-name">鈴木 里奈</div><div class="tl-time">今日 8:45</div></div>
+              <div class="tl-bottom"><div class="tl-preview">楽しみにしてます！</div></div>
+            </div>
+          </div>
+          <div class="tl-row">
+            <div class="tl-avatar-wrap"><div class="tl-avatar broadcast">📢</div></div>
+            <div class="tl-body">
+              <div class="tl-top"><div class="tl-name">🔥Core＋1人（11人）</div><div class="tl-time">今日 8:30</div></div>
+              <div class="tl-bottom"><div class="tl-preview">明日の朝活ですが、集合は7時渋谷ハチ公前で…</div></div>
+            </div>
+          </div>
+          <div class="tl-row">
+            <div class="tl-avatar-wrap" style="position:relative;">
+              <div class="tl-avatar">🍺</div>
+              <div class="tl-group-badge-icon">👥</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-top"><div class="tl-name">酒好き</div><div class="tl-time">今日 8:02</div></div>
+              <div class="tl-bottom"><div class="tl-preview">今度飲み行こうぜ</div></div>
+            </div>
+          </div>
+          <div class="tl-row">
+            <div class="tl-avatar-wrap"><div class="tl-avatar broadcast">📢</div></div>
+            <div class="tl-body">
+              <div class="tl-top"><div class="tl-name">🔥Core（10人）</div><div class="tl-time">昨日</div></div>
+              <div class="tl-bottom"><div class="tl-preview">今日の朝活、集合場所は代々木公園の入口です…</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== タブ2 ===== -->
+<div class="panel" id="panel-2">
+  <div class="caption">
+    <b>由来：</b>LINE公式アカウント配信リストの発想。宛先セットごとに1スレッドを維持する。<br>
+    <b>長所：</b>毎日配信しても一覧は汚れない。宛先セットごとに「配信基地」ができ、返信も1箇所に集まる。<br>
+    <b>短所：</b>微妙に違う宛先セット（Core＋1人など）が増えるとスレッドが乱立しがち→中身の設計とグループ昇格導線で対処（タブ3参照）。
+  </div>
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="talk-screen-header">
+          <div class="talk-screen-title">Talk</div>
+          <div style="font-size:16px;">✏️</div>
+        </div>
+        <div class="talk-seg-bar">
+          <button class="talk-seg-tab active">Messages</button>
+          <button class="talk-seg-tab">Circle &amp; Groups</button>
+        </div>
+        <div class="tl-list">
+          <div class="tl-row">
+            <div class="tl-avatar-wrap"><div class="tl-avatar">🧑</div></div>
+            <div class="tl-body">
+              <div class="tl-top"><div class="tl-name unread">田中 悠</div><div class="tl-time">今日 10:02</div></div>
+              <div class="tl-bottom"><div class="tl-preview unread">了解です、また連絡しますー</div><div class="tl-badge">1</div></div>
+            </div>
+          </div>
+          <div class="tl-row" onclick="document.querySelector('.tab-btn[data-tab=\'3\']').click();" style="cursor:pointer;">
+            <div class="tl-avatar-wrap"><div class="tl-avatar broadcast">🔥</div></div>
+            <div class="tl-body">
+              <div class="tl-top"><div class="tl-name unread">Core配信</div><div class="tl-time">今日 9:12</div></div>
+              <div class="tl-bottom"><div class="tl-preview unread">明日の朝活ですが、集合は7時渋谷ハチ公前で…</div><div class="tl-badge">3</div></div>
+            </div>
+          </div>
+          <div class="tl-row">
+            <div class="tl-avatar-wrap"><div class="tl-avatar">👩</div></div>
+            <div class="tl-body">
+              <div class="tl-top"><div class="tl-name">鈴木 里奈</div><div class="tl-time">今日 8:45</div></div>
+              <div class="tl-bottom"><div class="tl-preview">楽しみにしてます！</div></div>
+            </div>
+          </div>
+          <div class="tl-row">
+            <div class="tl-avatar-wrap"><div class="tl-avatar broadcast">📢</div></div>
+            <div class="tl-body">
+              <div class="tl-top"><div class="tl-name">田中、鈴木、他9人</div><div class="tl-time">今日 8:30</div></div>
+              <div class="tl-bottom"><div class="tl-preview">明日の朝活ですが、集合は7時渋谷ハチ公前で…</div></div>
+            </div>
+          </div>
+          <div class="tl-row">
+            <div class="tl-avatar-wrap" style="position:relative;">
+              <div class="tl-avatar">🍺</div>
+              <div class="tl-group-badge-icon">👥</div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-top"><div class="tl-name">酒好き</div><div class="tl-time">今日 8:02</div></div>
+              <div class="tl-bottom"><div class="tl-preview">今度飲み行こうぜ</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== タブ3 ===== -->
+<div class="panel" id="panel-3">
+  <div class="caption">
+    <b>これがタブ2の弱点への対処：</b>宛先セットが増減しても一覧が汚れないように、スレッドの中身側でごちゃつきを吸収する設計。<br>
+    <b>核：</b>複数日ぶんの配信を「日付ディバイダー＋配信カードの縦積み」で並べ、最新の配信だけ返信を開いた状態、古い配信はバブル＋サマリー1行に畳んで表示。サマリー行タップで開閉できる。<br>
+    <b>ヘッダー下の「⭐このメンバーでグループを作る」バナー：</b>本来はCore配信では不要（Coreは既存の固定グループ）。カスタム配信スレッド（例：田中＋Core9人）でこそ効く導線で、乱立した宛先セットを正式グループへ昇格できる。ここではデモとして両方に出している。
+  </div>
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="gt-header">
+          <span class="gt-back">&#8592;</span>
+          <div class="gt-title-area">
+            <div class="gt-avatar">🔥</div>
+            <span class="gt-name">Core配信</span>
+            <span class="gt-count">10人</span>
+          </div>
+          <span class="gt-menu">&#8942;</span>
+        </div>
+        <div class="gt-promo-banner">⭐ このメンバーでグループを作る</div>
+        <div class="gt-body" id="gtBody">
+
+          <div class="gt-date-divider"><span>昨日</span></div>
+          <div class="gt-card" data-card>
+            <div class="gt-bubble-row">
+              <div class="gt-bubble">今日の朝活、集合場所は代々木公園の入口です。7時開始、遅れる人は連絡ください〜</div>
+            </div>
+            <div class="gt-summary-row" data-toggle>
+              <span class="gt-summary-text">📨 10人に送信・返信 5（未読0）</span>
+              <span class="gt-summary-arrow">▼</span>
+            </div>
+            <div class="gt-replies">
+              <div class="gt-reply-row">
+                <div class="gt-reply-avatar">🧑</div>
+                <div class="gt-reply-body">
+                  <div class="gt-reply-sender">田中 悠</div>
+                  <div class="gt-reply-text">了解です！</div>
+                  <div class="gt-reply-time">昨日 7:05</div>
+                </div>
+              </div>
+              <div class="gt-reply-row">
+                <div class="gt-reply-avatar">👩</div>
+                <div class="gt-reply-body">
+                  <div class="gt-reply-sender">鈴木 里奈</div>
+                  <div class="gt-reply-text">向かいます！</div>
+                  <div class="gt-reply-time">昨日 7:08</div>
+                </div>
+              </div>
+              <div class="gt-reply-row">
+                <div class="gt-reply-avatar">👱‍♀️</div>
+                <div class="gt-reply-body">
+                  <div class="gt-reply-sender">高橋 美咲</div>
+                  <div class="gt-reply-text">了解〜</div>
+                  <div class="gt-reply-time">昨日 7:10</div>
+                </div>
+              </div>
+              <div class="gt-reply-row">
+                <div class="gt-reply-avatar">🧔</div>
+                <div class="gt-reply-body">
+                  <div class="gt-reply-sender">小林 亮</div>
+                  <div class="gt-reply-text">参加します</div>
+                  <div class="gt-reply-time">昨日 7:12</div>
+                </div>
+              </div>
+              <div class="gt-reply-row">
+                <div class="gt-reply-avatar">🧑‍🦱</div>
+                <div class="gt-reply-body">
+                  <div class="gt-reply-sender">山本 大輔</div>
+                  <div class="gt-reply-text">少し遅れます、先に始めてください</div>
+                  <div class="gt-reply-time">昨日 7:15</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="gt-date-divider"><span>今日</span></div>
+          <div class="gt-card open" data-card>
+            <div class="gt-bubble-row">
+              <div class="gt-bubble">明日の朝活ですが、集合は7時渋谷ハチ公前でお願いします！走った後にモーニングも行きましょう☕</div>
+            </div>
+            <div class="gt-summary-row" data-toggle>
+              <span class="gt-summary-text">📨 10人に送信・返信 3（<span class="unread-num">未読1</span>）</span>
+              <span class="gt-summary-arrow">▼</span>
+            </div>
+            <div class="gt-replies">
+              <div class="gt-reply-row">
+                <div class="gt-reply-avatar">🧑</div>
+                <div class="gt-reply-body">
+                  <div class="gt-reply-sender">田中 悠</div>
+                  <div class="gt-reply-text">了解です！7時集合ですね、参加します</div>
+                  <div class="gt-reply-time">今日 9:20</div>
+                </div>
+              </div>
+              <div class="gt-reply-row">
+                <div class="gt-reply-avatar">👩</div>
+                <div class="gt-reply-body">
+                  <div class="gt-reply-sender">鈴木 里奈<span class="gt-reply-unread">未読</span></div>
+                  <div class="gt-reply-text">楽しみにしてます！モーニングも行きたいです🙌</div>
+                  <div class="gt-reply-time">今日 9:35</div>
+                </div>
+              </div>
+              <div class="gt-reply-row">
+                <div class="gt-reply-avatar">🧔</div>
+                <div class="gt-reply-body">
+                  <div class="gt-reply-sender">佐藤 健太</div>
+                  <div class="gt-reply-text">すみません今日は仕事で参加できません…また次回お願いします！</div>
+                  <div class="gt-reply-time">今日 9:41</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="gt-input-bar">
+          <div class="gt-input">メッセージを入力...（Core全員に送信）</div>
+          <div class="gt-send-btn">送信</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // タブ切替
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // タブ3：配信カードの返信アコーディオン開閉
+  document.getElementById('gtBody').addEventListener('click', e => {
+    const toggle = e.target.closest('[data-toggle]');
+    if (!toggle) return;
+    const card = toggle.closest('[data-card]');
+    card.classList.toggle('open');
+  });
+</script>
+</body>
+</html>

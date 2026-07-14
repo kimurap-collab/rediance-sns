@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>配信の「名前を決める」UI 比較モック</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --primary:#1E3A5F; --primary-bg:#EEF3FB; --bg:#FFFFFF; --surface:#F5F5F5; --border:#E8E8E8;
+    --text-main:#1A1A2E; --text-sub:#555555; --text-light:#999999; --danger:#EF4444;
+    --grad: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+  }
+  body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:#ECECEF; padding:26px 0 70px; color:var(--text-main); }
+  h1 { text-align:center; font-size:18px; margin-bottom:4px; }
+  .sub { text-align:center; font-size:12px; color:#666; margin-bottom:22px; max-width:640px; margin-left:auto; margin-right:auto; padding:0 16px; line-height:1.6; }
+
+  /* タブ切替 */
+  .tabs { display:flex; justify-content:center; gap:8px; margin-bottom:8px; flex-wrap:wrap; padding:0 12px; }
+  .tab-btn {
+    font-size:13px; font-weight:700; padding:8px 18px; border-radius:20px; border:1px solid #ddd;
+    background:#fff; color:#555; cursor:pointer;
+  }
+  .tab-btn.active { color:#fff; border-color:transparent; background:var(--grad); }
+
+  .caption {
+    max-width:390px; margin:0 auto 14px; padding:10px 14px; background:#fff; border-radius:10px;
+    font-size:12px; line-height:1.7; color:#444; box-shadow:0 2px 8px rgba(0,0,0,.06);
+  }
+  .caption b { color:var(--text-main); }
+
+  .panel { display:none; }
+  .panel.active { display:block; }
+
+  /* iPhoneフレーム */
+  .frame-wrap { display:flex; justify-content:center; }
+  .frame {
+    width:390px; height:760px; background:#fff; border-radius:44px; border:8px solid #111;
+    overflow:hidden; position:relative; box-shadow:0 14px 34px rgba(0,0,0,.28);
+  }
+  .notch {
+    position:absolute; top:0; left:50%; transform:translateX(-50%); width:130px; height:26px;
+    background:#111; border-radius:0 0 16px 16px; z-index:50;
+  }
+  .screen { height:100%; display:flex; flex-direction:column; padding-top:26px; position:relative; background:#fff; }
+
+  .av {
+    width:34px; height:34px; border-radius:50%; background:var(--surface); display:flex; align-items:center;
+    justify-content:center; font-size:17px; flex-shrink:0; border:1px solid var(--border);
+  }
+
+  /* ===== 共通：作成画面ヘッダー ===== */
+  .cr-screen { display:flex; flex-direction:column; height:100%; }
+  .cr-header { display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--border); flex-shrink:0; }
+  .cr-back { font-size:19px; cursor:pointer; flex-shrink:0; width:20px; }
+  .cr-header-title { font-size:15.5px; font-weight:800; flex:1; text-align:center; }
+  .cr-done-btn { font-size:14px; font-weight:800; color:var(--primary); background:none; border:none; cursor:pointer; padding:4px 2px; flex-shrink:0; }
+  .cr-body { flex:1; overflow-y:auto; padding:22px 20px; }
+
+  /* アイコン＋カメラバッジ */
+  .cr-icon-wrap { display:flex; justify-content:center; margin-bottom:22px; }
+  .cr-icon-badge-wrap { position:relative; width:76px; height:76px; }
+  .cr-icon {
+    width:76px; height:76px; border-radius:50%; background:var(--primary-bg); display:flex; align-items:center;
+    justify-content:center; font-size:34px; cursor:pointer; border:1px solid var(--border);
+  }
+  .cr-cam-badge {
+    position:absolute; right:-2px; bottom:-2px; width:26px; height:26px; border-radius:50%; background:#fff;
+    border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:12px;
+    box-shadow:0 1px 3px rgba(0,0,0,.15);
+  }
+
+  .cr-name-input {
+    width:100%; border:none; border-bottom:1.5px solid var(--border); padding:10px 2px; font-size:15px;
+    font-weight:700; color:var(--text-main); outline:none; text-align:center;
+  }
+  .cr-name-note { font-size:10.5px; color:var(--text-light); text-align:center; margin-top:8px; line-height:1.7; }
+  .cr-avatars-label { font-size:11.5px; font-weight:800; color:var(--text-light); margin:22px 0 10px; }
+
+  /* 確定仕様：折り返しメンバーグリッド（1行5人・アバター上/名前下） */
+  .cr-avatar-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:14px 4px; }
+  .cr-av-item { display:flex; flex-direction:column; align-items:center; gap:4px; min-width:0; }
+  .cr-av-item .av { width:40px; height:40px; font-size:19px; }
+  .cr-av-name { font-size:10px; color:var(--text-sub); text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; width:100%; }
+
+  /* ===== 共通：作成後スレッド画面 ===== */
+  .th-screen { display:none; flex-direction:column; height:100%; }
+  .th-screen.active { display:flex; }
+  .th-header { display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--border); flex-shrink:0; }
+  .th-title { font-size:15.5px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .th-count { font-size:11.5px; color:var(--text-light); font-weight:700; margin-left:2px; flex-shrink:0; }
+  .th-body { flex:1; display:flex; align-items:center; justify-content:center; background:var(--surface); padding:0 24px; }
+  .th-body-msg { font-size:12.5px; color:var(--text-light); text-align:center; line-height:1.6; }
+  .th-input-bar { display:flex; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid var(--border); flex-shrink:0; }
+  .th-input { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:22px; padding:10px 16px; font-size:13px; color:var(--text-light); }
+  .th-send-btn { background:var(--primary); color:#fff; border:none; border-radius:20px; padding:9px 16px; font-size:13px; font-weight:700; opacity:.35; flex-shrink:0; }
+
+  /* ===== 案B：背景の薄いアドレス帳（選択モード） ===== */
+  .bg-dim { position:absolute; inset:0; opacity:.30; pointer-events:none; z-index:1; display:flex; flex-direction:column; }
+  .sel-header { padding:14px 16px 10px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; border-bottom:1px solid var(--border); }
+  .sel-header-title { font-size:16px; font-weight:800; }
+  .sel-cancel { font-size:14px; font-weight:700; color:#888; background:none; border:none; }
+  .sel-tier-mini { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--border); font-size:14px; font-weight:700; }
+  .rchk-mini { width:20px; height:20px; border-radius:50%; border:2px solid #D8D8DD; background:#fff; flex-shrink:0; }
+  .rchk-mini.checked { background:var(--grad); border-color:transparent; }
+  .rchk-mini.partial { background:#7C3AED; border-color:transparent; }
+
+  /* ===== 案B：ボトムシート ===== */
+  .sheet {
+    position:absolute; left:0; right:0; bottom:0; background:#fff; border-radius:20px 20px 0 0;
+    box-shadow:0 -8px 24px rgba(0,0,0,.15); padding:10px 20px 22px; z-index:10;
+  }
+  .sheet-handle { width:40px; height:4px; border-radius:2px; background:#DDD; margin:4px auto 14px; }
+  .sheet-title { font-size:13.5px; font-weight:800; color:var(--text-main); margin-bottom:12px; text-align:center; }
+  .sheet-name-input {
+    width:100%; border:none; border-bottom:1.5px solid var(--border); padding:8px 2px; font-size:14px;
+    font-weight:700; color:var(--text-main); outline:none; text-align:center; margin-bottom:8px;
+  }
+  .sheet-note { font-size:10px; color:var(--text-light); text-align:center; line-height:1.7; margin-bottom:16px; }
+  .facepile { display:flex; justify-content:center; margin-bottom:18px; }
+  .facepile-item {
+    width:34px; height:34px; border-radius:50%; background:var(--surface); border:2px solid #fff;
+    display:flex; align-items:center; justify-content:center; font-size:15px; margin-left:-10px;
+    box-shadow:0 1px 2px rgba(0,0,0,.12); flex-shrink:0;
+  }
+  .facepile-item:first-child { margin-left:0; }
+  .facepile-more {
+    width:34px; height:34px; border-radius:50%; background:#E8E8EE; color:var(--text-sub); font-size:11px;
+    font-weight:800; display:flex; align-items:center; justify-content:center; border:2px solid #fff;
+    margin-left:-10px; flex-shrink:0;
+  }
+  .sheet-create-btn {
+    width:100%; font-size:14px; font-weight:800; color:#fff; border:none; border-radius:12px; padding:13px;
+    background:var(--grad); cursor:pointer;
+  }
+
+  /* ===== 案C：ヘッダー内タイトル編集 ===== */
+  .th-title-wrap { display:flex; align-items:center; gap:5px; cursor:pointer; flex:1; min-width:0; }
+  .th-title-wrap.hidden { display:none; }
+  .th-edit-pencil { font-size:12px; color:var(--text-light); flex-shrink:0; }
+  .th-title-input {
+    display:none; flex:1; min-width:0; font-size:15px; font-weight:800; border:none;
+    border-bottom:1.5px solid var(--primary); outline:none; padding:2px 0; color:var(--text-main); background:transparent;
+  }
+  .th-title-input.active { display:block; }
+  .info-card {
+    background:var(--surface); border-radius:12px; padding:14px 16px; font-size:12px; line-height:1.9;
+    color:var(--text-sub); max-width:280px; text-align:left;
+  }
+</style>
+</head>
+<body>
+<h1>配信の「名前を決める」UI 比較モック</h1>
+<div class="sub">
+  BCC配信（受信者には個別DMに見える）の宛先選択後、「送信先グループに名前を付ける」ステップの3案比較。<br>
+  前提：Core全員＋Orbit2人＝9人選択済み。デフォルト名「Core＋2 2026/7/13」。
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="A">案A：LINE正統フルスクリーン</button>
+  <button class="tab-btn" data-tab="B">案B：ボトムシート軽量版</button>
+  <button class="tab-btn" data-tab="C">案C：名前は後付け（スキップ型）</button>
+</div>
+
+<!-- ===== 案A ===== -->
+<div class="panel active" id="panel-A">
+  <div class="caption">LINEのグループ作成と完全同型。<b>迷いゼロ</b>やが1画面挟まる重さはある。右上「作成」は名前が空でも押せる（デフォルト名採用）。</div>
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="cr-screen" id="crA">
+          <div class="cr-header">
+            <span class="cr-back">←</span>
+            <span class="cr-header-title">新しい配信</span>
+            <button class="cr-done-btn" id="crADoneBtn">作成</button>
+          </div>
+          <div class="cr-body">
+            <div class="cr-icon-wrap">
+              <div class="cr-icon-badge-wrap">
+                <div class="cr-icon">📢</div>
+                <span class="cr-cam-badge">📷</span>
+              </div>
+            </div>
+            <input type="text" class="cr-name-input" id="crAName" value="Core＋2 2026/7/13">
+            <div class="cr-name-note">
+              ※この名前は相手には伝わりません<br>
+              ✉️ それぞれに個別のメッセージとして届きます
+            </div>
+            <div class="cr-avatars-label">メンバー 9人</div>
+            <div class="cr-avatar-grid" id="crAAvatars"></div>
+          </div>
+        </div>
+        <div class="th-screen" id="thA">
+          <div class="th-header">
+            <span class="cr-back" id="thABack">←</span>
+            <span class="th-title" id="thATitle">Core＋2 2026/7/13</span>
+            <span class="th-count">・9人</span>
+          </div>
+          <div class="th-body"><div class="th-body-msg">ここから最初のメッセージを送ろう<br>（9人それぞれに個別送信されます）</div></div>
+          <div class="th-input-bar">
+            <div class="th-input">メッセージを入力...</div>
+            <div class="th-send-btn">送信</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 案B ===== -->
+<div class="panel" id="panel-B">
+  <div class="caption">画面遷移なし。その場で名付けてすぐスレッドへ。<b>軽い</b>が、メンバー全員の確認はしにくい（先頭6人のみ表示）。</div>
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="bg-dim">
+          <div class="sel-header">
+            <span class="sel-header-title">宛先を選択</span>
+            <button class="sel-cancel">✕</button>
+          </div>
+          <div class="sel-tier-mini"><span>🔥 Core</span><span class="rchk-mini checked"></span></div>
+          <div class="sel-tier-mini"><span>💎 Orbit</span><span class="rchk-mini partial"></span></div>
+          <div class="sel-tier-mini"><span>⭐ Halo</span><span class="rchk-mini"></span></div>
+        </div>
+        <div class="sheet" id="sheetB">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title">配信に名前を付ける</div>
+          <input type="text" class="sheet-name-input" id="crBName" value="Core＋2 2026/7/13">
+          <div class="sheet-note">
+            ※この名前は相手には伝わりません<br>
+            ✉️ それぞれに個別のメッセージとして届きます
+          </div>
+          <div class="facepile" id="crBFacepile"></div>
+          <button class="sheet-create-btn" id="crBCreateBtn">作成して開始</button>
+        </div>
+        <div class="th-screen" id="thB">
+          <div class="th-header">
+            <span class="cr-back" id="thBBack">←</span>
+            <span class="th-title" id="thBTitle">Core＋2 2026/7/13</span>
+            <span class="th-count">・9人</span>
+          </div>
+          <div class="th-body"><div class="th-body-msg">ここから最初のメッセージを送ろう<br>（9人それぞれに個別送信されます）</div></div>
+          <div class="th-input-bar">
+            <div class="th-input">メッセージを入力...</div>
+            <div class="th-send-btn">送信</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 案C ===== -->
+<div class="panel" id="panel-C">
+  <div class="caption">名付けステップ自体が消える。<b>一番速い</b>が、名前を意識せん人はデフォルト名のまま運用になる。タイトルをタップすると編集できる。</div>
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="th-screen active" id="thC">
+          <div class="th-header">
+            <span class="cr-back">←</span>
+            <span class="th-title-wrap" id="thCTitleWrap">
+              <span class="th-title" id="thCTitleText">Core＋2 2026/7/13</span>
+              <span class="th-edit-pencil">✎</span>
+            </span>
+            <input type="text" class="th-title-input" id="thCTitleInput" value="Core＋2 2026/7/13">
+            <span class="th-count">・9人</span>
+          </div>
+          <div class="th-body">
+            <div class="info-card">
+              ✉️ 9人にそれぞれ個別に届きます<br>
+              📝 名前は上のタイトルをタップでいつでも変更（相手には伝わりません）
+            </div>
+          </div>
+          <div class="th-input-bar">
+            <div class="th-input">メッセージを入力...</div>
+            <div class="th-send-btn">送信</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ===== データ：Core全員（7人）＋Orbit選択（2人）＝9人 ===== */
+  const CORE = [
+    { name:'田中 悠', avatar:'🧑' },
+    { name:'鈴木 里奈', avatar:'👩' },
+    { name:'佐藤 健太', avatar:'🧔' },
+    { name:'伊藤 大輔', avatar:'👨' },
+    { name:'高橋 美咲', avatar:'👱‍♀️' },
+    { name:'小林 亮', avatar:'🧑‍🦱' },
+    { name:'渡辺 彩', avatar:'🙍' },
+  ];
+  const ORBIT_SELECTED = [
+    { name:'山本 純', avatar:'👨‍💼' },
+    { name:'中村 舞', avatar:'👩‍💼' },
+  ];
+  const SELECTED = [...CORE, ...ORBIT_SELECTED]; // 9人
+  const DEFAULT_NAME = 'Core＋2 2026/7/13';
+
+  function renderAvatarGrid(containerId) {
+    document.getElementById(containerId).innerHTML = SELECTED.map(m => `
+      <div class="cr-av-item">
+        <span class="av">${m.avatar}</span>
+        <span class="cr-av-name">${m.name}</span>
+      </div>`).join('');
+  }
+
+  function renderFacepile(containerId, max) {
+    const shown = SELECTED.slice(0, max);
+    const restCount = SELECTED.length - shown.length;
+    let html = shown.map(m => `<div class="facepile-item">${m.avatar}</div>`).join('');
+    if (restCount > 0) html += `<div class="facepile-more">+${restCount}</div>`;
+    document.getElementById(containerId).innerHTML = html;
+  }
+
+  /* ===== タブ切替 ===== */
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      if (btn.dataset.tab === 'A') selectCrAName();
+    });
+  });
+
+  function selectCrAName() {
+    const inp = document.getElementById('crAName');
+    setTimeout(() => { inp.focus(); inp.select(); }, 30);
+  }
+
+  /* ===== 案A ===== */
+  renderAvatarGrid('crAAvatars');
+  document.getElementById('crADoneBtn').addEventListener('click', () => {
+    const name = document.getElementById('crAName').value.trim() || DEFAULT_NAME;
+    document.getElementById('crA').style.display = 'none';
+    document.getElementById('thA').classList.add('active');
+    document.getElementById('thATitle').textContent = name;
+  });
+  document.getElementById('thABack').addEventListener('click', () => {
+    document.getElementById('thA').classList.remove('active');
+    document.getElementById('crA').style.display = 'flex';
+  });
+  selectCrAName();
+
+  /* ===== 案B ===== */
+  renderFacepile('crBFacepile', 6);
+  document.getElementById('crBCreateBtn').addEventListener('click', () => {
+    const name = document.getElementById('crBName').value.trim() || DEFAULT_NAME;
+    document.querySelector('#panel-B .bg-dim').style.display = 'none';
+    document.getElementById('sheetB').style.display = 'none';
+    document.getElementById('thB').classList.add('active');
+    document.getElementById('thBTitle').textContent = name;
+  });
+  document.getElementById('thBBack').addEventListener('click', () => {
+    document.getElementById('thB').classList.remove('active');
+    document.querySelector('#panel-B .bg-dim').style.display = 'flex';
+    document.getElementById('sheetB').style.display = 'block';
+  });
+
+  /* ===== 案C：タイトルのインライン編集 ===== */
+  const thCTitleWrap = document.getElementById('thCTitleWrap');
+  const thCTitleText = document.getElementById('thCTitleText');
+  const thCTitleInput = document.getElementById('thCTitleInput');
+  function openEditC() {
+    thCTitleInput.value = thCTitleText.textContent;
+    thCTitleWrap.classList.add('hidden');
+    thCTitleInput.classList.add('active');
+    thCTitleInput.focus();
+    thCTitleInput.select();
+  }
+  function closeEditC() {
+    thCTitleText.textContent = thCTitleInput.value.trim() || DEFAULT_NAME;
+    thCTitleInput.classList.remove('active');
+    thCTitleWrap.classList.remove('hidden');
+  }
+  thCTitleWrap.addEventListener('click', openEditC);
+  thCTitleInput.addEventListener('blur', closeEditC);
+  thCTitleInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); thCTitleInput.blur(); }
+  });
+</script>
+</body>
+</html>

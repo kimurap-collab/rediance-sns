@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アドレス帳→LINE式配信作成フロー 体験モック</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --primary:#1E3A5F; --primary-bg:#EEF3FB; --bg:#FFFFFF; --surface:#F5F5F5; --border:#E8E8E8;
+    --text-main:#1A1A2E; --text-sub:#555555; --text-light:#999999; --danger:#EF4444;
+    --grad: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+  }
+  body { font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:#ECECEF; padding:26px 0 70px; color:var(--text-main); }
+  h1 { text-align:center; font-size:18px; margin-bottom:4px; }
+  .sub { text-align:center; font-size:12px; color:#666; margin-bottom:22px; max-width:640px; margin-left:auto; margin-right:auto; padding:0 16px; line-height:1.6; }
+
+  /* タブ切替 */
+  .tabs { display:flex; justify-content:center; gap:8px; margin-bottom:8px; flex-wrap:wrap; padding:0 12px; }
+  .tab-btn {
+    font-size:13px; font-weight:700; padding:8px 18px; border-radius:20px; border:1px solid #ddd;
+    background:#fff; color:#555; cursor:pointer;
+  }
+  .tab-btn.active { color:#fff; border-color:transparent; background:var(--grad); }
+
+  .caption {
+    max-width:390px; margin:0 auto 14px; padding:10px 14px; background:#fff; border-radius:10px;
+    font-size:12px; line-height:1.7; color:#444; box-shadow:0 2px 8px rgba(0,0,0,.06);
+  }
+  .caption b { color:var(--text-main); }
+
+  .panel { display:none; }
+  .panel.active { display:block; }
+
+  /* iPhoneフレーム */
+  .frame-wrap { display:flex; justify-content:center; }
+  .frame {
+    width:390px; height:760px; background:#fff; border-radius:44px; border:8px solid #111;
+    overflow:hidden; position:relative; box-shadow:0 14px 34px rgba(0,0,0,.28);
+  }
+  .notch {
+    position:absolute; top:0; left:50%; transform:translateX(-50%); width:130px; height:26px;
+    background:#111; border-radius:0 0 16px 16px; z-index:50;
+  }
+  .screen { height:100%; display:flex; flex-direction:column; padding-top:26px; position:relative; background:#fff; }
+
+  /* フレーム内サブ画面（①⇄選択モードのその場切替用） */
+  .subview { display:none; flex-direction:column; flex:1; min-height:0; position:relative; }
+  .subview.active { display:flex; }
+
+  /* ===== 丸チェックボックス（共通部品） ===== */
+  .rchk-wrap { position:relative; width:22px; height:22px; flex-shrink:0; display:inline-block; }
+  .rchk-input { position:absolute; inset:0; opacity:0; margin:0; cursor:pointer; z-index:2; }
+  .rchk-visual {
+    position:absolute; inset:0; border-radius:50%; border:2px solid #D8D8DD; background:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#fff;
+    pointer-events:none; transition:.15s;
+  }
+  .rchk-input:checked + .rchk-visual { background:var(--grad); border-color:transparent; }
+  .rchk-input:checked + .rchk-visual::after { content:'✓'; }
+  .rchk-input:indeterminate + .rchk-visual { background:#7C3AED; border-color:transparent; }
+  .rchk-input:indeterminate + .rchk-visual::after { content:'−'; }
+
+  .av {
+    width:34px; height:34px; border-radius:50%; background:var(--surface); display:flex; align-items:center;
+    justify-content:center; font-size:17px; flex-shrink:0; border:1px solid var(--border);
+  }
+
+  /* ===== トースト ===== */
+  .toast {
+    position:absolute; left:50%; bottom:70px; transform:translateX(-50%) translateY(10px); opacity:0;
+    background:#1A1A2E; color:#fff; font-size:12px; padding:8px 14px; border-radius:20px;
+    transition:opacity .2s, transform .2s; pointer-events:none; z-index:60; white-space:nowrap;
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ===== タブ1：アドレス帳（普段の姿） ===== */
+  .ab-header { padding:14px 16px 8px; flex-shrink:0; }
+  .ab-title { font-size:18px; font-weight:800; margin-bottom:10px; }
+  .ab-search-input {
+    width:100%; background:var(--surface); border:none; border-radius:10px; padding:9px 12px;
+    font-size:12.5px; color:var(--text-main); outline:none;
+  }
+  .ab-search-input::placeholder { color:#999; }
+  .ab-body { flex:1; overflow-y:auto; }
+  .ab-section-title {
+    font-size:11.5px; font-weight:800; color:var(--text-light); text-transform:uppercase; letter-spacing:.03em;
+    padding:14px 16px 6px;
+  }
+  .ab-tier-row, .ab-group-row {
+    display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--border); cursor:default;
+  }
+  .ab-row-icon { font-size:20px; width:26px; text-align:center; flex-shrink:0; }
+  .ab-row-body { flex:1; min-width:0; }
+  .ab-row-label { font-size:14px; font-weight:700; color:var(--text-main); }
+  .ab-row-count { font-size:12.5px; color:var(--text-light); flex-shrink:0; }
+  .ab-row-chevron { font-size:14px; color:var(--text-light); flex-shrink:0; }
+  .fab-pill {
+    position:absolute; right:18px; bottom:74px; height:48px; border-radius:26px; padding:0 20px 0 16px;
+    background:var(--grad); color:#fff; font-size:14px; font-weight:800; border:none;
+    display:flex; align-items:center; gap:8px; box-shadow:0 8px 18px rgba(124,58,237,.4); cursor:pointer; z-index:20;
+  }
+  .fab-pill .fab-icon { font-size:17px; }
+  .tabbar {
+    height:56px; border-top:1px solid #EEE; display:flex; align-items:center; justify-content:space-around;
+    font-size:19px; flex-shrink:0;
+  }
+
+  /* ===== 選択モード ===== */
+  .sel-header { padding:14px 16px 10px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; border-bottom:1px solid var(--border); }
+  .sel-header-title { font-size:16px; font-weight:800; }
+  .sel-cancel { font-size:14px; font-weight:700; color:#888; background:none; border:none; cursor:pointer; }
+  .sel-list { flex:1; overflow-y:auto; padding-bottom:8px; }
+  .sel-tier-head {
+    display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid var(--border); background:#fff;
+  }
+  .sel-tier-left { display:flex; align-items:center; gap:8px; flex:1; min-width:0; cursor:pointer; }
+  .sel-chevron { font-size:11px; color:var(--text-light); width:12px; flex-shrink:0; }
+  .sel-row-icon { font-size:18px; width:22px; text-align:center; flex-shrink:0; }
+  .sel-tier-label { font-size:14px; font-weight:700; color:var(--text-main); }
+  .sel-tier-count { font-size:11.5px; color:var(--text-light); }
+  .sel-member-list { background:var(--surface); }
+  .sel-member-row {
+    display:flex; align-items:center; gap:10px; padding:9px 16px 9px 40px; border-bottom:1px solid var(--border);
+    cursor:pointer;
+  }
+  .sel-member-name { flex:1; font-size:13px; font-weight:600; color:var(--text-main); }
+  .sel-footer {
+    flex-shrink:0; background:#1A1A2E; color:#fff; padding:12px 16px; display:flex; align-items:center;
+    justify-content:space-between;
+  }
+  .sel-footer-count { font-size:13.5px; font-weight:700; }
+  .sel-next-btn {
+    font-size:13.5px; font-weight:800; color:#fff; background:none; border:none; cursor:pointer;
+  }
+  .sel-next-btn:disabled { opacity:.4; cursor:not-allowed; }
+
+  /* ===== タブ3/4：グループ作成画面（LINE式） ===== */
+  .cr-header { display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--border); flex-shrink:0; }
+  .cr-back { font-size:19px; cursor:pointer; }
+  .cr-header-title { font-size:15.5px; font-weight:800; }
+  .cr-body { flex:1; overflow-y:auto; padding:22px 20px; }
+  .cr-icon-wrap { display:flex; justify-content:center; margin-bottom:22px; }
+  .cr-icon {
+    width:76px; height:76px; border-radius:50%; background:var(--primary-bg); display:flex; align-items:center;
+    justify-content:center; font-size:34px; cursor:pointer; border:1px solid var(--border);
+  }
+  .cr-name-input {
+    width:100%; border:none; border-bottom:1.5px solid var(--border); padding:10px 2px; font-size:15px;
+    font-weight:700; color:var(--text-main); outline:none; text-align:center;
+  }
+  .cr-name-note { font-size:10.5px; color:var(--text-light); text-align:center; margin-top:6px; }
+  .cr-avatars-label { font-size:11.5px; font-weight:800; color:var(--text-light); margin:22px 0 10px; }
+
+  /* LINE準拠：折り返しメンバーグリッド（1行5人・アバター上/名前下） */
+  .cr-avatar-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:14px 4px; }
+  .cr-av-item { display:flex; flex-direction:column; align-items:center; gap:4px; min-width:0; }
+  .cr-av-item .av { width:40px; height:40px; font-size:19px; }
+  .cr-av-name { font-size:10px; color:var(--text-sub); text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; width:100%; }
+  .cr-av-more {
+    width:40px; height:40px; border-radius:50%; background:#E8E8EE; color:var(--text-sub); font-size:11.5px;
+    font-weight:800; display:flex; align-items:center; justify-content:center;
+  }
+
+  .cr-footer { flex-shrink:0; padding:14px 20px 20px; }
+  .cr-create-btn {
+    width:100%; font-size:14px; font-weight:800; color:#fff; border:none; border-radius:12px; padding:13px;
+    background:var(--grad); cursor:pointer;
+  }
+
+  /* 作成後スレッド画面 */
+  .th-screen { display:none; flex-direction:column; height:100%; }
+  .th-screen.active { display:flex; }
+  .th-header { display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--border); flex-shrink:0; }
+  .th-title { font-size:15.5px; font-weight:800; }
+  .th-count { font-size:11.5px; color:var(--text-light); font-weight:700; margin-left:2px; }
+  .th-body { flex:1; display:flex; align-items:center; justify-content:center; background:var(--surface); }
+  .th-body-msg { font-size:12.5px; color:var(--text-light); text-align:center; padding:0 30px; line-height:1.6; }
+  .th-input-bar { display:flex; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid var(--border); flex-shrink:0; }
+  .th-input { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:22px; padding:10px 16px; font-size:13px; color:var(--text-light); }
+  .th-send-btn { background:var(--primary); color:#fff; border:none; border-radius:20px; padding:9px 16px; font-size:13px; font-weight:700; opacity:.35; flex-shrink:0; }
+
+  /* タブ4：追加プレビュー */
+  .mini-preview {
+    max-width:390px; margin:16px auto 0; padding:14px 16px; background:#fff; border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+  }
+  .mini-preview-label { font-size:10.5px; font-weight:800; color:var(--text-light); margin-bottom:8px; }
+  .mini-th-header { font-size:13.5px; font-weight:800; color:var(--text-main); margin-bottom:8px; }
+  .mini-th-count { font-size:11.5px; color:var(--text-light); font-weight:700; }
+  .mini-th-summary { font-size:12px; color:var(--text-sub); font-weight:600; }
+  .mini-th-summary .unread-num { color:var(--danger); font-weight:800; }
+</style>
+</head>
+<body>
+<h1>アドレス帳→LINE式配信作成フロー 体験モック</h1>
+<div class="sub">
+  「アドレス帳から選択ボタンを撤去したら、全員送信はどうやるのか？」を実際にタップで体験するモック。<br>
+  核心：選択モードでは階層見出しに丸チェックがあり、1タップで階層全員が選択される。タブ①のピルFABをタップすると、同じ画面がその場で選択モードに変身する。
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="1">①アドレス帳（普段の姿）</button>
+  <button class="tab-btn" data-tab="2">②選択モード（ここが答え）</button>
+  <button class="tab-btn" data-tab="3">③グループ作成画面（LINE式）</button>
+  <button class="tab-btn" data-tab="4">④100人超の例</button>
+</div>
+
+<!-- ===== タブ1 ===== -->
+<div class="panel active" id="panel-1">
+  <div class="caption">普段は純粋なアドレス帳。配信の入口は右下の<b>「✉️ 新しい配信」ピルFAB</b>だけ。タップすると<b>この画面がその場で選択モードに変身</b>する（本番アプリと同じ体験）。✕で元の姿に戻る。</div>
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+
+        <!-- サブ画面A：普段のアドレス帳 -->
+        <div class="subview active" id="abView">
+          <div class="ab-header">
+            <div class="ab-title">Circle &amp; Groups</div>
+            <input type="text" class="ab-search-input" placeholder="🔍 連絡先を検索">
+          </div>
+          <div class="ab-body">
+            <div class="ab-section-title">Your Circle</div>
+            <div class="ab-tier-row">
+              <span class="ab-row-icon">🔥</span>
+              <div class="ab-row-body"><div class="ab-row-label">Core</div></div>
+              <span class="ab-row-count">2人</span>
+              <span class="ab-row-chevron">›</span>
+            </div>
+            <div class="ab-tier-row">
+              <span class="ab-row-icon">💎</span>
+              <div class="ab-row-body"><div class="ab-row-label">Orbit</div></div>
+              <span class="ab-row-count">5人</span>
+              <span class="ab-row-chevron">›</span>
+            </div>
+            <div class="ab-tier-row">
+              <span class="ab-row-icon">⭐</span>
+              <div class="ab-row-body"><div class="ab-row-label">Halo</div></div>
+              <span class="ab-row-count">33人</span>
+              <span class="ab-row-chevron">›</span>
+            </div>
+            <div class="ab-section-title">Groups</div>
+            <div class="ab-group-row">
+              <span class="ab-row-icon">🍺</span>
+              <div class="ab-row-body"><div class="ab-row-label">酒好き</div></div>
+              <span class="ab-row-count">3人</span>
+              <span class="ab-row-chevron">›</span>
+            </div>
+          </div>
+          <button class="fab-pill" id="fabCompose"><span class="fab-icon">✉️</span>新しい配信</button>
+          <div class="tabbar">🏠🔍➕💬👤</div>
+        </div>
+
+        <!-- サブ画面B：その場で変身した選択モード -->
+        <div class="subview" id="selView1">
+          <div class="sel-header">
+            <span class="sel-header-title">宛先を選択</span>
+            <button class="sel-cancel" data-sel-cancel="inplace">✕</button>
+          </div>
+          <div class="sel-list"></div>
+          <div class="sel-footer">
+            <span class="sel-footer-count sel-count">0人を選択中</span>
+            <button class="sel-next-btn sel-next">次へ →</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== タブ2 ===== -->
+<div class="panel" id="panel-2">
+  <div class="caption"><b>ここが答え：</b>階層見出しの1タップ＝全員送信。LINEの友だち選択に「まとめチェック」を足しただけやから説明不要。<br>※このタブは①のFABで変身した状態を直接見るショートカット。</div>
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="sel-header">
+          <span class="sel-header-title">宛先を選択</span>
+          <button class="sel-cancel" data-sel-cancel="tab">✕</button>
+        </div>
+        <div class="sel-list"></div>
+        <div class="sel-footer">
+          <span class="sel-footer-count sel-count">0人を選択中</span>
+          <button class="sel-next-btn sel-next">次へ →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== タブ3 ===== -->
+<div class="panel" id="panel-3">
+  <div class="caption">LINE/WhatsAppのグループ作成そのまま。メンバーは折り返しグリッドで表示。作成→スレッドで本文を送る。</div>
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <!-- 作成画面 -->
+        <div class="cr-screen" id="cr3">
+          <div class="cr-header">
+            <span class="cr-back" id="cr3Back">←</span>
+            <span class="cr-header-title">新しい配信</span>
+          </div>
+          <div class="cr-body">
+            <div class="cr-icon-wrap"><button class="cr-icon" id="cr3Icon">📢</button></div>
+            <input type="text" class="cr-name-input" id="cr3Name" value="Core＋2 2026/7/13">
+            <div class="cr-name-note">※この名前は相手には伝わりません</div>
+            <div class="cr-avatars-label" id="cr3MembersLabel">メンバー</div>
+            <div class="cr-avatar-grid" id="cr3Avatars"></div>
+          </div>
+          <div class="cr-footer"><button class="cr-create-btn" id="cr3CreateBtn">作成</button></div>
+        </div>
+        <!-- 作成後スレッド -->
+        <div class="th-screen" id="th3">
+          <div class="th-header">
+            <span class="cr-back" id="th3Back">←</span>
+            <span class="th-title" id="th3Title">Core＋2 2026/7/13</span>
+            <span class="th-count" id="th3Count">・7人</span>
+          </div>
+          <div class="th-body"><div class="th-body-msg">ここから最初のメッセージを送ろう</div></div>
+          <div class="th-input-bar">
+            <div class="th-input">メッセージを入力...</div>
+            <div class="th-send-btn">送信</div>
+          </div>
+        </div>
+        <div class="toast" id="toast3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== タブ4 ===== -->
+<div class="panel" id="panel-4">
+  <div class="caption">100人超でも折り返しグリッド＋「+93」タイルで破綻しない（横スワイプなし・グリッド内で完結）。</div>
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="cr-screen">
+          <div class="cr-header">
+            <span class="cr-back">←</span>
+            <span class="cr-header-title">新しい配信</span>
+          </div>
+          <div class="cr-body">
+            <div class="cr-icon-wrap"><div class="cr-icon">📢</div></div>
+            <input type="text" class="cr-name-input" value="Halo＋Galaxy 2026/7/13">
+            <div class="cr-name-note">※この名前は相手には伝わりません</div>
+            <div class="cr-avatars-label">メンバー 108人</div>
+            <div class="cr-avatar-grid" id="cr4Avatars"></div>
+          </div>
+          <div class="cr-footer"><button class="cr-create-btn">作成</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mini-preview">
+    <div class="mini-preview-label">作成後のスレッド見本</div>
+    <div class="mini-th-header">📢 Halo＋Galaxy 2026/7/13<span class="mini-th-count">・108人</span></div>
+    <div class="mini-th-summary">📨 108人に送信・返信 23（<span class="unread-num">未読5</span>）</div>
+  </div>
+</div>
+
+<script>
+  /* ===== データ ===== */
+  const CORE = [
+    { id:'c0', name:'田中 悠', avatar:'🧑' },
+    { id:'c1', name:'鈴木 里奈', avatar:'👩' },
+  ];
+  const ORBIT = [
+    { id:'o0', name:'佐藤 健太', avatar:'🧔' },
+    { id:'o1', name:'伊藤 大輔', avatar:'👨' },
+    { id:'o2', name:'高橋 美咲', avatar:'👱‍♀️' },
+    { id:'o3', name:'小林 亮', avatar:'🧑‍🦱' },
+    { id:'o4', name:'渡辺 彩', avatar:'🙍' },
+  ];
+  const HALO_FAMILY = ['山田','中島','岡田','森','前田','松本','石田','加藤','斎藤','清水','石井','橋本','山口','山本','池田','阿部','藤井','遠藤','青木','福田','三浦','西村','藤田','岡本','後藤','長谷川','村上','近藤','石川','坂本','遠山','小川','谷口'];
+  const HALO_GIVEN = ['彩香','誠','真由','拓也','翔','葵','悠斗','陽菜','蓮','結衣','大和','花子','直樹','由美','智子','海斗','愛','雄一','恵美','隆','由紀','舞','健二','優子','大樹','朋美','和也','千尋','拓海','沙織','康平','麻衣','陸'];
+  const AVATAR_POOL = ['🧑','👩','👨','🧔','👱‍♀️','👱‍♂️','🧓','👴','👵','👩‍🦰','👨‍🦰','🧑‍🦱','🧑‍🦳','👩‍💼','👨‍💼'];
+  const HALO = HALO_FAMILY.map((fam, i) => ({ id:'h'+i, name: fam+' '+HALO_GIVEN[i], avatar: AVATAR_POOL[i % AVATAR_POOL.length] }));
+  const GROUP_SAKE = [
+    { id:'g0', name:'高木 悠真', avatar:'👨' },
+    { id:'g1', name:'岡部 舞子', avatar:'👩' },
+    { id:'g2', name:'新井 隆之', avatar:'🧔' },
+  ];
+  const TIERS = [
+    { key:'core', icon:'🔥', label:'Core', members: CORE },
+    { key:'orbit', icon:'💎', label:'Orbit', members: ORBIT },
+    { key:'halo', icon:'⭐', label:'Halo', members: HALO },
+  ];
+  const ALL_MEMBERS = [...CORE, ...ORBIT, ...HALO, ...GROUP_SAKE];
+
+  /* ===== タブ切替 ===== */
+  const PANEL_ENTER = {
+    '1': () => showAbView(),
+    '2': () => renderSelLists(),
+    '3': () => renderCr3(),
+  };
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      const enter = PANEL_ENTER[btn.dataset.tab];
+      if (enter) enter();
+    });
+  });
+  function goTab(n) { document.querySelector(`.tab-btn[data-tab="${n}"]`).click(); }
+
+  /* ===== タブ1：その場変身（アドレス帳⇄選択モード） ===== */
+  const abView = document.getElementById('abView');
+  const selView1 = document.getElementById('selView1');
+  function showAbView() {
+    selView1.classList.remove('active');
+    abView.classList.add('active');
+  }
+  function enterSelMode() {
+    renderSelLists();
+    abView.classList.remove('active');
+    selView1.classList.add('active');
+  }
+  document.getElementById('fabCompose').addEventListener('click', enterSelMode);
+
+  /* ===== 選択モード（タブ1内サブ画面とタブ2の2箇所に同じ状態を描画） ===== */
+  let selected = new Set([...CORE.map(m => m.id), ...ORBIT.map(m => m.id)]); // 初期：Core+Orbit＝7人
+  let expandedTiers = new Set();
+  const selListEls = Array.from(document.querySelectorAll('.sel-list'));
+
+  function tierRowHTML(tier) {
+    const expanded = expandedTiers.has(tier.key);
+    const memberRows = tier.members.map(m => `
+      <label class="sel-member-row">
+        <span class="av">${m.avatar}</span>
+        <span class="sel-member-name">${m.name}</span>
+        <span class="rchk-wrap">
+          <input type="checkbox" class="rchk-input" data-id="${m.id}" ${selected.has(m.id) ? 'checked' : ''}>
+          <span class="rchk-visual"></span>
+        </span>
+      </label>`).join('');
+    return `
+      <div class="sel-tier-block">
+        <div class="sel-tier-head">
+          <div class="sel-tier-left" data-toggle="${tier.key}">
+            <span class="sel-chevron">${expanded ? '▾' : '▸'}</span>
+            <span class="sel-row-icon">${tier.icon}</span>
+            <span class="sel-tier-label">${tier.label}</span>
+            <span class="sel-tier-count">${tier.members.length}人</span>
+          </div>
+          <span class="rchk-wrap">
+            <input type="checkbox" class="rchk-input" data-tier-chk="${tier.key}">
+            <span class="rchk-visual"></span>
+          </span>
+        </div>
+        <div class="sel-member-list" style="display:${expanded ? 'block' : 'none'}">${memberRows}</div>
+      </div>`;
+  }
+
+  function groupRowHTML() {
+    return `
+      <div class="sel-tier-head">
+        <div class="sel-tier-left">
+          <span class="sel-chevron"></span>
+          <span class="sel-row-icon">🍺</span>
+          <span class="sel-tier-label">酒好き</span>
+          <span class="sel-tier-count">${GROUP_SAKE.length}人</span>
+        </div>
+        <span class="rchk-wrap">
+          <input type="checkbox" class="rchk-input" data-group-chk="sake">
+          <span class="rchk-visual"></span>
+        </span>
+      </div>`;
+  }
+
+  function renderSelLists() {
+    const html = TIERS.map(tierRowHTML).join('') + groupRowHTML();
+    selListEls.forEach(el => { el.innerHTML = html; });
+    updateTierCheckboxes();
+    updateSelFooters();
+  }
+
+  function updateTierCheckboxes() {
+    selListEls.forEach(listEl => {
+      TIERS.forEach(tier => {
+        const ids = tier.members.map(m => m.id);
+        const checkedCount = ids.filter(id => selected.has(id)).length;
+        const chk = listEl.querySelector(`[data-tier-chk="${tier.key}"]`);
+        if (!chk) return;
+        chk.checked = ids.length > 0 && checkedCount === ids.length;
+        chk.indeterminate = checkedCount > 0 && checkedCount < ids.length;
+      });
+      const gIds = GROUP_SAKE.map(m => m.id);
+      const gChecked = gIds.filter(id => selected.has(id)).length;
+      const gChk = listEl.querySelector('[data-group-chk="sake"]');
+      if (gChk) {
+        gChk.checked = gChecked === gIds.length;
+        gChk.indeterminate = gChecked > 0 && gChecked < gIds.length;
+      }
+    });
+  }
+
+  function updateSelFooters() {
+    const n = selected.size;
+    document.querySelectorAll('.sel-count').forEach(el => { el.textContent = `${n}人を選択中`; });
+    document.querySelectorAll('.sel-next').forEach(el => { el.disabled = n === 0; });
+  }
+
+  selListEls.forEach(listEl => {
+    listEl.addEventListener('click', e => {
+      const toggle = e.target.closest('[data-toggle]');
+      if (!toggle) return;
+      const key = toggle.dataset.toggle;
+      if (expandedTiers.has(key)) expandedTiers.delete(key); else expandedTiers.add(key);
+      renderSelLists();
+    });
+    listEl.addEventListener('change', e => {
+      if (e.target.matches('[data-tier-chk]')) {
+        const tier = TIERS.find(t => t.key === e.target.dataset.tierChk);
+        const ids = tier.members.map(m => m.id);
+        if (e.target.checked) ids.forEach(id => selected.add(id));
+        else ids.forEach(id => selected.delete(id));
+        renderSelLists();
+      } else if (e.target.matches('[data-group-chk]')) {
+        const ids = GROUP_SAKE.map(m => m.id);
+        if (e.target.checked) ids.forEach(id => selected.add(id));
+        else ids.forEach(id => selected.delete(id));
+        renderSelLists();
+      } else if (e.target.matches('[data-id]')) {
+        const id = e.target.dataset.id;
+        if (e.target.checked) selected.add(id); else selected.delete(id);
+        renderSelLists();
+      }
+    });
+  });
+
+  // ✕：タブ1内サブ画面はその場でアドレス帳に戻る／タブ2はタブ1（普段の姿）へ
+  document.querySelectorAll('[data-sel-cancel]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.selCancel === 'inplace') showAbView();
+      else goTab(1);
+    });
+  });
+  // 次へ：どちらの選択モードからもタブ3へ
+  document.querySelectorAll('.sel-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (selected.size === 0) return;
+      goTab(3);
+    });
+  });
+
+  /* ===== タブ3：グループ作成画面 ===== */
+  function renderCr3() {
+    document.getElementById('cr3').style.display = 'flex';
+    document.getElementById('cr3').style.flexDirection = 'column';
+    document.getElementById('cr3').style.height = '100%';
+    document.getElementById('th3').classList.remove('active');
+    const members = ALL_MEMBERS.filter(m => selected.has(m.id));
+    document.getElementById('cr3MembersLabel').textContent = `メンバー ${members.length}人`;
+    document.getElementById('cr3Avatars').innerHTML = members.map(m => `
+      <div class="cr-av-item">
+        <span class="av">${m.avatar}</span>
+        <span class="cr-av-name">${m.name}</span>
+      </div>`).join('');
+  }
+
+  function showToast3(msg) {
+    const t = document.getElementById('toast3');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  document.getElementById('cr3Icon').addEventListener('click', () => showToast3('📷 グループ写真を変更（デモでは無効）'));
+  document.getElementById('cr3Back').addEventListener('click', () => goTab(2));
+  document.getElementById('th3Back').addEventListener('click', () => goTab(1));
+  document.getElementById('cr3CreateBtn').addEventListener('click', () => {
+    document.getElementById('cr3').style.display = 'none';
+    document.getElementById('th3').classList.add('active');
+    document.getElementById('th3Title').textContent = document.getElementById('cr3Name').value;
+    document.getElementById('th3Count').textContent = `・${selected.size}人`;
+  });
+
+  /* ===== タブ4：108人版（静的・グリッド3行＝15人＋「+93」タイル） ===== */
+  const CR4_NAMES = ['山田 彩香','中島 誠','岡田 真由','森 拓也','前田 翔','松本 葵','石田 悠斗','加藤 陽菜','斎藤 蓮','清水 結衣','石井 大和','橋本 花子','山口 直樹','山本 由美','池田 智子'];
+  document.getElementById('cr4Avatars').innerHTML =
+    CR4_NAMES.map((name, i) => `
+      <div class="cr-av-item">
+        <span class="av">${AVATAR_POOL[i % AVATAR_POOL.length]}</span>
+        <span class="cr-av-name">${name}</span>
+      </div>`).join('')
+    + `<div class="cr-av-item"><span class="cr-av-more">+93</span><span class="cr-av-name">&nbsp;</span></div>`;
+
+  /* ===== 初期描画 ===== */
+  renderSelLists();
+  renderCr3();
+</script>
+</body>
+</html>
