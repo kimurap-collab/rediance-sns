@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>お知らせフォーマット見本 v2（グローバル）</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #F0F0F0;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif;
+    color: #222;
+    padding: 32px 16px 80px;
+  }
+
+  .page-head {
+    max-width: 390px;
+    margin: 0 auto 40px;
+  }
+
+  .page-head h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .page-head p {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  .variant {
+    max-width: 390px;
+    margin: 0 auto 48px;
+  }
+
+  .variant-label {
+    font-weight: 700;
+    font-size: 15px;
+    text-align: left;
+    margin-bottom: 12px;
+    color: #222;
+  }
+
+  /* ---- スマホ枠 ---- */
+  .phone {
+    width: 390px;
+    max-width: 100%;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: 24px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+    overflow: hidden;
+  }
+
+  /* ---- チャットヘッダー ---- */
+  .chat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid #ECECEC;
+  }
+
+  .chat-header .back-arrow {
+    font-size: 18px;
+    color: #333;
+    width: 18px;
+  }
+
+  .chat-header .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #C9C2AE, #A9A28E);
+    flex-shrink: 0;
+  }
+
+  .chat-header .name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #222;
+  }
+
+  /* ---- チャット本体 ---- */
+  .chat-body {
+    padding: 16px 12px 20px;
+    background: #FBFBFA;
+  }
+
+  .row {
+    display: flex;
+    margin-bottom: 14px;
+  }
+  .row.received { justify-content: flex-start; }
+  .row.sent { justify-content: flex-end; }
+
+  .bubble-wrap {
+    max-width: 78%;
+  }
+  .row.sent .bubble-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .bubble {
+    padding: 10px 14px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .bubble.received {
+    background: #F1F1F3;
+    color: #222;
+    border-radius: 18px;
+    border-top-left-radius: 4px;
+  }
+
+  .bubble.sent {
+    background: #3B82F6;
+    color: #fff;
+    border-radius: 18px;
+    border-top-right-radius: 4px;
+  }
+
+  .timestamp {
+    font-size: 10px;
+    color: #999;
+    margin-top: 4px;
+    padding: 0 2px;
+  }
+
+  /* ---- 日付ディバイダー ---- */
+  .date-divider {
+    text-align: center;
+    font-size: 11px;
+    color: #999;
+    margin: 18px 0;
+  }
+
+  /* ---- お知らせ枠（共通・箱の中身は各案でカスタム） ---- */
+  .oshirase-row {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 4px;
+  }
+
+  .oshirase-wrap {
+    width: 88%;
+  }
+
+  .oshirase-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #8A8A8E;
+    margin-bottom: 10px;
+  }
+
+  .oshirase-body {
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: #333;
+  }
+
+  .oshirase-sender {
+    display: block;
+    text-align: right;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  .oshirase-footer {
+    font-size: 10.5px;
+    color: #999;
+    margin-top: 12px;
+  }
+
+  .oshirase-time {
+    font-size: 10px;
+    color: #999;
+    margin-top: 4px;
+    padding: 0 2px;
+  }
+
+  /* ============================================================
+     案1：トップバー（案Cの進化）
+  ============================================================ */
+  .box-1 {
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .box-1 .bar {
+    height: 3px;
+    background: #0F172A;
+  }
+  .box-1 .box-1-inner {
+    padding: 16px 18px;
+  }
+  .box-1 .oshirase-label {
+    text-align: left;
+  }
+
+  /* ============================================================
+     案2：メガホン
+  ============================================================ */
+  .box-2 {
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .box-2 .oshirase-label {
+    text-align: left;
+  }
+  .box-2 .oshirase-label .emoji {
+    letter-spacing: normal;
+    margin-right: 4px;
+    font-size: 12px;
+  }
+
+  /* ============================================================
+     案3：掲示（案Dの進化）
+  ============================================================ */
+  .box-3 {
+    background: #FAFAF9;
+    border-top: 1px solid #E5E3DD;
+    border-bottom: 1px solid #E5E3DD;
+    border-radius: 0;
+    padding: 16px 18px;
+  }
+  .box-3 .oshirase-label {
+    text-align: center;
+  }
+
+  /* ============================================================
+     案4：バッジ
+  ============================================================ */
+  .box-4 {
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .box-4 .oshirase-label {
+    text-align: left;
+  }
+  .box-4 .oshirase-badge {
+    display: inline-block;
+    background: #F1F1F3;
+    color: #55555A;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+
+  @media (max-width: 420px) {
+    .phone { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="page-head">
+    <h1>お知らせフォーマット見本 v2（グローバル）</h1>
+    <p>海外展開を見据えたグローバル仕様。和の便箋感・明朝体を廃し、Slack/Stripe系のクリーンなカード言語に統一。ラベルは英字「ANNOUNCEMENT」。</p>
+  </div>
+
+  <!-- ============ 案1：トップバー ============ -->
+  <div class="variant">
+    <div class="variant-label">案1「トップバー」</div>
+    <div class="phone">
+      <div class="chat-header">
+        <span class="back-arrow">‹</span>
+        <span class="avatar"></span>
+        <span class="name">誠司</span>
+      </div>
+      <div class="chat-body">
+
+        <div class="row received">
+          <div class="bubble-wrap">
+            <div class="bubble received">この前はありがとう！また飲もな</div>
+            <div class="timestamp">14:22</div>
+          </div>
+        </div>
+
+        <div class="date-divider">7月15日（水）</div>
+
+        <div class="oshirase-row">
+          <div class="oshirase-wrap">
+            <div class="box-1">
+              <div class="bar"></div>
+              <div class="box-1-inner">
+                <div class="oshirase-label">ANNOUNCEMENT</div>
+                <div class="oshirase-body">
+                  いつもありがとうございます。8月1日（土）より、BAR SHUTEN は三宮駅前へ移転します。新店舗は三宮駅より徒歩3分、より広い空間でお待ちしております。今後ともよろしくお願いいたします。
+                  <span class="oshirase-sender">誠司</span>
+                </div>
+                <div class="oshirase-footer">※返信は不要です</div>
+              </div>
+            </div>
+            <div class="oshirase-time">15:03</div>
+          </div>
+        </div>
+
+        <div class="row sent">
+          <div class="bubble-wrap">
+            <div class="bubble sent">了解！楽しみにしてるで</div>
+            <div class="timestamp">15:10</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 案2：メガホン ============ -->
+  <div class="variant">
+    <div class="variant-label">案2「メガホン」</div>
+    <div class="phone">
+      <div class="chat-header">
+        <span class="back-arrow">‹</span>
+        <span class="avatar"></span>
+        <span class="name">誠司</span>
+      </div>
+      <div class="chat-body">
+
+        <div class="row received">
+          <div class="bubble-wrap">
+            <div class="bubble received">この前はありがとう！また飲もな</div>
+            <div class="timestamp">14:22</div>
+          </div>
+        </div>
+
+        <div class="date-divider">7月15日（水）</div>
+
+        <div class="oshirase-row">
+          <div class="oshirase-wrap">
+            <div class="box-2">
+              <div class="oshirase-label"><span class="emoji">📢</span>ANNOUNCEMENT</div>
+              <div class="oshirase-body">
+                いつもありがとうございます。8月1日（土）より、BAR SHUTEN は三宮駅前へ移転します。新店舗は三宮駅より徒歩3分、より広い空間でお待ちしております。今後ともよろしくお願いいたします。
+                <span class="oshirase-sender">誠司</span>
+              </div>
+              <div class="oshirase-footer">※返信は不要です</div>
+            </div>
+            <div class="oshirase-time">15:03</div>
+          </div>
+        </div>
+
+        <div class="row sent">
+          <div class="bubble-wrap">
+            <div class="bubble sent">了解！楽しみにしてるで</div>
+            <div class="timestamp">15:10</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 案3：掲示 ============ -->
+  <div class="variant">
+    <div class="variant-label">案3「掲示」</div>
+    <div class="phone">
+      <div class="chat-header">
+        <span class="back-arrow">‹</span>
+        <span class="avatar"></span>
+        <span class="name">誠司</span>
+      </div>
+      <div class="chat-body">
+
+        <div class="row received">
+          <div class="bubble-wrap">
+            <div class="bubble received">この前はありがとう！また飲もな</div>
+            <div class="timestamp">14:22</div>
+          </div>
+        </div>
+
+        <div class="date-divider">7月15日（水）</div>
+
+        <div class="oshirase-row">
+          <div class="oshirase-wrap">
+            <div class="box-3">
+              <div class="oshirase-label">ANNOUNCEMENT</div>
+              <div class="oshirase-body">
+                いつもありがとうございます。8月1日（土）より、BAR SHUTEN は三宮駅前へ移転します。新店舗は三宮駅より徒歩3分、より広い空間でお待ちしております。今後ともよろしくお願いいたします。
+                <span class="oshirase-sender">誠司</span>
+              </div>
+              <div class="oshirase-footer">※返信は不要です</div>
+            </div>
+            <div class="oshirase-time">15:03</div>
+          </div>
+        </div>
+
+        <div class="row sent">
+          <div class="bubble-wrap">
+            <div class="bubble sent">了解！楽しみにしてるで</div>
+            <div class="timestamp">15:10</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 案4：バッジ ============ -->
+  <div class="variant">
+    <div class="variant-label">案4「バッジ」</div>
+    <div class="phone">
+      <div class="chat-header">
+        <span class="back-arrow">‹</span>
+        <span class="avatar"></span>
+        <span class="name">誠司</span>
+      </div>
+      <div class="chat-body">
+
+        <div class="row received">
+          <div class="bubble-wrap">
+            <div class="bubble received">この前はありがとう！また飲もな</div>
+            <div class="timestamp">14:22</div>
+          </div>
+        </div>
+
+        <div class="date-divider">7月15日（水）</div>
+
+        <div class="oshirase-row">
+          <div class="oshirase-wrap">
+            <div class="box-4">
+              <div class="oshirase-label"><span class="oshirase-badge">ANNOUNCEMENT</span></div>
+              <div class="oshirase-body">
+                いつもありがとうございます。8月1日（土）より、BAR SHUTEN は三宮駅前へ移転します。新店舗は三宮駅より徒歩3分、より広い空間でお待ちしております。今後ともよろしくお願いいたします。
+                <span class="oshirase-sender">誠司</span>
+              </div>
+              <div class="oshirase-footer">※返信は不要です</div>
+            </div>
+            <div class="oshirase-time">15:03</div>
+          </div>
+        </div>
+
+        <div class="row sent">
+          <div class="bubble-wrap">
+            <div class="bubble sent">了解！楽しみにしてるで</div>
+            <div class="timestamp">15:10</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

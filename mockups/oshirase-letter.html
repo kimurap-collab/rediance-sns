@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>お知らせフォーマット見本</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #F0F0F0;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    color: #222;
+    padding: 32px 16px 80px;
+  }
+
+  .page-head {
+    max-width: 390px;
+    margin: 0 auto 40px;
+  }
+
+  .page-head h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .page-head p {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  .variant {
+    max-width: 390px;
+    margin: 0 auto 48px;
+  }
+
+  .variant-label {
+    font-weight: 700;
+    font-size: 15px;
+    text-align: left;
+    margin-bottom: 12px;
+    color: #222;
+  }
+
+  /* ---- スマホ枠 ---- */
+  .phone {
+    width: 390px;
+    max-width: 100%;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: 24px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+    overflow: hidden;
+  }
+
+  /* ---- チャットヘッダー ---- */
+  .chat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid #ECECEC;
+  }
+
+  .chat-header .back-arrow {
+    font-size: 18px;
+    color: #333;
+    width: 18px;
+  }
+
+  .chat-header .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #C9C2AE, #A9A28E);
+    flex-shrink: 0;
+  }
+
+  .chat-header .name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #222;
+  }
+
+  /* ---- チャット本体 ---- */
+  .chat-body {
+    padding: 16px 12px 20px;
+    background: #FBFBFA;
+  }
+
+  .row {
+    display: flex;
+    margin-bottom: 14px;
+  }
+  .row.received { justify-content: flex-start; }
+  .row.sent { justify-content: flex-end; }
+
+  .bubble-wrap {
+    max-width: 78%;
+  }
+  .row.sent .bubble-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .bubble {
+    padding: 10px 14px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .bubble.received {
+    background: #F1F1F3;
+    color: #222;
+    border-radius: 18px;
+    border-top-left-radius: 4px;
+  }
+
+  .bubble.sent {
+    background: #3B82F6;
+    color: #fff;
+    border-radius: 18px;
+    border-top-right-radius: 4px;
+  }
+
+  .timestamp {
+    font-size: 10px;
+    color: #999;
+    margin-top: 4px;
+    padding: 0 2px;
+  }
+
+  /* ---- 日付ディバイダー ---- */
+  .date-divider {
+    text-align: center;
+    font-size: 11px;
+    color: #999;
+    margin: 18px 0;
+  }
+
+  /* ---- お知らせ枠（共通・幅は各案でカスタム） ---- */
+  .oshirase-row {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 4px;
+  }
+
+  .oshirase-wrap {
+    width: 88%;
+  }
+
+  .oshirase-label {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    margin-bottom: 10px;
+  }
+
+  .oshirase-body {
+    font-size: 13.5px;
+    line-height: 1.9;
+  }
+
+  .oshirase-sender {
+    display: block;
+    text-align: right;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  .oshirase-footer {
+    font-size: 10.5px;
+    color: #999;
+    margin-top: 12px;
+  }
+
+  .oshirase-time {
+    font-size: 10px;
+    color: #999;
+    margin-top: 4px;
+    padding: 0 2px;
+  }
+
+  /* ============================================================
+     案A：月光の紙
+  ============================================================ */
+  .box-a {
+    background: linear-gradient(135deg, #E6E2D5, #F4F2EA);
+    border: 1px solid rgba(120,110,85,0.35);
+    border-radius: 14px;
+    padding: 16px 18px;
+    color: #3B3A36;
+  }
+  .box-a .oshirase-body,
+  .box-a .oshirase-sender {
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  }
+  .box-a .oshirase-label {
+    color: #6B6350;
+  }
+  .box-a .oshirase-label .rule {
+    display: inline-block;
+    width: 22px;
+    height: 1px;
+    background: rgba(120,110,85,0.5);
+    vertical-align: middle;
+    margin: 0 8px;
+  }
+
+  /* ============================================================
+     案B：白い便箋
+  ============================================================ */
+  .box-b {
+    background: #FFFFFF;
+    border: 3px double #B8B2A0;
+    border-radius: 4px;
+    padding: 16px 18px;
+    color: #333;
+  }
+  .box-b .oshirase-body,
+  .box-b .oshirase-sender {
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  }
+  .box-b .oshirase-label {
+    color: #8A8271;
+  }
+  .box-b .oshirase-label .rule {
+    display: inline-block;
+    width: 22px;
+    height: 1px;
+    background: #B8B2A0;
+    vertical-align: middle;
+    margin: 0 8px;
+  }
+
+  /* ============================================================
+     案C：封書
+  ============================================================ */
+  .box-c {
+    background: #FFFFFF;
+    border: 1px solid #DDDDDD;
+    border-radius: 14px;
+    overflow: hidden;
+    color: #333;
+  }
+  .box-c .band {
+    height: 4px;
+    background: linear-gradient(90deg, #E6E2D5, #CFC7B0);
+  }
+  .box-c .box-c-inner {
+    padding: 16px 18px;
+  }
+  .box-c .oshirase-label {
+    color: #999;
+  }
+  .box-c .oshirase-label .rule {
+    display: inline-block;
+    width: 22px;
+    height: 1px;
+    background: #DDD;
+    vertical-align: middle;
+    margin: 0 8px;
+  }
+
+  /* ============================================================
+     案D：ミニマル
+  ============================================================ */
+  .box-d {
+    background: #FAFAF8;
+    border-top: 1px solid #E2E0D8;
+    border-bottom: 1px solid #E2E0D8;
+    border-radius: 0;
+    padding: 16px 18px;
+    color: #333;
+  }
+  .box-d .oshirase-label {
+    color: #999;
+  }
+
+  @media (max-width: 420px) {
+    .phone { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="page-head">
+    <h1>お知らせフォーマット見本</h1>
+    <p>DMの流れの中に"手紙"が届く。雰囲気で一斉送信とわかる。</p>
+  </div>
+
+  <!-- ============ 案A：月光の紙 ============ -->
+  <div class="variant">
+    <div class="variant-label">案A「月光の紙」</div>
+    <div class="phone">
+      <div class="chat-header">
+        <span class="back-arrow">‹</span>
+        <span class="avatar"></span>
+        <span class="name">誠司</span>
+      </div>
+      <div class="chat-body">
+
+        <div class="row received">
+          <div class="bubble-wrap">
+            <div class="bubble received">この前はありがとう！また飲もな</div>
+            <div class="timestamp">14:22</div>
+          </div>
+        </div>
+
+        <div class="date-divider">7月15日（水）</div>
+
+        <div class="oshirase-row">
+          <div class="oshirase-wrap">
+            <div class="box-a">
+              <div class="oshirase-label"><span class="rule"></span>お知らせ<span class="rule"></span></div>
+              <div class="oshirase-body">
+                いつもありがとうございます。8月1日（土）より、BAR SHUTEN は三宮駅前へ移転します。新店舗は三宮駅より徒歩3分、より広い空間でお待ちしております。今後ともよろしくお願いいたします。
+                <span class="oshirase-sender">誠司</span>
+              </div>
+              <div class="oshirase-footer">※返信は不要です</div>
+            </div>
+            <div class="oshirase-time">15:03</div>
+          </div>
+        </div>
+
+        <div class="row sent">
+          <div class="bubble-wrap">
+            <div class="bubble sent">了解！楽しみにしてるで</div>
+            <div class="timestamp">15:10</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 案B：白い便箋 ============ -->
+  <div class="variant">
+    <div class="variant-label">案B「白い便箋」</div>
+    <div class="phone">
+      <div class="chat-header">
+        <span class="back-arrow">‹</span>
+        <span class="avatar"></span>
+        <span class="name">誠司</span>
+      </div>
+      <div class="chat-body">
+
+        <div class="row received">
+          <div class="bubble-wrap">
+            <div class="bubble received">この前はありがとう！また飲もな</div>
+            <div class="timestamp">14:22</div>
+          </div>
+        </div>
+
+        <div class="date-divider">7月15日（水）</div>
+
+        <div class="oshirase-row">
+          <div class="oshirase-wrap">
+            <div class="box-b">
+              <div class="oshirase-label"><span class="rule"></span>お知らせ<span class="rule"></span></div>
+              <div class="oshirase-body">
+                いつもありがとうございます。8月1日（土）より、BAR SHUTEN は三宮駅前へ移転します。新店舗は三宮駅より徒歩3分、より広い空間でお待ちしております。今後ともよろしくお願いいたします。
+                <span class="oshirase-sender">誠司</span>
+              </div>
+              <div class="oshirase-footer">※返信は不要です</div>
+            </div>
+            <div class="oshirase-time">15:03</div>
+          </div>
+        </div>
+
+        <div class="row sent">
+          <div class="bubble-wrap">
+            <div class="bubble sent">了解！楽しみにしてるで</div>
+            <div class="timestamp">15:10</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 案C：封書 ============ -->
+  <div class="variant">
+    <div class="variant-label">案C「封書」</div>
+    <div class="phone">
+      <div class="chat-header">
+        <span class="back-arrow">‹</span>
+        <span class="avatar"></span>
+        <span class="name">誠司</span>
+      </div>
+      <div class="chat-body">
+
+        <div class="row received">
+          <div class="bubble-wrap">
+            <div class="bubble received">この前はありがとう！また飲もな</div>
+            <div class="timestamp">14:22</div>
+          </div>
+        </div>
+
+        <div class="date-divider">7月15日（水）</div>
+
+        <div class="oshirase-row">
+          <div class="oshirase-wrap">
+            <div class="box-c">
+              <div class="band"></div>
+              <div class="box-c-inner">
+                <div class="oshirase-label"><span class="rule"></span>✉️ お知らせ<span class="rule"></span></div>
+                <div class="oshirase-body">
+                  いつもありがとうございます。8月1日（土）より、BAR SHUTEN は三宮駅前へ移転します。新店舗は三宮駅より徒歩3分、より広い空間でお待ちしております。今後ともよろしくお願いいたします。
+                  <span class="oshirase-sender">誠司</span>
+                </div>
+                <div class="oshirase-footer">※返信は不要です</div>
+              </div>
+            </div>
+            <div class="oshirase-time">15:03</div>
+          </div>
+        </div>
+
+        <div class="row sent">
+          <div class="bubble-wrap">
+            <div class="bubble sent">了解！楽しみにしてるで</div>
+            <div class="timestamp">15:10</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 案D：ミニマル ============ -->
+  <div class="variant">
+    <div class="variant-label">案D「ミニマル」</div>
+    <div class="phone">
+      <div class="chat-header">
+        <span class="back-arrow">‹</span>
+        <span class="avatar"></span>
+        <span class="name">誠司</span>
+      </div>
+      <div class="chat-body">
+
+        <div class="row received">
+          <div class="bubble-wrap">
+            <div class="bubble received">この前はありがとう！また飲もな</div>
+            <div class="timestamp">14:22</div>
+          </div>
+        </div>
+
+        <div class="date-divider">7月15日（水）</div>
+
+        <div class="oshirase-row">
+          <div class="oshirase-wrap">
+            <div class="box-d">
+              <div class="oshirase-label">お知らせ</div>
+              <div class="oshirase-body">
+                いつもありがとうございます。8月1日（土）より、BAR SHUTEN は三宮駅前へ移転します。新店舗は三宮駅より徒歩3分、より広い空間でお待ちしております。今後ともよろしくお願いいたします。
+                <span class="oshirase-sender">誠司</span>
+              </div>
+              <div class="oshirase-footer">※返信は不要です</div>
+            </div>
+            <div class="oshirase-time">15:03</div>
+          </div>
+        </div>
+
+        <div class="row sent">
+          <div class="bubble-wrap">
+            <div class="bubble sent">了解！楽しみにしてるで</div>
+            <div class="timestamp">15:10</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>お知らせ選択UX見本（ParaDM作成画面）</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #F0F0F0;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif;
+    color: #222;
+    padding: 32px 16px 80px;
+  }
+
+  .page-head {
+    max-width: 390px;
+    margin: 0 auto 24px;
+  }
+
+  .page-head h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .page-head p {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  .scenario-bar {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .scenario-btn {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid #D8D8D8;
+    background: #fff;
+    color: #444;
+    cursor: pointer;
+  }
+
+  .scenario-btn.active {
+    background: #222;
+    border-color: #222;
+    color: #fff;
+  }
+
+  .phone-wrap {
+    max-width: 390px;
+    margin: 0 auto;
+  }
+
+  /* ---- スマホ枠 ---- */
+  .phone {
+    width: 390px;
+    max-width: 100%;
+    height: 780px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: 24px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .screen {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---- ヘッダー ---- */
+  .composer-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid #ECECEC;
+    flex-shrink: 0;
+  }
+
+  .composer-header .back-arrow {
+    font-size: 18px;
+    color: #333;
+    width: 18px;
+  }
+
+  .composer-header .title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #222;
+  }
+
+  /* ---- 宛先行 ---- */
+  .dest-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #ECECEC;
+    flex-shrink: 0;
+  }
+
+  .dest-row .dest-count {
+    font-size: 14px;
+    color: #222;
+  }
+
+  .dest-row .dest-edit {
+    font-size: 13px;
+    color: #3B82F6;
+  }
+
+  /* ---- 件名 ---- */
+  .subject-row {
+    padding: 12px 16px;
+    border-top: 1px solid #ECECEC;
+    border-bottom: 1px solid #ECECEC;
+    flex-shrink: 0;
+  }
+
+  .subject-row input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    font-family: inherit;
+    color: #222;
+    background: transparent;
+  }
+
+  .subject-row input::placeholder {
+    color: #B4B4B8;
+  }
+
+  /* ---- フォーマットチップ ---- */
+  .chip-row {
+    padding: 14px 16px 6px;
+    flex-shrink: 0;
+  }
+
+  .format-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 14px;
+    border: 1px solid #D8D8D8;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #222;
+    background: #fff;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* ---- ナッジ ---- */
+  .nudge {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 8px 16px 0;
+    padding: 10px 12px;
+    background: #FBF7EC;
+    color: #8A6D1B;
+    border-radius: 10px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    flex-shrink: 0;
+  }
+
+  .nudge.show {
+    display: flex;
+  }
+
+  .nudge-text {
+    flex: 1;
+  }
+
+  .nudge-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .nudge-switch {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: #8A6D1B;
+    background: #fff;
+    border: 1px solid #E4D7A8;
+    border-radius: 999px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+
+  .nudge-dismiss {
+    font-family: inherit;
+    font-size: 13px;
+    color: #8A6D1B;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+  }
+
+  /* ---- 本文エリア ---- */
+  .body-area {
+    padding: 16px;
+    flex: 1;
+  }
+
+  .msg-textarea {
+    width: 100%;
+    min-height: 160px;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #222;
+    background: transparent;
+  }
+
+  .msg-textarea::placeholder {
+    color: #B4B4B8;
+  }
+
+  .ann-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+
+  .ann-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #8A8A8E;
+    margin-bottom: 10px;
+  }
+
+  .ann-label .emoji {
+    letter-spacing: normal;
+    margin-right: 4px;
+    font-size: 12px;
+  }
+
+  .ann-textarea {
+    width: 100%;
+    min-height: 120px;
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: #333;
+  }
+
+  .ann-textarea::placeholder {
+    color: #B4B4B8;
+  }
+
+  .ann-footer {
+    font-size: 10.5px;
+    color: #999;
+    margin-top: 12px;
+  }
+
+  /* ---- 注意帯 ---- */
+  .notice-band {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: #F5F5F5;
+    font-size: 12px;
+    color: #666;
+    flex-shrink: 0;
+  }
+
+  .send-bar-spacer {
+    height: 76px;
+    flex-shrink: 0;
+  }
+
+  /* ---- 送信バー ---- */
+  .send-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #fff;
+    border-top: 1px solid #ECECEC;
+    padding: 12px 16px;
+    z-index: 5;
+  }
+
+  .send-btn {
+    width: 100%;
+    background: #3B82F6;
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  /* ---- ボトムシート ---- */
+  .sheet-dim {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 10;
+  }
+
+  .sheet-dim.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #fff;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.12);
+    padding: 8px 16px 24px;
+    transform: translateY(100%);
+    transition: transform 0.25s ease;
+    z-index: 11;
+  }
+
+  .sheet.open {
+    transform: translateY(0);
+  }
+
+  .sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: #D8D8D8;
+    border-radius: 2px;
+    margin: 8px auto 16px;
+  }
+
+  .sheet-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    padding-left: 4px;
+  }
+
+  .sheet-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 4px;
+    cursor: pointer;
+    border-radius: 10px;
+  }
+
+  .opt-emoji {
+    font-size: 22px;
+    width: 26px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .opt-text {
+    flex: 1;
+  }
+
+  .opt-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #222;
+  }
+
+  .opt-desc {
+    font-size: 12px;
+    color: #8A8A8E;
+    margin-top: 2px;
+    line-height: 1.5;
+  }
+
+  .opt-check {
+    font-size: 16px;
+    color: #3B82F6;
+    font-weight: 700;
+    visibility: hidden;
+    flex-shrink: 0;
+  }
+
+  .opt-check.checked {
+    visibility: visible;
+  }
+</style>
+</head>
+<body>
+
+  <div class="page-head">
+    <h1>お知らせ選択UX見本（ParaDM作成画面）</h1>
+    <p>ParaDM作成画面に送信フォーマット選択を追加する見本。「💬 メッセージ」（個別プレーンDM・デフォルト）と「📢 お知らせ」（告知カード・返信不要）をチップから切り替える。</p>
+    <div class="scenario-bar">
+      <button type="button" class="scenario-btn" id="btn8" onclick="initScenario(8)">８人で開く</button>
+      <button type="button" class="scenario-btn" id="btn42" onclick="initScenario(42)">４２人で開く</button>
+    </div>
+  </div>
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+
+        <div class="composer-header">
+          <span class="back-arrow">‹</span>
+          <span class="title">新しいparaDM</span>
+        </div>
+
+        <div class="dest-row">
+          <span class="dest-count" id="destCount">宛先：42人</span>
+          <span class="dest-edit">編集</span>
+        </div>
+
+        <div class="subject-row">
+          <input type="text" id="subjectInput" placeholder="42人にparaDM 26年7月15日">
+        </div>
+
+        <div class="chip-row">
+          <button type="button" class="format-chip" id="formatChip" onclick="openSheet()">💬 メッセージ ▾</button>
+        </div>
+
+        <div class="nudge" id="nudge">
+          <span class="nudge-text">人数が多いで。📢 お知らせ形式にする？</span>
+          <span class="nudge-actions">
+            <button type="button" class="nudge-switch" onclick="nudgeSwitch()">切替</button>
+            <button type="button" class="nudge-dismiss" onclick="nudgeDismiss()">✕</button>
+          </span>
+        </div>
+
+        <div class="body-area" id="bodyArea">
+          <textarea class="msg-textarea" id="msgInput" placeholder="メッセージを入力" rows="6"></textarea>
+          <div class="ann-card" id="annCard" style="display:none;">
+            <div class="ann-label"><span class="emoji">📢</span>ANNOUNCEMENT</div>
+            <textarea class="ann-textarea" id="annInput" placeholder="お知らせ内容を入力"></textarea>
+            <div class="ann-footer">※返信は不要です</div>
+          </div>
+        </div>
+
+        <div class="notice-band">
+          <span>ℹ️</span>
+          <span id="noticeText">相手には個別メッセージとして届きます</span>
+        </div>
+
+        <div class="send-bar-spacer"></div>
+      </div>
+
+      <div class="send-bar">
+        <button type="button" class="send-btn">送信</button>
+      </div>
+
+      <div class="sheet-dim" id="sheetDim" onclick="closeSheet()"></div>
+      <div class="sheet" id="sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">送信フォーマット</div>
+        <div class="sheet-option" onclick="selectFormat('message')">
+          <span class="opt-emoji">💬</span>
+          <div class="opt-text">
+            <div class="opt-title">メッセージ</div>
+            <div class="opt-desc">1人ずつ、個別のメッセージとして届きます</div>
+          </div>
+          <span class="opt-check" id="checkMessage">✓</span>
+        </div>
+        <div class="sheet-option" onclick="selectFormat('announcement')">
+          <span class="opt-emoji">📢</span>
+          <div class="opt-text">
+            <div class="opt-title">お知らせ</div>
+            <div class="opt-desc">全員に同じ告知カードが届きます。返信を求めない形式です</div>
+          </div>
+          <span class="opt-check" id="checkAnnouncement">✓</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  var peopleCount = 42;
+  var format = 'message';
+  var nudgeDismissed = false;
+
+  function initScenario(n) {
+    peopleCount = n;
+    format = 'message';
+    nudgeDismissed = false;
+    document.getElementById('msgInput').value = '';
+    document.getElementById('annInput').value = '';
+    document.getElementById('subjectInput').value = '';
+    closeSheet();
+    document.getElementById('btn8').classList.toggle('active', n === 8);
+    document.getElementById('btn42').classList.toggle('active', n === 42);
+    render();
+  }
+
+  function setFormat(newFormat) {
+    if (newFormat !== format) {
+      var msgInput = document.getElementById('msgInput');
+      var annInput = document.getElementById('annInput');
+      if (newFormat === 'announcement') {
+        annInput.value = msgInput.value;
+      } else {
+        msgInput.value = annInput.value;
+      }
+      format = newFormat;
+    }
+    nudgeDismissed = true;
+    render();
+  }
+
+  function selectFormat(f) {
+    setFormat(f);
+    closeSheet();
+  }
+
+  function nudgeSwitch() {
+    setFormat('announcement');
+  }
+
+  function nudgeDismiss() {
+    nudgeDismissed = true;
+    render();
+  }
+
+  function openSheet() {
+    document.getElementById('sheetDim').classList.add('open');
+    document.getElementById('sheet').classList.add('open');
+  }
+
+  function closeSheet() {
+    document.getElementById('sheetDim').classList.remove('open');
+    document.getElementById('sheet').classList.remove('open');
+  }
+
+  function render() {
+    document.getElementById('destCount').textContent = '宛先：' + peopleCount + '人';
+    document.getElementById('subjectInput').placeholder = peopleCount + '人にparaDM 26年7月15日';
+
+    document.getElementById('formatChip').textContent = format === 'announcement' ? '📢 お知らせ ▾' : '💬 メッセージ ▾';
+
+    var isAnnouncement = format === 'announcement';
+    document.getElementById('msgInput').style.display = isAnnouncement ? 'none' : 'block';
+    document.getElementById('annCard').style.display = isAnnouncement ? 'block' : 'none';
+
+    document.getElementById('noticeText').textContent = isAnnouncement
+      ? '全員に同じ告知カードが届きます。返信を求めない形式です'
+      : '相手には個別メッセージとして届きます';
+
+    document.getElementById('checkMessage').classList.toggle('checked', format === 'message');
+    document.getElementById('checkAnnouncement').classList.toggle('checked', format === 'announcement');
+
+    var showNudge = peopleCount === 42 && !nudgeDismissed;
+    document.getElementById('nudge').classList.toggle('show', showNudge);
+  }
+
+  initScenario(42);
+</script>
+
+</body>
+</html>
