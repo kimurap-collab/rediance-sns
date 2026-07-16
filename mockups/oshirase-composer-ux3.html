@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Announcement選択UX見本 v3（ワンタップ切替・背景色版）</title>
+<style>
+  /* ===== 実物app.htmlから抜き出したトークン ===== */
+  :root {
+    --primary: #1E3A5F;
+    --primary-light: #2E5EAA;
+    --primary-dark: #0F2040;
+    --primary-bg: #EEF3FB;
+    --primary-bg-light: #F5F8FE;
+    --bg: #FFFFFF;
+    --surface: #F5F5F5;
+    --border: #E8E8E8;
+    --text-main: #000000;
+    --text-sub: #555555;
+    --text-light: #999999;
+
+    /* Announcementモード背景色（暖色トーン=デフォルト）
+       ピル行の下端〜スマホ枠下端（メッセージエリア＋入力バー）を同一色で塗る */
+    --ann-msg-bg: #FBF6EA;
+    --ann-pill-text: #8A6D1B;
+    --ann-pill-bg: #FBF6EA;
+    --ann-pill-border: #E5D9B8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    letter-spacing: -0.14px;
+    font-feature-settings: "kern" 1;
+    background: #F0F0F0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 18px 12px 32px;
+  }
+
+  /* ===== ページ上部（見本用UI） ===== */
+  .page-head { width: 100%; max-width: 430px; margin-bottom: 14px; }
+  .page-title { font-size: 15px; font-weight: 800; color: #333; text-align: center; margin-bottom: 12px; }
+  .scenario-row { display: flex; gap: 10px; justify-content: center; }
+  .tone-row { display: flex; gap: 10px; justify-content: center; margin-top: 8px; }
+  .scenario-btn {
+    font-size: 13px; font-weight: 700; color: var(--text-sub);
+    background: #fff; border: 1px solid #dcdcdc; border-radius: 50px;
+    padding: 8px 18px; cursor: pointer; transition: all .15s;
+  }
+  .scenario-btn.active { color: #fff; background: var(--primary); border-color: var(--primary); }
+
+  /* ===== 実物phone枠 ===== */
+  .phone {
+    width: 100%;
+    max-width: 430px;
+    height: 812px;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 40px rgba(0,0,0,0.15);
+    border-radius: 6px;
+  }
+
+  /* ===== 寒色トーン（Announcementモード時のみ使う変数を上書き） ===== */
+  .phone.tone-cool {
+    --ann-msg-bg: #F3F5FB;
+    --ann-pill-text: #3B5998;
+    --ann-pill-bg: #F3F5FB;
+    --ann-pill-border: #D6DEF3;
+  }
+
+  /* ===== ヘッダー（実物 .chat-header） ===== */
+  .chat-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .chat-back { background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px; color: var(--text-main); }
+  .chat-header-name { font-size: 15px; font-weight: 700; }
+
+  /* ===== 宛先行（実物 .dm-broadcast-dest） ===== */
+  .dm-broadcast-dest {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .dm-broadcast-dest-label { font-size: 12px; color: var(--text-light); font-weight: 700; flex-shrink: 0; }
+  .dm-broadcast-dest-chips { display: flex; gap: 6px; overflow-x: auto; flex: 1; }
+  .dm-broadcast-dest-chips::-webkit-scrollbar { display: none; }
+  .dm-dest-chip {
+    display: flex; align-items: center; gap: 4px; background: var(--surface); border-radius: 16px;
+    padding: 4px 10px 4px 4px; font-size: 12px; font-weight: 600; color: var(--text-main); flex-shrink: 0; white-space: nowrap;
+  }
+  .dm-dest-chip-av {
+    width: 22px; height: 22px; border-radius: 50%; background: var(--bg); display: flex; align-items: center;
+    justify-content: center; font-size: 12px; flex-shrink: 0;
+  }
+
+  /* ===== 件名（配信名）行（実物 .dm-broadcast-name-row） ===== */
+  .dm-broadcast-name-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .dm-broadcast-name-label { font-size: 12px; color: var(--text-light); font-weight: 700; flex-shrink: 0; }
+  .dm-broadcast-name-input {
+    flex: 1; border: none; background: none; font-size: 14px; font-weight: 600; color: var(--text-main); outline: none; min-width: 0;
+  }
+
+  /* ===== フォーマットピル（ワンタップ切替・下シート無し） ===== */
+  .fmt-chip-row { padding: 10px 16px 0; flex-shrink: 0; }
+  .fmt-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid var(--border); background: var(--bg);
+    border-radius: 50px; padding: 6px 12px;
+    font-size: 12.5px; font-weight: 700; color: var(--text-main);
+    cursor: pointer; transition: background-color .15s, border-color .15s, color .15s;
+  }
+  .phone.mode-ann .fmt-chip {
+    color: var(--ann-pill-text);
+    background: var(--ann-pill-bg);
+    border-color: var(--ann-pill-border);
+  }
+
+  /* ===== 文章ナッジ（宛先20人以上で一度だけ） ===== */
+  .nudge {
+    display: flex; align-items: center; gap: 8px;
+    margin: 10px 16px 0; padding: 9px 12px;
+    background: var(--primary-bg); border: 1px solid #DCE6F6; border-radius: 10px;
+    font-size: 12px; color: var(--primary-dark); flex-shrink: 0;
+  }
+  .nudge-text { flex: 1; line-height: 1.5; }
+  .nudge-switch {
+    flex-shrink: 0; border: none; background: var(--primary); color: #fff;
+    font-size: 11.5px; font-weight: 700; border-radius: 50px; padding: 5px 12px; cursor: pointer;
+  }
+  .nudge-close {
+    flex-shrink: 0; border: none; background: none; color: var(--primary-light);
+    font-size: 15px; cursor: pointer; padding: 2px 4px; line-height: 1;
+  }
+
+  /* ===== メッセージエリア（実物 .chat-messages） ===== */
+  .chat-messages {
+    flex: 1; overflow-y: auto; overflow-x: hidden; padding: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+    background-color: var(--bg);
+    border-top: 1px solid transparent; /* ピル行下端の境界ヘアライン（Announcementモード時のみ着色） */
+    transition: background-color .25s ease, border-top-color .25s ease;
+  }
+  .phone.mode-ann .chat-messages {
+    background-color: var(--ann-msg-bg);
+    border-top-color: var(--border);
+  }
+  /* 注意文（実物 .dm-broadcast-note：メッセージエリア内・中央） */
+  .dm-broadcast-note { text-align: center; color: var(--text-light); font-size: 12px; padding: 10px 0; }
+
+  /* ===== 送信済みparaDMバブル ===== */
+  .msg-bubble {
+    align-self: flex-end;
+    max-width: 78%;
+    background: #3B82F6;
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* ===== 送信済みANNOUNCEMENTカード ===== */
+  .ann-card {
+    align-self: flex-end;
+    width: 88%;
+    background: #fff; border-radius: 14px; border: 1px solid #E5E5E5;
+    padding: 14px 16px 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    display: flex; flex-direction: column;
+  }
+  .ann-label {
+    font-size: 10px; letter-spacing: 0.25em; color: #8A8A8E;
+    font-weight: 700; margin-bottom: 12px;
+  }
+  .ann-label .ann-emoji { letter-spacing: normal; }
+  .ann-card-text {
+    font-size: 14px; line-height: 1.6; color: var(--text-main);
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .ann-noreply { font-size: 11px; color: #B0B0B4; margin-top: 12px; }
+
+  /* ===== 入力バー（実物 .chat-input-bar / .chat-input / .chat-send-btn） ===== */
+  .chat-input-bar {
+    display: flex;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    background-color: var(--bg);
+    transition: background-color .25s ease;
+  }
+  .phone.mode-ann .chat-input-bar { background-color: var(--ann-msg-bg); }
+  .chat-input-wrap { position: relative; flex: 1; display: flex; align-items: center; }
+  .chat-input {
+    width: 100%;
+    padding: 10px 44px 10px 16px;
+    border: none;
+    background-color: #F0F0F0;
+    border-radius: 22px;
+    font-size: 14px;
+    outline: none;
+    font-family: inherit;
+    transition: background-color .25s ease;
+  }
+  .phone.mode-ann .chat-input { background-color: #FFFFFF; }
+  .chat-send-btn {
+    position: absolute;
+    right: 4px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+    border: none;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: .35;
+    transition: opacity .15s;
+  }
+  .chat-input:not(:placeholder-shown) + .chat-send-btn { opacity: 1; }
+</style>
+</head>
+<body>
+  <div class="page-head">
+    <div class="page-title">Announcement選択UX見本 v3（ワンタップ切替・背景色版）</div>
+    <div class="scenario-row">
+      <button class="scenario-btn" id="scn8" onclick="openScenario(8)">８人で開く</button>
+      <button class="scenario-btn active" id="scn42" onclick="openScenario(42)">４２人で開く</button>
+    </div>
+    <div class="tone-row">
+      <button class="scenario-btn active" id="toneWarmBtn" onclick="setTone('warm')">暖色トーン</button>
+      <button class="scenario-btn" id="toneCoolBtn" onclick="setTone('cool')">寒色トーン</button>
+    </div>
+  </div>
+
+  <div class="phone" id="phone">
+    <!-- ヘッダー -->
+    <div class="chat-header">
+      <button class="chat-back" aria-label="戻る">&#8592;</button>
+      <div class="chat-header-name">新規メッセージ</div>
+    </div>
+
+    <!-- 宛先 -->
+    <div class="dm-broadcast-dest">
+      <span class="dm-broadcast-dest-label">宛先:</span>
+      <div class="dm-broadcast-dest-chips" id="destChips"></div>
+    </div>
+
+    <!-- 件名（配信名）：実物同様、デフォルト値をinput.valueとして黒太字表示 -->
+    <div class="dm-broadcast-name-row">
+      <span class="dm-broadcast-name-label">配信名:</span>
+      <input type="text" class="dm-broadcast-name-input" id="nameInput" placeholder="配信名">
+    </div>
+
+    <!-- フォーマットピル（タップで即切替） -->
+    <div class="fmt-chip-row">
+      <button class="fmt-chip" id="fmtChip" onclick="toggleFormat()">
+        <span id="fmtChipLabel">💬 paraDM</span>
+      </button>
+    </div>
+
+    <!-- ナッジ -->
+    <div class="nudge" id="nudge" style="display:none;">
+      <span class="nudge-text">宛先が多いようです。📢 Announcementで送りますか？</span>
+      <button class="nudge-switch" onclick="nudgeSwitch()">切替</button>
+      <button class="nudge-close" onclick="nudgeClose()" aria-label="閉じる">&#10005;</button>
+    </div>
+
+    <!-- メッセージエリア（実物：注意文はこの中に中央表示） -->
+    <div class="chat-messages" id="chatMessages">
+      <div class="dm-broadcast-note" id="note">✉️ それぞれに個別のメッセージとして届きます</div>
+    </div>
+
+    <!-- 入力バー（実物と同じ文法：丸ピルinput＋円形グラデ送信ボタン） -->
+    <div class="chat-input-bar">
+      <div class="chat-input-wrap">
+        <input class="chat-input" placeholder="メッセージを入力..." id="chatInput">
+        <button class="chat-send-btn" aria-label="送信" onclick="sendMessage()">&#8593;</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ===== 状態 =====
+  var state = {
+    count: 42,
+    format: 'paradm',      // 'paradm' | 'announcement'
+    nudgeDismissed: false, // このセッションで一度でも切替/✕したらtrue（再表示しない）
+    tone: 'warm',          // 'warm' | 'cool'（見本用：Announcement背景トーン比較）
+  };
+
+  var AVATARS = ['🧑','👩','🧔','👨','🙍','👱','🧓','👩‍🦰'];
+  var NOTE_PARADM = '✉️ それぞれに個別のメッセージとして届きます';
+  var NOTE_ANN = '全員に同じ告知カードが届きます。返信を求めない形式です';
+
+  // 実物 nmDefaultBroadcastName() と同じロジック：「◯人にparaDM YY年M月D日」
+  function defaultBroadcastName(count) {
+    var now = new Date();
+    var yy = String(now.getFullYear()).slice(-2);
+    var dateStr = yy + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日';
+    return count + '人にparaDM ' + dateStr;
+  }
+
+  function renderDestChips(count) {
+    var el = document.getElementById('destChips');
+    var html = '';
+    for (var i = 0; i < count; i++) {
+      var av = AVATARS[i % AVATARS.length];
+      html += '<span class="dm-dest-chip"><span class="dm-dest-chip-av">' + av + '</span>メンバー' + (i + 1) + '</span>';
+    }
+    el.innerHTML = html;
+    el.scrollLeft = 0;
+  }
+
+  function applyFormat() {
+    var isAnn = state.format === 'announcement';
+    document.getElementById('fmtChipLabel').textContent = isAnn ? '📢 Announcement' : '💬 paraDM';
+    document.getElementById('note').textContent = isAnn ? NOTE_ANN : NOTE_PARADM;
+    document.getElementById('phone').classList.toggle('mode-ann', isAnn);
+  }
+
+  function updateNudge() {
+    // 宛先20人以上 かつ 未dismiss かつ paraDMモードのときだけ表示
+    var show = state.count >= 20 && !state.nudgeDismissed && state.format === 'paradm';
+    document.getElementById('nudge').style.display = show ? 'flex' : 'none';
+  }
+
+  // ===== フォーマット：ワンタップで直接切替 =====
+  function toggleFormat() {
+    state.format = state.format === 'paradm' ? 'announcement' : 'paradm';
+    applyFormat();
+    updateNudge();
+  }
+
+  // ===== 送信：モードに応じてメッセージエリアにカード/バブルを追加 =====
+  function sendMessage() {
+    var input = document.getElementById('chatInput');
+    var text = input.value.trim();
+    if (!text) return;
+
+    var messages = document.getElementById('chatMessages');
+
+    if (state.format === 'announcement') {
+      var card = document.createElement('div');
+      card.className = 'ann-card';
+
+      var label = document.createElement('div');
+      label.className = 'ann-label';
+      label.innerHTML = '<span class="ann-emoji">📢</span> ANNOUNCEMENT';
+
+      var body = document.createElement('div');
+      body.className = 'ann-card-text';
+      body.textContent = text;
+
+      var noreply = document.createElement('div');
+      noreply.className = 'ann-noreply';
+      noreply.textContent = '返信は求めていない形式ですが返信可能です';
+
+      card.appendChild(label);
+      card.appendChild(body);
+      card.appendChild(noreply);
+      messages.appendChild(card);
+    } else {
+      var bubble = document.createElement('div');
+      bubble.className = 'msg-bubble';
+      bubble.textContent = text;
+      messages.appendChild(bubble);
+    }
+
+    input.value = '';
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  // ===== ナッジ操作 =====
+  function nudgeSwitch() {
+    state.nudgeDismissed = true;
+    toggleFormat(); // ワンタップ切替と同じ関数を呼ぶだけ
+  }
+  function nudgeClose() {
+    state.nudgeDismissed = true;
+    updateNudge();
+  }
+
+  // ===== 背景トーン比較（見本用） =====
+  function setTone(tone) {
+    state.tone = tone;
+    document.getElementById('phone').classList.toggle('tone-cool', tone === 'cool');
+    document.getElementById('toneWarmBtn').classList.toggle('active', tone === 'warm');
+    document.getElementById('toneCoolBtn').classList.toggle('active', tone === 'cool');
+  }
+
+  // ===== シナリオ切替（作成画面をリセットして開き直す） =====
+  function openScenario(count) {
+    state.count = count;
+    state.format = 'paradm';
+    state.nudgeDismissed = false;
+    document.getElementById('chatInput').value = '';
+    // 実物openDmBroadcast()と同じ：デフォルト配信名をinput.valueにセット（黒太字の実値表示）
+    document.getElementById('nameInput').value = defaultBroadcastName(count);
+    renderDestChips(count);
+    document.getElementById('chatMessages').innerHTML = '<div class="dm-broadcast-note" id="note">' + NOTE_PARADM + '</div>';
+    applyFormat();
+    updateNudge();
+    document.getElementById('scn8').classList.toggle('active', count === 8);
+    document.getElementById('scn42').classList.toggle('active', count === 42);
+  }
+
+  // 初期表示 = 42人で開いた状態・暖色トーン
+  openScenario(42);
+  setTone('warm');
+</script>
+</body>
+</html>

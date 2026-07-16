@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Announcement選択UX見本 v4（本物のParaDMトークルーム忠実再現版）</title>
+<style>
+  /*
+    ===== 実物app.htmlからの抜き出し元 =====
+    ・ステータスバー/ヘッダー/フッターのグラデ … .status-bar / .header / .tab-bar (app.html:87-96, 208-219)
+    ・トークルーム本体（screen-group-thread） … app.html:9047-9066
+      .group-thread-header/.group-thread-back-btn/.group-thread-title-area/.group-thread-name/.group-thread-menu-btn (app.html:7205-7248)
+      .group-thread-promo-banner「⭐このメンバーでグループを作る」 (app.html:7254-7266, 9058)
+      .group-thread-bcc-note「📢ParaDM｜...」 (app.html:7267-7277, 9059)
+      .group-thread-body / .group-thread-empty(-row/-avatar) (app.html:7249-7253, 7519-7540)
+      ウェルカム文言 (app.html:16506-16515 renderGroupThread())
+      .group-thread-input-bar/.group-thread-input/.group-thread-send-btn (app.html:7479-7517)
+    ・送信済みparaDMバブル = 実物と同じ .chat-bubble.mine (var(--primary)紺・白文字・角丸16/右下4) (app.html:1277-1289, 16548)
+    ・ヘッダー名「◯人にparaDM YY年M月D日（◯）」 = nmDefaultBroadcastName() + groupThreadHeaderName() (app.html:14723-14729, 16442-16444)
+    ・アバターの数字 = renderGroupAvatar()のgroup.name先頭文字 (app.html:16096-16104)
+    ・フッタータブアイコンSVG = app.html:9653-9671 からそのまま転記
+    v1〜v3は「JSで無理やり呼んだ作成画面（screen-broadcast-create）」ベースだったため別物。
+    v4は実際に使うトークルーム画面（screen-group-thread）を忠実再現した上にAnnouncement機能を乗せる。
+  */
+  :root {
+    --primary: #1E3A5F;
+    --primary-bg: #EEF3FB;
+    --bg: #FFFFFF;
+    --surface: #F5F5F5;
+    --border: #E8E8E8;
+    --text-main: #000000;
+    --text-sub: #555555;
+    --text-light: #999999;
+
+    /* Announcementモード塗り色（暖色=デフォルト）。境界線ははっきり見える明度差を確保 */
+    --ann-bg: #FBF6EA;
+    --ann-border: #D9D2BE;
+    --ann-pill-text: #8A6D1B;
+    --ann-pill-border: #E3D6B0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    letter-spacing: -0.14px;
+    font-feature-settings: "kern" 1;
+    background: #F0F0F0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 18px 12px 32px;
+    overflow-x: hidden;
+  }
+
+  /* ===== ページ上部（見本用UI・実物には存在しない） ===== */
+  .page-head { width: 100%; max-width: 430px; margin-bottom: 14px; }
+  .page-title { font-size: 14px; font-weight: 800; color: #333; text-align: center; margin-bottom: 12px; line-height: 1.5; }
+  .scenario-row, .tone-row { display: flex; gap: 10px; justify-content: center; }
+  .tone-row { margin-top: 8px; }
+  .scenario-btn {
+    font-size: 13px; font-weight: 700; color: var(--text-sub);
+    background: #fff; border: 1px solid #dcdcdc; border-radius: 50px;
+    padding: 8px 18px; cursor: pointer; transition: all .15s;
+  }
+  .scenario-btn.active { color: #fff; background: var(--primary); border-color: var(--primary); }
+
+  /* ===== 実物 .phone 枠 ===== */
+  .phone {
+    width: 100%;
+    max-width: 430px;
+    height: 860px;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 40px rgba(0,0,0,0.15);
+    border-radius: 6px;
+  }
+  .phone.tone-cool {
+    --ann-bg: #F3F5FB;
+    --ann-border: #C7D2EA;
+    --ann-pill-text: #3B5998;
+    --ann-pill-border: #CBD8F0;
+  }
+
+  /* ===== ステータスバー（実物 .status-bar：app.html:87-108） ===== */
+  .status-bar {
+    height: 44px;
+    background: linear-gradient(135deg, #020408 0%, #1E3A5F 35%, #7C3AED 70%, #EC4899 100%);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; flex-shrink: 0;
+  }
+  .status-time { font-size: 15px; font-weight: 700; color: #fff; }
+  .status-icons { display: flex; gap: 6px; align-items: center; font-size: 13px; color: #fff; }
+
+  /* ===== トークルームヘッダー（実物 .group-thread-header：app.html:7205-7248） ===== */
+  .group-thread-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    background: var(--bg); flex-shrink: 0;
+  }
+  .group-thread-back-btn { background: none; border: none; font-size: 22px; cursor: pointer; padding: 4px 8px 4px 0; color: var(--text-main); line-height: 1; }
+  .group-thread-title-area { display: flex; align-items: center; gap: 8px; flex: 1; cursor: pointer; min-width: 0; }
+  .group-thread-avatar-wrap { display: flex; align-items: center; flex-shrink: 0; }
+  .group-thread-name { font-size: 16px; font-weight: 700; color: var(--text-main); letter-spacing: -0.2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .group-thread-menu-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-sub); padding: 4px; flex-shrink: 0; }
+
+  /* ===== 2つの帯（実物 app.html:7254-7277, 9058-9059） ===== */
+  .group-thread-promo-banner {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px; background: var(--primary-bg); color: var(--primary);
+    font-size: 11.5px; font-weight: 700; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .group-thread-bcc-note {
+    display: flex; align-items: center; height: 28px;
+    font-size: 11px; color: var(--text-light); background: var(--surface);
+    border-bottom: 1px solid var(--border); flex-shrink: 0; text-align: left; padding: 0 12px;
+    white-space: nowrap; overflow: hidden;
+  }
+
+  /* ===== メッセージエリア（実物 .group-thread-body：app.html:7249-7253） ===== */
+  .group-thread-body {
+    flex: 1; overflow-y: auto; padding: 12px 0 16px;
+    border-top: 1px solid transparent; /* Announcementモード時のみ着色して境界線になる */
+    transition: background-color .25s ease, border-top-color .25s ease;
+  }
+  .phone.mode-ann .group-thread-body { background-color: var(--ann-bg); border-top-color: var(--ann-border); }
+
+  /* ウェルカム空状態（実物 .group-thread-empty*：app.html:7519-7540, 16506-16515） */
+  .group-thread-empty { display: flex; flex-direction: column; padding: 20px 16px 8px; gap: 10px; }
+  .group-thread-empty-row { display: flex; align-items: flex-end; gap: 8px; }
+  .group-thread-empty-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+
+  /* 実物 .chat-bubble / .chat-bubble.theirs / .chat-bubble.mine（app.html:1277-1296） */
+  .chat-bubble { max-width: 75%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
+  .chat-bubble.theirs { align-self: flex-start; background: var(--surface); color: var(--text-main); border-bottom-left-radius: 4px; border: 1px solid var(--border); }
+  .chat-bubble.mine { align-self: flex-end; background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
+
+  /* 送信済み行の右寄せラッパー（実物 .group-thread-bubble-row：app.html:7375-7381） */
+  .group-thread-bubble-row { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; margin: 0 14px 12px; }
+
+  /* 送信済みANNOUNCEMENTカード（新要素・v3から踏襲） */
+  .ann-card { width: 88%; background: #fff; border-radius: 14px; border: 1px solid #E5E5E5; padding: 14px 16px 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); display: flex; flex-direction: column; }
+  .ann-label { font-size: 10px; letter-spacing: 0.25em; color: #8A8A8E; font-weight: 700; margin-bottom: 12px; }
+  .ann-label .ann-emoji { letter-spacing: normal; }
+  .ann-card-text { font-size: 14px; line-height: 1.6; color: var(--text-main); white-space: pre-wrap; word-break: break-word; }
+  .ann-noreply { font-size: 11px; color: #B0B0B4; margin-top: 12px; }
+
+  /* ===== ナッジ（新要素：ピル行の上に一度だけ） ===== */
+  .nudge {
+    display: none; align-items: center; gap: 8px;
+    margin: 0 16px 10px; padding: 9px 12px;
+    background: var(--primary-bg); border: 1px solid #DCE6F6; border-radius: 10px;
+    font-size: 12px; color: var(--primary); flex-shrink: 0;
+    transition: background-color .25s ease, border-color .25s ease;
+  }
+  .nudge.show { display: flex; }
+  .phone.mode-ann .nudge { background-color: var(--ann-bg); border-color: var(--ann-border); }
+  .nudge-text { flex: 1; line-height: 1.5; }
+  .nudge-switch { flex-shrink: 0; border: none; background: var(--primary); color: #fff; font-size: 11.5px; font-weight: 700; border-radius: 50px; padding: 5px 12px; cursor: pointer; }
+  .nudge-close { flex-shrink: 0; border: none; background: none; color: var(--primary); opacity: .6; font-size: 15px; cursor: pointer; padding: 2px 4px; line-height: 1; }
+
+  /* ===== フォーマット切替ピル（新要素・入力バーのすぐ上） ===== */
+  .fmt-chip-row {
+    padding: 0 16px 8px; flex-shrink: 0;
+    background-color: transparent;
+    transition: background-color .25s ease;
+  }
+  .phone.mode-ann .fmt-chip-row { background-color: var(--ann-bg); }
+  .fmt-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid var(--border); background: var(--bg);
+    border-radius: 50px; padding: 6px 12px;
+    font-size: 12.5px; font-weight: 700; color: var(--text-main);
+    cursor: pointer; transition: background-color .15s, border-color .15s, color .15s;
+  }
+  .phone.mode-ann .fmt-chip { color: var(--ann-pill-text); background: #fff; border-color: var(--ann-pill-border); }
+
+  /* ===== 入力バー（実物 .group-thread-input-bar：app.html:7479-7517） ===== */
+  .group-thread-input-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 12px; background: var(--bg);
+    border-top: 1px solid var(--border); flex-shrink: 0;
+    transition: background-color .25s ease;
+  }
+  .phone.mode-ann .group-thread-input-bar { background-color: var(--ann-bg); }
+  .group-thread-input {
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 22px; padding: 10px 16px; font-size: 14px; color: var(--text-main);
+    outline: none; font-family: inherit;
+  }
+  .phone.mode-ann .group-thread-input { background: #fff; }
+  .group-thread-input::placeholder { color: var(--text-light); }
+  .group-thread-send-btn {
+    background: var(--primary); color: #fff; border: none; border-radius: 20px;
+    padding: 9px 16px; font-size: 13px; font-weight: 700; cursor: pointer;
+    transition: opacity 0.15s; flex-shrink: 0;
+  }
+  .group-thread-send-btn:disabled { opacity: 0.35; cursor: default; }
+
+  /* ===== フッタータブバー（実物 .tab-bar：app.html:208-274, 9653-9671） ===== */
+  .tab-bar {
+    height: 68px;
+    background: linear-gradient(135deg, #020408 0%, #1E3A5F 35%, #7C3AED 70%, #EC4899 100%);
+    display: flex; align-items: center; flex-shrink: 0;
+  }
+  .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border: none; background: none; color: rgba(255,255,255,0.5); }
+  .tab-item.active { color: #fff; }
+  .tab-post { flex: 1; display: flex; align-items: center; justify-content: center; border: none; background: none; }
+  .tab-post-btn { width: 48px; height: 48px; border-radius: 50%; background: #1E3A5F; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.25); }
+</style>
+</head>
+<body>
+  <div class="page-head">
+    <div class="page-title">Announcement選択UX見本 v4<br>本物のParaDMトークルーム（screen-group-thread）忠実再現版</div>
+    <div class="scenario-row">
+      <button class="scenario-btn active" id="scn7" onclick="openScenario(7)">7人で開く</button>
+      <button class="scenario-btn" id="scn42" onclick="openScenario(42)">42人で開く</button>
+    </div>
+    <div class="tone-row">
+      <button class="scenario-btn active" id="toneWarmBtn" onclick="setTone('warm')">暖色トーン</button>
+      <button class="scenario-btn" id="toneCoolBtn" onclick="setTone('cool')">寒色トーン</button>
+    </div>
+  </div>
+
+  <div class="phone" id="phone">
+    <!-- ステータスバー -->
+    <div class="status-bar">
+      <div class="status-time">21:55</div>
+      <div class="status-icons"><span>📶</span><span>🔋</span></div>
+    </div>
+
+    <!-- トークルームヘッダー -->
+    <div class="group-thread-header">
+      <button class="group-thread-back-btn" aria-label="戻る">&#8592;</button>
+      <div class="group-thread-title-area">
+        <div class="group-thread-avatar-wrap" id="avatarWrap"></div>
+        <span class="group-thread-name" id="threadName"></span>
+      </div>
+      <button class="group-thread-menu-btn" aria-label="メニュー">&#8942;</button>
+    </div>
+
+    <!-- 2つの帯 -->
+    <div class="group-thread-promo-banner">⭐ このメンバーでグループ登録する</div>
+    <div class="group-thread-bcc-note">📢 ParaDM｜送信はメンバーそれぞれに1対1で届きます</div>
+
+    <!-- メッセージエリア -->
+    <div class="group-thread-body" id="threadBody"></div>
+
+    <!-- ナッジ（42人・一度だけ） -->
+    <div class="nudge" id="nudge">
+      <span class="nudge-text">宛先が多いようです。📢 Announceに切り替える？</span>
+      <button class="nudge-switch" onclick="nudgeSwitch()">切替</button>
+      <button class="nudge-close" onclick="nudgeClose()" aria-label="閉じる">&#10005;</button>
+    </div>
+
+    <!-- フォーマット切替ピル -->
+    <div class="fmt-chip-row">
+      <button class="fmt-chip" id="fmtChip" onclick="toggleFormat()">
+        <span id="fmtChipLabel">💬 paraDM</span>
+      </button>
+    </div>
+
+    <!-- 入力バー -->
+    <div class="group-thread-input-bar">
+      <input type="text" class="group-thread-input" id="threadInput" placeholder="メッセージを入力..." oninput="onInputChange()">
+      <button class="group-thread-send-btn" id="sendBtn" onclick="sendMessage()" disabled>送信</button>
+    </div>
+
+    <!-- フッタータブバー（実物 app.html:9653-9671 のSVGをそのまま転記） -->
+    <div class="tab-bar">
+      <button class="tab-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+      </button>
+      <button class="tab-item">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>
+      </button>
+      <button class="tab-post">
+        <div class="tab-post-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+        </div>
+      </button>
+      <button class="tab-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 18V6l11-2v11"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 8.5 20 6.5"/><ellipse cx="6.5" cy="18" rx="2.5" ry="2" fill="currentColor" stroke="none"/><ellipse cx="17.5" cy="16.5" rx="2.5" ry="2" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <button class="tab-item">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>
+      </button>
+    </div>
+  </div>
+
+<script>
+  // ===== 状態 =====
+  var state = {
+    count: 7,
+    format: 'paradm',       // 'paradm' | 'announcement'
+    nudgeDismissed: false,  // 切替/✕のどちらかで一度trueにしたら、シナリオを往復しても二度と出さない
+    tone: 'warm',
+    messages: []            // { type:'bubble'|'ann', text }
+  };
+
+  // 実物 nmDefaultBroadcastName()（app.html:14723-14729）と同じロジック
+  function defaultThreadName(count) {
+    var now = new Date();
+    var yy = String(now.getFullYear()).slice(-2);
+    var dateStr = yy + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日';
+    return count + '人にparaDM ' + dateStr;
+  }
+  // 実物 groupThreadHeaderName()（app.html:16442-16444）：「名前（メンバー数）」
+  function headerName(count) {
+    return defaultThreadName(count) + '（' + count + '）';
+  }
+  // 実物 renderGroupAvatar()（app.html:16096-16104）：アバターの文字＝name.charAt(0)
+  function avatarInitial(count) {
+    return defaultThreadName(count).charAt(0);
+  }
+
+  function renderHeader() {
+    var wrap = document.getElementById('avatarWrap');
+    // colorIdx=5相当（Rose）。実機スクショの「ピンク系グラデ」に一致
+    wrap.innerHTML = '<div style="width:36px;height:36px;border-radius:50%;' +
+      'background:linear-gradient(135deg, #F093FB 0%, #F5576C 100%);' +
+      'display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;' +
+      'text-shadow:0 1px 3px rgba(0,0,0,0.4);flex-shrink:0;">' + avatarInitial(state.count) + '</div>';
+    document.getElementById('threadName').textContent = headerName(state.count);
+  }
+
+  function renderBody() {
+    var body = document.getElementById('threadBody');
+    if (state.messages.length === 0) {
+      // 実物 renderGroupThread() の空状態（app.html:16503-16516）
+      body.innerHTML =
+        '<div class="group-thread-empty">' +
+          '<div class="group-thread-empty-row">' +
+            '<div class="group-thread-empty-avatar">📢</div>' +
+            '<div class="chat-bubble theirs">👋 ここはParaDMのトークルームです。送ったメッセージは、メンバーそれぞれに個別のDMとして届きます。グループトークとは違って、メンバー同士はお互いが見えません</div>' +
+          '</div>' +
+          '<div class="group-thread-empty-row">' +
+            '<div class="group-thread-empty-avatar">📢</div>' +
+            '<div class="chat-bubble theirs">まずは最初のメッセージを送ってみよう</div>' +
+          '</div>' +
+          '<div class="group-thread-empty-row">' +
+            '<div class="group-thread-empty-avatar">📢</div>' +
+            '<div class="chat-bubble theirs">お知らせを一斉に送りたいときは、下の📢に切り替えてみて。返信を求めない告知として届きます</div>' +
+          '</div>' +
+        '</div>';
+      return;
+    }
+    var html = '';
+    state.messages.forEach(function (m) {
+      html += '<div class="group-thread-bubble-row">';
+      if (m.type === 'ann') {
+        html += '<div class="ann-card">' +
+          '<div class="ann-label"><span class="ann-emoji">📢</span> ANNOUNCEMENT</div>' +
+          '<div class="ann-card-text"></div>' +
+          '<div class="ann-noreply">返信は求めていない形式ですが返信可能です</div>' +
+        '</div>';
+      } else {
+        html += '<div class="chat-bubble mine"></div>';
+      }
+      html += '</div>';
+    });
+    body.innerHTML = html;
+    // XSS対策と改行保持のためtextContentで流し込む
+    var rows = body.querySelectorAll('.group-thread-bubble-row');
+    state.messages.forEach(function (m, i) {
+      var target = m.type === 'ann' ? rows[i].querySelector('.ann-card-text') : rows[i].querySelector('.chat-bubble.mine');
+      target.textContent = m.text;
+    });
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function applyFormat() {
+    var isAnn = state.format === 'announcement';
+    document.getElementById('fmtChipLabel').textContent = isAnn ? '📢 Announce' : '💬 paraDM';
+    document.getElementById('phone').classList.toggle('mode-ann', isAnn);
+  }
+
+  function updateNudge() {
+    var show = state.count === 42 && !state.nudgeDismissed && state.format === 'paradm';
+    document.getElementById('nudge').classList.toggle('show', show);
+  }
+
+  // ワンタップで直接トグル（シート・選択肢なし）
+  function toggleFormat() {
+    state.format = state.format === 'paradm' ? 'announcement' : 'paradm';
+    applyFormat();
+    updateNudge();
+  }
+
+  function onInputChange() {
+    var input = document.getElementById('threadInput');
+    document.getElementById('sendBtn').disabled = input.value.trim().length === 0;
+  }
+
+  function sendMessage() {
+    var input = document.getElementById('threadInput');
+    var text = input.value.trim();
+    if (!text) return; // 空欄無反応
+    state.messages.push({ type: state.format === 'announcement' ? 'ann' : 'bubble', text: text });
+    renderBody();
+    input.value = '';
+    document.getElementById('sendBtn').disabled = true;
+  }
+
+  function nudgeSwitch() {
+    state.nudgeDismissed = true;
+    toggleFormat(); // ナッジの「切替」もトグル関数を呼ぶだけ
+  }
+  function nudgeClose() {
+    state.nudgeDismissed = true;
+    updateNudge();
+  }
+
+  function setTone(tone) {
+    state.tone = tone;
+    document.getElementById('phone').classList.toggle('tone-cool', tone === 'cool');
+    document.getElementById('toneWarmBtn').classList.toggle('active', tone === 'warm');
+    document.getElementById('toneCoolBtn').classList.toggle('active', tone === 'cool');
+  }
+
+  // シナリオ切替＝新規スレッドを開き直す想定（実物openGroupThreadの初期化と同じ：入力欄/メッセージをリセット）
+  // nudgeDismissedだけは意図的にリセットしない（「二度と出ない」を往復後も維持するため）
+  function openScenario(count) {
+    state.count = count;
+    state.format = 'paradm';
+    state.messages = [];
+    document.getElementById('threadInput').value = '';
+    document.getElementById('sendBtn').disabled = true;
+    renderHeader();
+    renderBody();
+    applyFormat();
+    updateNudge();
+    document.getElementById('scn7').classList.toggle('active', count === 7);
+    document.getElementById('scn42').classList.toggle('active', count === 42);
+  }
+
+  // 初期表示＝7人で開いた状態・暖色トーン
+  openScenario(7);
+  setTone('warm');
+</script>
+</body>
+</html>

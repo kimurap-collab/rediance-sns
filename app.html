@@ -3615,6 +3615,23 @@
       display: flex; align-items: center; justify-content: center;
       z-index: 5;
     }
+    /* 幹事メニューボタン（右上・主催者のみ。戻るボタンと同グラマー） */
+    .ev-detail-floating-menu {
+      position: absolute;
+      top: 14px; right: 14px;
+      height: 38px;
+      padding: 0 14px;
+      border-radius: 20px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff;
+      border: none;
+      font-size: 12.5px; font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 5;
+    }
     /* スコープバッジ（左上・戻るボタン横） */
     .ev-detail-scope-badge {
       position: absolute; top: 19px; left: 62px;
@@ -4359,24 +4376,6 @@
     .ev-add-history-send:active { opacity: 0.8; }
 
     /* ===== イベント×BCC統合：招待・連絡 ===== */
-    /* 主催者の控えめ2ボタン（Partiful式・詳細ページ上部） */
-    .ev-host-admin-row {
-      display: flex; gap: 8px; margin: 10px 0 4px;
-    }
-    .ev-host-admin-btn {
-      flex: 1; padding: 9px 8px;
-      border-radius: 11px;
-      border: 1.5px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.06);
-      color: #fff; font-size: 13px; font-weight: 700;
-      cursor: pointer; transition: all 0.15s;
-    }
-    .ev-host-admin-btn:active { transform: scale(0.97); }
-    .ev-host-admin-btn.primary {
-      background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
-      border-color: transparent;
-    }
-
     /* 招待・連絡シート（追加連絡シートと同グラマー） */
     #evInviteSheetOverlay {
       position: fixed; inset: 0;
@@ -4979,6 +4978,37 @@
     .action-sheet-item:last-child { border-bottom: none; }
     .action-sheet-item.danger { color: var(--danger); }
     .action-sheet-item .action-icon { font-size: 20px; }
+
+    /* ===== イベントシェア：URLシート ===== */
+    .ev-share-url-row {
+      display: flex;
+      align-items: center;
+      padding: 4px 0 16px;
+    }
+    .ev-share-url-input {
+      flex: 1;
+      min-width: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 12.5px;
+      color: var(--text-sub);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .ev-share-copy-btn {
+      width: 100%;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
     /* ===== STAR MAP ===== */
     .star-map-container {
@@ -5828,35 +5858,6 @@
     .cmp-photo-frame .cmp-layer-handle.corner.bl { bottom: -8px; left: -8px; }
     .cmp-photo-frame .cmp-layer-handle.corner.br { bottom: -8px; right: -8px; }
     .cmp-photo-frame .cmp-layer-handle.rotate { top: -32px; }
-
-    /* ===== イベントシェアカード ハンドル ===== */
-    .cmp-ev-card-handle {
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #fff;
-      border: 2px solid rgba(0,0,0,0.4);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-      cursor: pointer;
-      touch-action: none;
-      z-index: 25;
-      pointer-events: auto;
-    }
-    .cmp-ev-handle-tl { top: -9px; left: -9px; cursor: nwse-resize; }
-    .cmp-ev-handle-tr { top: -9px; right: -9px; cursor: nesw-resize; }
-    .cmp-ev-handle-bl { bottom: -9px; left: -9px; cursor: nesw-resize; }
-    .cmp-ev-handle-br { bottom: -9px; right: -9px; cursor: nwse-resize; }
-    .cmp-ev-handle-rot {
-      top: -34px; left: 50%;
-      transform: translateX(-50%);
-      background: #4aa8ff;
-      border-color: rgba(255,255,255,0.9);
-      cursor: grab;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 10px; color: #fff;
-    }
-    #cmpEvCard { outline: 1.5px dashed rgba(255,255,255,0.5); outline-offset: 2px; }
 
     /* ボトムコントロールエリア */
     .cmp-controls {
@@ -7267,14 +7268,48 @@
     .group-thread-bcc-note {
       display: flex;
       align-items: center;
-      justify-content: center;
-      height: 28px;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 36px;
+      padding: 6px 10px 6px 12px;
       font-size: 11px;
       color: var(--text-light);
       background: var(--surface);
+      border-top: 1px solid transparent;
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
+      transition: background-color .25s ease, border-color .25s ease;
     }
+    .gt-fmt-bar-text {
+      flex: 1;
+      min-width: 0;
+      line-height: 1.45;
+    }
+    .gt-fmt-toggle {
+      flex-shrink: 0;
+      width: 44px;
+      height: 26px;
+      border: none;
+      border-radius: 13px;
+      background: #C7C7CC;
+      padding: 0;
+      position: relative;
+      cursor: pointer;
+      transition: background-color .2s ease;
+    }
+    .gt-fmt-toggle-knob {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+      transition: transform .2s ease;
+    }
+    .gt-fmt-toggle.on { background: #B08A2E; }
+    .gt-fmt-toggle.on .gt-fmt-toggle-knob { transform: translateX(18px); }
     /* ===== グループ昇格：命名モーダル（中央フェード＋スケール、cmp-identity-create-overlayと同じ流儀） ===== */
     .group-promote-modal-overlay {
       position: fixed;
@@ -7515,6 +7550,90 @@
       cursor: default;
     }
     .group-thread-avatar-wrap { display: flex; align-items: center; }
+
+    /* ===== ANNOUNCEMENTモード（トークルーム：フォーマット帯＋本文＋入力バーを暖色で一色に塗る） ===== */
+    #screen-group-thread .group-thread-body {
+      border-top: 1px solid transparent;
+      transition: background-color .25s ease;
+    }
+    #screen-group-thread .group-thread-input-bar,
+    #screen-group-thread .group-thread-input {
+      transition: background-color .25s ease;
+    }
+    #screen-group-thread.gt-mode-ann .group-thread-bcc-note { background-color: #FBF6EA; border-top-color: #D9D2BE; border-bottom-color: #FBF6EA; }
+    #screen-group-thread.gt-mode-ann .group-thread-body { background-color: #FBF6EA; }
+    #screen-group-thread.gt-mode-ann .group-thread-input-bar { background-color: #FBF6EA; }
+    #screen-group-thread.gt-mode-ann .group-thread-input { background: #fff; }
+    #screen-group-thread.gt-mode-ann .gt-nudge { background-color: #FBF6EA; border-color: #D9D2BE; }
+
+    /* 送信済みANNOUNCEMENTカード（送信側スレッド／受信側DMステルスマージ共用） */
+    .gt-ann-card {
+      align-self: flex-end;
+      width: 88%;
+      margin-left: auto;
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid #E5E5E5;
+      padding: 14px 16px 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+    }
+    .gt-ann-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: #8A8A8E;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .gt-ann-label .gt-ann-emoji { letter-spacing: normal; }
+    .gt-ann-card-text {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-main);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .gt-ann-noreply { font-size: 11px; color: #B0B0B4; margin-top: 12px; }
+
+    /* ナッジ（メンバー20人以上のスレッドで一度だけ・ピル行の上） */
+    .gt-nudge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 16px 10px;
+      padding: 9px 12px;
+      background: var(--primary-bg);
+      border: 1px solid #DCE6F6;
+      border-radius: 10px;
+      font-size: 12px;
+      color: var(--primary);
+      flex-shrink: 0;
+      transition: background-color .25s ease, border-color .25s ease;
+    }
+    .gt-nudge-text { flex: 1; line-height: 1.5; }
+    .gt-nudge-switch {
+      flex-shrink: 0;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      border-radius: 50px;
+      padding: 5px 12px;
+      cursor: pointer;
+    }
+    .gt-nudge-close {
+      flex-shrink: 0;
+      border: none;
+      background: none;
+      color: var(--primary);
+      opacity: .6;
+      font-size: 15px;
+      cursor: pointer;
+      padding: 2px 4px;
+      line-height: 1;
+    }
 
     .group-thread-empty {
       display: flex;
@@ -8320,7 +8439,7 @@
         <div class="notif-item" onclick="openUserProfile('sarah_ai')" style="cursor:pointer;">
           <div class="notif-avatar">✨</div>
           <div class="notif-body">
-            <div class="notif-text"><strong>Sarah Chen</strong>の投稿があなたに届きました 💎 DiamondStar</div>
+            <div class="notif-text"><strong>Sarah Chen</strong>の投稿があなたに届きました 💥 Supernova</div>
             <div class="notif-time">45分前</div>
           </div>
           <div class="notif-dot"></div>
@@ -8345,153 +8464,6 @@
             <div class="notif-text">あなたの影響力スコアが<strong>+127</strong>増加しました ↑4.7%</div>
             <div class="notif-time">今日 6:00</div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== PROFILE SCREEN ===== -->
-    <div class="screen" id="screen-profile">
-
-      <!-- POKEMON CARD PROFILE -->
-      <div class="pokemon-profile-card" style="background-image:url('assets/img/u02.jpg');">
-        <div class="pokemon-card-topbar">
-          <div class="pokemon-card-tier-badge rank-badge-star">
-            ⭐ Star
-            <span class="pokemon-card-tier-rs">(50.9K)</span>
-          </div>
-        </div>
-        <div class="pokemon-card-overlay">
-          <div class="pokemon-card-name">木村 誠司</div>
-          <div class="pokemon-card-handle">@taisho_k</div>
-          <div class="pokemon-card-bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
-          <div class="pokemon-card-stats">
-            <div class="pokemon-card-stat-item" onclick="showStatInfo('trust')">
-              <span class="pokemon-card-stat-icon">💖</span>
-              <span class="pokemon-card-stat-label">Trust</span>
-              <span class="pokemon-card-stat-value">23.0K</span>
-            </div>
-            <div class="pokemon-card-stat-item" onclick="showStatInfo('prestige')">
-              <span class="pokemon-card-stat-icon">💎</span>
-              <span class="pokemon-card-stat-label">Prestige</span>
-              <span class="pokemon-card-stat-value">16.1K</span>
-            </div>
-            <div class="pokemon-card-stat-item" onclick="showStatInfo('insights')">
-              <span class="pokemon-card-stat-icon">📝</span>
-              <span class="pokemon-card-stat-label">Insights</span>
-              <span class="pokemon-card-stat-value">11.7K</span>
-            </div>
-            <div class="pokemon-card-stat-item" onclick="showStatInfo('stature')">
-              <span class="pokemon-card-stat-icon">🏛️</span>
-              <span class="pokemon-card-stat-label">Stature</span>
-              <span class="pokemon-card-stat-value">105.6K</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="circle-settings-link" onclick="openCircleSettings()">
-        <span>Your Circle Settings</span>
-        <span>→</span>
-      </div>
-
-      <!-- IDENTITY SECTION -->
-      <div class="identity-section">
-        <div class="identity-section-title">✨ Identity</div>
-
-        <!-- AI・テック -->
-        <div class="identity-category open" id="my-identity-ai">
-          <div class="identity-cat-header" onclick="toggleIdentitySection('my-identity-ai')">
-            <div class="identity-cat-header-left">
-              <span class="identity-cat-name">🤖 AI・テック</span>
-              <span class="identity-cat-updated">2時間前</span>
-            </div>
-            <span class="identity-cat-chevron">▾</span>
-          </div>
-          <div class="identity-cat-body">
-            <div class="identity-posts-grid">
-              <div class="identity-post-item" style="background:linear-gradient(135deg,#7C3AED,#2563EB);" onclick="openFsPost(myIdentityPosts['ai'], 0, 'my')">
-                <div class="identity-post-text">Claude Codeで自分のAIチーム作ってるんやけど...</div>
-              </div>
-              <div class="identity-post-item" style="background:linear-gradient(135deg,#0f0c29,#24243e);" onclick="openFsPost(myIdentityPosts['ai'], 1, 'my')">
-                <div class="identity-post-text">AIエージェントの未来は人間を置き換えることじゃない...</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- シンガポール -->
-        <div class="identity-category open" id="my-identity-sg">
-          <div class="identity-cat-header" onclick="toggleIdentitySection('my-identity-sg')">
-            <div class="identity-cat-header-left">
-              <span class="identity-cat-name">🇸🇬 シンガポール</span>
-              <span class="identity-cat-updated">1日前</span>
-            </div>
-            <span class="identity-cat-chevron">▾</span>
-          </div>
-          <div class="identity-cat-body">
-            <div class="identity-posts-grid">
-              <div class="identity-post-item" style="background:linear-gradient(135deg,#059669,#10B981);" onclick="openFsPost(myIdentityPosts['sg'], 0, 'my')">
-                <div class="identity-post-text">ホーカーで$3のチキンライス食べながら...</div>
-              </div>
-              <div class="identity-post-item" style="background:linear-gradient(135deg,#0d9488,#0284c7);" onclick="openFsPost(myIdentityPosts['sg'], 1, 'my')">
-                <div class="identity-post-text">シンガポールのAI界隈、日本より3年先を行ってる感覚...</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 経営 -->
-        <div class="identity-category" id="my-identity-biz">
-          <div class="identity-cat-header" onclick="toggleIdentitySection('my-identity-biz')">
-            <div class="identity-cat-header-left">
-              <span class="identity-cat-name">💼 経営</span>
-              <span class="identity-cat-updated">3日前</span>
-            </div>
-            <span class="identity-cat-chevron">▾</span>
-          </div>
-          <div class="identity-cat-body">
-            <div class="identity-posts-grid">
-              <div class="identity-post-item" style="background:linear-gradient(135deg,#1a1a2e,#D97706);" onclick="openFsPost(myIdentityPosts['biz'], 0, 'my')">
-                <div class="identity-post-text">経営者に一番大事なスキルは『任せる力』...</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 投資 -->
-        <div class="identity-category" id="my-identity-inv">
-          <div class="identity-cat-header" onclick="toggleIdentitySection('my-identity-inv')">
-            <div class="identity-cat-header-left">
-              <span class="identity-cat-name">📈 投資</span>
-              <span class="identity-cat-updated">1週間前</span>
-            </div>
-            <span class="identity-cat-chevron">▾</span>
-          </div>
-          <div class="identity-cat-body">
-            <div class="identity-posts-grid">
-              <div class="identity-post-item" style="background:linear-gradient(135deg,#7C3AED,#EC4899);" onclick="openFsPost(myIdentityPosts['inv'], 0, 'my')">
-                <div class="identity-post-text">フォロワー数じゃなくて、誰にフォローされてるかが本当の影響力...</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- BIO CARD -->
-      <div class="profile-bio-card">
-        <div class="profile-bio-row">
-          <span class="profile-bio-icon">📍</span>
-          <span>🇸🇬 シンガポール ↔ 🇯🇵 日本</span>
-        </div>
-        <div class="profile-bio-tags">
-          <span class="profile-bio-tag">経営者</span>
-          <span class="profile-bio-tag">AI</span>
-          <span class="profile-bio-tag">投資</span>
-          <span class="profile-bio-tag">SNS開発</span>
-        </div>
-        <div class="profile-bio-row">
-          <span class="profile-bio-icon">📅</span>
-          <span>2024年1月から利用</span>
         </div>
       </div>
     </div>
@@ -9055,8 +9027,16 @@
         <button class="btn-pill-outline group-thread-event-btn" id="groupThreadEventBtn" style="display:none;" onclick="">📅 イベントを見る</button>
         <button class="group-thread-menu-btn" id="groupThreadMenuBtn" onclick="openGroupEditFromThread()">&#8942;</button>
       </div>
-      <div class="group-thread-promo-banner" id="groupThreadPromoBanner" style="display:none;" onclick="promoteBroadcastToGroup()">⭐ このメンバーでグループを作る</div>
-      <div class="group-thread-bcc-note">📢 ParaDM｜このトークの送信は、メンバーそれぞれに1対1のメッセージとして届きます</div>
+      <div class="group-thread-promo-banner" id="groupThreadPromoBanner" style="display:none;" onclick="promoteBroadcastToGroup()">⭐ このメンバーでグループ登録する</div>
+      <div class="group-thread-bcc-note" id="gtFmtBar">
+        <span class="gt-fmt-bar-text" id="gtFmtBarText">📢 ParaDM｜一斉送信ですが相手には1対1のDMとして届きます</span>
+        <button class="gt-fmt-toggle" id="gtFmtToggle" onclick="toggleGtFormat()" role="switch" aria-checked="false" aria-label="Announcementに切り替え"><span class="gt-fmt-toggle-knob"></span></button>
+      </div>
+      <div class="gt-nudge" id="gtNudge" style="display:none;">
+        <span class="gt-nudge-text">宛先が多いようです。📢 Announceに切り替える？</span>
+        <button class="gt-nudge-switch" onclick="gtNudgeSwitch()">切替</button>
+        <button class="gt-nudge-close" onclick="gtNudgeClose()" aria-label="閉じる">&#10005;</button>
+      </div>
       <div class="group-thread-body" id="groupThreadBody" style="flex:1;overflow-y:auto;padding-bottom:72px;"></div>
       <div class="gt-attach-banner" id="groupThreadAttachBanner" style="display:none;"></div>
       <div class="group-thread-input-bar">
@@ -9737,7 +9717,7 @@
 <div class="action-sheet-overlay" id="evShareSheet" onclick="closeEvShareSheet()">
   <div class="action-sheet" onclick="event.stopPropagation()">
     <div class="action-sheet-handle"></div>
-    <div class="action-sheet-title">このイベントをシェア</div>
+    <div class="action-sheet-title">このイベントをシェアする</div>
     <div id="evShareSheetBody"></div>
   </div>
 </div>
@@ -10903,7 +10883,6 @@
       colorpost: 'screen-color-post',
       colordetail: 'screen-color-detail',
       notif: 'screen-notif',
-      profile: 'screen-profile',
       talk: 'screen-talk',
       circle: 'screen-circle',
       events: 'screen-events',
@@ -11611,9 +11590,6 @@
   let cmpCurrentGrad = CMP_HYPERAY_GRAD;
   let cmpTextColor   = '#ffffff';
 
-  // ===== イベントシェアモード =====
-  let cmpEvShareMode = false;
-  let cmpEvShareData = null; // イベントオブジェクトのスナップショット
   let cmpFontFamily  = "'Noto Sans JP', sans-serif";
   let cmpFontWeight  = '700';
   let cmpPhotoEl     = null;     // 写真操作用
@@ -12632,8 +12608,7 @@
   function cmpPost() {
     cmpPruneEmptyLayers();
     const hasText = cmpLayers.some(l => l.text && l.text.trim());
-    // イベントシェアモードはカードがあれば無テキストでもOK
-    if (!hasText && cmpBgMode !== 'photo' && !cmpEvShareMode) {
+    if (!hasText && cmpBgMode !== 'photo') {
       showToast('テキストを入力してください');
       return;
     }
@@ -12733,7 +12708,7 @@
     const userData = storiesData.find(u => u.id === 'taisho_k');
     if (userData) {
       userData.stories.unshift({
-        text: textContent || (cmpEvShareMode && cmpEvShareData ? cmpEvShareData.title : '(画像投稿)'),
+        text: textContent || '(画像投稿)',
         time: 'たった今',
         likes: 0,
         shares: 0,
@@ -12741,31 +12716,10 @@
         grad: postGrad,
         textLayers: textLayersSnapshot,
         urlData: cmpUrlData || null,
-        evShareId: cmpEvShareMode && cmpEvShareData ? cmpEvShareData.id : null,
+        evShareId: null,
       });
       userData.hasNew = true;
       storiesSeen['taisho_k'] = false;
-    }
-
-    // イベントシェアモードの場合、フィードにも追加
-    if (cmpEvShareMode && cmpEvShareData) {
-      const evData = cmpEvShareData;
-      const newPostId = 'ev-share-' + Date.now();
-      feedPosts.unshift({
-        id: newPostId,
-        userId: 'taisho_k',
-        name: '木村 誠司',
-        avatar: '🧔',
-        avatarClass: 'avatar-inner',
-        score: 50879,
-        time: 'たった今',
-        body: textContent || ('📅 ' + evData.title),
-        grad: postGrad,
-        likes: 0,
-        shares: 0,
-        isSun: false,
-        evShareId: evData.id,
-      });
     }
 
     cmpClosePublishModal();
@@ -12787,11 +12741,6 @@
 
   // リセット
   function cmpReset() {
-    cmpEvShareMode = false;
-    cmpEvShareData = null;
-    // イベントカードDOMを削除
-    const existingCard = document.getElementById('cmpEvCard');
-    if (existingCard) existingCard.remove();
     cmpBgMode = 'grad';
     cmpCurrentGrad = CMP_HYPERAY_GRAD;
     cmpCurrentGradIndex = 0;
@@ -12872,152 +12821,6 @@
     }
   }
 
-  // ===== イベントシェアカード（ステッカー）描画 =====
-  function cmpEvRenderCard() {
-    if (!cmpEvShareMode || !cmpEvShareData) return;
-    const canvas = document.getElementById('cmpCanvas');
-    if (!canvas) return;
-    // 既存カードがあれば削除
-    const old = document.getElementById('cmpEvCard');
-    if (old) old.remove();
-
-    const ev = cmpEvShareData;
-    const weekdayArr = ['日','月','火','水','木','金','土'];
-    const dEv = new Date(ev.date);
-    const dateShortEv = `${dEv.getMonth()+1}月${dEv.getDate()}日(${weekdayArr[dEv.getDay()]}) ${ev.time}`;
-
-    // イベント背景CSS
-    let cardBg = '';
-    if (ev.bgPattern === 'black' || ev.bgPattern === 'none') {
-      cardBg = 'background:#000;';
-    } else {
-      const ecGrad = EV_BG_GRADIENTS[ev.bgGradient || 0] || '#0A0A0F';
-      const ecPat = EV_BG_PATTERNS[ev.bgPattern] ? EV_BG_PATTERNS[ev.bgPattern].apply : null;
-      if (ecPat) {
-        cardBg = `background:${ecPat}, ${ecGrad};`;
-      } else {
-        cardBg = `background:${ecGrad};`;
-      }
-    }
-
-    const card = document.createElement('div');
-    card.id = 'cmpEvCard';
-    card.style.cssText = `
-      position:absolute;
-      left:50%; top:50%;
-      width:220px;
-      border-radius:16px;
-      overflow:hidden;
-      box-shadow:0 6px 28px rgba(0,0,0,0.6);
-      cursor:grab;
-      user-select:none;
-      touch-action:none;
-      z-index:20;
-      ${cardBg}
-      transform:translate(-50%,-50%) rotate(0deg) scale(1);
-    `;
-    card.innerHTML = `
-      <div style="padding:14px 14px 12px;position:relative;">
-        <div style="font-size:8px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.5);margin-bottom:5px;text-transform:uppercase;">HYPERAY Event</div>
-        <div style="font-size:15px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:8px;text-shadow:0 1px 6px rgba(0,0,0,0.4);">${(ev.title||'').replace(/</g,'&lt;')}</div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.85);display:flex;align-items:center;gap:4px;margin-bottom:3px;">📅 ${dateShortEv}</div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.85);display:flex;align-items:center;gap:4px;margin-bottom:8px;">📍 ${(ev.place||'').replace(/</g,'&lt;')}</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div style="font-size:9px;color:rgba(255,255,255,0.6);">主催: ${(ev.hostName||'').replace(/</g,'&lt;')}</div>
-          <div style="font-size:8px;font-weight:800;letter-spacing:1px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;">HYPERAY</div>
-        </div>
-      </div>
-      <div class="cmp-ev-card-handle cmp-ev-handle-tl" data-eh="tl"></div>
-      <div class="cmp-ev-card-handle cmp-ev-handle-tr" data-eh="tr"></div>
-      <div class="cmp-ev-card-handle cmp-ev-handle-bl" data-eh="bl"></div>
-      <div class="cmp-ev-card-handle cmp-ev-handle-br" data-eh="br"></div>
-      <div class="cmp-ev-card-handle cmp-ev-handle-rot" data-eh="rot">↻</div>
-    `;
-    canvas.appendChild(card);
-    cmpEvAttachDrag(card);
-  }
-
-  // イベントカードのドラッグ・スケール・回転
-  function cmpEvAttachDrag(card) {
-    let evX = 0, evY = 0, evScale = 1, evRot = 0;
-    let isDragging = false, isHandling = false;
-    let startPX = 0, startPY = 0;
-    let startEvX = 0, startEvY = 0;
-    let handleType = null;
-    let startDist = 0, startScale = 1;
-    let startAngle = 0, startRot = 0;
-    let activePointers = {};
-
-    function applyTransform() {
-      card.style.transform = `translate(calc(-50% + ${evX}px), calc(-50% + ${evY}px)) rotate(${evRot}deg) scale(${evScale})`;
-    }
-
-    // ポインタダウン
-    card.addEventListener('pointerdown', (e) => {
-      // ハンドルかどうか確認
-      const handleEl = e.target.closest('[data-eh]');
-      if (handleEl) {
-        handleType = handleEl.dataset.eh;
-        isHandling = true;
-        e.stopPropagation();
-        e.preventDefault();
-        handleEl.setPointerCapture(e.pointerId);
-        activePointers[e.pointerId] = { x: e.clientX, y: e.clientY };
-        startPX = e.clientX; startPY = e.clientY;
-        startScale = evScale; startRot = evRot;
-        startEvX = evX; startEvY = evY;
-        // カード中心をcanvas内の座標で算出
-        const cardRect = card.getBoundingClientRect();
-        const cx = cardRect.left + cardRect.width / 2;
-        const cy = cardRect.top + cardRect.height / 2;
-        startAngle = Math.atan2(e.clientY - cy, e.clientX - cx);
-        startDist = Math.hypot(e.clientX - cx, e.clientY - cy);
-        return;
-      }
-      // ドラッグ
-      isDragging = true;
-      e.stopPropagation();
-      e.preventDefault();
-      card.setPointerCapture(e.pointerId);
-      activePointers[e.pointerId] = { x: e.clientX, y: e.clientY };
-      startPX = e.clientX; startPY = e.clientY;
-      startEvX = evX; startEvY = evY;
-    });
-
-    card.addEventListener('pointermove', (e) => {
-      if (!isDragging && !isHandling) return;
-      e.preventDefault();
-      if (isDragging) {
-        evX = startEvX + (e.clientX - startPX);
-        evY = startEvY + (e.clientY - startPY);
-        applyTransform();
-      }
-      if (isHandling && handleType) {
-        const cardRect = card.getBoundingClientRect();
-        const cx = cardRect.left + cardRect.width / 2;
-        const cy = cardRect.top + cardRect.height / 2;
-        const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-        const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
-        if (handleType === 'rot') {
-          evRot = startRot + (angle - startAngle) * (180 / Math.PI);
-        } else {
-          // スケール：初期距離との比率
-          evScale = Math.max(0.3, Math.min(4, startScale * (dist / (startDist || 1))));
-        }
-        applyTransform();
-      }
-    });
-
-    const endDrag = (e) => {
-      isDragging = false;
-      isHandling = false;
-      handleType = null;
-      delete activePointers[e.pointerId];
-    };
-    card.addEventListener('pointerup', endDrag);
-    card.addEventListener('pointercancel', endDrag);
-  }
-
   // init
   document.addEventListener('DOMContentLoaded', () => {
     // グラデ長押し登録
@@ -13062,7 +12865,6 @@
     'screen-home': 'home',
     'screen-post': 'post',
     'screen-notif': 'notif',
-    'screen-profile': 'profile',
     'screen-my': 'my',
     'screen-talk': 'talk',
     'screen-search': 'search',
@@ -13196,10 +12998,6 @@
       container.appendChild(node);
     });
   }
-
-  // ===== HOME STORIES CARD GRID =====
-  // Tracks which story cards have been opened (unblurred)
-  const storyCardOpened = new Set();
 
   // Layout columns state: 1 / 2 / 3
   let homeStoryCols = 3;
@@ -13369,7 +13167,7 @@
     if (lt) lt.style.display = 'none';   // グリッド専用の切替ボタンは不要
     grid.style.display = 'block';   // グリッドを縦タイムライン化
     grid.style.padding = '0';       // 案B：フルブリード帯＝左右余白ゼロ・角丸なし
-    grid.innerHTML = colorPosts.map(cpBandHtml).join('');
+    grid.innerHTML = colorPosts.map(p => p.evShareId ? cpShareBandHtml(p) : cpBandHtml(p)).join('');
     if (typeof buildCpStoryRow === 'function') buildCpStoryRow();  // 未読レイのストーリー列も同期
   }
 
@@ -13583,7 +13381,8 @@
   // ===== イベント招待の帯（投稿テンプレ準拠・2026-07-05） =====
   // 頭に招待コンテキスト行（Xの「○○さんがリポスト」文法）、地はHYPERAYグラデ＝特別な帯の記号。
   // 参加/不参加はここで決めない（ボタンなし）。帯タップでイベント詳細へ。
-  function cpInviteBandHtml(ev, ctxOverride) {
+  // commentHtml：シェア投稿のコメント（コンテキスト行の直下に差し込む。X引用ポスト文法）
+  function cpInviteBandHtml(ev, ctxOverride, commentHtml) {
     const host = cpFindUser(ev.hostId);
     const tier = getTitle(host.score || 0);
     const fg = '#F8FAFC';
@@ -13608,6 +13407,7 @@
     return `
     <div onclick="openEventDetail('${ev.id}', 'home')" style="background:linear-gradient(135deg,#020408 0%,#1E3A5F 40%,#5B21B6 75%,#9D174D 100%);color:${fg};padding:14px 18px 11px;border-bottom:1px solid rgba(0,0,0,0.10);cursor:pointer;">
       <div style="font-size:12.5px;font-weight:700;color:${meta};margin-bottom:9px;">${ctx}</div>
+      ${commentHtml || ''}
       <div style="display:flex;align-items:center;gap:9px;">
         <span style="font-size:26px;line-height:1;cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${ev.hostId}')">${host.avatar}</span>
         <div style="flex:1;min-width:0;">
@@ -13631,100 +13431,22 @@
     </div>`;
   }
 
+  // ===== イベントシェアの帯（招待帯と同じHYPERAYグラデ帯・タップでイベント詳細へ） =====
+  // colorPosts の evShareId 付きエントリを描画。コメントは帯内・コンテキスト行の直下（X引用ポスト文法）
+  function cpShareBandHtml(p) {
+    const ev = (typeof eventsData !== 'undefined') ? eventsData.find(e => e.id === p.evShareId) : null;
+    if (!ev) return cpBandHtml(p);   // イベントが消えていたら通常のレイ帯として表示
+    const u = cpFindUser(p.uid);
+    const ctx = `📣 ${escapeHtml(u.name)}さんがイベントをシェアしました`;
+    const commentHtml = p.text
+      ? `<div style="font-size:15.5px;line-height:1.75;margin:0 2px 11px;white-space:pre-wrap;word-break:break-word;">${escapeHtml(p.text)}</div>`
+      : '';
+    return cpInviteBandHtml(ev, ctx, commentHtml);
+  }
+
   function buildHomeStories() {
-    // X型カラー投稿モードならカラータイムラインを描画（旧グリッドはフラグ復帰でそのまま動く）
-    if (POST_UI_MODE === 'color') { buildColorTimeline(); return; }
-    const grid = document.getElementById('homeStoriesRow');
-    if (!grid) return;
-    grid.innerHTML = '';
-    // Apply current column setting
-    grid.style.setProperty('--story-cols', homeStoryCols);
-
-    storiesData.forEach(user => {
-      if (!user.stories || user.stories.length === 0) return;
-      const story = user.stories[0]; // first story as card preview
-      const isSelf = user.id === 'taisho_k';
-      const hasNew = user.hasNew && !storiesSeen[user.id];
-      const ringClass = hasNew ? 'has-new' : 'seen';
-      const displayName = isSelf ? '自分' : user.name.split(' ')[0];
-      const cardId = 'home-story-card-' + user.id;
-      const isOpened = storyCardOpened.has(user.id);
-
-      // Relative time from story.time string (already human-readable)
-      const timeLabel = story.time || '';
-
-      // Determine card content: blur image or redact text
-      const hasImg = !!story.img;
-      let bgStyle = '';
-      let bodyContent = '';
-
-      if (hasImg) {
-        // Image post: blur background if unread
-        const blurClass = isOpened ? '' : 'blurred';
-        bgStyle = `background-image: url('${story.img}'); background-size: cover; background-position: center;`;
-        bodyContent = `<div class="home-story-card-bg ${blurClass}" style="${bgStyle}"></div>`;
-      } else {
-        // Text/gradient post
-        const gradStyle = `background: ${story.grad || 'linear-gradient(135deg,#1a1a2e,#7C3AED)'};`;
-        bodyContent = `<div class="home-story-card-bg" style="${gradStyle}"></div>`;
-        if (!isOpened) {
-          // Black-bar redaction for text content
-          bodyContent += `
-            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none;padding:12px 10px;">
-              <div class="home-story-redact" style="width:100%;">
-                <div class="home-story-redact-bar" style="width:90%;"></div>
-                <div class="home-story-redact-bar" style="width:75%;"></div>
-                <div class="home-story-redact-bar" style="width:85%;"></div>
-                <div class="home-story-redact-bar" style="width:60%;"></div>
-                <div class="home-story-redact-bar" style="width:70%;"></div>
-              </div>
-            </div>`;
-        } else {
-          // Show text snippet when opened
-          const snippet = story.text ? story.text.replace(/\n/g, ' ').slice(0, 70) : '';
-          bodyContent += `
-            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none;padding:12px 10px;">
-              <div style="font-size:12px;font-weight:600;color:#fff;line-height:1.5;text-shadow:0 1px 4px rgba(0,0,0,0.6);">${snippet}</div>
-            </div>`;
-        }
-      }
-
-      const card = document.createElement('div');
-      card.className = 'home-story-card';
-      card.id = cardId;
-      card.innerHTML = `
-        ${bodyContent}
-        <div class="home-story-card-top-grad"></div>
-        <div class="home-story-card-body">
-          <div class="home-story-card-user">
-            <div class="home-story-card-avatar-wrap">
-              <div class="home-story-card-ring ${ringClass}">
-                <div class="home-story-card-ring-inner">${user.avatar}</div>
-              </div>
-            </div>
-            <div class="home-story-card-meta">
-              <div class="home-story-card-name">${displayName}</div>
-              <div class="home-story-card-time">${timeLabel}</div>
-            </div>
-          </div>
-        </div>
-      `;
-
-      card.onclick = () => {
-        // Mark as opened (unblur)
-        storyCardOpened.add(user.id);
-        // Navigate to full-screen story viewer
-        if (user.stories && user.stories.length > 0) {
-          openStoryPop(user.id);
-        } else {
-          openUserProfile(user.id);
-        }
-        // Rebuild card to unblur it
-        buildHomeStories();
-      };
-
-      grid.appendChild(card);
-    });
+    // ホームのタイムライン＝カラータイムライン（レイ帯）を描画
+    buildColorTimeline();
   }
 
   // ===== MESSAGE OVERLAY =====
@@ -13818,6 +13540,16 @@
     ],
   };
 
+  // ANNOUNCEMENTカードHTML（送信側スレッド描画とDMステルスマージの両方から使う共用ヘルパー。
+  // このscriptブロックが先に読み込まれるため、後続ブロックのrenderGroupThreadからも実行時に参照できる）
+  function gtAnnCardHtml(text) {
+    return `<div class="gt-ann-card">` +
+      `<div class="gt-ann-label"><span class="gt-ann-emoji">📢</span> ANNOUNCEMENT</div>` +
+      `<div class="gt-ann-card-text">${text}</div>` +
+      `<div class="gt-ann-noreply">返信は求めていない形式ですが返信可能です</div>` +
+      `</div>`;
+  }
+
   let currentDmUserId = null;
   function openDmChat(userId, name, avatar) {
     dmBroadcastMode = false;
@@ -13854,6 +13586,7 @@
           groupMessages.push({
             from: 'me',
             text: thread.text,
+            announcement: !!thread.announcement,
             card: (invEv && typeof evInviteMiniCardHtml === 'function') ? evInviteMiniCardHtml(invEv) : null,
             time: relativeTime(thread.sentAt),
             _ts: new Date(thread.sentAt).getTime()
@@ -13885,6 +13618,11 @@
         container.appendChild(cardWrap);
       }
       if (!msg.text) return;
+      // Announcement配信はDM側でも同じANNOUNCEMENTカードで描画
+      if (msg.announcement) {
+        container.insertAdjacentHTML('beforeend', gtAnnCardHtml(msg.text));
+        return;
+      }
       const bubble = document.createElement('div');
       bubble.className = 'chat-bubble ' + (msg.from === 'me' ? 'mine' : 'theirs');
       bubble.innerHTML = msg.text + '<div class="chat-bubble-meta">' + msg.time + '</div>';
@@ -13979,21 +13717,6 @@
 
   // ===== HOME FEED DATA =====
   const feedPosts = [
-    {
-      id: 'ev-share-demo',
-      userId: 'taisho_k',
-      name: '木村 誠司',
-      avatar: '🧔',
-      avatarClass: 'avatar-inner',
-      score: 50879,
-      time: 'たった今',
-      body: '📅 Yogbo淡路島保養所 お泊り会',
-      grad: 'linear-gradient(135deg,#020408,#1E3A5F)',
-      likes: 0,
-      shares: 0,
-      isSun: false,
-      evShareId: 'ev-demo-1',
-    },
     {
       id: 'f1',
       userId: 'sarah_ai',
@@ -14167,218 +13890,19 @@
         e.hostId !== EV_SELF_ID &&
         (e.isPublic || e.invitees.includes(EV_SELF_ID))
       );
-      // カラー投稿モード：招待は投稿と同じ帯テンプレ（HYPERAYグラデ地・ボタンなし・タップで詳細へ）
-      if (POST_UI_MODE === 'color') {
-        myInvites.forEach(ev => {
-          const div = document.createElement('div');
-          div.innerHTML = cpInviteBandHtml(ev);
-          container.appendChild(div.firstElementChild);
-        });
-        return;
-      }
+      // 招待は投稿と同じ帯テンプレ（HYPERAYグラデ地・ボタンなし・タップで詳細へ）
       myInvites.forEach(ev => {
-        const card = document.createElement('div');
-        card.className = 'invite-card';
-        card.onclick = () => openEventDetail(ev.id, 'home');
-        const myR = ev.responses[EV_SELF_ID];
-        const cls = (k) => myR === k ? `active ${k}` : '';
-        const weekdayArr = ['日','月','火','水','木','金','土'];
-        const d = new Date(ev.date);
-        const dateShort = `${d.getMonth()+1}/${d.getDate()}(${weekdayArr[d.getDay()]})`;
-        const goingCount = Object.values(ev.responses).filter(r => r === 'going').length;
-        const coverPos2 = ev.coverPos ? `${ev.coverPos.x}% ${ev.coverPos.y}%` : 'center';
-        const coverBg = ev.coverImage
-          ? `background-image: url(${ev.coverImage}); background-position: ${coverPos2};`
-          : '';
-        const labelText = ev.isPublic ? '📅 オープンイベント' : '📅 招待';
-        // ホームのタイムラインに出るイベントカードは全て「招待されている」扱い（大将方針：表示されてる時点で招待）
-        const homeInviteLabel = `<div style="padding:6px 12px 2px;"><span style="font-size:11px;font-weight:700;color:#FCD34D;letter-spacing:0.03em;">あなたが招待されています（限定）</span></div>`;
-        if (isPoll(ev)) {
-          card.innerHTML = `${homeInviteLabel}${pollCardInner(ev)}`;
-          container.appendChild(card);
-          return;
-        }
-        card.innerHTML = `
-          ${homeInviteLabel}
-          <div class="invite-card-cover" style="${coverBg}">
-            <div class="invite-card-label">${labelText}</div>
-            <div class="invite-card-cover-date">${dateShort} ${ev.time}</div>
-            <div class="invite-card-cover-overlay"></div>
-          </div>
-          <div class="invite-card-body">
-            <div class="invite-card-title">${escapeHtml(ev.title)}</div>
-            <div class="invite-card-host">主催: ${escapeHtml(ev.hostName)}</div>
-            <div class="invite-card-meta"><span class="ico">📍</span>${escapeHtml(ev.place)}</div>
-            ${ev.message ? `<div class="invite-card-msg">${escapeHtml(ev.message)}</div>` : ''}
-            <div class="invite-card-actions">
-              <button class="invite-card-btn ${cls('going')}" onclick="event.stopPropagation(); setInviteResponseFromFeed('${ev.id}','going')">✓ 行く</button>
-              <button class="invite-card-btn ${cls('maybe')}" onclick="event.stopPropagation(); setInviteResponseFromFeed('${ev.id}','maybe')">? 検討</button>
-              <button class="invite-card-btn ${cls('skip')}"  onclick="event.stopPropagation(); setInviteResponseFromFeed('${ev.id}','skip')">✗ 行けない</button>
-            </div>
-            <div class="invite-card-footer">
-              <span>✓ ${goingCount}人が参加予定</span>
-              ${ev.deadline ? `<span>締切 ${ev.deadline}</span>` : '<span></span>'}
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
+        const div = document.createElement('div');
+        div.innerHTML = cpInviteBandHtml(ev);
+        container.appendChild(div.firstElementChild);
       });
     }
-
-    // カラー投稿モードでは旧スタイル投稿は出さない（イベント招待・日程調整カードだけ残す）。
-    // タイムライン本体は上段のカラーカード（buildColorTimeline）が担う。
-    if (POST_UI_MODE === 'color') return;
-
-    feedPosts.forEach((post, idx) => {
-      const titleInfo = getTitle(post.score);
-      const isSun = post.isSun;
-
-      const card = document.createElement('div');
-      const bgStyle = post.img
-        ? `background-image: url('${post.img}'); background-size: cover; background-position: center;`
-        : `background: ${post.grad};`;
-      const overlayGrad = post.img
-        ? 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.7) 100%)'
-        : 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.7) 100%)';
-
-      card.style.cssText = `
-        margin: 8px 12px;
-        border-radius: 16px;
-        overflow: hidden;
-        cursor: pointer;
-        height: 220px;
-        position: relative;
-        ${bgStyle}
-        border: 1px solid rgba(255,255,255,0.12);
-        transition: transform 0.15s;
-      `;
-      // イベントシェア投稿はイベント詳細、通常はフルスクリーンビューアー
-      if (post.evShareId) {
-        card.onclick = () => openEventDetail(post.evShareId, 'home');
-      } else {
-        card.onclick = () => openFeedFs(idx);
-      }
-
-      const sunLabel = isSun ? `<div style="display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,0.22);border:1px solid rgba(245,158,11,0.45);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;color:#FCD34D;margin-bottom:6px;">✨ 強い光が届きました</div>` : '';
-
-      const snippetText = post.body.replace(/\n/g, ' ');
-      const snippet = snippetText.length > 80 ? snippetText.slice(0, 80) + '…<span style="opacity:0.6;">続きを読む</span>' : snippetText;
-
-      const scoreDisp = formatRS(post.score);
-
-      // イベントシェア投稿は専用ビジュアル
-      if (post.evShareId) {
-        const sharedEv = typeof eventsData !== 'undefined' ? eventsData.find(e => e.id === post.evShareId) : null;
-        let evCardInner = '';
-        if (sharedEv) {
-          const weekdayArr2 = ['日','月','火','水','木','金','土'];
-          const dEv = new Date(sharedEv.date);
-          const dateShortEv = `${dEv.getMonth()+1}月${dEv.getDate()}日(${weekdayArr2[dEv.getDay()]}) ${sharedEv.time}`;
-          // イベント背景をインラインスタイルで再現
-          let evCardBgStyle = '';
-          if (sharedEv.bgPattern === 'black' || sharedEv.bgPattern === 'none') {
-            evCardBgStyle = 'background:#000;';
-          } else {
-            const ecGrad = EV_BG_GRADIENTS[sharedEv.bgGradient || 0] || '#0A0A0F';
-            const ecPat = EV_BG_PATTERNS[sharedEv.bgPattern] ? EV_BG_PATTERNS[sharedEv.bgPattern].apply : null;
-            if (ecPat) {
-              evCardBgStyle = `background:${ecPat}, ${ecGrad};`;
-            } else {
-              evCardBgStyle = `background:${ecGrad};`;
-            }
-          }
-          evCardInner = `
-            <div style="position:absolute;inset:0;background:${overlayGrad};pointer-events:none;z-index:1;"></div>
-            <!-- 上部: ユーザー情報 -->
-            <div style="position:absolute;top:0;left:0;right:0;padding:10px 12px 0;z-index:3;">
-              <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${post.userId}')">
-                <div style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;border:1.5px solid rgba(255,255,255,0.5);">${post.avatar}</div>
-                <div>
-                  <div style="font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.5);">${post.name}</div>
-                  <div style="font-size:10px;color:rgba(255,255,255,0.7);">イベントをシェア</div>
-                </div>
-              </div>
-            </div>
-            <!-- 中央: イベントカード -->
-            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;width:82%;max-width:260px;">
-              <div style="border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.5);${evCardBgStyle}">
-                <div style="padding:14px 14px 12px;">
-                  <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,0.55);margin-bottom:6px;">HYPERAY EVENT</div>
-                  <div style="font-size:14px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:8px;text-shadow:0 1px 4px rgba(0,0,0,0.4);">${escapeHtml(sharedEv.title)}</div>
-                  <div style="font-size:10px;color:rgba(255,255,255,0.8);margin-bottom:3px;">📅 ${dateShortEv}</div>
-                  <div style="font-size:10px;color:rgba(255,255,255,0.8);">📍 ${escapeHtml(sharedEv.place)}</div>
-                </div>
-              </div>
-            </div>
-            <!-- 下部: テキスト & いいね -->
-            <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 12px;z-index:3;">
-              ${post.body && post.body !== '📅 ' + sharedEv.title ? `<div style="font-size:12px;color:#fff;opacity:0.9;margin-bottom:4px;text-shadow:0 1px 3px rgba(0,0,0,0.5);">${escapeHtml(post.body.slice(0,50))}</div>` : ''}
-              <div style="font-size:11px;color:#fff;opacity:0.65;">♡ ${post.likes || 0}　🔄 ${post.shares || 0}</div>
-            </div>
-          `;
-        } else {
-          evCardInner = `
-            <div style="position:absolute;inset:0;background:${overlayGrad};pointer-events:none;"></div>
-            <div style="position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);padding:0 14px;z-index:2;pointer-events:none;">
-              <div style="font-size:13px;font-weight:600;color:#fff;text-align:center;">📅 イベント</div>
-            </div>
-          `;
-        }
-        card.innerHTML = evCardInner;
-      } else {
-        card.innerHTML = `
-          <div style="position:absolute;inset:0;background:${overlayGrad};pointer-events:none;"></div>
-          <!-- 上部: ユーザー情報 -->
-          <div style="position:absolute;top:0;left:0;right:0;padding:12px 14px 0;z-index:2;">
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${post.userId}')">
-                <div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;border:1.5px solid rgba(255,255,255,0.5);">${post.avatar}</div>
-                <div>
-                  <div style="font-size:13px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.5);">${post.name}</div>
-                  <div style="font-size:11px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,0.5);color:${titleInfo.color};">${titleInfo.emoji} ${titleInfo.name} <span style="opacity:0.75;font-weight:600;">(${scoreDisp})</span></div>
-                </div>
-              </div>
-            </div>
-            ${sunLabel}
-          </div>
-          <!-- 中央: 投稿テキスト -->
-          <div style="position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);padding:0 14px;z-index:2;pointer-events:none;">
-            <div style="font-size:13px;font-weight:600;color:#fff;line-height:1.55;text-shadow:0 1px 4px rgba(0,0,0,0.6);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${snippet}</div>
-          </div>
-          <!-- 下部: いいね・転用数 -->
-          <div style="position:absolute;bottom:0;left:0;right:0;padding:12px 14px;z-index:2;">
-            <div style="font-size:12px;color:#fff;opacity:0.75;text-shadow:0 1px 3px rgba(0,0,0,0.5);">♡ ${post.likes || 0}　🔄 ${post.shares || 0}</div>
-          </div>
-        `;
-      }
-      container.appendChild(card);
-    });
   }
 
-  // ===== FEED FULLSCREEN POST VIEWER =====
-  let feedFsIdx = 0;
 
-  function openFeedFs(idx) {
-    feedFsIdx = idx;
-    renderFeedFs();
-    document.getElementById('feedFsOverlay').classList.add('open');
-  }
-
+  // ===== FEED FULLSCREEN POST VIEWER（検索結果のフルスクリーン表示で使用） =====
   function closeFeedFs() {
     document.getElementById('feedFsOverlay').classList.remove('open');
-  }
-
-  function renderFeedFs() {
-    const post = feedPosts[feedFsIdx];
-    if (!post) return;
-    const slideEl = document.getElementById('feedFsSlide');
-    const likeKey = 'feed-' + post.id;
-    renderPostFsSlide(slideEl, post, {
-      isMine: false,
-      likeKey,
-      likeToggleFn: `toggleFeedFsLike('${post.id}')`,
-      profileNav: `closeFeedFs(); setTimeout(()=>openUserProfile('${post.userId}'),300);`,
-    });
   }
 
   function openSearchPostFs(encodedData) {
@@ -14406,22 +13930,6 @@
     }
     // Note: We don't have reference to the post object here for the search result,
     // so we just update the UI. In a real app, we'd update the backend.
-  }
-
-  function toggleFeedFsLike(postId) {
-    const likeKey = 'feed-' + postId;
-    feedLiked[likeKey] = !feedLiked[likeKey];
-    const post = feedPosts.find(p => p.id === postId);
-    const icon = document.getElementById('like-icon-' + likeKey);
-    const countEl = document.getElementById('like-count-' + likeKey);
-    if (feedLiked[likeKey]) {
-      if (icon) icon.textContent = '❤️';
-      if (post) post.likes += 1;
-    } else {
-      if (icon) icon.textContent = '🤍';
-      if (post) post.likes = Math.max(0, post.likes - 1);
-    }
-    if (countEl && post) countEl.textContent = formatCount(post.likes);
   }
 
   // ===== USER PROFILE TAB SWITCH =====
@@ -15912,12 +15420,12 @@
 <!-- ===== グループ昇格：命名モーダル ===== -->
 <div class="group-promote-modal-overlay" id="groupPromoteModalOverlay">
   <div class="group-promote-modal-dialog">
-    <div class="group-promote-modal-title">グループを作成</div>
-    <div class="group-promote-modal-desc">このメンバー構成で新しいグループを作成します（この配信はこのまま残ります）</div>
+    <div class="group-promote-modal-title">グループ登録</div>
+    <div class="group-promote-modal-desc">このメンバー構成で新しいグループを登録します（この配信はこのまま残ります）</div>
     <input type="text" class="group-promote-modal-input" id="groupPromoteNameInput" placeholder="グループ名" maxlength="30" oninput="onGroupPromoteNameInput()">
     <div class="group-promote-modal-actions">
       <button class="group-promote-modal-cancel" onclick="closeGroupPromoteModal()">キャンセル</button>
-      <button class="group-promote-modal-confirm" id="groupPromoteConfirmBtn" onclick="confirmPromoteBroadcastToGroup()" disabled>作成</button>
+      <button class="group-promote-modal-confirm" id="groupPromoteConfirmBtn" onclick="confirmPromoteBroadcastToGroup()" disabled>登録</button>
     </div>
   </div>
 </div>
@@ -16422,7 +15930,54 @@ function openGroupThread(groupId) {
   if (inp) inp.value = '';
   const btn = document.getElementById('groupThreadSendBtn');
   if (btn) btn.disabled = true;
+  // フォーマットはスレッドを開くたびparaDMにリセット
+  _gtAnnMode = false;
+  applyGtFormat();
+  updateGtNudge(group);
   renderGroupThread(groupId);
+}
+
+// ===== ANNOUNCEMENTモード（画面単位の一時状態・永続化なし） =====
+let _gtAnnMode = false;
+const _gtNudgeDismissedIds = new Set(); // このセッション中にナッジを消したスレッドID（再表示しない）
+
+function applyGtFormat() {
+  const text = document.getElementById('gtFmtBarText');
+  if (text) text.textContent = _gtAnnMode
+    ? '📢 Announcement｜告知形式の送信です。相手からの返信が減ります'
+    : '📢 ParaDM｜一斉送信ですが相手には1対1のDMとして届きます';
+  const toggle = document.getElementById('gtFmtToggle');
+  if (toggle) {
+    toggle.classList.toggle('on', _gtAnnMode);
+    toggle.setAttribute('aria-checked', _gtAnnMode ? 'true' : 'false');
+  }
+  const screen = document.getElementById('screen-group-thread');
+  if (screen) screen.classList.toggle('gt-mode-ann', _gtAnnMode);
+}
+
+function toggleGtFormat() {
+  _gtAnnMode = !_gtAnnMode;
+  applyGtFormat();
+  updateGtNudge();
+}
+
+// メンバー20人以上・未dismiss・paraDMモードのときだけ表示
+function updateGtNudge(groupArg) {
+  const nudge = document.getElementById('gtNudge');
+  if (!nudge) return;
+  const g = groupArg || userGroups.find(x => x.id === _currentGroupThreadId);
+  const show = !!g && g.memberIds.length >= 20 && !_gtNudgeDismissedIds.has(g.id) && !_gtAnnMode;
+  nudge.style.display = show ? 'flex' : 'none';
+}
+
+function gtNudgeSwitch() {
+  if (_currentGroupThreadId) _gtNudgeDismissedIds.add(_currentGroupThreadId);
+  toggleGtFormat(); // スイッチのワンタップ切替と同じ関数
+}
+
+function gtNudgeClose() {
+  if (_currentGroupThreadId) _gtNudgeDismissedIds.add(_currentGroupThreadId);
+  updateGtNudge();
 }
 
 function closeGroupThreadScreen() {
@@ -16512,6 +16067,10 @@ function renderGroupThread(groupOrId) {
           <div class="group-thread-empty-avatar">${emptyAvatar}</div>
           <div class="chat-bubble theirs">まずは最初のメッセージを送ってみよう</div>
         </div>
+        <div class="group-thread-empty-row">
+          <div class="group-thread-empty-avatar">${emptyAvatar}</div>
+          <div class="chat-bubble theirs">お知らせを一斉に送りたいときは、上のスイッチを切り替えてみて。返信を求めない告知として届きます</div>
+        </div>
       </div>`;
     return;
   }
@@ -16545,7 +16104,7 @@ function renderGroupThread(groupOrId) {
         ${tagHtml ? `<div class="gt-thread-tags">${tagHtml}</div>` : ''}
         <div class="group-thread-bubble-row">
           ${cardHtml ? `<div class="dm-invite-card-wrap">${cardHtml}</div>` : ''}
-          ${thread.text ? `<div class="chat-bubble mine">${thread.text}</div>` : ''}
+          ${thread.announcement ? gtAnnCardHtml(thread.text) : (thread.text ? `<div class="chat-bubble mine">${thread.text}</div>` : '')}
         </div>
         <div class="group-thread-summary-row" onclick="toggleGroupThreadCard(this)">
           <span class="group-thread-summary-text">${summaryText}</span>
@@ -16647,6 +16206,7 @@ function sendGroupThreadMessage() {
     text: text,
     replies: [],
   };
+  if (_gtAnnMode) newThread.announcement = true; // Announcementモードで送った配信はカード描画
   // 添付予定（招待カード or 宛先フィルタ）をスレッドに焼き込む
   const p = (_groupThreadPending && _groupThreadPending.eventId === g.eventId) ? _groupThreadPending : null;
   if (p) {
@@ -17133,6 +16693,7 @@ let eventsData = [
     hostId: 'yu_tanaka', hostName: '田中 悠', hostAvatar: '🧑', hostScore: 32100,
     invitees: ['taisho_k','rina_s','kenta_s','daisuke_ito'],
     responses: {
+      'yu_tanaka':   { c1: 'going', c2: 'going', c3: 'going' },   // 主催者は作成時に全候補○（現行ルール）
       'rina_s':      { c1: 'going', c2: 'going', c3: 'going' },
       'kenta_s':     { c1: 'going', c2: 'maybe', c3: 'skip' },
       'daisuke_ito': { c1: 'maybe', c2: 'going', c3: 'going' },
@@ -17222,58 +16783,24 @@ function buildEventsHub() {
   if (upcoming.length === 0) {
     html += '<div class="events-empty">これから予定のイベントはありません</div>';
   } else {
-    upcoming.forEach(ev => { html += (POST_UI_MODE === 'color' ? cpEventHubBand(ev) : renderEventRow(ev)); });
+    upcoming.forEach(ev => { html += cpEventHubBand(ev); });
   }
 
   html += '<div class="events-section-title">📤 主催したもの</div>';
   if (hosted.length === 0) {
     html += '<div class="events-empty">まだ主催したイベントはありません</div>';
   } else {
-    hosted.forEach(ev => { html += (POST_UI_MODE === 'color' ? cpEventHubBand(ev, '📤 あなたが主催しています') : renderEvInviteCard(ev)); });
+    hosted.forEach(ev => { html += cpEventHubBand(ev, '📤 あなたが主催しています'); });
   }
 
   html += '<div class="events-section-title">📥 招待されたもの</div>';
   if (invited.length === 0) {
     html += '<div class="events-empty">まだ招待はありません</div>';
   } else {
-    invited.forEach(ev => { html += (POST_UI_MODE === 'color' ? cpEventHubBand(ev) : renderEvInviteCard(ev)); });
+    invited.forEach(ev => { html += cpEventHubBand(ev); });
   }
 
   list.innerHTML = html;
-}
-
-function renderEventRow(ev) {
-  const d = new Date(ev.date);
-  const month = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][d.getMonth()];
-  const day = d.getDate();
-
-  let statusHtml = '';
-  if (ev.hostId === EV_SELF_ID) {
-    statusHtml = `<div class="events-row-status host">主催</div>`;
-  } else {
-    const r = ev.responses[EV_SELF_ID];
-    const map = {
-      going: { cls: 'going', label: '✓ 行く' },
-      maybe: { cls: 'maybe', label: '? 検討中' },
-      skip:  { cls: 'skip',  label: '✗ 行けない' },
-    };
-    const st = map[r] || { cls: 'pending', label: '未回答' };
-    statusHtml = `<div class="events-row-status ${st.cls}">${st.label}</div>`;
-  }
-
-  return `
-    <div class="events-row" onclick="openEventDetail('${ev.id}')">
-      <div class="events-row-date">
-        <div class="events-row-date-month">${month}</div>
-        <div class="events-row-date-day">${day}</div>
-      </div>
-      <div class="events-row-body">
-        <div class="events-row-title">${escapeHtml(ev.title)}</div>
-        <div class="events-row-meta">${ev.time} · ${escapeHtml(ev.place)}</div>
-        ${statusHtml}
-      </div>
-    </div>
-  `;
 }
 
 // イベントページ用：ホームの招待帯（cpInviteBandHtml）をそのまま使う。
@@ -17281,78 +16808,6 @@ function renderEventRow(ev) {
 function cpEventHubBand(ev, ctxOverride) {
   const ctx = ctxOverride || (ev.hostId === EV_SELF_ID ? '📤 あなたが主催しています' : undefined);
   return '<div style="margin:0 -16px;">' + cpInviteBandHtml(ev, ctx) + '</div>';
-}
-
-// ===== ホームのinvite-cardと共通のリッチカード（主催イベント一覧用） =====
-// 日程調整イベント用の招待カード中身（フィード・ハブ共通）
-function pollCardInner(ev) {
-  const coverPos = ev.coverPos ? `${ev.coverPos.x}% ${ev.coverPos.y}%` : 'center';
-  const coverBg = ev.coverImage ? `background-image: url(${ev.coverImage}); background-position: ${coverPos};` : '';
-  const candCount = (ev.candidates || []).length;
-  const myAns = ev.responses[EV_SELF_ID];
-  const answered = (myAns && typeof myAns === 'object') ? Object.keys(myAns).length : 0;
-  const ctaText = answered > 0 ? `回答済み（${answered}/${candCount}）・変更する` : '日程を回答する';
-  return `
-    <div class="invite-card-cover" style="${coverBg}">
-      <div class="invite-card-label">🗳️ みんなで日程調整</div>
-      <div class="invite-card-cover-date">候補 ${candCount}件</div>
-      <div class="invite-card-cover-overlay"></div>
-    </div>
-    <div class="invite-card-body">
-      <div class="invite-card-title">${escapeHtml(ev.title)}</div>
-      <div class="invite-card-host">主催: ${escapeHtml(ev.hostName)}</div>
-      <div class="invite-card-meta"><span class="ico">📍</span>${escapeHtml(ev.place)}</div>
-      ${ev.message ? `<div class="invite-card-msg">${escapeHtml(ev.message)}</div>` : ''}
-      <div class="invite-card-actions">
-        <button class="invite-card-btn" style="flex:1;background:rgba(168,85,247,0.25);border-color:#A855F7;color:#fff;">🗳️ ${ctaText}</button>
-      </div>
-      <div class="invite-card-footer">
-        <span>タップして候補に回答</span>
-        ${ev.deadline ? `<span>締切 ${ev.deadline}</span>` : '<span></span>'}
-      </div>
-    </div>
-  `;
-}
-
-function renderEvInviteCard(ev) {
-  if (isPoll(ev)) {
-    return `<div class="invite-card" onclick="openEventDetail('${ev.id}')">${pollCardInner(ev)}</div>`;
-  }
-  const weekdayArr = ['日','月','火','水','木','金','土'];
-  const d = new Date(ev.date);
-  const dateShort = `${d.getMonth()+1}/${d.getDate()}(${weekdayArr[d.getDay()]})`;
-  const goingCount = Object.values(ev.responses).filter(r => r === 'going').length;
-  const coverPos = ev.coverPos ? `${ev.coverPos.x}% ${ev.coverPos.y}%` : 'center';
-  const coverBg = ev.coverImage
-    ? `background-image: url(${ev.coverImage}); background-position: ${coverPos};`
-    : '';
-  const labelText = ev.hostId === EV_SELF_ID ? '📅 主催' : (ev.isPublic ? '📅 オープンイベント' : '📅 招待');
-  const myR = ev.responses[EV_SELF_ID];
-  const cls = (k) => (myR === k ? `active ${k}` : '');
-  return `
-    <div class="invite-card" onclick="openEventDetail('${ev.id}')">
-      <div class="invite-card-cover" style="${coverBg}">
-        <div class="invite-card-label">${labelText}</div>
-        <div class="invite-card-cover-date">${dateShort} ${ev.time}</div>
-        <div class="invite-card-cover-overlay"></div>
-      </div>
-      <div class="invite-card-body">
-        <div class="invite-card-title">${escapeHtml(ev.title)}</div>
-        <div class="invite-card-host">主催: ${escapeHtml(ev.hostName)}</div>
-        <div class="invite-card-meta"><span class="ico">📍</span>${escapeHtml(ev.place)}</div>
-        ${ev.message ? `<div class="invite-card-msg">${escapeHtml(ev.message)}</div>` : ''}
-        <div class="invite-card-actions">
-          <button class="invite-card-btn ${cls('going')}" onclick="event.stopPropagation(); setInviteResponseFromFeed('${ev.id}','going')">✓ 行く</button>
-          <button class="invite-card-btn ${cls('maybe')}" onclick="event.stopPropagation(); setInviteResponseFromFeed('${ev.id}','maybe')">? 検討</button>
-          <button class="invite-card-btn ${cls('skip')}"  onclick="event.stopPropagation(); setInviteResponseFromFeed('${ev.id}','skip')">✗ 行けない</button>
-        </div>
-        <div class="invite-card-footer">
-          <span>✓ ${goingCount}人が参加予定</span>
-          ${ev.deadline ? `<span>締切 ${ev.deadline}</span>` : '<span></span>'}
-        </div>
-      </div>
-    </div>
-  `;
 }
 
 function escapeHtml(s) {
@@ -17877,20 +17332,35 @@ function deleteEventFromDetail(eventId) {
   if (!confirm('このイベントを削除しますか？\nこの操作は取り消せません。')) return;
   const idx = eventsData.findIndex(e => e.id === eventId);
   if (idx === -1) return;
+  // イベント一団（セット）側のeventId参照を外す（セット/スレッド自体は残す）
+  if (typeof userGroups !== 'undefined') {
+    userGroups.forEach(g => { if (g.eventId === eventId) g.eventId = null; });
+  }
   eventsData.splice(idx, 1);
   showToast('イベントを削除しました');
+  evDetailReturnTo = 'events';   // 削除後はイベントページへ戻る
   closeEventDetail();
 }
 
-// 主催者メニュー（⋯ボタンから表示するaction sheet）
+// 幹事メニュー（詳細ヘッダー右上のボタンから表示。主催者操作はここに全集約）
 function openHostActionSheet(eventId) {
   const ev = eventsData.find(e => e.id === eventId);
   if (!ev || ev.hostId !== EV_SELF_ID) return;
-  document.getElementById('actionSheetTitle').textContent = 'イベント主催者メニュー';
+  document.getElementById('actionSheetTitle').textContent = '幹事メニュー';
   const body = document.getElementById('actionSheetBody');
   const items = [];
+  items.push(`<div class="action-sheet-item" onclick="editEventFromSheet('${eventId}')">
+    <span class="action-icon">✎</span><span>イベントを編集する</span></div>`);
+  items.push(`<div class="action-sheet-item" onclick="inviteContactFromSheet('${eventId}')">
+    <span class="action-icon">📨</span><span>招待・連絡</span></div>`);
+  items.push(`<div class="action-sheet-item" onclick="shareEventFromSheet('${eventId}')">
+    <span class="action-icon">📣</span><span>このイベントをシェアする</span></div>`);
+  if (isPoll(ev) && !ev.closed) {
+    items.push(`<div class="action-sheet-item" onclick="enterPollFinalizeFromSheet('${eventId}')">
+      <span class="action-icon">📌</span><span>日程を確定する</span></div>`);
+  }
   items.push(`<div class="action-sheet-item" onclick="openEventSettingsSheet('${eventId}')">
-    <span class="action-icon">⚙️</span><span>イベント設定</span></div>`);
+    <span class="action-icon">🌐</span><span>公開設定</span></div>`);
   if (ev.closed) {
     items.push(`<div class="action-sheet-item" onclick="reopenEventFromSheet('${eventId}')">
       <span class="action-icon">🔓</span><span>受付を再開する</span></div>`);
@@ -17899,11 +17369,38 @@ function openHostActionSheet(eventId) {
       <span class="action-icon">🔒</span><span>受付を締める</span></div>`);
   }
   items.push(`<div class="action-sheet-item danger" onclick="deleteEventFromSheet('${eventId}')">
-    <span class="action-icon">🗑</span><span>イベントを削除</span></div>`);
+    <span class="action-icon">🗑</span><span>イベントを削除する</span></div>`);
   items.push(`<div class="action-sheet-item" onclick="closeActionSheet()" style="justify-content:center;">
     <span>キャンセル</span></div>`);
   body.innerHTML = items.join('');
   document.getElementById('actionSheet').classList.add('show');
+}
+// 幹事メニュー各行のディスパッチ（シートを閉じてから既存フローへ。開閉対称の150ms待ち）
+function editEventFromSheet(eventId) {
+  closeActionSheet();
+  setTimeout(() => openEventEdit(eventId), 150);
+}
+function inviteContactFromSheet(eventId) {
+  closeActionSheet();
+  setTimeout(() => openEventInviteContactSheet(eventId), 150);
+}
+function shareEventFromSheet(eventId) {
+  closeActionSheet();
+  setTimeout(() => openEvShareSheet(eventId), 150);
+}
+function enterPollFinalizeFromSheet(eventId) {
+  closeActionSheet();
+  setTimeout(() => {
+    const ev = eventsData.find(e => e.id === eventId);
+    if (!ev || ev.hostId !== EV_SELF_ID || !isPoll(ev)) return;
+    evPollFinalizeMode = true;
+    renderEventDetail(ev);
+  }, 150);
+}
+function exitPollFinalizeMode() {
+  evPollFinalizeMode = false;
+  const ev = eventsData.find(e => e.id === evDetailCurrentId);
+  if (ev) renderEventDetail(ev);
 }
 function closeEventFromSheet() {
   closeActionSheet();
@@ -17954,19 +17451,15 @@ function toggleEventSettingsScope(eventId) {
   if (evDetailCurrentId === eventId) renderEventDetail(ev);
 }
 
-// ===== イベントシェア機能 =====
+// ===== イベントシェア機能（URLシート） =====
 function openEvShareSheet(eventId) {
   const body = document.getElementById('evShareSheetBody');
+  const url = 'https://hyperay.app/e/' + eventId;
   body.innerHTML = `
-    <div class="action-sheet-item" onclick="evShareCopyLink('${eventId}')">
-      <span class="action-icon">🔗</span><span>リンクをコピー</span>
+    <div class="ev-share-url-row">
+      <input type="text" class="ev-share-url-input" id="evShareUrlInput" value="${url}" readonly onclick="this.select()">
     </div>
-    <div class="action-sheet-item" onclick="openEvShareComposer('${eventId}')">
-      <span class="action-icon">✈️</span><span>投稿でシェア</span>
-    </div>
-    <div class="action-sheet-item" onclick="closeEvShareSheet()" style="justify-content:center;">
-      <span>キャンセル</span>
-    </div>
+    <button class="ev-share-copy-btn" onclick="evShareCopyLink('${eventId}')">リンクをコピー</button>
   `;
   document.getElementById('evShareSheet').classList.add('show');
 }
@@ -17986,25 +17479,6 @@ function evShareCopyLink(eventId) {
     showToast('リンクをコピーしました');
   }
 }
-function openEvShareComposer(eventId) {
-  closeEvShareSheet();
-  const ev = eventsData.find(e => e.id === eventId);
-  if (!ev) return;
-  // コンポーザーをイベントシェアモードで開く
-  cmpReset();
-  cmpEvShareMode = true;
-  cmpEvShareData = { ...ev };
-  // コンポーザー画面に切り替え
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-post').classList.add('active');
-  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-  // テキストレイヤーが空なら作成（ユーザーが自由に入力できる枠）
-  setTimeout(() => {
-    if (cmpLayers.length === 0) cmpCreateTextLayer(false);
-    cmpEvRenderCard();
-  }, 80);
-}
-
 function renderEvCoverEditor() {
   const preview = document.getElementById('evCoverPreview');
   const photos  = document.getElementById('evCoverPhotos');
@@ -18194,6 +17668,15 @@ function previewEventCreate() {
       isPublic,
       invitees: isPublic ? [] : invitees,
     };
+    // 日程調整：編集で増えた候補には主催者の回答を自動で○（既存候補への回答は触らない）
+    if (isPollMode) {
+      const updated = eventsData[idx];
+      const oldIds = new Set((old.candidates || []).map(c => c.id));
+      const hostAns = (updated.responses[EV_SELF_ID] && typeof updated.responses[EV_SELF_ID] === 'object')
+        ? updated.responses[EV_SELF_ID] : {};
+      pollCandidates.forEach(c => { if (!oldIds.has(c.id) && !hostAns[c.id]) hostAns[c.id] = 'going'; });
+      updated.responses[EV_SELF_ID] = hostAns;
+    }
     const updatedId = evEditingEventId;
     evEditingEventId = null;
     showToast('イベントを更新しました');
@@ -18225,7 +17708,10 @@ function previewEventCreate() {
     hostAvatar: '🧔',
     hostScore: 50879,
     invitees,
-    responses: {},
+    // 日程調整：主催者は全候補○でスタート（あとから普通にトグルで変更可能）
+    responses: isPollMode
+      ? { [EV_SELF_ID]: Object.fromEntries(pollCandidates.map(c => [c.id, 'going'])) }
+      : {},
     history: [],
     closed: false,
     createdAt: new Date().toISOString().slice(0, 10),
@@ -18283,7 +17769,10 @@ function renderPollCandidates(ev, isHost) {
     const n = Object.keys(responses).filter(uid => ansOf(uid, c.id) === 'going').length;
     if (n > bestCount) { bestCount = n; bestIdx = i; }
   });
-  const namesFor = (cid, status) => Object.keys(responses).filter(uid => ansOf(uid, cid) === status).map(uid => escapeHtml(evMemberName(uid)));
+  // 回答者名（主催者には「主催」バッジ。イベント一覧の主催バッジと同スタイル）
+  const nameWithBadge = (uid) => escapeHtml(evMemberName(uid))
+    + (uid === ev.hostId ? ' <span class="events-row-status host" style="margin:0;padding:1px 6px;font-size:9.5px;">主催</span>' : '');
+  const namesFor = (cid, status) => Object.keys(responses).filter(uid => ansOf(uid, cid) === status).map(nameWithBadge);
   const resultRow = (cls, mark, label, names) => `
         <div class="ev-poll-result-row">
           <span class="ev-poll-mark ${cls}">${mark}</span>
@@ -18291,6 +17780,8 @@ function renderPollCandidates(ev, isHost) {
           <span class="ev-poll-rcount">${names.length}</span>
           <span class="ev-poll-rnames">${names.length ? names.join('、') : '—'}</span>
         </div>`;
+  // 確定モード（幹事メニュー「日程を確定する」から入る）：主催者だけ「この日にする」ボタンを表示
+  const finalizeMode = isHost && evPollFinalizeMode;
   const cards = candidates.map((c, i) => {
     const goingNames = namesFor(c.id, 'going');
     const maybeNames = namesFor(c.id, 'maybe');
@@ -18305,8 +17796,8 @@ function renderPollCandidates(ev, isHost) {
           ${resultRow('maybe','△','微妙',maybeNames)}
           ${resultRow('skip','×','無理',skipNames)}
         </div>
-        ${isHost ? `
-          <button class="ev-poll-finalize-btn" onclick="finalizePollDate('${ev.id}','${c.id}')">✓ この日で確定する</button>
+        ${finalizeMode ? `
+          <button class="ev-poll-finalize-btn" onclick="finalizePollDate('${ev.id}','${c.id}')">📌 この日にする</button>
         ` : `
           <div class="ev-poll-answer-label">あなたの回答</div>
           <div class="ev-poll-rsvp-row">
@@ -18317,7 +17808,9 @@ function renderPollCandidates(ev, isHost) {
         `}
       </div>`;
   }).join('');
-  const head = `<div style="font-size:13px;font-weight:700;color:#fff;margin:4px 16px 8px;">🗳️ 日程を調整中 — ${isHost ? '一番集まる日を確定できます' : '都合のいい日に答えてね'}</div>`;
+  const head = finalizeMode
+    ? `<div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:700;color:#fff;margin:4px 16px 8px;"><span>📌 確定する日を選んでください</span><span onclick="exitPollFinalizeMode()" style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.65);cursor:pointer;">キャンセル</span></div>`
+    : `<div style="font-size:13px;font-weight:700;color:#fff;margin:4px 16px 8px;">🗳️ 日程を調整中 — 都合のいい日に答えてね</div>`;
   const note = ev.deadline ? `<div style="font-size:12px;color:rgba(255,255,255,0.55);margin:0 16px 8px;">回答締切: ${ev.deadline}</div>` : '';
   return `<div class="ev-poll-section">${head}${note}${cards}</div>`;
 }
@@ -18339,7 +17832,9 @@ function finalizePollDate(eventId, candidateId) {
   if (!cand) return;
   const end = computeEndFromDuration(cand.date, cand.time, ev.durationHours);  // 共通所要時間で終了を算出
   const rangeLabel = end.endTime ? `${cand.time}〜${end.endTime}` : cand.time;
-  if (!confirm(`「${cand.date} ${rangeLabel}」で日程を確定しますか？\n確定すると候補は締め切られ、通常の出欠に切り替わります。`)) return;
+  const cd = new Date(cand.date);
+  const candLabel = `${cd.getMonth()+1}/${cd.getDate()}(${['日','月','火','水','木','金','土'][cd.getDay()]}) ${rangeLabel}`;
+  if (!confirm(`${candLabel} で確定しますか？\n確定すると候補は締め切られ、通常の出欠に切り替わります。`)) return;
   ev.type = 'fixed';
   ev.date = cand.date;
   ev.time = cand.time;
@@ -18347,6 +17842,7 @@ function finalizePollDate(eventId, candidateId) {
   ev.endTime = end.endTime;
   delete ev.candidates;
   ev.responses = {};
+  evPollFinalizeMode = false;
   showToast('日程を確定しました');
   renderEventDetail(ev);
 }
@@ -18354,12 +17850,14 @@ function finalizePollDate(eventId, candidateId) {
 // ===== 詳細画面 =====
 let evDetailCurrentId = null;
 let evDetailReturnTo = 'talk'; // 'talk' | 'home'
+let evPollFinalizeMode = false; // 幹事メニュー「日程を確定する」の確定モード中か
 
 function openEventDetail(eventId, returnTo = 'events') {
   const ev = eventsData.find(e => e.id === eventId);
   if (!ev) return;
   evDetailCurrentId = eventId;
   evDetailReturnTo = returnTo;
+  evPollFinalizeMode = false;   // 開き直したら通常の投票モードから
   renderEventDetail(ev);
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-event-detail').classList.add('active');
@@ -18382,22 +17880,6 @@ function closeEventDetail() {
 }
 
 // フィード上の招待カードからの即時回答
-function setInviteResponseFromFeed(eventId, status) {
-  const ev = eventsData.find(e => e.id === eventId);
-  if (!ev || ev.closed) { showToast('受付終了しています'); return; }
-  if (ev.responses[EV_SELF_ID] === status) {
-    delete ev.responses[EV_SELF_ID];
-    showToast('回答を取り消しました');
-  } else {
-    ev.responses[EV_SELF_ID] = status;
-    const msg = { going: '「行く」で回答しました', maybe: '「検討中」で回答しました', skip: '「行けない」で回答しました' };
-    showToast(msg[status]);
-  }
-  buildHomeFeed();
-  // hub（イベントタブ）が表示中なら再描画
-  if (document.getElementById('eventsHubList')) buildEventsHub();
-}
-
 // 地図アプリを開く（実機ではGoogle Mapsアプリ／無ければブラウザ・Apple Maps）
 function openMapsApp(lat, lng, q) {
   const query = (lat != null && lng != null) ? (lat + ',' + lng) : (q || '');
@@ -18417,7 +17899,8 @@ function initDetailMiniMap(bodyId, lat, lng) {
   }).setView([lat, lng], 16);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
   _detailMiniMaps[id] = map;
-  setTimeout(() => map.invalidateSize(), 100);
+  // 100ms以内に再描画されて旧mapが破棄済みの場合はスキップ（連続投票時のLeafletエラー防止）
+  setTimeout(() => { if (_detailMiniMaps[id] === map) map.invalidateSize(); }, 100);
 }
 
 // 日時レンジ整形（詳細・プレビュー・カード共通）。同日は「7月21日(火) 19:00〜21:00」、
@@ -18487,6 +17970,7 @@ function renderEventDetail(ev, opts = {}) {
     <div class="ev-detail-cover" style="${coverBg}">
       <button class="ev-detail-floating-back" onclick="closeEventDetail()">←</button>
       ${scopeBadge}
+      ${isHost ? `<button class="ev-detail-floating-menu" onclick="openHostActionSheet('${ev.id}')">☰ 幹事メニュー</button>` : ''}
       <div class="ev-detail-cover-overlay"></div>
     </div>
 
@@ -18497,12 +17981,6 @@ function renderEventDetail(ev, opts = {}) {
         <span class="ev-detail-host-name">${escapeHtml(ev.hostName)}</span>
         ${hostBadge}
       </div>
-
-      ${isHost ? `
-      <div class="ev-host-admin-row">
-        <button class="ev-host-admin-btn" onclick="openEventEdit('${ev.id}')">✎ 編集</button>
-        <button class="ev-host-admin-btn primary" onclick="openEventInviteContactSheet('${ev.id}')">📨 招待・連絡</button>
-      </div>` : ''}
 
       ${isPoll(ev) ? renderPollCandidates(ev, isHost) : `
       <div class="ev-detail-infoblock">
@@ -18572,22 +18050,12 @@ function renderEventDetail(ev, opts = {}) {
   const ctaBar = ctaId ? document.getElementById(ctaId) : null;
   if (!ctaBar) return;
   if (isHost) {
-    // Partiful式一本化：編集・招待/連絡は上部の控えめ2ボタンへ集約。下部はシェア＋その他のみ
-    if (ev.closed) {
-      ctaBar.className = 'ev-detail-cta-bar';
-      ctaBar.innerHTML = `
-        <div style="flex:1;text-align:center;padding:12px 4px;color:rgba(255,255,255,0.5);font-weight:600;font-size:12px;">受付終了</div>
-        <button class="ev-cta-pill" style="flex:0 0 auto;" onclick="openEvShareSheet('${ev.id}')">📤 シェア</button>
-        <button class="ev-cta-pill more-btn" onclick="openHostActionSheet('${ev.id}')" title="その他">⋯</button>
-      `;
-    } else {
-      ctaBar.className = 'ev-detail-cta-bar';
-      ctaBar.innerHTML = `
-        <button class="ev-cta-pill" style="flex:1;" onclick="openEvShareSheet('${ev.id}')">📤 シェア</button>
-        <button class="ev-cta-pill more-btn" onclick="openHostActionSheet('${ev.id}')" title="その他">⋯</button>
-      `;
-    }
+    // 主催者操作はヘッダー右上の「幹事メニュー」1個に集約（調整さん式）。下部バーは出さない
+    ctaBar.className = '';
+    ctaBar.innerHTML = '';
+    ctaBar.style.display = 'none';
   } else {
+    ctaBar.style.display = '';
     if (ev.closed) {
       ctaBar.className = 'ev-detail-cta-bar';
       ctaBar.innerHTML = `
@@ -19027,39 +18495,11 @@ function renderGroupThreadEventLink(group) {
   }
 }
 
-// eventsData 定義後にホームフィードを再描画（初期データの evShareId カードを反映）
+// eventsData 定義後にホームフィードを再描画（招待帯の初期表示に必要）
 if (typeof buildHomeFeed === 'function') buildHomeFeed();
 
 // ===== STORY POP MODAL (中央ポン演出) =====
 // インラインstyle廃止。pop-mode クラスで完全制御。translateY スライドゼロ。
-
-function openStoryPop(userId) {
-  const storiesEl = document.getElementById('storiesOverlay');
-  const backdrop  = document.getElementById('storyPopBackdrop');
-  if (!storiesEl || !backdrop) { openStories(userId); return; }
-
-  // 二重オープン防止（既に表示中＝open のときだけ弾く。pop-mode は閉じても常駐するので判定に使わない）
-  if (storiesEl.classList.contains('open')) return;
-
-  // pop-mode クラスを付与（scale0.9/opacity0 の初期状態）
-  storiesEl.classList.add('pop-mode');
-  backdrop.classList.add('open');
-
-  // ストーリーデータ・タイマーをセット（この中で .open は付かない）
-  const user = typeof storiesData !== 'undefined' && storiesData.find(u => u.id === userId);
-  if (!user) { storiesEl.classList.remove('pop-mode'); backdrop.classList.remove('open'); return; }
-  currentStoriesUserId = userId;
-  currentStoriesIdx = 0;
-  renderStorySlide();
-  startStoriesTimer();
-
-  // 1フレーム後に .open を付けてアニメ開始（pop-mode.open = scale1/opacity1）
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      storiesEl.classList.add('open');
-    });
-  });
-}
 
 function closeStoryPop() {
   const storiesEl = document.getElementById('storiesOverlay');
