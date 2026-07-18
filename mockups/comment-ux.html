@@ -1,0 +1,761 @@
+<title>コメントUX見本（3方式）</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #F0F0F0;
+    overflow-x: hidden;
+    max-width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Sans", sans-serif;
+    color: #1A1A1A;
+  }
+
+  main {
+    max-width: 430px;
+    margin: 0 auto;
+    padding: 32px 16px 72px;
+  }
+
+  .page-title {
+    font-size: 21px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    letter-spacing: 0.01em;
+  }
+
+  .page-desc {
+    font-size: 13px;
+    color: #666;
+    margin: 0 0 40px;
+    line-height: 1.6;
+  }
+
+  .demo {
+    margin-bottom: 56px;
+  }
+
+  .demo-head {
+    margin-bottom: 16px;
+  }
+
+  .demo-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #7B1FA2;
+    background: #F3E5F5;
+    padding: 3px 9px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+
+  .demo-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 3px;
+  }
+
+  .demo-source {
+    font-size: 12px;
+    color: #999;
+    margin: 0 0 8px;
+  }
+
+  .demo-desc {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .demo-note {
+    font-size: 12px;
+    color: #7B1FA2;
+    line-height: 1.6;
+    margin: 6px 0 0;
+    background: #F9F0FB;
+    padding: 8px 10px;
+    border-radius: 8px;
+  }
+
+  /* ---- phone frame ---- */
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+  }
+
+  .phone {
+    position: relative;
+    width: min(390px, 100%);
+    height: 780px;
+    border-radius: 24px;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---- shared viewer base ---- */
+  .viewer-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 14px;
+    position: relative;
+    z-index: 6;
+    flex-shrink: 0;
+  }
+
+  .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+
+  .username {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    margin-left: 9px;
+  }
+
+  .tier-badge {
+    color: #FFD54F;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 6px;
+    background: rgba(255, 255, 255, 0.14);
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+
+  .close-btn {
+    margin-left: auto;
+    color: #fff;
+    font-size: 18px;
+    opacity: 0.85;
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: default;
+  }
+
+  .viewer-body {
+    flex: 1;
+    min-height: 0;
+    background: linear-gradient(135deg, #4527A0, #7B1FA2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 30px;
+  }
+
+  .post-text {
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    line-height: 1.7;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  /* ---- footer: icon column (A / C) ---- */
+  .footer-icons {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    padding: 14px 18px calc(14px + env(safe-area-inset-bottom, 0px));
+    background: rgba(0, 0, 0, 0.55);
+    position: relative;
+    z-index: 6;
+  }
+
+  .icon-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    padding: 4px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .icon-btn .count {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .icon-btn.share-btn { margin-left: auto; }
+
+  /* ---- Case A: bottom sheet ---- */
+  .sheet-dim {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 15;
+  }
+  .sheet-dim.open { opacity: 1; pointer-events: auto; }
+
+  .bottom-sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 52%;
+    background: #fff;
+    border-radius: 18px 18px 0 0;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    display: flex;
+    flex-direction: column;
+    z-index: 20;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  }
+  .bottom-sheet.open { transform: translateY(0); }
+
+  .sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: #DDD;
+    border-radius: 3px;
+    margin: 10px auto 6px;
+    flex-shrink: 0;
+  }
+
+  .sheet-title {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #333;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #F0F0F0;
+    flex-shrink: 0;
+  }
+
+  .comment-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 16px;
+  }
+
+  .comment-item {
+    display: flex;
+    gap: 9px;
+    margin-bottom: 16px;
+  }
+
+  .comment-item .avatar {
+    background: #EDE7F6;
+    color: #333;
+  }
+
+  .comment-body { flex: 1; min-width: 0; }
+
+  .comment-name {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #222;
+  }
+
+  .comment-text {
+    font-size: 13.5px;
+    color: #333;
+    line-height: 1.5;
+    margin: 2px 0 3px;
+    word-break: break-word;
+  }
+
+  .comment-meta {
+    font-size: 11px;
+    color: #999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .comment-input-row {
+    flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+    padding: 10px 14px calc(12px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid #F0F0F0;
+  }
+
+  .comment-input-row input {
+    flex: 1;
+    border: 1px solid #E4E4E4;
+    background: #F7F7F7;
+    border-radius: 20px;
+    padding: 9px 14px;
+    font-size: 13.5px;
+    font-family: inherit;
+    outline: none;
+    min-width: 0;
+  }
+
+  .send-btn {
+    border: none;
+    background: #4527A0;
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 0 16px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .send-btn:disabled { background: #CCC; cursor: default; }
+
+  /* ---- Case B: story reply ---- */
+  .footer-b {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 14px calc(14px + env(safe-area-inset-bottom, 0px));
+    background: rgba(0, 0, 0, 0.55);
+    position: relative;
+    z-index: 6;
+  }
+
+  .footer-b input {
+    flex: 1;
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    background: rgba(0, 0, 0, 0.2);
+    color: #fff;
+    border-radius: 22px;
+    padding: 10px 16px;
+    font-size: 13.5px;
+    font-family: inherit;
+    outline: none;
+    min-width: 0;
+  }
+  .footer-b input::placeholder { color: rgba(255, 255, 255, 0.75); }
+
+  .footer-b .icon-btn { flex-shrink: 0; }
+
+  .toast {
+    position: absolute;
+    left: 50%;
+    bottom: 84px;
+    transform: translate(-50%, 10px);
+    background: rgba(20, 20, 20, 0.92);
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 20px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 25;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* ---- Case C: thread ---- */
+  .thread-overlay {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    display: flex;
+    flex-direction: column;
+    z-index: 30;
+  }
+  .thread-overlay.open { transform: translateY(0); }
+
+  .thread-topbar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-bottom: 1px solid #F0F0F0;
+  }
+
+  .back-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: #222;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 4px;
+  }
+
+  .thread-topbar .thread-topbar-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #222;
+  }
+
+  .thread-scroll {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .thread-post {
+    padding: 4px 0 14px;
+    border-bottom: 8px solid #F5F5F5;
+  }
+
+  .thread-post .viewer-header { padding: 14px 16px 10px; }
+
+  .thread-post-body {
+    background: linear-gradient(135deg, #4527A0, #7B1FA2);
+    margin: 0 16px;
+    border-radius: 14px;
+    padding: 26px 20px;
+  }
+
+  .thread-post-body .post-text { font-size: 15.5px; }
+
+  .thread-replies {
+    padding: 6px 16px 12px;
+  }
+
+  .thread-replies .comment-item { margin-bottom: 18px; }
+
+  .thread-replies .comment-name { color: #222; }
+  .thread-replies .comment-handle {
+    font-size: 11.5px;
+    color: #999;
+    font-weight: 400;
+    margin-left: 3px;
+  }
+
+  .thread-compose {
+    flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+    padding: 10px 14px calc(12px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid #F0F0F0;
+  }
+
+  .thread-compose input {
+    flex: 1;
+    border: 1px solid #E4E4E4;
+    background: #F7F7F7;
+    border-radius: 20px;
+    padding: 9px 14px;
+    font-size: 13.5px;
+    font-family: inherit;
+    outline: none;
+    min-width: 0;
+  }
+</style>
+
+<main>
+  <h1 class="page-title">コメントUX見本（3方式）</h1>
+  <p class="page-desc">レイ（全画面カラー投稿）にコメント機能をつけるための方式見本。オリジナリティは狙わず、世の中で最も一般的な3方式をそのまま再現しています。実際にタップ・入力して比較してください。</p>
+
+  <!-- ===================== 案A ===================== -->
+  <section class="demo">
+    <div class="demo-head">
+      <span class="demo-badge">案A</span>
+      <h2 class="demo-title">コメントシート</h2>
+      <p class="demo-source">出典：TikTok / Instagramリール / YouTube Shorts方式（現在の業界標準）</p>
+      <p class="demo-desc">💬アイコンをタップすると画面下から半画面のシートがスライドイン。投稿は背後に見えたまま、コメント一覧と入力欄がその上に重なる。</p>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="viewer-header">
+          <div class="avatar">👤</div>
+          <span class="username">誠司</span>
+          <span class="tier-badge">⭐ Star</span>
+          <button class="close-btn">✕</button>
+        </div>
+        <div class="viewer-body">
+          <p class="post-text">経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。</p>
+        </div>
+        <div class="footer-icons">
+          <button class="icon-btn"><span>♡</span><span class="count">128</span></button>
+          <button class="icon-btn" id="openSheetA"><span>💬</span><span class="count" id="countA">3</span></button>
+          <button class="icon-btn share-btn"><span>↗</span></button>
+        </div>
+
+        <div class="sheet-dim" id="dimA"></div>
+        <div class="bottom-sheet" id="sheetA">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title">コメント <span id="sheetCountA">3</span>件</div>
+          <div class="comment-list" id="listA">
+            <div class="comment-item">
+              <div class="avatar">👩</div>
+              <div class="comment-body">
+                <div class="comment-name">ゆかり</div>
+                <div class="comment-text">任せる力、めちゃくちゃ共感します</div>
+                <div class="comment-meta"><span>2時間前</span><span>♡ 12</span></div>
+              </div>
+            </div>
+            <div class="comment-item">
+              <div class="avatar">🧑</div>
+              <div class="comment-body">
+                <div class="comment-name">タカシ</div>
+                <div class="comment-text">AIに任せる勇気がまだない…</div>
+                <div class="comment-meta"><span>1時間前</span><span>♡ 5</span></div>
+              </div>
+            </div>
+            <div class="comment-item">
+              <div class="avatar">👨</div>
+              <div class="comment-body">
+                <div class="comment-name">ケンジ</div>
+                <div class="comment-text">全部自分でやってた頃を思い出す</div>
+                <div class="comment-meta"><span>30分前</span><span>♡ 8</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="comment-input-row">
+            <input type="text" id="inputA" placeholder="コメントを追加…">
+            <button class="send-btn" id="sendA">送信</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 案B ===================== -->
+  <section class="demo">
+    <div class="demo-head">
+      <span class="demo-badge">案B</span>
+      <h2 class="demo-title">ストーリーズ返信</h2>
+      <p class="demo-source">出典：Instagramストーリーズ方式</p>
+      <p class="demo-desc">公開コメント欄そのものが存在しない。「メッセージを送信」欄に入力すると、投稿者へのDMとして1対1で届く。</p>
+      <p class="demo-note">公開コメントが無い＝荒れない・気軽。ただし盛り上がりは見えない。HYPERAYのBCC思想（公開の場を作らず1対1に流す）と相性が良い選択肢。</p>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="viewer-header">
+          <div class="avatar">👤</div>
+          <span class="username">誠司</span>
+          <span class="tier-badge">⭐ Star</span>
+          <button class="close-btn">✕</button>
+        </div>
+        <div class="viewer-body">
+          <p class="post-text">経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。</p>
+        </div>
+        <div class="footer-b">
+          <input type="text" id="inputB" placeholder="メッセージを送信">
+          <button class="icon-btn"><span>♡</span></button>
+          <button class="icon-btn" id="sendB"><span>➤</span></button>
+        </div>
+        <div class="toast" id="toastB">💬 誠司さんにDMで送信しました</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 案C ===================== -->
+  <section class="demo">
+    <div class="demo-head">
+      <span class="demo-badge">案C</span>
+      <h2 class="demo-title">スレッド表示</h2>
+      <p class="demo-source">出典：X（旧Twitter）/ Threads方式</p>
+      <p class="demo-desc">💬アイコンをタップするとポスト詳細画面に遷移。本文の下にリプライが時系列で連なり、最下部に固定の入力欄から返信できる。</p>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="viewer-header">
+          <div class="avatar">👤</div>
+          <span class="username">誠司</span>
+          <span class="tier-badge">⭐ Star</span>
+          <button class="close-btn">✕</button>
+        </div>
+        <div class="viewer-body">
+          <p class="post-text">経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。</p>
+        </div>
+        <div class="footer-icons">
+          <button class="icon-btn"><span>♡</span><span class="count">128</span></button>
+          <button class="icon-btn" id="openThreadC"><span>💬</span><span class="count" id="countC">3</span></button>
+          <button class="icon-btn share-btn"><span>↗</span></button>
+        </div>
+
+        <div class="thread-overlay" id="threadC">
+          <div class="thread-topbar">
+            <button class="back-btn" id="backC">‹</button>
+            <span class="thread-topbar-title">ポスト</span>
+          </div>
+          <div class="thread-scroll" id="threadScrollC">
+            <div class="thread-post">
+              <div class="viewer-header" style="background:#fff;">
+                <div class="avatar" style="background:#EDE7F6;color:#333;">👤</div>
+                <span class="username" style="color:#222;">誠司</span>
+                <span class="tier-badge" style="color:#7B1FA2;background:#F3E5F5;">⭐ Star</span>
+              </div>
+              <div class="thread-post-body">
+                <p class="post-text">経営者に一番大事なスキルは「任せる力」。AIにも人にも。全部自分でやろうとするやつは伸びない。</p>
+              </div>
+            </div>
+            <div class="thread-replies" id="repliesC">
+              <div class="comment-item">
+                <div class="avatar" style="background:#EDE7F6;color:#333;">👩</div>
+                <div class="comment-body">
+                  <div class="comment-name">ゆかり<span class="comment-handle">@yukari_biz</span></div>
+                  <div class="comment-text">任せる力、めちゃくちゃ共感します</div>
+                  <div class="comment-meta"><span>2時間前</span><span>♡ 12</span></div>
+                </div>
+              </div>
+              <div class="comment-item">
+                <div class="avatar" style="background:#EDE7F6;color:#333;">🧑</div>
+                <div class="comment-body">
+                  <div class="comment-name">タカシ<span class="comment-handle">@takashi_ai</span></div>
+                  <div class="comment-text">AIに任せる勇気がまだない…</div>
+                  <div class="comment-meta"><span>1時間前</span><span>♡ 5</span></div>
+                </div>
+              </div>
+              <div class="comment-item">
+                <div class="avatar" style="background:#EDE7F6;color:#333;">👨</div>
+                <div class="comment-body">
+                  <div class="comment-name">ケンジ<span class="comment-handle">@kenji_mgmt</span></div>
+                  <div class="comment-text">全部自分でやってた頃を思い出す</div>
+                  <div class="comment-meta"><span>30分前</span><span>♡ 8</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="thread-compose">
+            <input type="text" id="inputC" placeholder="返信をポスト">
+            <button class="send-btn" id="sendC">投稿</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  /* ---- Case A: bottom sheet ---- */
+  var dimA = document.getElementById('dimA');
+  var sheetA = document.getElementById('sheetA');
+  var listA = document.getElementById('listA');
+  var inputA = document.getElementById('inputA');
+  var countA = document.getElementById('countA');
+  var sheetCountA = document.getElementById('sheetCountA');
+  var commentCountA = 3;
+
+  function openSheetA() {
+    dimA.classList.add('open');
+    sheetA.classList.add('open');
+  }
+  function closeSheetA() {
+    dimA.classList.remove('open');
+    sheetA.classList.remove('open');
+  }
+  document.getElementById('openSheetA').addEventListener('click', openSheetA);
+  dimA.addEventListener('click', closeSheetA);
+
+  function submitCommentA() {
+    var text = inputA.value.trim();
+    if (!text) return;
+    var item = document.createElement('div');
+    item.className = 'comment-item';
+    item.innerHTML =
+      '<div class="avatar">🙂</div>' +
+      '<div class="comment-body">' +
+        '<div class="comment-name">誠司</div>' +
+        '<div class="comment-text">' + escapeHtml(text) + '</div>' +
+        '<div class="comment-meta"><span>たった今</span><span>♡ 0</span></div>' +
+      '</div>';
+    listA.appendChild(item);
+    listA.scrollTop = listA.scrollHeight;
+    commentCountA += 1;
+    countA.textContent = commentCountA;
+    sheetCountA.textContent = commentCountA;
+    inputA.value = '';
+  }
+  document.getElementById('sendA').addEventListener('click', submitCommentA);
+  inputA.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') submitCommentA();
+  });
+
+  /* ---- Case B: story reply ---- */
+  var inputB = document.getElementById('inputB');
+  var toastB = document.getElementById('toastB');
+  var toastTimer = null;
+
+  function submitMessageB() {
+    var text = inputB.value.trim();
+    if (!text) return;
+    toastB.classList.add('show');
+    inputB.value = '';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toastB.classList.remove('show');
+    }, 2200);
+  }
+  document.getElementById('sendB').addEventListener('click', submitMessageB);
+  inputB.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') submitMessageB();
+  });
+
+  /* ---- Case C: thread ---- */
+  var threadC = document.getElementById('threadC');
+  var repliesC = document.getElementById('repliesC');
+  var threadScrollC = document.getElementById('threadScrollC');
+  var inputC = document.getElementById('inputC');
+  var countC = document.getElementById('countC');
+  var replyCountC = 3;
+
+  document.getElementById('openThreadC').addEventListener('click', function () {
+    threadC.classList.add('open');
+  });
+  document.getElementById('backC').addEventListener('click', function () {
+    threadC.classList.remove('open');
+  });
+
+  function submitReplyC() {
+    var text = inputC.value.trim();
+    if (!text) return;
+    var item = document.createElement('div');
+    item.className = 'comment-item';
+    item.innerHTML =
+      '<div class="avatar" style="background:#EDE7F6;color:#333;">🙂</div>' +
+      '<div class="comment-body">' +
+        '<div class="comment-name">誠司<span class="comment-handle">@seiji</span></div>' +
+        '<div class="comment-text">' + escapeHtml(text) + '</div>' +
+        '<div class="comment-meta"><span>たった今</span><span>♡ 0</span></div>' +
+      '</div>';
+    repliesC.appendChild(item);
+    threadScrollC.scrollTop = threadScrollC.scrollHeight;
+    replyCountC += 1;
+    countC.textContent = replyCountC;
+    inputC.value = '';
+  }
+  document.getElementById('sendC').addEventListener('click', submitReplyC);
+  inputC.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') submitReplyC();
+  });
+})();
+</script>
