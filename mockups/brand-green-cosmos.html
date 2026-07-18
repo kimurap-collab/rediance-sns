@@ -1,0 +1,522 @@
+<meta charset="utf-8">
+<title>ブランドグラデ見本：緑×宇宙</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #F0F0F0;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    color: #1a1a1a;
+    padding: 40px 20px 80px;
+  }
+  .page-title {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .page-desc {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 48px;
+  }
+  section.sample {
+    max-width: 500px;
+    margin: 0 auto 64px;
+  }
+  .sample-name {
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .sample-concept {
+    font-size: 13px;
+    color: #777;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  /* ---- phone mock (共通構造) ---- */
+  .phone {
+    width: 390px;
+    max-width: 100%;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    overflow: hidden;
+  }
+  .status-bar {
+    height: 26px;
+    background: var(--grad);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .app-header {
+    background: var(--grad);
+    padding: 14px 0 18px;
+    text-align: center;
+  }
+  .wordmark {
+    color: #fff;
+    font-weight: 800;
+    font-size: 19px;
+    letter-spacing: 1.5px;
+  }
+  .stories {
+    display: flex;
+    gap: 14px;
+    padding: 16px;
+    background: #fff;
+    overflow-x: auto;
+  }
+  .story-ring {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--grad);
+    padding: 2.5px;
+  }
+  .story-ring .story-ring-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #fff;
+    padding: 2px;
+  }
+  .story-ring .story-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #D9D9D9;
+  }
+  .invite-banner {
+    margin: 0 16px 18px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: var(--grad);
+    color: #fff;
+  }
+  .invite-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .invite-body {
+    font-size: 12px;
+    line-height: 1.5;
+    opacity: 0.95;
+  }
+  .actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 4px 16px 20px;
+  }
+  .send-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--grad);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .cta-pill {
+    padding: 13px 26px;
+    border-radius: 999px;
+    background: var(--grad);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .tab-bar {
+    height: 56px;
+    background: var(--grad);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 19px;
+  }
+
+  /* ---- グラデ定義（案ごとに --grad を差し替え） ---- */
+  .grad-current { --grad: linear-gradient(135deg, #020408 0%, #1E3A5F 35%, #7C3AED 70%, #EC4899 100%); }
+  .grad-a { --grad: linear-gradient(135deg, #022C22 0%, #0D9488 30%, #1E3A5F 65%, #4C1D95 100%); }
+  .grad-a1 { --grad: linear-gradient(135deg, #022C22 0%, #059669 25%, #0D9488 55%, #1E3A5F 80%, #4C1D95 100%); }
+  .grad-a2 { --grad: linear-gradient(135deg, #064E3B 0%, #10B981 30%, #0D9488 58%, #1E3A5F 85%, #3B0764 100%); }
+  .grad-a3 { --grad: linear-gradient(135deg, #022C22 0%, #0F766E 40%, #0D9488 68%, #1E3A5F 90%, #4C1D95 100%); }
+  .grad-a4 { --grad: linear-gradient(135deg, #052E16 0%, #059669 35%, #134E4A 62%, #4C1D95 100%); }
+  .grad-l1 { --grad: linear-gradient(135deg, #04140A 0%, #4D7C0F 28%, #A3E635 52%, #065F46 75%, #020617 100%); }
+  .grad-l2 { --grad: linear-gradient(135deg, #0A0F02 0%, #65A30D 32%, #BEF264 54%, #134E4A 78%, #0F172A 100%); }
+  .grad-l3 { --grad: linear-gradient(135deg, #04140A 0%, #84CC16 40%, #A3E635 55%, #5B1D1D 80%, #020617 100%); }
+  .grad-l4 { --grad: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%); }
+  /* ライム明部（#A3E635/#BEF264）上の白文字は視認性が落ちるため薄い影を付与 */
+  .lime .status-bar, .lime .wordmark, .lime .invite-banner, .lime .cta-pill { text-shadow: 0 1px 2px rgba(0,0,0,.35); }
+  .grad-b { --grad: linear-gradient(135deg, #064E3B 0%, #0F3D3E 35%, #0F172A 70%, #2E1065 100%); }
+  .grad-c { --grad: linear-gradient(135deg, #10B981 0%, #059669 25%, #134E4A 55%, #020617 100%); }
+  .grad-d { --grad: linear-gradient(135deg, #115E59 0%, #16A34A 35%, #1E293B 70%, #3B0764 100%); }
+  .grad-e { --grad: linear-gradient(135deg, #052E16 0%, #15803D 30%, #0C1E3E 65%, #78350F 98%); }
+</style>
+
+<h1 class="page-title">ブランドグラデ見本：緑×宇宙</h1>
+<p class="page-desc">現行案の紺→紫→ピンクを見直し、緑を主役に宇宙（紺・紫・黒）へ繋がる5案を比較する。</p>
+
+<!-- 現行（参考） -->
+<section class="sample">
+  <div class="sample-name">現行（参考）</div>
+  <div class="sample-concept">紺→紫→ピンク。インスタに近いと指摘された現状のグラデ</div>
+  <div class="phone grad-current">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><div class="wordmark">HYPERAY</div></div>
+    <div class="stories">
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+    </div>
+    <div class="invite-banner">
+      <div class="invite-title">📩 あなたをイベントに招待しています</div>
+      <div class="invite-body">夏の飲み会 🗓 7/25(土) 19:00〜</div>
+    </div>
+    <div class="actions-row">
+      <div class="send-btn">➤</div>
+      <div class="cta-pill">イベントを作成</div>
+    </div>
+    <div class="tab-bar"><span>🏠</span><span>💬</span><span>♪</span><span>👤</span></div>
+  </div>
+</section>
+
+<!-- 案A -->
+<section class="sample">
+  <div class="sample-name">案A「オーロラ」（本命）</div>
+  <div class="sample-concept">緑の光が夜空に溶けていく</div>
+  <div class="phone grad-a">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><div class="wordmark">HYPERAY</div></div>
+    <div class="stories">
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+    </div>
+    <div class="invite-banner">
+      <div class="invite-title">📩 あなたをイベントに招待しています</div>
+      <div class="invite-body">夏の飲み会 🗓 7/25(土) 19:00〜</div>
+    </div>
+    <div class="actions-row">
+      <div class="send-btn">➤</div>
+      <div class="cta-pill">イベントを作成</div>
+    </div>
+    <div class="tab-bar"><span>🏠</span><span>💬</span><span>♪</span><span>👤</span></div>
+  </div>
+</section>
+
+<!-- 案A-1 -->
+<section class="sample">
+  <div class="sample-name">案A-1「緑ロング」（緑マシ検討）</div>
+  <div class="sample-concept">緑が55%まで粘ってから宇宙へ（緑の割合：約6割）</div>
+  <div class="phone grad-a1">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><div class="wordmark">HYPERAY</div></div>
+    <div class="stories">
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+    </div>
+    <div class="invite-banner">
+      <div class="invite-title">📩 あなたをイベントに招待しています</div>
+      <div class="invite-body">夏の飲み会 🗓 7/25(土) 19:00〜</div>
+    </div>
+    <div class="actions-row">
+      <div class="send-btn">➤</div>
+      <div class="cta-pill">イベントを作成</div>
+    </div>
+    <div class="tab-bar"><span>🏠</span><span>💬</span><span>♪</span><span>👤</span></div>
+  </div>
+</section>
+
+<!-- 案A-2 -->
+<section class="sample">
+  <div class="sample-name">案A-2「エメラルド強め」（緑マシ検討）</div>
+  <div class="sample-concept">緑自体を明るく鮮やかに（緑の割合：約6割・発色強め）</div>
+  <div class="phone grad-a2">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><div class="wordmark">HYPERAY</div></div>
+    <div class="stories">
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+    </div>
+    <div class="invite-banner">
+      <div class="invite-title">📩 あなたをイベントに招待しています</div>
+      <div class="invite-body">夏の飲み会 🗓 7/25(土) 19:00〜</div>
+    </div>
+    <div class="actions-row">
+      <div class="send-btn">➤</div>
+      <div class="cta-pill">イベントを作成</div>
+    </div>
+    <div class="tab-bar"><span>🏠</span><span>💬</span><span>♪</span><span>👤</span></div>
+  </div>
+</section>
+
+<!-- 案A-3 -->
+<section class="sample">
+  <div class="sample-name">案A-3「ほぼ緑」（緑マシ検討）</div>
+  <div class="sample-concept">7割緑・端だけ宇宙（緑の割合：約7割）</div>
+  <div class="phone grad-a3">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><div class="wordmark">HYPERAY</div></div>
+    <div class="stories">
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+    </div>
+    <div class="invite-banner">
+      <div class="invite-title">📩 あなたをイベントに招待しています</div>
+      <div class="invite-body">夏の飲み会 🗓 7/25(土) 19:00〜</div>
+    </div>
+    <div class="actions-row">
+      <div class="send-btn">➤</div>
+      <div class="cta-pill">イベントを作成</div>
+    </div>
+    <div class="tab-bar"><span>🏠</span><span>💬</span><span>♪</span><span>👤</span></div>
+  </div>
+</section>
+
+<!-- 案A-4 -->
+<section class="sample">
+  <div class="sample-name">案A-4「緑→紫直結」（緑マシ検討）</div>
+  <div class="sample-concept">紺を薄めて緑と紫のオーロラ感を強調（緑の割合：約6割）</div>
+  <div class="phone grad-a4">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><div class="wordmark">HYPERAY</div></div>
+    <div class="stories">
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+    </div>
+    <div class="invite-banner">
+      <div class="invite-title">📩 あなたをイベントに招待しています</div>
+      <div class="invite-body">夏の飲み会 🗓 7/25(土) 19:00〜</div>
+    </div>
+    <div class="actions-row">
+      <div class="send-btn">➤</div>
+      <div class="cta-pill">イベントを作成</div>
+    </div>
+    <div class="tab-bar"><span>🏠</span><span>💬</span><span>♪</span><span>👤</span></div>
+  </div>
+</section>
+
+<!-- 案L-1 -->
+<section class="sample">
+  <div class="sample-name">案L-1「ライムオーロラ」（ライム検討）</div>
+  <div class="sample-concept">王道・暗→ライム発光→深宇宙</div>
+  <div class="phone lime grad-l1">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><div class="wordmark">HYPERAY</div></div>
+    <div class="stories">
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+    </div>
+    <div class="invite-banner">
+      <div class="invite-title">📩 あなたをイベントに招待しています</div>
+      <div class="invite-body">夏の飲み会 🗓 7/25(土) 19:00〜</div>
+    </div>
+    <div class="actions-row">
+      <div class="send-btn">➤</div>
+      <div class="cta-pill">イベントを作成</div>
+    </div>
+    <div class="tab-bar"><span>🏠</span><span>💬</span><span>♪</span><span>👤</span></div>
+  </div>
+</section>
+
+<!-- 案L-2 -->
+<section class="sample">
+  <div class="sample-name">案L-2「テクノライム」（ライム検討）</div>
+  <div class="sample-concept">一番蛍光・ピークがほぼ白緑</div>
+  <div class="phone lime grad-l2">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><div class="wordmark">HYPERAY</div></div>
+    <div class="stories">
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+    </div>
+    <div class="invite-banner">
+      <div class="invite-title">📩 あなたをイベントに招待しています</div>
+      <div class="invite-body">夏の飲み会 🗓 7/25(土) 19:00〜</div>
+    </div>
+    <div class="actions-row">
+      <div class="send-btn">➤</div>
+      <div class="cta-pill">イベントを作成</div>
+    </div>
+    <div class="tab-bar"><span>🏠</span><span>💬</span><span>♪</span><span>👤</span></div>
+  </div>
+</section>
+
+<!-- 案L-3 -->
+<section class="sample">
+  <div class="sample-name">案L-3「ライム×紅」（ライム検討）</div>
+  <div class="sample-concept">写真の赤い筋を再現・ライムの後に赤茶の気配</div>
+  <div class="phone lime grad-l3">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><div class="wordmark">HYPERAY</div></div>
+    <div class="stories">
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+    </div>
+    <div class="invite-banner">
+      <div class="invite-title">📩 あなたをイベントに招待しています</div>
+      <div class="invite-body">夏の飲み会 🗓 7/25(土) 19:00〜</div>
+    </div>
+    <div class="actions-row">
+      <div class="send-btn">➤</div>
+      <div class="cta-pill">イベントを作成</div>
+    </div>
+    <div class="tab-bar"><span>🏠</span><span>💬</span><span>♪</span><span>👤</span></div>
+  </div>
+</section>
+
+<!-- 案L-4 -->
+<section class="sample">
+  <div class="sample-name">案L-4「ライム→紫宇宙」（ライム検討）</div>
+  <div class="sample-concept">ライムから紫へ・オーロラのフルスペクトル</div>
+  <div class="phone lime grad-l4">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><div class="wordmark">HYPERAY</div></div>
+    <div class="stories">
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+    </div>
+    <div class="invite-banner">
+      <div class="invite-title">📩 あなたをイベントに招待しています</div>
+      <div class="invite-body">夏の飲み会 🗓 7/25(土) 19:00〜</div>
+    </div>
+    <div class="actions-row">
+      <div class="send-btn">➤</div>
+      <div class="cta-pill">イベントを作成</div>
+    </div>
+    <div class="tab-bar"><span>🏠</span><span>💬</span><span>♪</span><span>👤</span></div>
+  </div>
+</section>
+
+<!-- 案B -->
+<section class="sample">
+  <div class="sample-name">案B「深緑深宇宙」</div>
+  <div class="sample-concept">渋くて大人な、落ち着いたトーン</div>
+  <div class="phone grad-b">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><div class="wordmark">HYPERAY</div></div>
+    <div class="stories">
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+    </div>
+    <div class="invite-banner">
+      <div class="invite-title">📩 あなたをイベントに招待しています</div>
+      <div class="invite-body">夏の飲み会 🗓 7/25(土) 19:00〜</div>
+    </div>
+    <div class="actions-row">
+      <div class="send-btn">➤</div>
+      <div class="cta-pill">イベントを作成</div>
+    </div>
+    <div class="tab-bar"><span>🏠</span><span>💬</span><span>♪</span><span>👤</span></div>
+  </div>
+</section>
+
+<!-- 案C -->
+<section class="sample">
+  <div class="sample-name">案C「翡翠ネオン」</div>
+  <div class="sample-concept">明るい緑が効いた華やか系</div>
+  <div class="phone grad-c">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><div class="wordmark">HYPERAY</div></div>
+    <div class="stories">
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+    </div>
+    <div class="invite-banner">
+      <div class="invite-title">📩 あなたをイベントに招待しています</div>
+      <div class="invite-body">夏の飲み会 🗓 7/25(土) 19:00〜</div>
+    </div>
+    <div class="actions-row">
+      <div class="send-btn">➤</div>
+      <div class="cta-pill">イベントを作成</div>
+    </div>
+    <div class="tab-bar"><span>🏠</span><span>💬</span><span>♪</span><span>👤</span></div>
+  </div>
+</section>
+
+<!-- 案D -->
+<section class="sample">
+  <div class="sample-name">案D「極光の延長」</div>
+  <div class="sample-concept">投稿パレットの極光Teal800→Green500と血縁</div>
+  <div class="phone grad-d">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><div class="wordmark">HYPERAY</div></div>
+    <div class="stories">
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+    </div>
+    <div class="invite-banner">
+      <div class="invite-title">📩 あなたをイベントに招待しています</div>
+      <div class="invite-body">夏の飲み会 🗓 7/25(土) 19:00〜</div>
+    </div>
+    <div class="actions-row">
+      <div class="send-btn">➤</div>
+      <div class="cta-pill">イベントを作成</div>
+    </div>
+    <div class="tab-bar"><span>🏠</span><span>💬</span><span>♪</span><span>👤</span></div>
+  </div>
+</section>
+
+<!-- 案E -->
+<section class="sample">
+  <div class="sample-name">案E「緑×金の宇宙」</div>
+  <div class="sample-concept">緑＋ゴールドアクセントのラグジュアリー系</div>
+  <div class="phone grad-e">
+    <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="app-header"><div class="wordmark">HYPERAY</div></div>
+    <div class="stories">
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+      <div class="story-ring"><div class="story-ring-inner"><div class="story-avatar"></div></div></div>
+    </div>
+    <div class="invite-banner">
+      <div class="invite-title">📩 あなたをイベントに招待しています</div>
+      <div class="invite-body">夏の飲み会 🗓 7/25(土) 19:00〜</div>
+    </div>
+    <div class="actions-row">
+      <div class="send-btn">➤</div>
+      <div class="cta-pill">イベントを作成</div>
+    </div>
+    <div class="tab-bar"><span>🏠</span><span>💬</span><span>♪</span><span>👤</span></div>
+  </div>
+</section>

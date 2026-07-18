@@ -83,10 +83,21 @@
       box-shadow: 0 0 40px rgba(0,0,0,0.15);
     }
 
+    /* 旧ブランドグラデ（復元用・2026-07-18差し替え）: 3色版 linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899) ／ 4色版 #020408→#1E3A5F→#7C3AED→#EC4899。全出現箇所は git ef8ee8d 参照 */
+    /* L-4「ライム→紫宇宙」明部（#84CC16帯）上の白文字の視認性確保 */
+    .status-bar, .header, .home-header, .tab-bar,
+    .nm-next-btn.tier-confirm, .basket-send-btn, .basket-sheet-send-btn,
+    .tp-decide-btn, .chat-send-btn, .events-create-btn, .ev-send-btn,
+    .ev-cta-pill.primary, .ev-host-btn.primary, .group-promote-modal-confirm,
+    .contacts-action-btn.tp-primary-btn, .tp-btn-outline.tp-primary-btn,
+    .ev-invite-minicard {
+      text-shadow: 0 1px 2px rgba(0,0,0,.35);
+    }
+
     /* ===== STATUS BAR ===== */
     .status-bar {
       height: var(--status-height);
-      background: linear-gradient(135deg, #020408 0%, #1E3A5F 35%, #7C3AED 70%, #EC4899 100%);
+      background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -170,7 +181,7 @@
       position: sticky;
       top: 0;
       height: var(--header-height);
-      background: linear-gradient(135deg, #020408 0%, #1E3A5F 35%, #7C3AED 70%, #EC4899 100%);
+      background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
       border-bottom: none;
       display: flex;
       align-items: center;
@@ -207,7 +218,7 @@
     /* ===== TAB BAR ===== */
     .tab-bar {
       height: var(--tab-height);
-      background: linear-gradient(135deg, #020408 0%, #1E3A5F 35%, #7C3AED 70%, #EC4899 100%);
+      background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
       border-top: none;
       display: flex;
       align-items: center;
@@ -278,7 +289,7 @@
       position: sticky;
       top: 0;
       height: var(--header-height);
-      background: linear-gradient(135deg, #020408 0%, #1E3A5F 35%, #7C3AED 70%, #EC4899 100%);
+      background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
       border-bottom: none;
       display: flex;
       align-items: center;
@@ -362,7 +373,7 @@
       justify-content: center;
     }
     .home-story-card-ring.has-new {
-      background: linear-gradient(135deg, #7C3AED, #EC4899);
+      background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
     }
     .home-story-card-ring.seen {
       background: var(--border);
@@ -835,7 +846,7 @@
       cursor: not-allowed;
     }
     .nm-next-btn.tier-confirm {
-      background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+      background: linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);
       color: #fff;
     }
 
@@ -888,7 +899,7 @@
       font-size: 13px;
       font-weight: 700;
       color: #fff;
-      background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+      background: linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);
       cursor: pointer;
       flex-shrink: 0;
     }
@@ -989,7 +1000,7 @@
       border: none;
       border-radius: 12px;
       padding: 12px;
-      background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+      background: linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);
       flex-shrink: 0;
       cursor: pointer;
     }
@@ -1077,7 +1088,7 @@
     }
     .tp-decide-btn {
       width: 100%; font-size: 16px; font-weight: 800; color: #fff; border: none; border-radius: 12px; padding: 12px;
-      background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899); cursor: pointer;
+      background: linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%); cursor: pointer;
     }
     .tp-decide-btn:disabled { opacity: .45; cursor: not-allowed; }
 
@@ -1324,7 +1335,7 @@
       width: 34px;
       height: 34px;
       border-radius: 50%;
-      background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+      background: linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);
       border: none;
       color: #fff;
       font-size: 15px;
@@ -1501,7 +1512,7 @@
       padding: 2px;
     }
     .story-ring.has-new {
-      background: conic-gradient(#020408, #7C3AED, #EC4899, #020408);
+      background: conic-gradient(#1A2E05, #84CC16, #0D9488, #4C1D95, #1A2E05);
     }
     .story-ring.seen {
       background: #D1D5DB;
@@ -2420,7 +2431,7 @@
       height: 82px;
       border-radius: 50%;
       padding: 3px;
-      background: linear-gradient(135deg, #7C3AED, #EC4899);
+      background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
     }
     .insta-profile-avatar-inner {
       width: 100%;
@@ -3142,7 +3153,7 @@
       padding: 14px 16px;
       border: none;
       border-radius: 14px;
-      background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+      background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
       color: #fff;
       font-size: 16px;
       font-weight: 700;
@@ -3537,7 +3548,7 @@
       padding: 14px 16px;
       border: none;
       border-radius: 12px;
-      background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+      background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
       color: #fff; font-size: 16px; font-weight: 700;
       cursor: pointer;
       margin-top: 10px;
@@ -3791,7 +3802,7 @@
     .ev-cta-pill.active.maybe { background: rgba(234,179,8,0.3); border-color: #EAB308; color: #FDE68A; }
     .ev-cta-pill.active.skip  { background: rgba(239,68,68,0.3); border-color: #EF4444; color: #FCA5A5; }
     .ev-cta-pill.primary {
-      background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+      background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
       border-color: transparent;
     }
     /* その他メニューボタン（正方形・省スペース） */
@@ -3981,7 +3992,7 @@
     }
     .ev-host-btn:active { transform: scale(0.97); }
     .ev-host-btn.primary {
-      background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+      background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
       color: #fff; border-color: transparent;
     }
     .ev-dm-btn {
@@ -4451,7 +4462,7 @@
 
     /* 招待ミニカード（DM＋添付バナー共用） */
     .ev-invite-minicard {
-      background: linear-gradient(135deg,#020408 0%,#1E3A5F 42%,#5B21B6 78%,#9D174D 100%);
+      background: linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);
       border-radius: 12px; padding: 11px 13px; cursor: pointer;
       color: #F8FAFC; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
@@ -4779,7 +4790,7 @@
     }
     .contacts-action-btn.tp-primary-btn,
     .tp-btn-outline.tp-primary-btn {
-      background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+      background: linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);
       border: 1px solid transparent;
       color: #fff;
     }
@@ -4787,7 +4798,7 @@
     .contacts-action-btn.tp-primary-btn:active,
     .tp-btn-outline.tp-primary-btn:active {
       opacity: 0.85;
-      background: linear-gradient(135deg,#1E3A5F,#7C3AED,#EC4899);
+      background: linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);
     }
 
     /* ===== DISCOVER SCREEN ===== */
@@ -5605,7 +5616,7 @@
       position: absolute;
       inset: 0;
       z-index: 1;
-      background: linear-gradient(135deg, #020408 0%, #1E3A5F 35%, #7C3AED 70%, #EC4899 100%);
+      background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
     }
     .cmp-bg-photo-wrap {
       position: absolute;
@@ -6113,7 +6124,7 @@
       cursor: pointer;
       flex-shrink: 0;
       transition: transform 0.15s;
-      background: linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);
+      background: linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);
       box-shadow: 0 2px 10px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.15);
       padding: 0;
     }
@@ -7381,7 +7392,7 @@
       padding: 10px 0;
       border-radius: 50px;
       border: none;
-      background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+      background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
       color: #fff;
       font-size: 16px;
       font-weight: 700;
@@ -8160,7 +8171,7 @@
       <!-- Header -->
       <div class="home-header">
         <button class="icon-btn" onclick="openCreateMenu()">＋</button>
-        <img src="hyperay-logo-white.png" alt="HYPERAY" style="position:absolute;left:50%;transform:translateX(-50%);height:28px;width:auto;object-fit:contain;">
+        <img src="hyperay-logo-white.png" alt="HYPERAY" style="position:absolute;left:50%;transform:translateX(-50%);height:28px;width:auto;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));">
         <div style="display:flex;align-items:center;gap:4px;">
           <button class="home-layout-toggle-btn" id="homeLayoutToggleBtn" onclick="cycleHomeStoryLayout()" title="レイアウト切替">⊟</button>
           <button class="icon-btn" onclick="showNotif()">♡</button>
@@ -8189,7 +8200,7 @@
         #colorPostText::placeholder { color: inherit; opacity: 0.45; }
         /* 色サイクルボタン（インスタ背景切替方式）：HYPERAYグラデのリング＝「色を変えられるボタン」のアピール。
            中心の円は現在色のミニプレビュー */
-        .cp-cycle { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; cursor: pointer; border: none; padding: 0; display: flex; align-items: center; justify-content: center; user-select: none; background: linear-gradient(135deg, #020408 0%, #1E3A5F 35%, #7C3AED 70%, #EC4899 100%); box-shadow: 0 1px 4px rgba(0,0,0,0.25); }
+        .cp-cycle { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; cursor: pointer; border: none; padding: 0; display: flex; align-items: center; justify-content: center; user-select: none; background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%); box-shadow: 0 1px 4px rgba(0,0,0,0.25); }
         .cp-cycle:active { transform: scale(0.92); }
         .cp-core { width: 27px; height: 27px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; line-height: 1; transition: background .15s, color .15s; }
       </style>
@@ -8291,7 +8302,7 @@
           <!-- 右下フローティングコントロール -->
           <div class="cmp-float-controls">
             <div class="cmp-float-palette" id="cmpFloatPalette">
-              <div class="cmp-grad-dot active" style="background:linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);" data-grad="linear-gradient(135deg,#020408 0%,#1E3A5F 35%,#7C3AED 70%,#EC4899 100%)" onclick="cmpSelectGradFromPalette(this, 0)"></div>
+              <div class="cmp-grad-dot active" style="background:linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);" data-grad="linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%)" onclick="cmpSelectGradFromPalette(this, 0)"></div>
               <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FF0080,#FF8C00,#FFE500);" data-grad="linear-gradient(135deg,#FF0080 0%,#FF8C00 50%,#FFE500 100%)" onclick="cmpSelectGradFromPalette(this, 1)"></div>
               <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#00F5FF,#00B4FF,#7B2FF7,#F107A3);" data-grad="linear-gradient(135deg,#00F5FF 0%,#00B4FF 35%,#7B2FF7 70%,#F107A3 100%)" onclick="cmpSelectGradFromPalette(this, 2)"></div>
               <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FAACA8,#DDD6F3);" data-grad="linear-gradient(135deg,#FAACA8 0%,#DDD6F3 100%)" onclick="cmpSelectGradFromPalette(this, 3)"></div>
@@ -8302,7 +8313,7 @@
               <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#F6D365,#FDA085);" data-grad="linear-gradient(135deg,#F6D365 0%,#FDA085 100%)" onclick="cmpSelectGradFromPalette(this, 8)"></div>
               <div class="cmp-grad-dot" style="background:linear-gradient(135deg,#FF512F,#F09819,#FFD700);" data-grad="linear-gradient(135deg,#FF512F 0%,#F09819 50%,#FFD700 100%)" onclick="cmpSelectGradFromPalette(this, 9)"></div>
             </div>
-            <button class="cmp-float-grad-btn" id="cmpGradCycleBtn" style="background:linear-gradient(135deg,#020408,#1E3A5F,#7C3AED,#EC4899);"></button>
+            <button class="cmp-float-grad-btn" id="cmpGradCycleBtn" style="background:linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);"></button>
             <button class="cmp-float-btn" id="cmpIconFont" onclick="cmpToggleToolPanel('font')" title="文字">
               <span class="icon-glyph">Aa</span>
             </button>
@@ -8604,8 +8615,8 @@
               <span class="identity-cat-chevron">▾</span>
             </div>
             <div class="identity-cat-body">
-              <div onclick="openFsPost(myIdentityPosts['ai'], 0, 'my')" style="background:linear-gradient(135deg,#020408 0%,#1E3A5F 70%,#2E1065 100%);color:#8BE9FD;padding:14px 18px;font-size:16px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">Claude Codeで自分のAIチーム作ってるんやけど、毎朝勝手にレポート届くの最高すぎる。</div>
-              <div onclick="openFsPost(myIdentityPosts['ai'], 1, 'my')" style="background:linear-gradient(135deg,#512DA8 0%,#9C27B0 100%);color:#FFFFFF;padding:14px 18px;font-size:16px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">AIエージェントの未来は人間を置き換えることじゃなく、任せ方の発明や。</div>
+              <div onclick="openFsPost(myIdentityPosts['ai'], 0, 'my')" style="background:linear-gradient(135deg,#020617 0%,#0F3D3E 45%,#2E1065 100%);color:#8BE9FD;padding:14px 18px;font-size:16px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">Claude Codeで自分のAIチーム作ってるんやけど、毎朝勝手にレポート届くの最高すぎる。</div>
+              <div onclick="openFsPost(myIdentityPosts['ai'], 1, 'my')" style="background:linear-gradient(135deg,#4C1D95 0%,#6D28D9 100%);color:#FFFFFF;padding:14px 18px;font-size:16px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">AIエージェントの未来は人間を置き換えることじゃなく、任せ方の発明や。</div>
             </div>
           </div>
 
@@ -8618,7 +8629,7 @@
               <span class="identity-cat-chevron">▾</span>
             </div>
             <div class="identity-cat-body">
-              <div onclick="openFsPost(myIdentityPosts['sg'], 0, 'my')" style="background:linear-gradient(135deg,#00695C 0%,#4CAF50 100%);color:#FFFFFF;padding:14px 18px;font-size:16px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">ホーカーで$3のチキンライス食べながら10億の話をするのがシンガポール。</div>
+              <div onclick="openFsPost(myIdentityPosts['sg'], 0, 'my')" style="background:linear-gradient(135deg,#0F766E 0%,#65A30D 100%);color:#FFFFFF;padding:14px 18px;font-size:16px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">ホーカーで$3のチキンライス食べながら10億の話をするのがシンガポール。</div>
               <div onclick="openFsPost(myIdentityPosts['sg'], 1, 'my')" style="background:linear-gradient(135deg,#3949AB 0%,#03A9F4 100%);color:#FFFFFF;padding:14px 18px;font-size:16px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">シンガポールのAI界隈、日本より3年先を行ってる感覚。組み合わせたら最強やろ。</div>
             </div>
           </div>
@@ -8632,7 +8643,7 @@
               <span class="identity-cat-chevron">▾</span>
             </div>
             <div class="identity-cat-body">
-              <div onclick="openFsPost(myIdentityPosts['biz'], 0, 'my')" style="background:linear-gradient(135deg,#E6E2D5 0%,#F4F2EA 100%);color:#292524;padding:14px 18px;font-size:16px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">経営者に一番大事なスキルは「任せる力」。AIにも人にも。</div>
+              <div onclick="openFsPost(myIdentityPosts['biz'], 0, 'my')" style="background:radial-gradient(circle at 30% 20%,#FFFFFF 0%,#EEF3F3 50%,#DFDAEE 100%);color:#292524;padding:14px 18px;font-size:16px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">経営者に一番大事なスキルは「任せる力」。AIにも人にも。</div>
             </div>
           </div>
 
@@ -8645,7 +8656,7 @@
               <span class="identity-cat-chevron">▾</span>
             </div>
             <div class="identity-cat-body">
-              <div onclick="openFsPost(myIdentityPosts['inv'], 0, 'my')" style="background:linear-gradient(135deg,#9C27B0 0%,#E91E63 100%);color:#FFFFFF;padding:14px 18px;font-size:16px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">フォロワー数じゃなくて、誰にフォローされてるか。それが本当の影響力や。</div>
+              <div onclick="openFsPost(myIdentityPosts['inv'], 0, 'my')" style="background:linear-gradient(135deg,#7C3AED 0%,#4F46E5 55%,#0EA5E9 100%);color:#FFFFFF;padding:14px 18px;font-size:16px;line-height:1.75;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.10);">フォロワー数じゃなくて、誰にフォローされてるか。それが本当の影響力や。</div>
             </div>
           </div>
         </div>
@@ -10145,15 +10156,19 @@
     nPink:     { id: 'npink',     name: 'ネオンピンク',   fg: '#FF79C6' },
     nLav:      { id: 'nlav',      name: 'ラベンダー',     fg: '#C0CAF5' },
   };
+  // 旧パレット（復元用・2026-07-18再調律）：ブランドグラデL-4化に伴い6色を差し替え（月光・蒼穹は据え置き）。旧値は git ef8ee8d 参照
+  //   月光   #E6E2D5→#F4F2EA ／ 暁 #F4511E→#FFC107 ／ 蒼穹 #3949AB→#03A9F4 ／ 茜 #E91E63→#FF9800
+  //   星雲   #9C27B0→#E91E63 ／ 極光 #00695C→#4CAF50 ／ 深宇宙 #512DA8→#9C27B0 ／ 星空 #020408→#1E3A5F 70%→#2E1065
+  //   月光は2026-07-19にT-2「白コア強発光」（radial）へ再差し替え（旧値は上記の #E6E2D5→#F4F2EA）
   const POST_BGS = [
-    { id: 'gekko',     name: '月光',   bg: 'linear-gradient(135deg,#E6E2D5 0%,#F4F2EA 100%)',             fgs: POST_INKS },
-    { id: 'akatsuki',  name: '暁',     bg: 'linear-gradient(135deg,#F4511E 0%,#FFC107 100%)',             fgs: [FG_WHITE, FG.awakin, FG.sumi, FG.shinku, FG.nYellow] },
+    { id: 'gekko',     name: '月光',   bg: 'radial-gradient(circle at 30% 20%,#FFFFFF 0%,#EEF3F3 50%,#DFDAEE 100%)', fgs: POST_INKS },
+    { id: 'akatsuki',  name: '暁',     bg: 'linear-gradient(135deg,#C2410C 0%,#F59E0B 100%)',             fgs: [FG_WHITE, FG.awakin, FG.sumi, FG.shinku, FG.nYellow] },
     { id: 'soukyu',    name: '蒼穹',   bg: 'linear-gradient(135deg,#3949AB 0%,#03A9F4 100%)',             fgs: [FG_WHITE, FG.awasora, FG.awakin, FG.nCyan, FG.sumi] },
-    { id: 'akane',     name: '茜',     bg: 'linear-gradient(135deg,#E91E63 0%,#FF9800 100%)',             fgs: [FG_WHITE, FG.awazakura, FG.awakin, FG.sumi, FG.nYellow] },
-    { id: 'seiun',     name: '星雲',   bg: 'linear-gradient(135deg,#9C27B0 0%,#E91E63 100%)',             fgs: [FG_WHITE, FG.awafuji, FG.awazakura, FG.nYellow, FG.nCyan] },
-    { id: 'kyokko',    name: '極光',   bg: 'linear-gradient(135deg,#00695C 0%,#4CAF50 100%)',             fgs: [FG_WHITE, FG.awamidori, FG.nGreen, FG.nCyan, FG.awakin] },
-    { id: 'shinuchu',  name: '深宇宙', bg: 'linear-gradient(135deg,#512DA8 0%,#9C27B0 100%)',             fgs: [FG_WHITE, FG.awafuji, FG.nLav, FG.nCyan, FG.nPink] },
-    { id: 'hoshizora', name: '星空',   bg: 'linear-gradient(135deg,#020408 0%,#1E3A5F 70%,#2E1065 100%)', fgs: POST_NEONS },
+    { id: 'akane',     name: '茜',     bg: 'linear-gradient(135deg,#BE123C 0%,#F97316 100%)',             fgs: [FG_WHITE, FG.awazakura, FG.awakin, FG.sumi, FG.nYellow] },
+    { id: 'seiun',     name: '星雲',   bg: 'linear-gradient(135deg,#7C3AED 0%,#4F46E5 55%,#0EA5E9 100%)', fgs: [FG_WHITE, FG.awafuji, FG.awazakura, FG.nYellow, FG.nCyan] },
+    { id: 'kyokko',    name: '極光',   bg: 'linear-gradient(135deg,#0F766E 0%,#65A30D 100%)',             fgs: [FG_WHITE, FG.awamidori, FG.nGreen, FG.nCyan, FG.awakin] },
+    { id: 'shinuchu',  name: '深宇宙', bg: 'linear-gradient(135deg,#4C1D95 0%,#6D28D9 100%)',             fgs: [FG_WHITE, FG.awafuji, FG.nLav, FG.nCyan, FG.nPink] },
+    { id: 'hoshizora', name: '星空',   bg: 'linear-gradient(135deg,#020617 0%,#0F3D3E 45%,#2E1065 100%)', fgs: POST_NEONS },
   ];
   function cpBg(id) { return POST_BGS.find(b => b.id === id) || POST_BGS[0]; }
   function cpFgList(bgId) { return cpBg(bgId).fgs; }
@@ -10228,7 +10243,7 @@
       isRadiance: false,
       stories: [
         { text: '今朝の朝活で気づいたこと。\n\n「完璧なタイミング」を待っていると永遠に動けない。不完全なまま動いて、走りながら直す。それが最速。', time: '22分前', likes: 62, shares: 11, tags: [], img: 'assets/img/u13.jpg', grad: 'linear-gradient(135deg, #831843, #BE185D)' },
-        { text: '朝活コミュニティ200人突破！\nゆっくりだけど確実に「動く人の輪」が広がってる。ありがとうございます🙏', time: '3日前', likes: 154, shares: 33, tags: ['taisho_k'], grad: 'linear-gradient(135deg, #9D174D, #EC4899)' },
+        { text: '朝活コミュニティ200人突破！\nゆっくりだけど確実に「動く人の輪」が広がってる。ありがとうございます🙏', time: '3日前', likes: 154, shares: 33, tags: ['taisho_k'], grad: 'linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%)' },
         { text: 'マーケの本質は「共感設計」だと思う。\n人が動くのは、理屈より感情。感情より「自分事」になった瞬間。', time: '1週間前', likes: 98, shares: 19, tags: [], grad: 'linear-gradient(135deg, #4a044e, #BE185D)' },
       ]
     },
@@ -10395,7 +10410,7 @@
       hasNew: true,
       isRadiance: false,
       stories: [
-        { text: '今日の夕景。\nシンガポールの空は毎日ドラマがある。', time: '15分前', likes: 312, shares: 54, tags: [], img: 'assets/img/u11.jpg', grad: 'linear-gradient(135deg, #7C3AED, #EC4899)' },
+        { text: '今日の夕景。\nシンガポールの空は毎日ドラマがある。', time: '15分前', likes: 312, shares: 54, tags: [], img: 'assets/img/u11.jpg', grad: 'linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%)' },
         { text: '朝のコーヒーと作業。\nこの時間が一日で一番好き。', time: '6時間前', likes: 187, shares: 28, tags: [], img: 'assets/img/u19.jpg', grad: 'linear-gradient(135deg, #422006, #9A3412)' },
         { text: 'ストリートの一枚。\n偶然の光が最高の被写体になる。', time: '3日前', likes: 445, shares: 89, tags: ['misaki_t'], img: 'assets/img/u04.jpg', grad: 'linear-gradient(135deg, #0f172a, #334155)' },
       ]
@@ -10475,12 +10490,12 @@
       stats: { trust: 12800, prestige: 11200, insights: 4400, stature: 49000 },
       posts: [
         { id: 'u2-1', body: '今朝の朝活で気づいたこと。\n\n「完璧なタイミング」を待っていると永遠に動けない。', time: '22分前', likes: 62, shares: 11, grad: 'linear-gradient(135deg, #831843, #BE185D)' },
-        { id: 'u2-2', body: '朝活コミュニティ200人突破！\nゆっくりだけど確実に「動く人の輪」が広がってる。', time: '3日前', likes: 154, shares: 33, grad: 'linear-gradient(135deg, #9D174D, #EC4899)' },
+        { id: 'u2-2', body: '朝活コミュニティ200人突破！\nゆっくりだけど確実に「動く人の輪」が広がってる。', time: '3日前', likes: 154, shares: 33, grad: 'linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%)' },
         { id: 'u2-3', body: 'マーケの本質は「共感設計」だと思う。\n人が動くのは、理屈より感情。感情より「自分事」になった瞬間。', time: '1週間前', likes: 98, shares: 19, grad: 'linear-gradient(135deg, #4a044e, #BE185D)' },
       ],
       identity: [
         { name: '🌅 朝活', updated: '3日前', posts: [
-          { body: '朝活コミュニティ200人突破！', grad: 'linear-gradient(135deg, #9D174D, #EC4899)' },
+          { body: '朝活コミュニティ200人突破！', grad: 'linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%)' },
         ]},
         { name: '📣 マーケティング', updated: '1週間前', posts: [
           { body: 'マーケの本質は「共感設計」だと思う。', grad: 'linear-gradient(135deg, #4a044e, #BE185D)' },
@@ -11304,7 +11319,7 @@
     { id: 'my-2', body: 'Claude Codeで自分のAIチーム作ってるんやけど、毎朝勝手に資産運用レポート届くの最高すぎる。エンジニア雇わんでもここまでできる時代。', time: '8h ago', likes: 567, shares: 123, views: '23K', grad: 'linear-gradient(135deg, #7C3AED, #2563EB)' },
     { id: 'my-3', body: '経営者に一番大事なスキルは『任せる力』。AIにも人にも。全部自分でやろうとするやつは伸びない。', time: '1d ago', likes: 1200, shares: 234, views: '45K', grad: 'linear-gradient(135deg, #1a1a2e, #D97706)' },
     { id: 'my-4', body: 'ホーカーで$3のチキンライス食べながら$10Mの投資案件の話してるの、シンガポールっぽくて好き。', time: '2d ago', likes: 892, shares: 145, views: '34K', grad: 'linear-gradient(135deg, #059669, #10B981)' },
-    { id: 'my-5', body: 'フォロワー数じゃなくて、誰にフォローされてるかが本当の影響力。これを可視化するSNS作りたい。', time: '3d ago', likes: 2300, shares: 567, views: '89K', grad: 'linear-gradient(135deg, #7C3AED, #EC4899)' },
+    { id: 'my-5', body: 'フォロワー数じゃなくて、誰にフォローされてるかが本当の影響力。これを可視化するSNS作りたい。', time: '3d ago', likes: 2300, shares: 567, views: '89K', grad: 'linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%)' },
   ];
 
   const myLiked = {};
@@ -11626,7 +11641,7 @@
       { id: 'id-biz-1', body: '経営者に一番大事なスキルは『任せる力』。AIにも人にも。全部自分でやろうとするやつは伸びない。', time: '3日前', likes: 1200, shares: 234, grad: 'linear-gradient(135deg, #1a1a2e, #D97706)' },
     ],
     'inv': [
-      { id: 'id-inv-1', body: 'フォロワー数じゃなくて、誰にフォローされてるかが本当の影響力。これを可視化するSNS作りたい。', time: '1週間前', likes: 2300, shares: 567, grad: 'linear-gradient(135deg, #7C3AED, #EC4899)' },
+      { id: 'id-inv-1', body: 'フォロワー数じゃなくて、誰にフォローされてるかが本当の影響力。これを可視化するSNS作りたい。', time: '1週間前', likes: 2300, shares: 567, grad: 'linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%)' },
     ],
   };
 
@@ -11647,12 +11662,12 @@
   }
 
   // ===== POST COMPOSER (簡易版) =====
-  const CMP_HYPERAY_GRAD = 'linear-gradient(135deg,#020408 0%,#1E3A5F 35%,#7C3AED 70%,#EC4899 100%)';
-  // HYPERAYテーマカラー: #020408 → #1E3A5F → #7C3AED → #EC4899
+  const CMP_HYPERAY_GRAD = 'linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%)';
+  // HYPERAYテーマカラー（L-4ライム→紫宇宙）: #1A2E05 → #84CC16 → #0D9488 → #4C1D95
 
   // 10グラデーション（順番保持）
   const CMP_GRADS = [
-    'linear-gradient(135deg,#020408 0%,#1E3A5F 35%,#7C3AED 70%,#EC4899 100%)',
+    'linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%)',
     'linear-gradient(135deg,#FF0080 0%,#FF8C00 50%,#FFE500 100%)',
     'linear-gradient(135deg,#00F5FF 0%,#00B4FF 35%,#7B2FF7 70%,#F107A3 100%)',
     'linear-gradient(135deg,#FAACA8 0%,#DDD6F3 100%)',
@@ -13327,7 +13342,7 @@
       const u = cpFindUser(uid);
       return `
       <div onclick="openCpStories('${uid}')" style="display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;width:60px;">
-        <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#020408 0%,#1E3A5F 35%,#7C3AED 70%,#EC4899 100%);display:flex;align-items:center;justify-content:center;">
+        <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);display:flex;align-items:center;justify-content:center;">
           <div style="width:49px;height:49px;border-radius:50%;background:var(--bg,#fff);display:flex;align-items:center;justify-content:center;font-size:26px;">${u.avatar}</div>
         </div>
         <div style="font-size:10.5px;color:var(--text-sub,#555);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60px;">${u.name.split(' ')[0]}</div>
@@ -13693,7 +13708,7 @@
       ? Object.values(ev.responses).filter(r => r === 'going').length : 0;
     const coverPos = ev.coverPos ? `${ev.coverPos.x}% ${ev.coverPos.y}%` : 'center';
     return `
-    <div onclick="openEventDetail('${ev.id}', 'home')" style="background:linear-gradient(135deg,#020408 0%,#1E3A5F 40%,#5B21B6 75%,#9D174D 100%);color:${fg};padding:14px 18px 11px;border-bottom:1px solid rgba(0,0,0,0.10);cursor:pointer;">
+    <div onclick="openEventDetail('${ev.id}', 'home')" style="background:linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);color:${fg};text-shadow:0 1px 2px rgba(0,0,0,.35);padding:14px 18px 11px;border-bottom:1px solid rgba(0,0,0,0.10);cursor:pointer;">
       <div style="font-size:13px;font-weight:700;color:${meta};margin-bottom:9px;">${ctx}</div>
       ${commentHtml || ''}
       <div style="display:flex;align-items:center;gap:9px;">
@@ -15876,7 +15891,7 @@ function selectGroupCreateEmoji(emoji) {
 
 // ===== GROUP AVATAR GRADIENTS =====
 const GROUP_AVATAR_GRADIENTS = [
-  'linear-gradient(135deg, #1E3A5F 0%, #7C3AED 50%, #EC4899 100%)', // HYPERAY
+  'linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%)', // HYPERAY
   'linear-gradient(135deg, #FF0080 0%, #FF8C00 50%, #FFE500 100%)', // Sunset
   'linear-gradient(135deg, #00F5FF 0%, #7B2FF7 50%, #F107A3 100%)', // Neon
   'linear-gradient(135deg, #43E97B 0%, #38F9D7 100%)',              // Mint
@@ -16792,7 +16807,7 @@ const EV_SELF_ID = 'taisho_k';
 
 // ヒーロー画像プリセットグラデーション
 const EV_COVER_GRADIENTS = [
-  'linear-gradient(135deg,#1E3A5F 0%,#7C3AED 50%,#EC4899 100%)', // HYPERAY
+  'linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%)', // HYPERAY
   'linear-gradient(135deg,#FF0080 0%,#FF8C00 50%,#FFE500 100%)', // Sunset
   'linear-gradient(135deg,#00F5FF 0%,#7B2FF7 50%,#F107A3 100%)', // Neon
   'linear-gradient(135deg,#43E97B 0%,#38F9D7 100%)',             // Mint
