@@ -1,0 +1,210 @@
+<title>CONSEQ 月齢タイポ：3案</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --deep-green:#1A2E05;
+    --lime:#84CC16;
+    --teal:#0D9488;
+    --purple:#4C1D95;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;overflow-x:hidden;}
+  body{
+    background:#F2F2F4;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    color:#1A1A1A;
+    padding:32px 20px 80px;
+  }
+  header{max-width:1080px;margin:0 auto 40px;}
+  header h1{font-size:26px;font-weight:700;margin:0 0 8px;}
+  header p{font-size:14px;color:#555;margin:0;line-height:1.6;}
+
+  main{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:44px;}
+
+  section.case{background:#fff;border-radius:20px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+  section.case h2{font-size:18px;font-weight:700;margin:0 0 4px;}
+  section.case .concept{font-size:13px;color:#666;margin:0 0 18px;}
+
+  .pair{display:flex;gap:20px;flex-wrap:wrap;align-items:stretch;}
+  .card{
+    height:170px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:1 1 300px;
+    min-width:280px;
+  }
+  .light{background:#FFFFFF;}
+  .card.light{border:1px solid #E5E5E7;}
+  .dark{background:#0B0F1A;}
+
+  .icon-holder{
+    flex:0 0 130px;
+    border-radius:16px;
+    border:1px dashed #D5D5DA;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    height:170px;
+  }
+  .icon-holder .label{font-size:11px;color:#888;}
+  .app-icon{
+    width:64px;height:64px;border-radius:15px;
+    background:#0B0F1A;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .app-icon svg{width:40px;height:40px;overflow:visible;display:block;}
+
+  /* ---- ワードマーク共通 ---- */
+  .wm{font-size:40px;line-height:1;white-space:nowrap;display:inline-block;}
+  .light .wm{color:var(--deep-green);}
+  .dark .wm{color:#FFFFFF;}
+  .wm svg{overflow:visible;display:inline-block;}
+
+  /* G-1 / G-3：月グリフ組み文字 */
+  .wmMoon svg{width:0.68em;height:0.68em;margin-right:0.07em;margin-bottom:-0.01em;}
+  .wmMoon svg:last-child{margin-right:0;}
+  .g1 .mfill{fill:url(#ltGrad);}
+  .g1 .mline{stroke:url(#ltGrad);}
+  .g3 .mfill{fill:none;stroke:currentColor;stroke-width:1.8;}
+  .g3 .mline{stroke:currentColor;stroke-width:1.8;}
+  .g3 .mshadow{display:none;}
+  .g3 .qtail-line{stroke:#84CC16 !important;}
+
+  /* G-2：月が満ちる（Bold文字＋月齢塗り） */
+  .g2{font-weight:700;letter-spacing:0.08em;}
+  .light .g2{--dim:#D6DCCB;}
+  .dark .g2, .app-icon .g2{--dim:#2E3647;}
+  .g2 span{
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .g2 .p0{
+    background-image:linear-gradient(90deg,var(--dim),var(--dim));
+    -webkit-text-stroke:0.025em rgba(132,204,22,0.65);
+  }
+  .g2 .p22{background-image:linear-gradient(90deg,#84CC16 0%,#0D9488 22%,var(--dim) 22%,var(--dim) 100%);}
+  .g2 .p50{background-image:linear-gradient(90deg,#84CC16 0%,#0D9488 50%,var(--dim) 50%,var(--dim) 100%);}
+  .g2 .p66{background-image:linear-gradient(90deg,#84CC16 0%,#0D9488 66%,var(--dim) 66%,var(--dim) 100%);}
+  .g2 .p90{background-image:linear-gradient(90deg,#84CC16 0%,#0D9488 90%,var(--dim) 90%,var(--dim) 100%);}
+  .g2 .p100{
+    background-image:linear-gradient(90deg,#84CC16 0%,#0D9488 100%);
+    text-shadow:0 0 0.3em rgba(132,204,22,0.45);
+  }
+
+  /* ---- 縮小耐性チェック行 ---- */
+  section.mini-check{background:#fff;border-radius:20px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+  section.mini-check h2{font-size:18px;font-weight:700;margin:0 0 4px;}
+  section.mini-check .concept{font-size:13px;color:#666;margin:0 0 18px;}
+  .strip{
+    border-radius:12px;padding:18px 20px;
+    display:flex;align-items:center;gap:28px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .strip.light{border:1px solid #E5E5E7;}
+  .strip .wm{font-size:18px;}
+
+  @media (prefers-color-scheme: dark){
+    body{background:#161618;color:#EDEDED;}
+    section.case,section.mini-check{background:#1E1E22;box-shadow:none;}
+    section.case .concept,section.mini-check .concept{color:#9A9AA0;}
+    .card.light,.strip.light{border-color:#333;}
+    .icon-holder{border-color:#444;}
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="ltGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#84CC16"/>
+      <stop offset="100%" stop-color="#0D9488"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<header>
+  <h1>CONSEQ 月齢タイポ：3案</h1>
+  <p>「全部のフォントを月の満ち欠けで表現」の3案。G-1=文字の形自体を月の幾何（三日月・半月・満月）で構築した塗り版、G-2=普通のBold文字の塗りが新月→満月へ満ちていく本命案、G-3=G-1の線画版。各案とも白/濃紺黒の2カード（40px）＋記号文字のアプリアイコン検証カード。最下部に18px縮小耐性行。</p>
+</header>
+
+<main>
+
+  <!-- ===== G-1 月から彫る（塗り） ===== -->
+  <section class="case">
+    <h2>G-1「月から彫る」</h2>
+    <p class="concept">C=三日月・O=満月（左端に欠けの陰）・N=半月2枚＋斜線・S=逆向き三日月の咬み合わせ・E=縦半月＋横棒3本・Q=満月＋短テール。全文字を月の幾何で構築した塗り版。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wmMoon g1"><!--C--><svg viewBox="0 0 26 26"><path class="mfill" d="M 20 2.05 A 13 13 0 1 0 20 23.95 A 11 11 0 0 1 20 2.05 Z"/></svg><!--O--><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/><path class="mshadow" d="M 16.38 2.51 A 11.5 11.5 0 1 0 16.38 24.49 A 11 11 0 0 1 16.38 2.51 Z" fill="#1A2E05" opacity="0.3"/></svg><!--N--><svg viewBox="0 0 26 26"><path class="mfill" d="M 8 1 A 5.8 12.5 0 0 0 8 26 Z"/><path class="mfill" d="M 18 1 A 5.8 12.5 0 0 1 18 26 Z"/><line class="mline" x1="8" y1="3.5" x2="18" y2="22.5" stroke-width="2"/></svg><!--S--><svg viewBox="0 0 26 26"><path class="mfill" d="M 16.68 2.21 A 6.2 6.2 0 1 0 16.68 12.19 A 5 5 0 0 1 16.68 2.21 Z"/><path class="mfill" d="M 9.32 14.01 A 6.2 6.2 0 1 1 9.32 23.99 A 5 5 0 0 0 9.32 14.01 Z"/></svg><!--E--><svg viewBox="0 0 26 26"><path class="mfill" d="M 6 1 A 6.5 12.5 0 0 1 6 26 Z"/><rect class="mfill" x="13.5" y="1.2" width="7.5" height="3.4" rx="1"/><rect class="mfill" x="13.5" y="11.3" width="7.5" height="3.4" rx="1"/><rect class="mfill" x="13.5" y="21.4" width="7.5" height="3.4" rx="1"/></svg><!--Q--><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/><line class="mline qtail-line" x1="20" y1="21" x2="25.5" y2="26.5" stroke-width="3.5" stroke-linecap="round"/></svg></span>
+      </div>
+      <div class="card dark">
+        <span class="wm wmMoon g1"><!--C--><svg viewBox="0 0 26 26"><path class="mfill" d="M 20 2.05 A 13 13 0 1 0 20 23.95 A 11 11 0 0 1 20 2.05 Z"/></svg><!--O--><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/><path class="mshadow" d="M 16.38 2.51 A 11.5 11.5 0 1 0 16.38 24.49 A 11 11 0 0 1 16.38 2.51 Z" fill="#0B0F1A" opacity="0.4"/></svg><!--N--><svg viewBox="0 0 26 26"><path class="mfill" d="M 8 1 A 5.8 12.5 0 0 0 8 26 Z"/><path class="mfill" d="M 18 1 A 5.8 12.5 0 0 1 18 26 Z"/><line class="mline" x1="8" y1="3.5" x2="18" y2="22.5" stroke-width="2"/></svg><!--S--><svg viewBox="0 0 26 26"><path class="mfill" d="M 16.68 2.21 A 6.2 6.2 0 1 0 16.68 12.19 A 5 5 0 0 1 16.68 2.21 Z"/><path class="mfill" d="M 9.32 14.01 A 6.2 6.2 0 1 1 9.32 23.99 A 5 5 0 0 0 9.32 14.01 Z"/></svg><!--E--><svg viewBox="0 0 26 26"><path class="mfill" d="M 6 1 A 6.5 12.5 0 0 1 6 26 Z"/><rect class="mfill" x="13.5" y="1.2" width="7.5" height="3.4" rx="1"/><rect class="mfill" x="13.5" y="11.3" width="7.5" height="3.4" rx="1"/><rect class="mfill" x="13.5" y="21.4" width="7.5" height="3.4" rx="1"/></svg><!--Q--><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/><line class="mline qtail-line" x1="20" y1="21" x2="25.5" y2="26.5" stroke-width="3.5" stroke-linecap="round"/></svg></span>
+      </div>
+      <div class="icon-holder">
+        <div class="app-icon"><svg viewBox="0 0 26 26"><path d="M 20 2.05 A 13 13 0 1 0 20 23.95 A 11 11 0 0 1 20 2.05 Z" fill="url(#ltGrad)"/></svg></div>
+        <div class="label">アイコン単体（C）</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== G-2 月が満ちる ===== -->
+  <section class="case">
+    <h2>G-2「月が満ちる」</h2>
+    <p class="concept">本命。文字はBoldのまま、塗りが月齢で進行：C新月（輪郭だけ薄ライム）→O三日月→N半月→S凸月→Eほぼ満月→Q満月（全面発光）。影響力が育つ＝月が満ちる。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm g2"><span class="p0">C</span><span class="p22">O</span><span class="p50">N</span><span class="p66">S</span><span class="p90">E</span><span class="p100">Q</span></span>
+      </div>
+      <div class="card dark">
+        <span class="wm g2"><span class="p0">C</span><span class="p22">O</span><span class="p50">N</span><span class="p66">S</span><span class="p90">E</span><span class="p100">Q</span></span>
+      </div>
+      <div class="icon-holder">
+        <div class="app-icon"><span class="wm g2" style="font-size:40px;"><span class="p100">Q</span></span></div>
+        <div class="label">アイコン単体（Q）</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== G-3 月から彫る・線画 ===== -->
+  <section class="case">
+    <h2>G-3「月から彫る・線画」</h2>
+    <p class="concept">G-1と同じ月構築を均一な細めストロークの線画で。単色（白/深緑）、Qのテールだけライム。上品系。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wmMoon g3"><!--C--><svg viewBox="0 0 26 26"><path class="mfill" d="M 20 2.05 A 13 13 0 1 0 20 23.95 A 11 11 0 0 1 20 2.05 Z"/></svg><!--O--><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/></svg><!--N--><svg viewBox="0 0 26 26"><path class="mfill" d="M 8 1 A 5.8 12.5 0 0 0 8 26 Z"/><path class="mfill" d="M 18 1 A 5.8 12.5 0 0 1 18 26 Z"/><line class="mline" x1="8" y1="3.5" x2="18" y2="22.5"/></svg><!--S--><svg viewBox="0 0 26 26"><path class="mfill" d="M 16.68 2.21 A 6.2 6.2 0 1 0 16.68 12.19 A 5 5 0 0 1 16.68 2.21 Z"/><path class="mfill" d="M 9.32 14.01 A 6.2 6.2 0 1 1 9.32 23.99 A 5 5 0 0 0 9.32 14.01 Z"/></svg><!--E--><svg viewBox="0 0 26 26"><path class="mfill" d="M 6 1 A 6.5 12.5 0 0 1 6 26 Z"/><line class="mline" x1="13.5" y1="2.9" x2="21" y2="2.9"/><line class="mline" x1="13.5" y1="13" x2="21" y2="13"/><line class="mline" x1="13.5" y1="23.1" x2="21" y2="23.1"/></svg><!--Q--><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/><line class="mline qtail-line" x1="20" y1="21" x2="25.5" y2="26.5" stroke-linecap="round"/></svg></span>
+      </div>
+      <div class="card dark">
+        <span class="wm wmMoon g3"><!--C--><svg viewBox="0 0 26 26"><path class="mfill" d="M 20 2.05 A 13 13 0 1 0 20 23.95 A 11 11 0 0 1 20 2.05 Z"/></svg><!--O--><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/></svg><!--N--><svg viewBox="0 0 26 26"><path class="mfill" d="M 8 1 A 5.8 12.5 0 0 0 8 26 Z"/><path class="mfill" d="M 18 1 A 5.8 12.5 0 0 1 18 26 Z"/><line class="mline" x1="8" y1="3.5" x2="18" y2="22.5"/></svg><!--S--><svg viewBox="0 0 26 26"><path class="mfill" d="M 16.68 2.21 A 6.2 6.2 0 1 0 16.68 12.19 A 5 5 0 0 1 16.68 2.21 Z"/><path class="mfill" d="M 9.32 14.01 A 6.2 6.2 0 1 1 9.32 23.99 A 5 5 0 0 0 9.32 14.01 Z"/></svg><!--E--><svg viewBox="0 0 26 26"><path class="mfill" d="M 6 1 A 6.5 12.5 0 0 1 6 26 Z"/><line class="mline" x1="13.5" y1="2.9" x2="21" y2="2.9"/><line class="mline" x1="13.5" y1="13" x2="21" y2="13"/><line class="mline" x1="13.5" y1="23.1" x2="21" y2="23.1"/></svg><!--Q--><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/><line class="mline qtail-line" x1="20" y1="21" x2="25.5" y2="26.5" stroke-linecap="round"/></svg></span>
+      </div>
+      <div class="icon-holder">
+        <div class="app-icon"><svg viewBox="0 0 26 26"><path d="M 20 2.05 A 13 13 0 1 0 20 23.95 A 11 11 0 0 1 20 2.05 Z" fill="none" stroke="#FFFFFF" stroke-width="1.8"/></svg></div>
+        <div class="label">アイコン単体（C）</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 縮小耐性チェック ===== -->
+  <section class="mini-check">
+    <h2>縮小耐性チェック（18px）</h2>
+    <p class="concept">採用時のヘッダー・ファビコン隣接サイズを想定し、3案を18pxで横一列に並べた確認行。上=白背景、下=濃紺黒背景。</p>
+
+    <div class="strip light">
+      <span class="wm wmMoon g1"><svg viewBox="0 0 26 26"><path class="mfill" d="M 20 2.05 A 13 13 0 1 0 20 23.95 A 11 11 0 0 1 20 2.05 Z"/></svg><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/><path class="mshadow" d="M 16.38 2.51 A 11.5 11.5 0 1 0 16.38 24.49 A 11 11 0 0 1 16.38 2.51 Z" fill="#1A2E05" opacity="0.3"/></svg><svg viewBox="0 0 26 26"><path class="mfill" d="M 8 1 A 5.8 12.5 0 0 0 8 26 Z"/><path class="mfill" d="M 18 1 A 5.8 12.5 0 0 1 18 26 Z"/><line class="mline" x1="8" y1="3.5" x2="18" y2="22.5" stroke-width="2"/></svg><svg viewBox="0 0 26 26"><path class="mfill" d="M 16.68 2.21 A 6.2 6.2 0 1 0 16.68 12.19 A 5 5 0 0 1 16.68 2.21 Z"/><path class="mfill" d="M 9.32 14.01 A 6.2 6.2 0 1 1 9.32 23.99 A 5 5 0 0 0 9.32 14.01 Z"/></svg><svg viewBox="0 0 26 26"><path class="mfill" d="M 6 1 A 6.5 12.5 0 0 1 6 26 Z"/><rect class="mfill" x="13.5" y="1.2" width="7.5" height="3.4" rx="1"/><rect class="mfill" x="13.5" y="11.3" width="7.5" height="3.4" rx="1"/><rect class="mfill" x="13.5" y="21.4" width="7.5" height="3.4" rx="1"/></svg><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/><line class="mline qtail-line" x1="20" y1="21" x2="25.5" y2="26.5" stroke-width="3.5" stroke-linecap="round"/></svg></span>
+      <span class="wm g2"><span class="p0">C</span><span class="p22">O</span><span class="p50">N</span><span class="p66">S</span><span class="p90">E</span><span class="p100">Q</span></span>
+      <span class="wm wmMoon g3"><svg viewBox="0 0 26 26"><path class="mfill" d="M 20 2.05 A 13 13 0 1 0 20 23.95 A 11 11 0 0 1 20 2.05 Z"/></svg><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/></svg><svg viewBox="0 0 26 26"><path class="mfill" d="M 8 1 A 5.8 12.5 0 0 0 8 26 Z"/><path class="mfill" d="M 18 1 A 5.8 12.5 0 0 1 18 26 Z"/><line class="mline" x1="8" y1="3.5" x2="18" y2="22.5"/></svg><svg viewBox="0 0 26 26"><path class="mfill" d="M 16.68 2.21 A 6.2 6.2 0 1 0 16.68 12.19 A 5 5 0 0 1 16.68 2.21 Z"/><path class="mfill" d="M 9.32 14.01 A 6.2 6.2 0 1 1 9.32 23.99 A 5 5 0 0 0 9.32 14.01 Z"/></svg><svg viewBox="0 0 26 26"><path class="mfill" d="M 6 1 A 6.5 12.5 0 0 1 6 26 Z"/><line class="mline" x1="13.5" y1="2.9" x2="21" y2="2.9"/><line class="mline" x1="13.5" y1="13" x2="21" y2="13"/><line class="mline" x1="13.5" y1="23.1" x2="21" y2="23.1"/></svg><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/><line class="mline qtail-line" x1="20" y1="21" x2="25.5" y2="26.5" stroke-linecap="round"/></svg></span>
+    </div>
+
+    <div class="strip dark">
+      <span class="wm wmMoon g1"><svg viewBox="0 0 26 26"><path class="mfill" d="M 20 2.05 A 13 13 0 1 0 20 23.95 A 11 11 0 0 1 20 2.05 Z"/></svg><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/><path class="mshadow" d="M 16.38 2.51 A 11.5 11.5 0 1 0 16.38 24.49 A 11 11 0 0 1 16.38 2.51 Z" fill="#0B0F1A" opacity="0.4"/></svg><svg viewBox="0 0 26 26"><path class="mfill" d="M 8 1 A 5.8 12.5 0 0 0 8 26 Z"/><path class="mfill" d="M 18 1 A 5.8 12.5 0 0 1 18 26 Z"/><line class="mline" x1="8" y1="3.5" x2="18" y2="22.5" stroke-width="2"/></svg><svg viewBox="0 0 26 26"><path class="mfill" d="M 16.68 2.21 A 6.2 6.2 0 1 0 16.68 12.19 A 5 5 0 0 1 16.68 2.21 Z"/><path class="mfill" d="M 9.32 14.01 A 6.2 6.2 0 1 1 9.32 23.99 A 5 5 0 0 0 9.32 14.01 Z"/></svg><svg viewBox="0 0 26 26"><path class="mfill" d="M 6 1 A 6.5 12.5 0 0 1 6 26 Z"/><rect class="mfill" x="13.5" y="1.2" width="7.5" height="3.4" rx="1"/><rect class="mfill" x="13.5" y="11.3" width="7.5" height="3.4" rx="1"/><rect class="mfill" x="13.5" y="21.4" width="7.5" height="3.4" rx="1"/></svg><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/><line class="mline qtail-line" x1="20" y1="21" x2="25.5" y2="26.5" stroke-width="3.5" stroke-linecap="round"/></svg></span>
+      <span class="wm g2"><span class="p0">C</span><span class="p22">O</span><span class="p50">N</span><span class="p66">S</span><span class="p90">E</span><span class="p100">Q</span></span>
+      <span class="wm wmMoon g3"><svg viewBox="0 0 26 26"><path class="mfill" d="M 20 2.05 A 13 13 0 1 0 20 23.95 A 11 11 0 0 1 20 2.05 Z"/></svg><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/></svg><svg viewBox="0 0 26 26"><path class="mfill" d="M 8 1 A 5.8 12.5 0 0 0 8 26 Z"/><path class="mfill" d="M 18 1 A 5.8 12.5 0 0 1 18 26 Z"/><line class="mline" x1="8" y1="3.5" x2="18" y2="22.5"/></svg><svg viewBox="0 0 26 26"><path class="mfill" d="M 16.68 2.21 A 6.2 6.2 0 1 0 16.68 12.19 A 5 5 0 0 1 16.68 2.21 Z"/><path class="mfill" d="M 9.32 14.01 A 6.2 6.2 0 1 1 9.32 23.99 A 5 5 0 0 0 9.32 14.01 Z"/></svg><svg viewBox="0 0 26 26"><path class="mfill" d="M 6 1 A 6.5 12.5 0 0 1 6 26 Z"/><line class="mline" x1="13.5" y1="2.9" x2="21" y2="2.9"/><line class="mline" x1="13.5" y1="13" x2="21" y2="13"/><line class="mline" x1="13.5" y1="23.1" x2="21" y2="23.1"/></svg><svg viewBox="0 0 26 26"><circle class="mfill" cx="13" cy="13.5" r="11.5"/><line class="mline qtail-line" x1="20" y1="21" x2="25.5" y2="26.5" stroke-linecap="round"/></svg></span>
+    </div>
+  </section>
+
+</main>

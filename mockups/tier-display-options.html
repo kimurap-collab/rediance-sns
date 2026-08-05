@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>階級表示見本 — 枠なしデザイン</title>
+<style>
+  :root {
+    --primary-bg: #EEF3FB;
+    --bg: #FFFFFF;
+    --surface: #F5F5F5;
+    --border: #E8E8E8;
+    --text-main: #000000;
+    --text-sub: #555555;
+    --text-light: #999999;
+    --header-height: 56px;
+    --star-dark: #1E40AF;
+    --star-mid: #3B82F6;
+    --supernova: #D946EF;
+    --human: #64748B;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: #F0F0F0;
+    color: #1A1A1A;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans",
+      "Yu Gothic", sans-serif;
+    padding: 40px 20px 80px;
+  }
+
+  button {
+    font: inherit;
+  }
+
+  .page-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .page-desc {
+    max-width: 620px;
+    margin: 0 auto 48px;
+    color: #666;
+    font-size: 13px;
+    line-height: 1.7;
+    text-align: center;
+  }
+
+  .compare {
+    max-width: 500px;
+    margin: 0 auto 64px;
+  }
+
+  .option-heading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .option-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: linear-gradient(
+      135deg,
+      #1A2E05 0%,
+      #84CC16 38%,
+      #0D9488 65%,
+      #4C1D95 100%
+    );
+    color: #FFF;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .5px;
+  }
+
+  .option-name {
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .option-desc {
+    margin-bottom: 20px;
+    color: #777;
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .phone-frame {
+    width: 390px;
+    max-width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    background: var(--bg);
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+  }
+
+  .home-header {
+    height: var(--header-height);
+    padding: 0 16px;
+    position: relative;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(
+      135deg,
+      #1A2E05 0%,
+      #84CC16 38%,
+      #0D9488 65%,
+      #4C1D95 100%
+    );
+  }
+
+  .header-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #FFF;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -.5px;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, .15);
+    color: #FFF;
+    cursor: pointer;
+    font-size: 22px;
+  }
+
+  .icon-btn:active {
+    background: rgba(255, 255, 255, .25);
+  }
+
+  .profile-block {
+    margin: 0 0 4px;
+    padding: 12px 16px;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    background: linear-gradient(
+      135deg,
+      var(--surface) 0%,
+      var(--primary-bg) 100%
+    );
+  }
+
+  .profile-main {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 11px;
+  }
+
+  .avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+
+  .identity {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .name-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+  }
+
+  .profile-name {
+    color: var(--text-main);
+    font-size: 16px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .handle {
+    color: var(--text-light);
+    font-size: 13px;
+  }
+
+  .score {
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .score-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .score-value {
+    color: var(--text-main);
+    font-size: 26px;
+    font-weight: 900;
+  }
+
+  .score-delta {
+    color: #10B981;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .score-label {
+    color: var(--text-light);
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  .bio {
+    color: var(--text-sub);
+    font-size: 13px;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+    padding: 4px 16px 12px;
+  }
+
+  .action-button {
+    flex: 1;
+    padding: 8px 0;
+    border: 0;
+    border-radius: 8px;
+    background: #F3F4F6;
+    color: var(--text-main);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .my-profile-tab-bar {
+    display: flex;
+    border-bottom: 1.5px solid var(--border);
+    position: relative;
+    z-index: 5;
+    background: var(--bg);
+  }
+
+  .my-profile-tab {
+    flex: 1;
+    margin-bottom: -1.5px;
+    padding: 12px 0;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: var(--text-sub);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .my-profile-tab.active {
+    border-bottom-color: #1E3A5F;
+    color: #1E3A5F;
+  }
+
+  .feed-placeholder {
+    padding: 24px 16px;
+    color: var(--text-light);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  /* 案1：名前の下に独立した階級行 */
+  .tier-meta-line {
+    min-height: 18px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--star-dark);
+  }
+
+  .tier-meta-label {
+    color: #64748B;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+  }
+
+  .tier-meta-value {
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  /* 案2：影響力スコアのラベルと統合 */
+  .score-tier-label {
+    min-height: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+    color: var(--star-dark);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .55px;
+  }
+
+  .score-tier-label .divider {
+    color: #B4BCC8;
+    font-weight: 400;
+  }
+
+  .score-tier-label .meaning {
+    color: var(--text-light);
+    font-weight: 500;
+  }
+
+  /* 案3：名前の右側にラベル＋階級名の固定二段組み */
+  .tier-name-stack {
+    display: grid;
+    grid-template-rows: auto auto;
+    align-items: center;
+    flex-shrink: 0;
+    color: var(--star-dark);
+  }
+
+  .tier-name-stack small {
+    color: #64748B;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 1.15;
+  }
+
+  .tier-name-stack strong {
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  /* 案4：独立行のグラデーション文字 */
+  .tier-gradient-line {
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  .tier-gradient-text {
+    background: linear-gradient(
+      90deg,
+      #1E40AF 0%,
+      #3B82F6 38%,
+      #06B6D4 68%,
+      #1E40AF 100%
+    );
+    background-size: 180% auto;
+    color: #1E40AF;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .tier-gradient-caption {
+    color: #64748B;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    -webkit-text-fill-color: initial;
+  }
+
+  /* 案5：文字下のアクセントライン */
+  .tier-underline-line {
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+  }
+
+  .tier-underlined {
+    padding: 0 1px 2px;
+    border-bottom: 2px solid var(--star-mid);
+    color: var(--star-dark);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .15px;
+  }
+
+  .tier-underlined::before {
+    content: "階級";
+    margin-right: 6px;
+    color: #64748B;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  /* 各案共通ミニプレビュー */
+  .mini-preview {
+    margin: 12px 16px 0;
+    padding-top: 10px;
+    border-top: 1px solid rgba(148, 163, 184, .28);
+  }
+
+  .mini-preview-title {
+    margin-bottom: 7px;
+    color: #94A3B8;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .mini-preview-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .mini-tier {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .mini-tier::before {
+    content: "階級";
+    color: #94A3B8;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .8px;
+  }
+
+  .mini-tier.supernova {
+    color: var(--supernova);
+  }
+
+  .mini-tier.human {
+    color: var(--human);
+  }
+
+  .mini-preview.score-style .mini-tier {
+    display: grid;
+    grid-template-columns: auto;
+    gap: 1px;
+    justify-items: start;
+  }
+
+  .mini-preview.score-style .mini-tier::before {
+    content: "影響力に対応する階級";
+  }
+
+  .mini-preview.stack-style .mini-tier {
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 0;
+  }
+
+  .mini-preview.stack-style .mini-tier::before {
+    line-height: 1;
+  }
+
+  .mini-preview.gradient-style .mini-tier {
+    font-size: 12px;
+  }
+
+  .mini-preview.gradient-style .supernova {
+    background: linear-gradient(90deg, #A21CAF, #F97316, #E11D48);
+    color: #A21CAF;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .mini-preview.gradient-style .human {
+    background: linear-gradient(90deg, #475569, #94A3B8);
+    color: #475569;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .mini-preview.gradient-style .mini-tier::before {
+    -webkit-text-fill-color: #94A3B8;
+  }
+
+  .mini-preview.underline-style .mini-tier {
+    width: max-content;
+    padding-bottom: 2px;
+  }
+
+  .mini-preview.underline-style .supernova {
+    border-bottom: 2px solid var(--supernova);
+  }
+
+  .mini-preview.underline-style .human {
+    border-bottom: 2px solid var(--human);
+  }
+
+  @media (max-width: 430px) {
+    body {
+      padding: 28px 10px 64px;
+    }
+
+    .page-title {
+      font-size: 21px;
+    }
+
+    .compare {
+      margin-bottom: 52px;
+    }
+
+    .phone-frame {
+      border-radius: 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">階級表示見本 — 枠なしデザイン</h1>
+<p class="page-desc">
+  実アプリのプロフィールヘッダー「案A」を基準に、階級表示だけを変更した比較見本。
+  すべて枠・ピル・背景塗りを使わず、独立した行または固定レイアウトで縦位置の崩れを防いでいる。
+</p>
+
+<!-- 案1 -->
+<section class="compare">
+  <div class="option-heading">
+    <span class="option-tag">案1</span>
+    <span class="option-name">階級メタ行</span>
+  </div>
+  <p class="option-desc">
+    名前直下に「階級」という明示ラベルを置く。意味が最も伝わりやすく、名前と別行なので長い階級名にも強い。
+  </p>
+
+  <div class="phone-frame">
+    <header class="home-header">
+      <div style="width:32px;"></div>
+      <div class="header-logo">@taisho_k</div>
+      <button class="icon-btn" type="button" aria-label="メニュー">☰</button>
+    </header>
+
+    <div class="profile-block">
+      <div class="profile-main">
+        <img class="avatar" src="../assets/img/u16.jpg" alt="木村 誠司">
+        <div class="identity">
+          <div class="name-row">
+            <span class="profile-name">木村 誠司</span>
+          </div>
+          <div class="tier-meta-line">
+            <span class="tier-meta-label">階級</span>
+            <span class="tier-meta-value">⭐ Star</span>
+          </div>
+          <div class="handle">@taisho_k</div>
+        </div>
+        <div class="score">
+          <div class="score-row">
+            <span class="score-value">50.9K</span>
+            <span class="score-delta">▲ +12%</span>
+          </div>
+          <div class="score-label">影響力</div>
+        </div>
+      </div>
+
+      <div class="bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+
+    </div>
+
+    <div class="action-buttons">
+      <button class="action-button" type="button">Edit Profile</button>
+      <button class="action-button" type="button">Circle Settings</button>
+      <button class="action-button" type="button">Group Settings</button>
+    </div>
+
+    <nav class="my-profile-tab-bar" aria-label="プロフィール">
+      <button class="my-profile-tab active" type="button">Posts</button>
+      <button class="my-profile-tab" type="button">Identity</button>
+    </nav>
+    <div class="feed-placeholder">（投稿フィード）</div>
+  </div>
+</section>
+
+<!-- 案2 -->
+<section class="compare">
+  <div class="option-heading">
+    <span class="option-tag">案2</span>
+    <span class="option-name">スコアと階級を統合</span>
+  </div>
+  <p class="option-desc">
+    50.9Kの下を「⭐ Star・影響力」に置換。階級とスコアの関係が自然に伝わり、名前側を最もすっきり保てる。
+  </p>
+
+  <div class="phone-frame">
+    <header class="home-header">
+      <div style="width:32px;"></div>
+      <div class="header-logo">@taisho_k</div>
+      <button class="icon-btn" type="button" aria-label="メニュー">☰</button>
+    </header>
+
+    <div class="profile-block">
+      <div class="profile-main">
+        <img class="avatar" src="../assets/img/u16.jpg" alt="木村 誠司">
+        <div class="identity">
+          <div class="name-row">
+            <span class="profile-name">木村 誠司</span>
+          </div>
+          <div class="handle">@taisho_k</div>
+        </div>
+        <div class="score">
+          <div class="score-row">
+            <span class="score-value">50.9K</span>
+            <span class="score-delta">▲ +12%</span>
+          </div>
+          <div class="score-tier-label">
+            <span>⭐ STAR</span>
+            <span class="divider">·</span>
+            <span class="meaning">影響力階級</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+
+    </div>
+
+    <div class="action-buttons">
+      <button class="action-button" type="button">Edit Profile</button>
+      <button class="action-button" type="button">Circle Settings</button>
+      <button class="action-button" type="button">Group Settings</button>
+    </div>
+
+    <nav class="my-profile-tab-bar" aria-label="プロフィール">
+      <button class="my-profile-tab active" type="button">Posts</button>
+      <button class="my-profile-tab" type="button">Identity</button>
+    </nav>
+    <div class="feed-placeholder">（投稿フィード）</div>
+  </div>
+</section>
+
+<!-- 案3 -->
+<section class="compare">
+  <div class="option-heading">
+    <span class="option-tag">案3</span>
+    <span class="option-name">名前横・二段ラベル</span>
+  </div>
+  <p class="option-desc">
+    名前横に「階級／⭐ Star」を二段で配置。単一行のベースラインに乗せず、CSS Gridで独立した文字ブロックとして扱う。
+  </p>
+
+  <div class="phone-frame">
+    <header class="home-header">
+      <div style="width:32px;"></div>
+      <div class="header-logo">@taisho_k</div>
+      <button class="icon-btn" type="button" aria-label="メニュー">☰</button>
+    </header>
+
+    <div class="profile-block">
+      <div class="profile-main">
+        <img class="avatar" src="../assets/img/u16.jpg" alt="木村 誠司">
+        <div class="identity">
+          <div class="name-row">
+            <span class="profile-name">木村 誠司</span>
+            <span class="tier-name-stack">
+              <small>階級</small>
+              <strong>⭐ Star</strong>
+            </span>
+          </div>
+          <div class="handle">@taisho_k</div>
+        </div>
+        <div class="score">
+          <div class="score-row">
+            <span class="score-value">50.9K</span>
+            <span class="score-delta">▲ +12%</span>
+          </div>
+          <div class="score-label">影響力</div>
+        </div>
+      </div>
+
+      <div class="bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+
+    </div>
+
+    <div class="action-buttons">
+      <button class="action-button" type="button">Edit Profile</button>
+      <button class="action-button" type="button">Circle Settings</button>
+      <button class="action-button" type="button">Group Settings</button>
+    </div>
+
+    <nav class="my-profile-tab-bar" aria-label="プロフィール">
+      <button class="my-profile-tab active" type="button">Posts</button>
+      <button class="my-profile-tab" type="button">Identity</button>
+    </nav>
+    <div class="feed-placeholder">（投稿フィード）</div>
+  </div>
+</section>
+
+<!-- 案4 -->
+<section class="compare">
+  <div class="option-heading">
+    <span class="option-tag">案4</span>
+    <span class="option-name">グラデーション階級名</span>
+  </div>
+  <p class="option-desc">
+    名前下の独立行に、絵文字と階級固有色のグラデーション文字を表示。装飾性は高いが、囲みを使わず軽やかに見せられる。
+  </p>
+
+  <div class="phone-frame">
+    <header class="home-header">
+      <div style="width:32px;"></div>
+      <div class="header-logo">@taisho_k</div>
+      <button class="icon-btn" type="button" aria-label="メニュー">☰</button>
+    </header>
+
+    <div class="profile-block">
+      <div class="profile-main">
+        <img class="avatar" src="../assets/img/u16.jpg" alt="木村 誠司">
+        <div class="identity">
+          <div class="name-row">
+            <span class="profile-name">木村 誠司</span>
+          </div>
+          <div class="tier-gradient-line">
+            <span class="tier-gradient-text">⭐ STAR</span>
+            <span class="tier-gradient-caption">階級</span>
+          </div>
+          <div class="handle">@taisho_k</div>
+        </div>
+        <div class="score">
+          <div class="score-row">
+            <span class="score-value">50.9K</span>
+            <span class="score-delta">▲ +12%</span>
+          </div>
+          <div class="score-label">影響力</div>
+        </div>
+      </div>
+
+      <div class="bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+
+    </div>
+
+    <div class="action-buttons">
+      <button class="action-button" type="button">Edit Profile</button>
+      <button class="action-button" type="button">Circle Settings</button>
+      <button class="action-button" type="button">Group Settings</button>
+    </div>
+
+    <nav class="my-profile-tab-bar" aria-label="プロフィール">
+      <button class="my-profile-tab active" type="button">Posts</button>
+      <button class="my-profile-tab" type="button">Identity</button>
+    </nav>
+    <div class="feed-placeholder">（投稿フィード）</div>
+  </div>
+</section>
+
+<!-- 案5 -->
+<section class="compare">
+  <div class="option-heading">
+    <span class="option-tag">案5</span>
+    <span class="option-name">階級アンダーライン</span>
+  </div>
+  <p class="option-desc">
+    独立行の階級名にティアカラーの短い下線を添える。囲まずに視線を止められ、文字量が変わっても下線が自動追従する。
+  </p>
+
+  <div class="phone-frame">
+    <header class="home-header">
+      <div style="width:32px;"></div>
+      <div class="header-logo">@taisho_k</div>
+      <button class="icon-btn" type="button" aria-label="メニュー">☰</button>
+    </header>
+
+    <div class="profile-block">
+      <div class="profile-main">
+        <img class="avatar" src="../assets/img/u16.jpg" alt="木村 誠司">
+        <div class="identity">
+          <div class="name-row">
+            <span class="profile-name">木村 誠司</span>
+          </div>
+          <div class="tier-underline-line">
+            <span class="tier-underlined">⭐ Star</span>
+          </div>
+          <div class="handle">@taisho_k</div>
+        </div>
+        <div class="score">
+          <div class="score-row">
+            <span class="score-value">50.9K</span>
+            <span class="score-delta">▲ +12%</span>
+          </div>
+          <div class="score-label">影響力</div>
+        </div>
+      </div>
+
+      <div class="bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+
+    </div>
+
+    <div class="action-buttons">
+      <button class="action-button" type="button">Edit Profile</button>
+      <button class="action-button" type="button">Circle Settings</button>
+      <button class="action-button" type="button">Group Settings</button>
+    </div>
+
+    <nav class="my-profile-tab-bar" aria-label="プロフィール">
+      <button class="my-profile-tab active" type="button">Posts</button>
+      <button class="my-profile-tab" type="button">Identity</button>
+    </nav>
+    <div class="feed-placeholder">（投稿フィード）</div>
+  </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自分プロフすっきり見本 — 3案</title>
+<style>
+  :root {
+    --primary: #1E3A5F;
+    --primary-bg: #EEF3FB;
+    --bg: #FFFFFF;
+    --surface: #F5F5F5;
+    --border: #E8E8E8;
+    --text-main: #000000;
+    --text-sub: #555555;
+    --text-light: #999999;
+    --header-height: 56px;
+    --num-font: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: #E9ECEF;
+    padding: 32px 20px 80px;
+    color: var(--text-main);
+  }
+
+  /* ===== page chrome (this comparison doc only) ===== */
+  .page-title {
+    font-size: 22px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .page-sub {
+    font-size: 13px;
+    color: #6B7280;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .variants {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .variant {
+    width: 390px;
+    max-width: 100%;
+  }
+  .variant-label {
+    font-size: 15px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 2px;
+  }
+  .variant-desc {
+    font-size: 12.5px;
+    color: #6B7280;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .phone-frame {
+    background: var(--bg);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.16);
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+
+  /* ===== copied verbatim from app.html (see comments) ===== */
+
+  /* home-header — app.html L288-300 */
+  .home-header {
+    position: sticky;
+    top: 0;
+    height: var(--header-height);
+    background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 50;
+    flex-shrink: 0;
+  }
+  /* header-logo — app.html L192-197 */
+  .header-logo {
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+  }
+  /* icon-btn — app.html L202-216 */
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: background 0.15s;
+    color: #ffffff;
+  }
+  .icon-btn:active { background: rgba(255,255,255,0.25); }
+
+  /* upx-* — 他人プロフヘッダー。app.html L2305-2359 */
+  .upx-banner {
+    height: 120px;
+    background-size: cover;
+    background-position: center;
+  }
+  .upx-avatar-row {
+    padding: 0 16px;
+    margin-top: -32px;
+  }
+  .upx-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid var(--bg);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .upx-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .upx-white-header {
+    padding: 8px 16px 12px;
+  }
+  .upx-name-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .upx-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+  .upx-handle {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-top: 2px;
+  }
+  .upx-score-col {
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .upx-score-label {
+    font-size: 10px;
+    color: var(--text-light);
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+  .upx-bio {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.5;
+    margin-top: 10px;
+  }
+
+  /* insta-rs-score-val — app.html L2606-2610 */
+  .insta-rs-score-val {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+
+  /* rs-tier-line / rs-tier-grad / rs-tg-star / rs-tier-caption — app.html L2617-2657 */
+  .rs-tier-line {
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 900;
+  }
+  .rs-tier-grad {
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .rs-tg-star { background-image: linear-gradient(135deg,#1E40AF,#06B6D4); color: #1E40AF; }
+  .rs-tier-caption {
+    color: #64748B;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    -webkit-text-fill-color: initial;
+  }
+
+  /* my-profile-tab-bar / my-profile-tab — app.html L2682-2707 */
+  .my-profile-tab-bar {
+    display: flex;
+    border-bottom: 1.5px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 5;
+  }
+  .my-profile-tab {
+    flex: 1;
+    padding: 12px 0;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-sub);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1.5px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .my-profile-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+
+  /* ===== new-to-this-doc pieces ===== */
+
+  /* button row — reproduces the Edit Profile / Circle Settings / Group Settings row
+     from screen-my (app.html L8676-8680), inline styles copied verbatim there so kept inline here too */
+
+  .feed-placeholder {
+    padding: 60px 16px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-light);
+  }
+
+  /* 案3 専用：バナーなし・横並びヘッダーを他人プロフと同じ余白/行間に広げたもの。
+     app.html L8650-8672 の構造を土台に、色付きグラデ背景のみ廃止して白フラットにした。 */
+  .flat-header {
+    padding: 16px 16px 12px;
+    background: var(--bg);
+  }
+  .flat-header-row {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 10px;
+  }
+  .flat-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+  <div class="page-title">自分プロフすっきり見本 — 3案</div>
+  <div class="page-sub">他人プロフィールと同じ余白感・白地の様式に揃える案。現行の色付きグラデ背景ブロックは廃止。</div>
+
+  <div class="variants">
+
+    <!-- ============ 案1: 写真バナー ============ -->
+    <div class="variant">
+      <div class="variant-label">案1 — 写真バナー</div>
+      <div class="variant-desc">他人プロフと完全同型。写真バナー→アバター半重なり→白地に名前・階級・handle、右にスコア。</div>
+      <div class="phone-frame">
+        <div class="home-header">
+          <div style="width:32px;"></div>
+          <div class="header-logo" style="position:absolute;left:50%;transform:translateX(-50%);">@taisho_k</div>
+          <button class="icon-btn" style="font-size:22px;">☰</button>
+        </div>
+
+        <div class="upx-banner" style="background-image:url('../assets/img/u16.jpg');filter:blur(2px) brightness(0.92);transform:scale(1.04);"></div>
+        <div class="upx-avatar-row">
+          <div class="upx-avatar"><img src="../assets/img/u16.jpg" alt="木村 誠司"></div>
+        </div>
+        <div class="upx-white-header">
+          <div class="upx-name-row">
+            <div>
+              <div class="upx-name">木村 誠司</div>
+              <div class="rs-tier-line">
+                <span class="rs-tier-grad rs-tg-star">⭐ STAR</span>
+                <span class="rs-tier-caption">階級</span>
+              </div>
+              <div class="upx-handle">@taisho_k</div>
+            </div>
+            <div class="upx-score-col">
+              <div style="display:flex;align-items:baseline;gap:8px;justify-content:flex-end;">
+                <span class="insta-rs-score-val">50.9K</span>
+                <span style="font-family:var(--num-font);font-size:13px;font-weight:700;color:#10B981;white-space:nowrap;">▲ +12%</span>
+              </div>
+              <div class="upx-score-label">影響力</div>
+            </div>
+          </div>
+          <div class="upx-bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+        </div>
+
+        <div style="display:flex;gap:8px;padding:4px 16px 12px;">
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Edit Profile</button>
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Circle Settings</button>
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Group Settings</button>
+        </div>
+
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+        <div class="feed-placeholder">（投稿フィード）</div>
+      </div>
+    </div>
+
+    <!-- ============ 案2: ブランドグラデバナー ============ -->
+    <div class="variant">
+      <div class="variant-label">案2 — ブランドグラデバナー</div>
+      <div class="variant-desc">案1と同じ構造だが、バナーは写真ではなくブランドグラデ（低め80px）。写真未設定ユーザーのデフォルト姿でもある。</div>
+      <div class="phone-frame">
+        <div class="home-header">
+          <div style="width:32px;"></div>
+          <div class="header-logo" style="position:absolute;left:50%;transform:translateX(-50%);">@taisho_k</div>
+          <button class="icon-btn" style="font-size:22px;">☰</button>
+        </div>
+
+        <div class="upx-banner" style="height:80px;background:linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);"></div>
+        <div class="upx-avatar-row">
+          <div class="upx-avatar"><img src="../assets/img/u16.jpg" alt="木村 誠司"></div>
+        </div>
+        <div class="upx-white-header">
+          <div class="upx-name-row">
+            <div>
+              <div class="upx-name">木村 誠司</div>
+              <div class="rs-tier-line">
+                <span class="rs-tier-grad rs-tg-star">⭐ STAR</span>
+                <span class="rs-tier-caption">階級</span>
+              </div>
+              <div class="upx-handle">@taisho_k</div>
+            </div>
+            <div class="upx-score-col">
+              <div style="display:flex;align-items:baseline;gap:8px;justify-content:flex-end;">
+                <span class="insta-rs-score-val">50.9K</span>
+                <span style="font-family:var(--num-font);font-size:13px;font-weight:700;color:#10B981;white-space:nowrap;">▲ +12%</span>
+              </div>
+              <div class="upx-score-label">影響力</div>
+            </div>
+          </div>
+          <div class="upx-bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+        </div>
+
+        <div style="display:flex;gap:8px;padding:4px 16px 12px;">
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Edit Profile</button>
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Circle Settings</button>
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Group Settings</button>
+        </div>
+
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+        <div class="feed-placeholder">（投稿フィード）</div>
+      </div>
+    </div>
+
+    <!-- ============ 案3: バナーなし・余白統一 ============ -->
+    <div class="variant">
+      <div class="variant-label">案3 — バナーなし・余白統一</div>
+      <div class="variant-desc">バナーを敷かず、現行の横並び構造（アバター56px・名前・スコア右）を維持したまま背景を白フラットにし、他人プロフと同じ余白・行間に広げた案。一番変更が小さい。</div>
+      <div class="phone-frame">
+        <div class="home-header">
+          <div style="width:32px;"></div>
+          <div class="header-logo" style="position:absolute;left:50%;transform:translateX(-50%);">@taisho_k</div>
+          <button class="icon-btn" style="font-size:22px;">☰</button>
+        </div>
+
+        <div class="flat-header">
+          <div class="flat-header-row">
+            <img class="flat-avatar" src="../assets/img/u16.jpg" alt="木村 誠司">
+            <div style="flex:1;min-width:0;">
+              <div class="upx-name">木村 誠司</div>
+              <div class="rs-tier-line">
+                <span class="rs-tier-grad rs-tg-star">⭐ STAR</span>
+                <span class="rs-tier-caption">階級</span>
+              </div>
+              <div class="upx-handle">@taisho_k</div>
+            </div>
+            <div class="upx-score-col">
+              <div style="display:flex;align-items:baseline;gap:8px;justify-content:flex-end;">
+                <span class="insta-rs-score-val">50.9K</span>
+                <span style="font-family:var(--num-font);font-size:13px;font-weight:700;color:#10B981;white-space:nowrap;">▲ +12%</span>
+              </div>
+              <div class="upx-score-label">影響力</div>
+            </div>
+          </div>
+          <div class="upx-bio" style="margin-top:0;">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+        </div>
+
+        <div style="display:flex;gap:8px;padding:4px 16px 12px;">
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Edit Profile</button>
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Circle Settings</button>
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Group Settings</button>
+        </div>
+
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+        <div class="feed-placeholder">（投稿フィード）</div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

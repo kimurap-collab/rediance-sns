@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>HYPERAY — App</title>
+  <title>CONSEQ — App</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=M+PLUS+1p:wght@700&family=Zen+Kaku+Gothic+New:wght@300&family=Noto+Serif+JP&family=Shippori+Mincho&family=Yusei+Magic&family=Klee+One&family=Kaisei+Decol&family=Stick&family=Reggae+One&display=swap" rel="stylesheet">
@@ -2300,6 +2300,181 @@
       border: 1px solid rgba(255,255,255,0.12);
     }
 
+    /* ===== USER PROFILE HEADER — X(Twitter)-style (2026-08 改修) =====
+       写真はバナーに敷くだけ、テキストは白地に配置。階級グラデ文字は rs-tier-line/rs-tier-grad/rs-tg-*（2559〜2599行）を流用。 */
+    .upx-banner {
+      height: 120px;
+      background-size: cover;
+      background-position: center;
+    }
+    .upx-avatar-row {
+      padding: 0 16px;
+      margin-top: -32px;
+    }
+    .upx-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 3px solid var(--bg);
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+    .upx-white-header {
+      padding: 8px 16px 12px;
+    }
+    .upx-name-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .upx-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+    .upx-handle {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+    .upx-score-col {
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .upx-score-label {
+      font-size: 10px;
+      color: var(--text-light);
+      letter-spacing: 1px;
+      margin-top: 2px;
+    }
+    .upx-bio {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+
+    /* ===== PROFILE HEADER — 現行インスタ完コピ構造（mockups/profile-ig-clone.html準拠、2026-08）=====
+       自分プロフ（screen-my）・他人プロフ（buildPokemonCard）で共用。バナー無し・白トップバー・アバター88px＋名前→スタッツ3枠。 */
+    .ig-top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: var(--header-height);
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+    .ig-top-bar .handle {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .ig-header-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 16px 16px 0;
+    }
+    .ig-avatar-ring {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      padding: 2px;
+      flex-shrink: 0;
+    }
+    .ig-avatar-ring img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
+    .ig-avatar-emoji {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+    }
+    .ig-right-col {
+      flex: 1;
+      padding-top: 6px;
+    }
+    .ig-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+    .ig-stats {
+      display: flex;
+    }
+    .ig-stat {
+      flex: 1;
+      text-align: center;
+    }
+    .ig-stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.25;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ig-stat-value.is-trend { color: var(--success); }
+    .ig-stat-label {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+    .ig-bio-block {
+      padding: 12px 16px 4px;
+    }
+    .ig-bio-category {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-bottom: 2px;
+    }
+    .ig-bio-text {
+      font-size: 14px;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+    .ig-action-row {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+    }
+    .ig-action-btn {
+      flex: 1;
+      height: 34px;
+      background: #F3F4F6;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
     .settings-menu-item {
       padding: 14px 20px;
       font-size: 16px;
@@ -2555,6 +2730,48 @@
       font-weight: 800;
       padding: 4px 12px;
       border-radius: 20px;
+    }
+    .rs-tier-line {
+      min-height: 20px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .rs-tier-grad {
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    /* 10ティアのグラデ定義（.rs-tier-grad と併用）。既存の .tg-* (target group送信リスト, 3130行付近)
+       と衝突するため rs- 接頭辞を付与 */
+    .rs-tg-human       { background-image: linear-gradient(135deg,#4B5563,#6B7280); color: #4B5563; }
+    .rs-tg-leader      { background-image: linear-gradient(135deg,#92400E,#F59E0B); color: #92400E; }
+    .rs-tg-icon        { background-image: linear-gradient(135deg,#047857,#34D399); color: #047857; }
+    .rs-tg-rising      { background-image: linear-gradient(135deg,#0D9488,#84CC16); color: #0D9488; }
+    .rs-tg-star        { background-image: linear-gradient(135deg,#1E40AF,#06B6D4); color: #1E40AF; }
+    .rs-tg-nova        { background-image: linear-gradient(135deg,#6D28D9,#C026D3); color: #6D28D9; }
+    .rs-tg-supernova   { background-image: linear-gradient(135deg,#BE123C,#F97316); color: #BE123C; }
+    .rs-tg-gravity     { background-image: linear-gradient(135deg,#312E81,#0D9488); color: #312E81; }
+    .rs-tg-singularity { background-image: linear-gradient(135deg,#0F172A,#7C3AED); color: #0F172A; }
+    .rs-tg-universe {
+      background-image: linear-gradient(
+        135deg,
+        #1A2E05 0%,
+        #84CC16 38%,
+        #0D9488 65%,
+        #4C1D95 100%
+      );
+      color: #1A2E05;
+    }
+    .rs-tier-caption {
+      color: #64748B;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.1px;
+      -webkit-text-fill-color: initial;
     }
     .insta-rs-sub-stats {
       display: flex;
@@ -7068,7 +7285,7 @@
     }
     .member-cosmic-title {
       font-size: 11px;
-      color: var(--text-light);
+      font-weight: 800;
       margin-top: 1px;
       display: block;
     }
@@ -8153,6 +8370,342 @@
 </head>
 <body>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="gradient-human" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#4B5563"/>
+    <stop offset="1" stop-color="#6B7280"/>
+  </linearGradient>
+  <linearGradient id="gradient-leader" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#92400E"/>
+    <stop offset="1" stop-color="#F59E0B"/>
+  </linearGradient>
+  <linearGradient id="gradient-icon" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#047857"/>
+    <stop offset="1" stop-color="#34D399"/>
+  </linearGradient>
+  <linearGradient id="gradient-rising" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#0D9488"/>
+    <stop offset="1" stop-color="#84CC16"/>
+  </linearGradient>
+  <linearGradient id="gradient-star" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#1E40AF"/>
+    <stop offset="1" stop-color="#06B6D4"/>
+  </linearGradient>
+  <linearGradient id="gradient-nova" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#6D28D9"/>
+    <stop offset="1" stop-color="#C026D3"/>
+  </linearGradient>
+  <linearGradient id="gradient-supernova" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#BE123C"/>
+    <stop offset="1" stop-color="#F97316"/>
+  </linearGradient>
+  <linearGradient id="gradient-gravity" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#312E81"/>
+    <stop offset="1" stop-color="#0D9488"/>
+  </linearGradient>
+  <linearGradient id="gradient-singularity" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#0F172A"/>
+    <stop offset="1" stop-color="#7C3AED"/>
+  </linearGradient>
+  <linearGradient id="gradient-universe" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#1A2E05"/>
+    <stop offset="38%" stop-color="#84CC16"/>
+    <stop offset="65%" stop-color="#0D9488"/>
+    <stop offset="100%" stop-color="#4C1D95"/>
+  </linearGradient>
+
+  <g id="shape-human" fill="currentColor">
+    <circle cx="12" cy="6.35" r="3.45"/>
+    <path d="M3.45 21.65 C3.75 15.1 6.9 11.55 12 11.55 C17.1 11.55 20.25 15.1 20.55 21.65 Z"/>
+  </g>
+
+  <g id="shape-leader" fill="currentColor">
+    <path fill-rule="evenodd" d="M12 4.15 A8.85 8.85 0 1 1 12 21.85 A8.85 8.85 0 1 1 12 4.15 Z M12 8 A5 5 0 1 0 12 18 A5 5 0 1 0 12 8 Z"/>
+    <path d="M12 1.05 L16.65 5.7 L14.2 8.15 L12 5.95 L9.8 8.15 L7.35 5.7 Z"/>
+  </g>
+
+  <g id="shape-icon" fill="currentColor">
+    <path fill-rule="evenodd" d="M1.15 12 C4.25 6.85 7.85 4.35 12 4.35 C16.15 4.35 19.75 6.85 22.85 12 C19.75 17.15 16.15 19.65 12 19.65 C7.85 19.65 4.25 17.15 1.15 12 Z M5.35 12 C7.35 14.65 9.45 15.95 12 15.95 C14.55 15.95 16.65 14.65 18.65 12 C16.65 9.35 14.55 8.05 12 8.05 C9.45 8.05 7.35 9.35 5.35 12 Z"/>
+    <circle cx="12" cy="12" r="2.15"/>
+  </g>
+
+  <g id="shape-rising" fill="currentColor">
+    <path fill-rule="evenodd" d="M12 1.05 C17.55 6.05 20.45 10.55 20.45 15.25 C20.45 20.05 16.75 23 12 23 C7.25 23 3.55 20.05 3.55 15.25 C3.55 10.55 6.45 6.05 12 1.05 Z M12 6.25 C8.7 9.65 7.05 12.55 7.05 15.35 C7.05 18.05 9.15 19.75 12 19.75 C14.85 19.75 16.95 18.05 16.95 15.35 C16.95 12.55 15.3 9.65 12 6.25 Z"/>
+    <circle cx="12" cy="15.15" r="2.2"/>
+  </g>
+
+  <g id="shape-star" fill="currentColor">
+    <path fill-rule="evenodd" d="M12 1.05 L14.65 8.15 L22.25 8.5 L16.3 13.25 L18.35 20.55 L12 16.4 L5.65 20.55 L7.7 13.25 L1.75 8.5 L9.35 8.15 Z M12 7.8 A4.2 4.2 0 1 0 12 16.2 A4.2 4.2 0 1 0 12 7.8 Z"/>
+    <circle cx="12" cy="12" r="2.2"/>
+  </g>
+
+  <g id="shape-nova" fill="currentColor">
+    <path fill-rule="evenodd" d="M12 .75 C13.55 6.1 15.15 8.45 23.25 12 C15.15 15.55 13.55 17.9 12 23.25 C10.45 17.9 8.85 15.55 .75 12 C8.85 8.45 10.45 6.1 12 .75 Z M12 7.85 A4.15 4.15 0 1 0 12 16.15 A4.15 4.15 0 1 0 12 7.85 Z"/>
+    <circle cx="12" cy="12" r="2.3"/>
+  </g>
+
+  <g id="shape-supernova" fill="currentColor">
+    <path fill-rule="evenodd" d="M12 .45 L14.65 6.35 L19.85 4.15 L17.65 9.35 L23.55 12 L17.65 14.65 L19.85 19.85 L14.65 17.65 L12 23.55 L9.35 17.65 L4.15 19.85 L6.35 14.65 L.45 12 L6.35 9.35 L4.15 4.15 L9.35 6.35 Z M12 7.15 A4.85 4.85 0 1 0 12 16.85 A4.85 4.85 0 1 0 12 7.15 Z"/>
+    <path d="M12 8.55 L15.45 12 L12 15.45 L8.55 12 Z"/>
+  </g>
+
+  <g id="shape-gravity" fill="currentColor">
+    <path fill-rule="evenodd" d="M12 1.25 A10.75 10.75 0 1 1 12 22.75 A10.75 10.75 0 1 1 12 1.25 Z M12 4.35 A7.65 7.65 0 1 0 12 19.65 A7.65 7.65 0 1 0 12 4.35 Z"/>
+    <path fill-rule="evenodd" transform="rotate(-28 12 12)" d="M2.7 12 A9.3 4.35 0 1 0 21.3 12 A9.3 4.35 0 1 0 2.7 12 Z M5.55 12 A6.45 1.7 0 1 1 18.45 12 A6.45 1.7 0 1 1 5.55 12 Z"/>
+    <circle cx="12" cy="12" r="2.2"/>
+  </g>
+
+  <g id="shape-singularity" fill="currentColor">
+    <path fill-rule="evenodd" d="M12 1.4 A10.6 10.6 0 1 1 12 22.6 A10.6 10.6 0 1 1 12 1.4 Z M12 4.45 A7.55 7.55 0 1 0 12 19.55 A7.55 7.55 0 1 0 12 4.45 Z"/>
+    <rect x="1.35" y="10.55" width="21.3" height="2.9" rx="1.45"/>
+    <circle cx="12" cy="12" r="3.65"/>
+    <circle cx="12" cy="5.7" r="1.05"/>
+    <circle cx="12" cy="18.3" r="1.05"/>
+  </g>
+
+  <g id="shape-universe" fill="currentColor">
+    <path fill-rule="evenodd" d="M12 1 A11 11 0 1 1 12 23 A11 11 0 1 1 12 1 Z M12 3.55 A8.45 8.45 0 1 0 12 20.45 A8.45 8.45 0 1 0 12 3.55 Z"/>
+    <path fill-rule="evenodd" d="M12 9.42 C10.28 7.15 8.58 5.95 6.45 5.95 C3.15 5.95 .9 8.42 .9 12 C.9 15.58 3.15 18.05 6.45 18.05 C8.58 18.05 10.28 16.85 12 14.58 C13.72 16.85 15.42 18.05 17.55 18.05 C20.85 18.05 23.1 15.58 23.1 12 C23.1 8.42 20.85 5.95 17.55 5.95 C15.42 5.95 13.72 7.15 12 9.42 Z M6.5 8.78 C7.68 8.78 8.75 9.72 10.15 12 C8.75 14.28 7.68 15.22 6.5 15.22 C4.82 15.22 3.72 13.93 3.72 12 C3.72 10.07 4.82 8.78 6.5 8.78 Z M17.5 8.78 C19.18 8.78 20.28 10.07 20.28 12 C20.28 13.93 19.18 15.22 17.5 15.22 C16.32 15.22 15.25 14.28 13.85 12 C15.25 9.72 16.32 8.78 17.5 8.78 Z"/>
+    <circle cx="12" cy="1.35" r="1.25"/>
+    <circle cx="22.65" cy="12" r="1.25"/>
+    <circle cx="12" cy="22.65" r="1.25"/>
+    <circle cx="1.35" cy="12" r="1.25"/>
+  </g>
+
+  <mask id="mask-human" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+    <use href="#shape-human" color="#fff"/>
+  </mask>
+  <mask id="mask-leader" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+    <use href="#shape-leader" color="#fff"/>
+  </mask>
+  <mask id="mask-icon" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+    <use href="#shape-icon" color="#fff"/>
+  </mask>
+  <mask id="mask-rising" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+    <use href="#shape-rising" color="#fff"/>
+  </mask>
+  <mask id="mask-star" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+    <use href="#shape-star" color="#fff"/>
+  </mask>
+  <mask id="mask-nova" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+    <use href="#shape-nova" color="#fff"/>
+  </mask>
+  <mask id="mask-supernova" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+    <use href="#shape-supernova" color="#fff"/>
+  </mask>
+  <mask id="mask-gravity" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+    <use href="#shape-gravity" color="#fff"/>
+  </mask>
+  <mask id="mask-singularity" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+    <use href="#shape-singularity" color="#fff"/>
+  </mask>
+  <mask id="mask-universe" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+    <use href="#shape-universe" color="#fff"/>
+  </mask>
+
+  <!-- ===== ENAMEL BADGE (mockups/badge-enamel.html より移植) ===== -->
+  <filter id="ink-shadow" x="-20%" y="-20%" width="140%" height="145%">
+    <feDropShadow dx="0" dy=".75" stdDeviation=".8"
+      flood-color="#17191d" flood-opacity=".24"/>
+  </filter>
+
+  <!-- 全ティア共通：左上を明、右下を深色に統一 -->
+  <linearGradient id="enamel-human" x1="9" y1="7" x2="39" y2="41"
+    gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#6b7280"/>
+    <stop offset="1" stop-color="#4b5563"/>
+  </linearGradient>
+
+  <linearGradient id="enamel-leader" x1="9" y1="7" x2="39" y2="41"
+    gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#b45309"/>
+    <stop offset="1" stop-color="#78350f"/>
+  </linearGradient>
+
+  <linearGradient id="enamel-icon" x1="9" y1="7" x2="39" y2="41"
+    gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#0f8b6d"/>
+    <stop offset="1" stop-color="#065f46"/>
+  </linearGradient>
+
+  <linearGradient id="enamel-rising" x1="9" y1="7" x2="39" y2="41"
+    gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#168c84"/>
+    <stop offset="1" stop-color="#3f6212"/>
+  </linearGradient>
+
+  <linearGradient id="enamel-star" x1="9" y1="7" x2="39" y2="41"
+    gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#2563a8"/>
+    <stop offset="1" stop-color="#155e75"/>
+  </linearGradient>
+
+  <linearGradient id="enamel-nova" x1="9" y1="7" x2="39" y2="41"
+    gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#7c3aed"/>
+    <stop offset="1" stop-color="#86198f"/>
+  </linearGradient>
+
+  <linearGradient id="enamel-supernova" x1="9" y1="7" x2="39" y2="41"
+    gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#be3655"/>
+    <stop offset="1" stop-color="#9a3412"/>
+  </linearGradient>
+
+  <linearGradient id="enamel-gravity" x1="9" y1="7" x2="39" y2="41"
+    gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#4338a8"/>
+    <stop offset="1" stop-color="#115e59"/>
+  </linearGradient>
+
+  <linearGradient id="enamel-singularity" x1="9" y1="7" x2="39" y2="41"
+    gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#475569"/>
+    <stop offset="1" stop-color="#4c1d95"/>
+  </linearGradient>
+
+  <linearGradient id="enamel-universe" x1="9" y1="7" x2="39" y2="41"
+    gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#4d7c0f"/>
+    <stop offset=".5" stop-color="#0f766e"/>
+    <stop offset="1" stop-color="#3b0764"/>
+  </linearGradient>
+
+  <!--
+    badge-maison-v3.html の shape-* を母型にした20px専用章。
+    細い副要素を整理し、負形とストローク量を小サイズ向けに再設定。
+  -->
+  <symbol id="mark-human" viewBox="0 0 24 24">
+    <circle cx="12" cy="6.9" r="3.15" fill="#fff"/>
+    <path d="M5 21c.3-6.25 2.9-9.4 7-9.4s6.7 3.15 7 9.4Z" fill="#fff"/>
+  </symbol>
+
+  <symbol id="mark-leader" viewBox="0 0 24 24">
+    <circle cx="12" cy="13.1" r="7.25" fill="none"
+      stroke="#fff" stroke-width="3" />
+    <path d="M12 1.7 16.4 6.1 14.15 8.35 12 6.2 9.85 8.35 7.6 6.1Z"
+      fill="#fff"/>
+  </symbol>
+
+  <symbol id="mark-icon" viewBox="0 0 24 24">
+    <path fill="#fff" fill-rule="evenodd"
+      d="M1.6 12C4.55 7.2 7.95 4.9 12 4.9S19.45 7.2 22.4 12c-2.95 4.8-6.35 7.1-10.4 7.1S4.55 16.8 1.6 12Zm4.45 0c1.75 2.25 3.7 3.35 5.95 3.35s4.2-1.1 5.95-3.35C16.2 9.75 14.25 8.65 12 8.65S7.8 9.75 6.05 12Z"/>
+    <circle cx="12" cy="12" r="2.25" fill="#fff"/>
+  </symbol>
+
+  <symbol id="mark-rising" viewBox="0 0 24 24">
+    <path fill="#fff" fill-rule="evenodd"
+      d="M12 1.55c5.1 4.65 7.75 8.7 7.75 13.05 0 4.65-3.35 7.7-7.75 7.7s-7.75-3.05-7.75-7.7C4.25 10.25 6.9 6.2 12 1.55Zm0 5.15c-2.8 2.95-4.15 5.45-4.15 7.9 0 2.55 1.7 4.15 4.15 4.15s4.15-1.6 4.15-4.15c0-2.45-1.35-4.95-4.15-7.9Z"/>
+    <circle cx="12" cy="14.8" r="2.15" fill="#fff"/>
+  </symbol>
+
+  <symbol id="mark-star" viewBox="0 0 24 24">
+    <path fill="#fff" fill-rule="evenodd"
+      d="m12 1.7 2.5 6.6 7.05.35-5.5 4.4 1.9 6.8L12 16l-5.95 3.85 1.9-6.8-5.5-4.4 7.05-.35L12 1.7Zm0 6.05a4.25 4.25 0 1 0 0 8.5 4.25 4.25 0 0 0 0-8.5Z"/>
+    <circle cx="12" cy="12" r="2.2" fill="#fff"/>
+  </symbol>
+
+  <symbol id="mark-nova" viewBox="0 0 24 24">
+    <path fill="#fff" fill-rule="evenodd"
+      d="M12 1.15c1.4 4.95 3.1 7.2 10.85 10.85C15.1 15.65 13.4 17.9 12 22.85 10.6 17.9 8.9 15.65 1.15 12 8.9 8.35 10.6 6.1 12 1.15Zm0 6.55a4.3 4.3 0 1 0 0 8.6 4.3 4.3 0 0 0 0-8.6Z"/>
+    <circle cx="12" cy="12" r="2.3" fill="#fff"/>
+  </symbol>
+
+  <symbol id="mark-supernova" viewBox="0 0 24 24">
+    <path fill="#fff" fill-rule="evenodd"
+      d="m12 1 2.5 5.55 5.35-2.4-2.4 5.35L23 12l-5.55 2.5 2.4 5.35-5.35-2.4L12 23l-2.5-5.55-5.35 2.4 2.4-5.35L1 12l5.55-2.5-2.4-5.35 5.35 2.4L12 1Zm0 6.55a4.45 4.45 0 1 0 0 8.9 4.45 4.45 0 0 0 0-8.9Z"/>
+    <path d="m12 8.75 3.25 3.25L12 15.25 8.75 12Z" fill="#fff"/>
+  </symbol>
+
+  <symbol id="mark-gravity" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9.15" fill="none"
+      stroke="#fff" stroke-width="2.8"/>
+    <ellipse cx="12" cy="12" rx="9.55" ry="4.15" fill="none"
+      stroke="#fff" stroke-width="2.45" transform="rotate(-28 12 12)"/>
+    <circle cx="12" cy="12" r="2.25" fill="#fff"/>
+  </symbol>
+
+  <symbol id="mark-singularity" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8.85" fill="none"
+      stroke="#fff" stroke-width="2.85"/>
+    <rect x="2.05" y="10.55" width="19.9" height="2.9" rx="1.45"
+      fill="#fff"/>
+    <circle cx="12" cy="12" r="3.45" fill="#fff"/>
+  </symbol>
+
+  <symbol id="mark-universe" viewBox="0 0 24 24">
+    <path fill="#fff" fill-rule="evenodd"
+      d="M12 9.4C10.25 7.1 8.55 5.9 6.4 5.9 3.15 5.9.9 8.4.9 12s2.25 6.1 5.5 6.1c2.15 0 3.85-1.2 5.6-3.5 1.75 2.3 3.45 3.5 5.6 3.5 3.25 0 5.5-2.5 5.5-6.1s-2.25-6.1-5.5-6.1c-2.15 0-3.85 1.2-5.6 3.5ZM6.45 8.75c1.2 0 2.25.95 3.7 3.25-1.45 2.3-2.5 3.25-3.7 3.25-1.65 0-2.75-1.3-2.75-3.25s1.1-3.25 2.75-3.25Zm11.1 0c1.65 0 2.75 1.3 2.75 3.25s-1.1 3.25-2.75 3.25c-1.2 0-2.25-.95-3.7-3.25 1.45-2.3 2.5-3.25 3.7-3.25Z"/>
+    <circle cx="12" cy="2.1" r="1.45" fill="#fff"/>
+    <circle cx="12" cy="21.9" r="1.45" fill="#fff"/>
+  </symbol>
+
+  <!-- 共通台座：直径44に対して白縁2.2＝5%。章は24px母型を28px領域へ再配置 -->
+  <symbol id="badge-human" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="21" fill="url(#enamel-human)"
+      stroke="#fff" stroke-width="2.2" filter="url(#ink-shadow)"/>
+    <use href="#mark-human" x="10" y="10" width="28" height="28"/>
+  </symbol>
+
+  <symbol id="badge-leader" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="21" fill="url(#enamel-leader)"
+      stroke="#fff" stroke-width="2.2" filter="url(#ink-shadow)"/>
+    <use href="#mark-leader" x="10" y="10" width="28" height="28"/>
+  </symbol>
+
+  <symbol id="badge-icon" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="21" fill="url(#enamel-icon)"
+      stroke="#fff" stroke-width="2.2" filter="url(#ink-shadow)"/>
+    <use href="#mark-icon" x="10" y="10" width="28" height="28"/>
+  </symbol>
+
+  <symbol id="badge-rising" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="21" fill="url(#enamel-rising)"
+      stroke="#fff" stroke-width="2.2" filter="url(#ink-shadow)"/>
+    <use href="#mark-rising" x="10" y="10" width="28" height="28"/>
+  </symbol>
+
+  <symbol id="badge-star" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="21" fill="url(#enamel-star)"
+      stroke="#fff" stroke-width="2.2" filter="url(#ink-shadow)"/>
+    <use href="#mark-star" x="10" y="10" width="28" height="28"/>
+  </symbol>
+
+  <symbol id="badge-nova" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="21" fill="url(#enamel-nova)"
+      stroke="#fff" stroke-width="2.2" filter="url(#ink-shadow)"/>
+    <use href="#mark-nova" x="10" y="10" width="28" height="28"/>
+  </symbol>
+
+  <symbol id="badge-supernova" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="21" fill="url(#enamel-supernova)"
+      stroke="#fff" stroke-width="2.2" filter="url(#ink-shadow)"/>
+    <use href="#mark-supernova" x="10" y="10" width="28" height="28"/>
+  </symbol>
+
+  <symbol id="badge-gravity" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="21" fill="url(#enamel-gravity)"
+      stroke="#fff" stroke-width="2.2" filter="url(#ink-shadow)"/>
+    <use href="#mark-gravity" x="10" y="10" width="28" height="28"/>
+  </symbol>
+
+  <symbol id="badge-singularity" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="21" fill="url(#enamel-singularity)"
+      stroke="#fff" stroke-width="2.2" filter="url(#ink-shadow)"/>
+    <circle cx="24" cy="24" r="19.15" fill="none"
+      stroke="#fffdf6" stroke-opacity=".74" stroke-width=".65"/>
+    <use href="#mark-singularity" x="10" y="10" width="28" height="28"/>
+  </symbol>
+
+  <symbol id="badge-universe" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="21" fill="url(#enamel-universe)"
+      stroke="#fff" stroke-width="2.2" filter="url(#ink-shadow)"/>
+    <circle cx="24" cy="24" r="19.15" fill="none"
+      stroke="#fffdf6" stroke-opacity=".74" stroke-width=".65"/>
+    <use href="#mark-universe" x="10" y="10" width="28" height="28"/>
+  </symbol>
+</defs></svg>
+
 <div class="phone">
   <!-- STATUS BAR -->
   <div class="status-bar">
@@ -8171,7 +8724,7 @@
       <!-- Header -->
       <div class="home-header">
         <button class="icon-btn" onclick="openCreateMenu()">＋</button>
-        <img src="hyperay-logo-white.png" alt="HYPERAY" style="position:absolute;left:50%;transform:translateX(-50%);height:28px;width:auto;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));">
+        <div class="header-logo" style="position:absolute;left:50%;transform:translateX(-50%);letter-spacing:2.5px;font-size:18px;text-shadow:0 1px 2px rgba(0,0,0,.35);">CONSEQ</div>
         <div style="display:flex;align-items:center;gap:4px;">
           <button class="home-layout-toggle-btn" id="homeLayoutToggleBtn" onclick="cycleHomeStoryLayout()" title="レイアウト切替">⊟</button>
           <button class="icon-btn" onclick="showNotif()">♡</button>
@@ -8507,7 +9060,7 @@
         <div class="notif-item" onclick="openUserProfile('sarah_ai')" style="cursor:pointer;">
           <div class="notif-avatar">✨</div>
           <div class="notif-body">
-            <div class="notif-text"><strong>Sarah Chen</strong>の投稿があなたに届きました 💥 Supernova</div>
+            <div class="notif-text"><strong>Sarah Chen</strong>の投稿があなたに届きました 💥 SUPERNOVA</div>
             <div class="notif-time">45分前</div>
           </div>
           <div class="notif-dot"></div>
@@ -8539,60 +9092,47 @@
     <!-- ===== MY PAGE SCREEN ===== -->
     <div class="screen" id="screen-my" style="overflow-y:auto;">
 
-      <!-- My Header with ☰ -->
-      <div class="home-header">
+      <!-- My Header with ☰（現行インスタ完コピ：白トップバー・戻る無し＝タブ画面のため） -->
+      <div class="ig-top-bar">
         <div style="width:32px;"></div>
-        <div class="header-logo" style="position:absolute;left:50%;transform:translateX(-50%);">@taisho_k</div>
-        <button class="icon-btn" onclick="openSettingsMenu()" style="font-size:22px;">☰</button>
+        <div class="handle" style="position:absolute;left:50%;transform:translateX(-50%);">@taisho_k</div>
+        <button class="icon-btn" onclick="openSettingsMenu()" style="font-size:22px;color:var(--text-main);background:transparent;">☰</button>
       </div>
 
-      <!-- RS SCORE BLOCK (主役・案1-E統合: アバター+名前+トレンド) -->
-      <div class="insta-rs-block" style="margin:0 0 4px;border-radius:0;background:linear-gradient(135deg,var(--surface) 0%,var(--primary-bg) 100%);border-bottom:1px solid var(--border,#E8E8E8);">
-        <div style="display:flex;align-items:center;gap:13px;margin-bottom:11px;">
-          <img src="assets/img/u16.jpg" alt="木村 誠司" style="width:56px;height:56px;border-radius:50%;object-fit:cover;flex-shrink:0;">
-          <div style="flex:1;min-width:0;">
-            <div style="display:flex;align-items:center;gap:7px;">
-              <span style="font-size:16px;font-weight:700;color:var(--text-main);white-space:nowrap;">木村 誠司</span>
-              <span class="insta-rs-tier-badge rank-badge-star">⭐ Star</span>
+      <!-- RS SCORE BLOCK：現行インスタ完コピ構造（mockups/profile-ig-clone.html準拠）。バナー廃止 -->
+      <div class="ig-header-row">
+        <div class="ig-avatar-ring">
+          <img src="assets/img/u16.jpg" alt="木村 誠司">
+        </div>
+        <div class="ig-right-col">
+          <div class="ig-name">木村 誠司</div>
+          <div class="ig-stats">
+            <div class="ig-stat">
+              <div class="ig-stat-value" style="line-height:23px;"><svg width="24" height="24" viewBox="1.75 1.05 20.50 19.50" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect width="24" height="24" fill="url(#gradient-star)" mask="url(#mask-star)"/></svg></div>
+              <div class="ig-stat-label rs-tier-grad rs-tg-star" style="font-size:13px;font-weight:700;">STAR</div>
             </div>
-            <div style="font-size:13px;color:var(--text-light);">@taisho_k</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="display:flex;align-items:baseline;gap:8px;justify-content:flex-end;">
-              <span class="insta-rs-score-val" style="font-size:26px;">50.9K</span>
-              <span style="font-family:var(--num-font);font-size:14px;font-weight:700;color:#10B981;white-space:nowrap;">▲ +12%</span>
+            <div class="ig-stat">
+              <div class="ig-stat-value">50.9K</div>
+              <div class="ig-stat-label">影響力</div>
             </div>
-            <div style="font-size:10px;color:var(--text-light);letter-spacing:1px;">影響力</div>
+            <div class="ig-stat">
+              <div class="ig-stat-value is-trend">▲ +12%</div>
+              <div class="ig-stat-label">前日比</div>
+            </div>
           </div>
         </div>
-        <div style="margin-bottom:12px;">
-          <div style="font-size:13px;color:var(--text-sub);">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
-        </div>
-        <div class="insta-rs-sub-stats">
-          <div class="insta-rs-sub-stat" onclick="showStatInfo('trust')">
-            <span class="insta-rs-sub-val">23.0K</span>
-            <span class="insta-rs-sub-label">💖 Trust</span>
-          </div>
-          <div class="insta-rs-sub-stat" onclick="showStatInfo('prestige')">
-            <span class="insta-rs-sub-val">16.1K</span>
-            <span class="insta-rs-sub-label">💎 Prestige</span>
-          </div>
-          <div class="insta-rs-sub-stat" onclick="showStatInfo('insights')">
-            <span class="insta-rs-sub-val">11.7K</span>
-            <span class="insta-rs-sub-label">📝 Insights</span>
-          </div>
-          <div class="insta-rs-sub-stat" onclick="showStatInfo('stature')">
-            <span class="insta-rs-sub-val">105.6K</span>
-            <span class="insta-rs-sub-label">🏛️ Stature</span>
-          </div>
-        </div>
+      </div>
+
+      <div class="ig-bio-block">
+        <div class="ig-bio-category">経営者・AIテック</div>
+        <div class="ig-bio-text">シンガポール🇸🇬 ↔ 日本🇯🇵で活動中</div>
       </div>
 
       <!-- Action Buttons（インスタ風） -->
-      <div style="display:flex;gap:8px;padding:4px 16px 12px;">
-        <button onclick="showToast('Edit Profile (coming soon)')" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Edit Profile</button>
-        <button onclick="openCircleSettings();closeSettingsMenu && closeSettingsMenu()" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Circle Settings</button>
-        <button onclick="openGroupList()" style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Group Settings</button>
+      <div class="ig-action-row">
+        <button class="ig-action-btn" onclick="showToast('Edit Profile (coming soon)')">Edit Profile</button>
+        <button class="ig-action-btn" onclick="openCircleSettings();closeSettingsMenu && closeSettingsMenu()">Circle Settings</button>
+        <button class="ig-action-btn" onclick="openGroupList()">Group Settings</button>
       </div>
 
       <!-- タブ切り替え（2026-07-05：Posts左・デフォに変更） -->
@@ -10061,6 +10601,79 @@
     if (score >= 1000)    return { emoji: '🔱',  name: 'Leader',      cls: 'leader',      color: '#4ADE80' };
     return                       { emoji: '👤',  name: 'Human',       cls: 'human',       color: '#94A3B8' };
   }
+  // 階級グラデ文字用ヘルパー（案4方式）：スコアから tg-* クラス名と大文字表記を返す
+  function tierGradInfo(score) {
+    const t = getTitle(score);
+    return { gradClass: 'rs-tg-' + t.cls, label: t.emoji + ' ' + t.name.toUpperCase() };
+  }
+  // 階級章SVG（グラデ塗り）：<body>直後のSVGスプライト（gradient-*/mask-*）を参照する静的アイコン
+  // 各章の外接枠（getBBoxで実測・2026-08-05）。余白を切り詰め、指定サイズ＝視覚サイズにする
+  const TIER_BADGE_BOX = {
+    human:       '3.45 2.90 17.10 18.75',
+    leader:      '3.15 1.05 17.71 20.80',
+    icon:        '1.15 4.35 21.70 15.30',
+    star:        '1.75 1.05 20.50 19.50',
+    rising:      '3.55 1.05 16.90 21.95',
+    nova:        '0.75 0.75 22.50 22.50',
+    supernova:   '0.45 0.45 23.10 23.10',
+    gravity:     '1.25 1.25 21.50 21.50',
+    singularity: '1.35 1.40 21.30 21.20',
+    universe:    '0.10 0.10 23.80 23.80',
+  };
+  function tierBadgeSvg(score, size) {
+    const cls = getTitle(score).cls;
+    const box = TIER_BADGE_BOX[cls] || '0 0 24 24';
+    return `<svg width="${size}" height="${size}" viewBox="${box}" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect width="24" height="24" fill="url(#gradient-${cls})" mask="url(#mask-${cls})"/></svg>`;
+  }
+  // 階級章SVG（エナメルバッジ）：mockups/badge-enamel.html の構造そのまま。ティア色台座＋白抜き章
+  function tierEnamelSvg(score, size) {
+    const cls = getTitle(score).cls;
+    return `<svg width="${size}" height="${size}" viewBox="0 0 48 48" aria-hidden="true"><use href="#badge-${cls}"/></svg>`;
+  }
+  // 階級グラデのCSS値（.rs-tg-* と同値。inline background合成用にJS側にも持つ）
+  const TIER_GRAD_CSS = {
+    human:       'linear-gradient(135deg,#4B5563,#6B7280)',
+    leader:      'linear-gradient(135deg,#92400E,#F59E0B)',
+    icon:        'linear-gradient(135deg,#047857,#34D399)',
+    rising:      'linear-gradient(135deg,#0D9488,#84CC16)',
+    star:        'linear-gradient(135deg,#1E40AF,#06B6D4)',
+    nova:        'linear-gradient(135deg,#6D28D9,#C026D3)',
+    supernova:   'linear-gradient(135deg,#BE123C,#F97316)',
+    gravity:     'linear-gradient(135deg,#312E81,#0D9488)',
+    singularity: 'linear-gradient(135deg,#0F172A,#7C3AED)',
+    universe:    'linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%)',
+  };
+  // 「階級の空」バナー背景：星空（ラベルなし）＋夜スクリム＋ティアグラデの3層。
+  // STAR_BG_URI_PLAIN は後続scriptブロックで定義されるが、呼び出し時（DOMContentLoaded以降）には既に評価済みのため参照可能
+  function tierSkyBg(score) {
+    const t = getTitle(score);
+    const grad = TIER_GRAD_CSS[t.cls] || TIER_GRAD_CSS.human;
+    return `${STAR_BG_URI_PLAIN} center/cover no-repeat, linear-gradient(rgba(2,6,23,0.5),rgba(2,6,23,0.35)), ${grad}`;
+  }
+  // 暗い帯（写真オーバーレイ・濃色シート等）用：階級グラデ文字は沈んで読めないため、ティア明色のソリッド文字で表示する
+  const TIER_BRIGHT = {
+    human:       '#9CA3AF',
+    leader:      '#F59E0B',
+    icon:        '#34D399',
+    rising:      '#84CC16',
+    star:        '#06B6D4',
+    nova:        '#C026D3',
+    supernova:   '#F97316',
+    gravity:     '#2DD4BF',
+    singularity: '#8B5CF6',
+    universe:    '#84CC16',
+  };
+  // 階級ソリッド文字用ヘルパー（暗い地専用）：スコアから明色とラベル（絵文字＋大文字）を返す
+  function tierBrightInfo(score) {
+    const t = getTitle(score);
+    return { color: TIER_BRIGHT[t.cls] || TIER_BRIGHT.human, label: t.emoji + ' ' + t.name.toUpperCase() };
+  }
+  // 他人プロフの前日比：userProfiles に trend フィールド（数値%）があればそれを使い、
+  // 無ければスコアから決定的に算出（同じユーザーは常に同じ値・±15%にクランプ）
+  function userTrendPct(user) {
+    if (typeof user.trend === 'number') return user.trend;
+    return Math.max(-15, Math.min(15, (user.score % 23) - 5));
+  }
   function formatRS(n) {
     if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0','') + 'M';
     if (n >= 1000)    return (n / 1000).toFixed(1).replace('.0','') + 'K';
@@ -10171,6 +10784,9 @@
     { id: 'hoshizora', name: '星空',   bg: 'linear-gradient(135deg,#020617 0%,#0F3D3E 45%,#2E1065 100%)', fgs: POST_NEONS },
   ];
   function cpBg(id) { return POST_BGS.find(b => b.id === id) || POST_BGS[0]; }
+  // 帯の明暗判定：POST_INKS（インク文字＝明るい帯用）を使う光は現状「月光」のみ。
+  // 階級グラデ文字（rs-tier-grad）は明るい帯の上でしか映えないため、この判定でのみ使う
+  function cpBgIsLight(bgId) { return cpBg(bgId).fgs === POST_INKS; }
   function cpFgList(bgId) { return cpBg(bgId).fgs; }
   function cpFg(bgId, fgId) {
     const list = cpFgList(bgId);
@@ -10396,7 +11012,7 @@
       hasNew: true,
       isRadiance: true,
       stories: [
-        { text: "The platform is the message.\n\nWe were told social media connects people.\nIt connected us to versions of ourselves we perform for each other.\n\nHYPERAY was built to end that.", time: '5m ago', likes: 142000, shares: 48000, tags: ['taisho_k', 'yuki_singularity'], grad: 'linear-gradient(135deg, #FF0080, #FF8C00, #FFD700, #00FF80, #00BFFF, #8000FF)' },
+        { text: "The platform is the message.\n\nWe were told social media connects people.\nIt connected us to versions of ourselves we perform for each other.\n\nCONSEQ was built to end that.", time: '5m ago', likes: 142000, shares: 48000, tags: ['taisho_k', 'yuki_singularity'], grad: 'linear-gradient(135deg, #FF0080, #FF8C00, #FFD700, #00FF80, #00BFFF, #8000FF)' },
         { text: "I don't post often.\n\nWhen I do, it's because something needs to be said that no algorithm would ever surface.\n\nPay attention.", time: '1 month ago', likes: 230000, shares: 72000, tags: [], grad: 'linear-gradient(135deg, #000000, #7C3AED, #FF0080)' },
         { text: "Status:\n\n8.1M RS. Universe tier.\n\nNone of it matters unless the people closest to you trust you with their truth.\n\nStart there.", time: '3 months ago', likes: 310000, shares: 89000, tags: [], grad: 'linear-gradient(135deg, #0a0a0a, #1a0030, #FF8C00)' },
       ]
@@ -10487,6 +11103,7 @@
       location: '大阪',
       joinDate: '2024年2月から利用',
       score: 28400,
+      trend: 4,
       stats: { trust: 12800, prestige: 11200, insights: 4400, stature: 49000 },
       posts: [
         { id: 'u2-1', body: '今朝の朝活で気づいたこと。\n\n「完璧なタイミング」を待っていると永遠に動けない。', time: '22分前', likes: 62, shares: 11, grad: 'linear-gradient(135deg, #831843, #BE185D)' },
@@ -10513,6 +11130,7 @@
       location: 'San Francisco / Singapore',
       joinDate: '2023年6月から利用',
       score: 620000,
+      trend: 8,
       stats: { trust: 240000, prestige: 260000, insights: 120000, stature: 1400000 },
       posts: [
         { id: 'u3-1', body: "The future of AI agents is not about replacing humans.\nIt's about amplifying the unique humans who know how to use them.", time: '1h ago', likes: 1247, shares: 341, grad: 'linear-gradient(135deg, #064E3B, #047857)' },
@@ -10531,6 +11149,7 @@
       location: 'シンガポール',
       joinDate: '2024年3月から利用',
       score: 14800,
+      trend: -3,
       stats: { trust: 6200, prestige: 7100, insights: 1500, stature: 32000 },
       posts: [
         { id: 'u4-1', body: 'シンガポールのAIカンファレンス🇸🇬\n現場の熱量、やばすぎる。', time: '30分前', likes: 38, shares: 6, grad: 'linear-gradient(135deg, #0C4A6E, #0369A1)' },
@@ -10572,6 +11191,7 @@
       location: '東京 / バリ',
       joinDate: '2023年9月から利用',
       score: 180000,
+      trend: 6,
       stats: { trust: 72000, prestige: 82000, insights: 26000, stature: 410000 },
       posts: [
         { id: 'u6-1', body: '「信頼の輪」を小さく深くつくること。フォロワー数より、本当に動ける3人の仲間を持て。', time: '2時間前', likes: 847, shares: 198, grad: 'linear-gradient(135deg, #1E1B4B, #4338CA)' },
@@ -10590,6 +11210,7 @@
       location: '京都',
       joinDate: '2024年5月から利用',
       score: 3200,
+      trend: -1,
       stats: { trust: 1400, prestige: 1500, insights: 300, stature: 7200 },
       posts: [
         { id: 'u7-1', body: '「イシューからはじめよ」再読。\n問いの質が答えの質を決める、という話。', time: '3時間前', likes: 34, shares: 5, grad: 'linear-gradient(135deg, #134E4A, #0D9488)' },
@@ -10608,6 +11229,7 @@
       location: '福岡',
       joinDate: '2025年1月から利用',
       score: 540,
+      trend: -2,
       stats: { trust: 220, prestige: 260, insights: 60, stature: 1300 },
       posts: [
         { id: 'u8-1', body: '転職の件、一歩踏み出すことにしました。\n不安より期待の方が大きくなってきた。前に進みます💪', time: '4時間前', likes: 12, shares: 1, grad: 'linear-gradient(135deg, #374151, #6B7280)' },
@@ -10626,6 +11248,7 @@
       location: '東京',
       joinDate: '2024年6月から利用',
       score: 8400,
+      trend: 3,
       stats: { trust: 3600, prestige: 4100, insights: 700, stature: 18500 },
       posts: [
         { id: 'u9-1', body: 'デザインとエンジニアリングの境界線がどんどん薄くなってる。\nAIが補完してくれるから、X字型スキルが求められる時代に。', time: '1時間前', likes: 29, shares: 5, grad: 'linear-gradient(135deg, #134E4A, #0D9488)' },
@@ -10644,6 +11267,7 @@
       location: 'Tokyo / NYC',
       joinDate: '2023年4月から利用',
       score: 1240000,
+      trend: 9,
       stats: { trust: 580000, prestige: 410000, insights: 250000, stature: 3200000 },
       posts: [
         { id: 'ag-1', body: "When you operate at this scale, trust becomes infrastructure.\nNot a metric. Not a score. Infrastructure.", time: '45m ago', likes: 8420, shares: 2130, grad: 'linear-gradient(135deg, #4C1D95, #7C3AED)' },
@@ -10662,6 +11286,7 @@
       location: 'Geneva / Singapore',
       joinDate: '2023年1月から利用',
       score: 2800000,
+      trend: 7,
       stats: { trust: 1200000, prestige: 980000, insights: 620000, stature: 7400000 },
       posts: [
         { id: 'ys-1', body: "I've advised 3 governments, 2 central banks, and one UN committee this year.\nAll on the same topic: what happens when AI knows your citizens better than you do.", time: '20m ago', likes: 31200, shares: 8900, grad: 'linear-gradient(135deg, #1E293B, #475569, #94A3B8)' },
@@ -10680,9 +11305,10 @@
       location: '—',
       joinDate: '2022年から利用',
       score: 8100000,
+      trend: 3,
       stats: { trust: 3800000, prestige: 2900000, insights: 1400000, stature: 22000000 },
       posts: [
-        { id: 'z-1', body: "The platform is the message.\n\nWe were told social media connects people.\nIt connected us to versions of ourselves we perform for each other.\n\nHYPERAY was built to end that.", time: '5m ago', likes: 142000, shares: 48000, grad: 'linear-gradient(135deg, #FF0080, #FF8C00, #FFD700, #00FF80, #00BFFF, #8000FF)' },
+        { id: 'z-1', body: "The platform is the message.\n\nWe were told social media connects people.\nIt connected us to versions of ourselves we perform for each other.\n\nCONSEQ was built to end that.", time: '5m ago', likes: 142000, shares: 48000, grad: 'linear-gradient(135deg, #FF0080, #FF8C00, #FFD700, #00FF80, #00BFFF, #8000FF)' },
         { id: 'z-2', body: "I don't post often.\n\nWhen I do, it's because something needs to be said that no algorithm would ever surface.\n\nPay attention.", time: '1 month ago', likes: 230000, shares: 72000, grad: 'linear-gradient(135deg, #000000, #7C3AED, #FF0080)' },
         { id: 'z-3', body: "Status:\n\n8.1M RS. Universe tier.\n\nNone of it matters unless the people closest to you trust you with their truth.\n\nStart there.", time: '3 months ago', likes: 310000, shares: 89000, grad: 'linear-gradient(135deg, #0a0a0a, #1a0030, #FF8C00)' },
       ],
@@ -10719,7 +11345,6 @@
     storiesData.forEach(user => {
       if (q && !user.name.toLowerCase().includes(q) && !user.handle.toLowerCase().includes(q)) return;
 
-      const titleInfo = getTitle(user.score);
       const isSeen = storiesSeen[user.id];
       const isRadiance = user.isRadiance;
 
@@ -10729,7 +11354,9 @@
 
       const ringClass = isSeen ? 'seen' : 'has-new';
 
-      const titleHtml = `<span class="story-tier-label" style="color:${titleInfo.color};">${titleInfo.emoji} ${titleInfo.name}</span>`;
+      // story-row は白地の一覧行のため、階級グラデ文字（rs-tier-grad）を使う
+      const tierInfo = tierGradInfo(user.score);
+      const titleHtml = `<span class="story-tier-label rs-tier-grad ${tierInfo.gradClass}">${tierInfo.label}</span>`;
 
       row.innerHTML = `
         <div class="story-avatar-wrap">
@@ -11037,14 +11664,14 @@
     const bodyTruncated = bodyClean.length > 60
       ? bodyClean.slice(0, 60) + '<span style="opacity:0.6;">…続きを読む</span>'
       : bodyClean;
-    const titleInfo = getTitle(p.score);
+    const titleInfo = tierBrightInfo(p.score);
     const scoreDisp = formatRS(p.score);
     return `
       <div class="search-post-card" style="${bgStyle}border:1px solid rgba(255,255,255,0.12);" onclick="openSearchPostFs('${encodeURIComponent(JSON.stringify(p))}')">
         <div class="search-post-top">
           <div class="search-post-avatar" style="background:rgba(255,255,255,0.2);cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${p.userId}')">${p.avatar}</div>
           <span class="search-post-name" style="cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${p.userId}')">${p.name}</span>
-          <span style="font-size:10px;font-weight:700;color:${titleInfo.color};text-shadow:0 1px 3px rgba(0,0,0,0.5);margin-left:2px;">${titleInfo.emoji} ${titleInfo.name} <span style="opacity:0.7;font-weight:600;">(${scoreDisp})</span></span>
+          <span style="font-size:10px;font-weight:800;color:${titleInfo.color};text-shadow:0 1px 3px rgba(0,0,0,0.5);margin-left:2px;">${titleInfo.label} <span style="opacity:0.7;font-weight:600;">(${scoreDisp})</span></span>
         </div>
         <div class="search-post-body">${bodyTruncated}</div>
         <div class="search-post-stats">♡ ${p.likes || 0}　🔄 ${p.shares || 0}</div>
@@ -11127,50 +11754,46 @@
   }
 
   // ===== USER POKEMON CARD BUILDER =====
+  // 2026-08 改修：現行インスタ完コピ構造に変更（mockups/profile-ig-clone.html準拠）。バナー廃止、
+  // アバターは写真があれば丸cover表示・無ければ絵文字グラデ円。名前直下にスタッツ3枠（階級／影響力／前日比）。
+  // 4指標帯（Trust/Prestige/Insights/Stature）は自分プロフ（screen-my）撤去済みの決定と平仄を合わせ削除。
   function buildPokemonCard(user) {
-    const titleInfo = getTitle(user.score);
     const scoreDisplay = formatRS(user.score);
     const bioLine = user.bio.replace(/\n/g, ' / ');
     const photo = user.profilePhoto || '';
-    const bgStyle = photo
-      ? `background-image:url('${photo}');`
-      : `background:${user.bannerGradient || 'linear-gradient(135deg,#1c1917,#292524)'};`;
-    const stats = user.stats || { trust: 0, prestige: 0, insights: 0, stature: 0 };
+    const avatarEmoji = user.avatarEmoji || user.name.charAt(0);
+    const avatarClass = user.avatarClass || 'avatar-inner';
+    const avatarHtml = photo
+      ? `<img src="${photo}" alt="${user.name}">`
+      : `<div class="ig-avatar-emoji ${avatarClass}">${avatarEmoji}</div>`;
+    const tierInfo = tierGradInfo(user.score);
+    const trendPct = userTrendPct(user);
+    const trendUp = trendPct >= 0;
+    const trendColor = trendUp ? '#10B981' : '#EF4444';
+    const trendLabel = (trendUp ? '▲ +' : '▼ ') + trendPct + '%';
     return `
-      <div class="up-pokemon-card" style="${bgStyle}">
-        <div class="pokemon-card-topbar">
-          <div class="pokemon-card-tier-badge rank-badge-${titleInfo.cls}">
-            ${titleInfo.emoji} ${titleInfo.name}
-            <span class="pokemon-card-tier-rs">(${scoreDisplay})</span>
-          </div>
-        </div>
-        <div class="pokemon-card-overlay">
-          <div class="pokemon-card-name">${user.name}</div>
-          <div class="pokemon-card-handle">${user.handle}</div>
-          <div class="pokemon-card-bio">${bioLine}</div>
-          <div class="pokemon-card-stats">
-            <div class="pokemon-card-stat-item" onclick="event.stopPropagation(); showStatInfo('trust');">
-              <span class="pokemon-card-stat-icon">💖</span>
-              <span class="pokemon-card-stat-label">Trust</span>
-              <span class="pokemon-card-stat-value">${formatRS(stats.trust)}</span>
+      <div class="ig-header-row">
+        <div class="ig-avatar-ring">${avatarHtml}</div>
+        <div class="ig-right-col">
+          <div class="ig-name">${user.name}</div>
+          <div class="ig-stats">
+            <div class="ig-stat">
+              <div class="ig-stat-value" style="line-height:23px;">${tierBadgeSvg(user.score, 24)}</div>
+              <div class="ig-stat-label rs-tier-grad ${tierInfo.gradClass}" style="font-size:13px;font-weight:700;">${getTitle(user.score).name.toUpperCase()}</div>
             </div>
-            <div class="pokemon-card-stat-item" onclick="event.stopPropagation(); showStatInfo('prestige');">
-              <span class="pokemon-card-stat-icon">💎</span>
-              <span class="pokemon-card-stat-label">Prestige</span>
-              <span class="pokemon-card-stat-value">${formatRS(stats.prestige)}</span>
+            <div class="ig-stat">
+              <div class="ig-stat-value">${scoreDisplay}</div>
+              <div class="ig-stat-label">影響力</div>
             </div>
-            <div class="pokemon-card-stat-item" onclick="event.stopPropagation(); showStatInfo('insights');">
-              <span class="pokemon-card-stat-icon">📝</span>
-              <span class="pokemon-card-stat-label">Insights</span>
-              <span class="pokemon-card-stat-value">${formatRS(stats.insights)}</span>
-            </div>
-            <div class="pokemon-card-stat-item" onclick="event.stopPropagation(); showStatInfo('stature');">
-              <span class="pokemon-card-stat-icon">🏛️</span>
-              <span class="pokemon-card-stat-label">Stature</span>
-              <span class="pokemon-card-stat-value">${formatRS(stats.stature)}</span>
+            <div class="ig-stat">
+              <div class="ig-stat-value is-trend" style="color:${trendColor};">${trendLabel}</div>
+              <div class="ig-stat-label">前日比</div>
             </div>
           </div>
         </div>
+      </div>
+      <div class="ig-bio-block">
+        <div class="ig-bio-text">${bioLine}</div>
       </div>
     `;
   }
@@ -11180,7 +11803,7 @@
     const user = userProfiles[userId];
     if (!user) { showToast('プロフィールを読み込み中...'); return; }
     currentProfileUserId = userId;
-    document.getElementById('upHeaderName').textContent = user.name;
+    document.getElementById('upHeaderName').textContent = user.handle;
     document.getElementById('upPokemonCard').innerHTML = buildPokemonCard(user);
     const isSelfProfile = (userId === 'taisho_k');
     const followBtn = document.getElementById('upFollowBtn');
@@ -13272,7 +13895,11 @@
   function cpBandHtml(p, listSource) {
       const u = cpFindUser(p.uid);
       const c = { bg: cpBg(p.bgId).bg, fg: cpFg(p.bgId, p.fgId).fg };
-      const tier = getTitle(u.score || 0);
+      // 明るい帯（月光）の上は階級グラデ文字（rs-tier-grad）、暗い帯はティア明色のソリッド文字（TIER_BRIGHT）。絵文字部分のみSVG章に差し替え
+      const tierName = getTitle(u.score || 0).name.toUpperCase();
+      const tierHtml = cpBgIsLight(p.bgId)
+        ? `<span style="vertical-align:-3px;">${tierEnamelSvg(u.score || 0, 20)}</span> <span class="rs-tier-grad ${tierGradInfo(u.score || 0).gradClass}" style="font-size:12px;font-weight:800;white-space:nowrap;">${tierName}</span>`
+        : `<span style="vertical-align:-3px;">${tierEnamelSvg(u.score || 0, 20)}</span> <span style="font-size:12px;font-weight:800;white-space:nowrap;color:${tierBrightInfo(u.score || 0).color};">${tierName}</span>`;
       const liked = colorLiked.has(p.id);
       const meta = c.fg + 'A6';   // 文字色の65%不透明（メタ情報用）
       const line = c.fg + '22';
@@ -13286,7 +13913,7 @@
           <div style="flex:1;min-width:0;">
             <div style="display:flex;align-items:center;gap:6px;">
               <span style="font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${p.uid}')">${u.name}</span>
-              <span style="font-size:12px;white-space:nowrap;">${tier.emoji} ${tier.name}</span>
+              ${tierHtml}
             </div>
             <div style="font-size:13px;color:${meta};">${u.handle || ''}・${p.time}</div>
           </div>
@@ -13420,8 +14047,11 @@
     const p = entry.posts[cpStoryPostIdx];
     cpSeenPosts.add(p.id);   // 表示した時点で既読
     const u = cpFindUser(p.uid);
-    const tier = getTitle(u.score || 0);
     const c = { bg: cpBg(p.bgId).bg, fg: cpFg(p.bgId, p.fgId).fg };
+    // 明るい帯（月光）の上は階級グラデ文字（rs-tier-grad）、暗い帯はティア明色のソリッド文字（TIER_BRIGHT）
+    const tierHtml = cpBgIsLight(p.bgId)
+      ? `<span class="rs-tier-grad ${tierGradInfo(u.score || 0).gradClass}" style="font-size:11.5px;font-weight:800;">${tierGradInfo(u.score || 0).label}</span>`
+      : `<span style="font-size:11.5px;font-weight:800;color:${tierBrightInfo(u.score || 0).color};">${tierBrightInfo(u.score || 0).label}</span>`;
     const meta = c.fg + 'A6', line = c.fg + '22';
     const isShort = (p.text || '').length <= 60 && !p.media;
     // 進捗バー（そのユーザーの未読数ぶん）
@@ -13433,9 +14063,9 @@
         <div id="cpStoryHeader" style="flex-shrink:0;padding:10px 14px 0;">
           <div style="display:flex;gap:4px;margin-bottom:10px;">${bars}</div>
           <div style="display:flex;align-items:center;gap:9px;">
-            <span style="font-size:26px;line-height:1;">${u.avatar}</span>
-            <div style="flex:1;min-width:0;">
-              <div style="font-weight:700;font-size:14px;">${u.name} <span style="font-size:11.5px;">${tier.emoji} ${tier.name}</span></div>
+            <span style="font-size:26px;line-height:1;cursor:pointer;" onclick="event.stopPropagation();closeCpStories();openUserProfile('${p.uid}')">${u.avatar}</span>
+            <div style="flex:1;min-width:0;cursor:pointer;" onclick="event.stopPropagation();closeCpStories();openUserProfile('${p.uid}')">
+              <div style="font-weight:700;font-size:14px;">${u.name} ${tierHtml}</div>
               <div class="cp-story-meta" style="font-size:11.5px;color:${meta};">${u.handle || ''}・${p.time}</div>
             </div>
             <button onclick="closeCpStories()" style="background:none;border:none;color:${c.fg};font-size:19px;cursor:pointer;padding:6px;line-height:1;">✕</button>
@@ -13623,7 +14253,6 @@
     // コメント時系列リスト（丸アバター・名前・ティアバッジ・本文・時刻・♡トグル）
     const itemsHtml = p.comments.map((cm, i) => {
       const cu = cpFindUser(cm.uid);
-      const ctier = getTitle(cu.score || 0);
       const likedKey = p.id + ':' + i;
       const liked = cpCommentLiked.has(likedKey);
       // コメント＝タイムライン帯（cpBandHtml）のミニ版：行全体が色帯・フルブリード・ヘアライン区切り。
@@ -13631,6 +14260,11 @@
       const cc = { bg: cpBg(cm.bgId || 'gekko').bg, fg: cpFg(cm.bgId || 'gekko', cm.fgId || 'sumi').fg };
       const cmeta = cc.fg + 'A6';   // メタ＝fg色の65%（cpBandHtmlと同じ文法）
       const cline = cc.fg + '22';
+      // 明るい帯（月光）の上は階級グラデ文字（rs-tier-grad）、暗い帯はティア明色のソリッド文字（TIER_BRIGHT）。絵文字部分のみSVG章に差し替え
+      const cTierName = getTitle(cu.score || 0).name.toUpperCase();
+      const ctierHtml = cpBgIsLight(cm.bgId || 'gekko')
+        ? `<span style="vertical-align:-2px;">${tierEnamelSvg(cu.score || 0, 16)}</span> <span class="rs-tier-grad ${tierGradInfo(cu.score || 0).gradClass}" style="font-size:11px;font-weight:800;white-space:nowrap;">${cTierName}</span>`
+        : `<span style="vertical-align:-2px;">${tierEnamelSvg(cu.score || 0, 16)}</span> <span style="font-size:11px;font-weight:800;white-space:nowrap;color:${tierBrightInfo(cu.score || 0).color};">${cTierName}</span>`;
       return `
       <div style="background:${cc.bg};color:${cc.fg};padding:12px 16px 8px;border-bottom:1px solid rgba(0,0,0,0.10);">
         <div style="display:flex;align-items:center;gap:8px;">
@@ -13638,7 +14272,7 @@
           <div style="flex:1;min-width:0;">
             <div style="display:flex;align-items:center;gap:6px;">
               <span style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;" onclick="openUserProfile('${cm.uid}')">${cu.name}</span>
-              <span style="font-size:11px;white-space:nowrap;">${ctier.emoji} ${ctier.name}</span>
+              ${ctierHtml}
             </div>
             <div style="font-size:13px;color:${cmeta};">${cu.handle || ''}・${cm.time}</div>
           </div>
@@ -13687,7 +14321,7 @@
   // commentHtml：シェア投稿のコメント（コンテキスト行の直下に差し込む。X引用ポスト文法）
   function cpInviteBandHtml(ev, ctxOverride, commentHtml) {
     const host = cpFindUser(ev.hostId);
-    const tier = getTitle(host.score || 0);
+    const tier = tierBrightInfo(host.score || 0);
     const fg = '#F8FAFC';
     const meta = 'rgba(248,250,252,0.72)';
     const line = 'rgba(255,255,255,0.18)';
@@ -13716,7 +14350,7 @@
         <div style="flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:6px;">
             <span style="font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;" onclick="event.stopPropagation(); openUserProfile('${ev.hostId}')">${escapeHtml(ev.hostName || host.name)}</span>
-            <span style="font-size:12px;white-space:nowrap;">${tier.emoji} ${tier.name}</span>
+            <span style="font-size:12px;font-weight:800;white-space:nowrap;color:${tier.color};">${tier.label}</span>
           </div>
           <div style="font-size:13px;color:${meta};">${host.handle || ''}・主催</div>
         </div>
@@ -14171,7 +14805,7 @@
       avatarClass: 'avatar-radiance',
       score: 8100000,
       time: '5分前',
-      body: "The platform is the message.\n\nWe were told social media connects people.\nIt connected us to versions of ourselves we perform for each other.\n\nHYPERAY was built to end that.",
+      body: "The platform is the message.\n\nWe were told social media connects people.\nIt connected us to versions of ourselves we perform for each other.\n\nCONSEQ was built to end that.",
       grad: 'linear-gradient(135deg, #FF0080, #FF8C00, #FFD700, #00FF80, #00BFFF, #8000FF)',
       likes: 142000,
       shares: 48000,
@@ -14408,6 +15042,8 @@
   initSearchRecommended();
   // renderTalkMessagesList() は userGroups 定義後の initGroupSystem() で呼ぶ（TDZ回避）
   // renderMyPosts() — post grid removed from profile screen
+  // 自分プロフの「階級の空」バナー（#myProfileBanner）は現行インスタ完コピ構造化（2026-08）でバナー自体を廃止したため、
+  // それに背景を流し込んでいたDOMContentLoadedリスナーは削除。tierSkyBg/STAR_BG_URI_PLAINの関数定義自体は指示により温存（呼び出し元なしのデッドコード化）。
 
   // ===== NEW MESSAGE: 状態管理 =====
   // selectedMembers: id → { name, avatar } のMap（同一人物はどのセクションでも共通）
@@ -15167,8 +15803,9 @@
   const TP_INDEX_KEYS = ['あ','か','さ','た','な','は','ま','や','ら','わ','A'];
 
   function tpBadgeHTML(rs) {
-    const t = getTitle(rs);
-    return `<span class="contacts-tier-badge-small" style="background:rgba(0,0,0,.06);color:${t.color};">${t.emoji} ${t.name}</span>`;
+    // 白地の一覧行（Target Picker / メンバー一覧シート）なので階級グラデ文字（rs-tier-grad）を使う
+    const t = tierGradInfo(rs);
+    return `<span class="contacts-tier-badge-small rs-tier-grad ${t.gradClass}" style="background:rgba(0,0,0,.06);font-weight:800;">${t.label}</span>`;
   }
 
   function tpFindMember(id) {
@@ -15778,8 +16415,8 @@ function renderGroupCreateMembers() {
     html += `<div class="group-member-section-heading">${CIRCLE_TIER_LABELS[tier]}</div>`;
     html += members.map(m => {
       const profile = (typeof userProfiles !== 'undefined' && userProfiles[m.id]) ? userProfiles[m.id] : null;
-      const titleInfo = profile ? getTitle(profile.score) : null;
-      const titleHtml = titleInfo ? `<span class="member-cosmic-title">${titleInfo.emoji} ${titleInfo.name}</span>` : '';
+      const titleInfo = profile ? tierGradInfo(profile.score) : null;
+      const titleHtml = titleInfo ? `<span class="member-cosmic-title rs-tier-grad ${titleInfo.gradClass}">${titleInfo.label}</span>` : '';
       return `
     <div class="group-create-member-row${groupSelectedMembers.has(m.id) ? ' selected' : ''}" onclick="toggleGroupMember('${m.id}')">
       <div class="group-create-member-avatar">${m.avatar}</div>
@@ -16646,8 +17283,8 @@ function renderGroupEditMembers() {
     html += `<div class="group-member-section-heading">${CIRCLE_TIER_LABELS[tier]}</div>`;
     html += members.map(m => {
       const profile = (typeof userProfiles !== 'undefined' && userProfiles[m.id]) ? userProfiles[m.id] : null;
-      const titleInfo = profile ? getTitle(profile.score) : null;
-      const titleHtml = titleInfo ? `<span class="member-cosmic-title">${titleInfo.emoji} ${titleInfo.name}</span>` : '';
+      const titleInfo = profile ? tierGradInfo(profile.score) : null;
+      const titleHtml = titleInfo ? `<span class="member-cosmic-title rs-tier-grad ${titleInfo.gradClass}">${titleInfo.label}</span>` : '';
       return `
     <div class="group-edit-member-row${_editGroupSelectedMembers.has(m.id) ? ' selected' : ''}" onclick="toggleGroupEditMember('${m.id}')">
       <div class="group-edit-member-avatar">${m.avatar}</div>
@@ -16825,7 +17462,7 @@ const EV_BG_GRADIENTS = EV_BG_LIST.map(b => b.bg);
 // ===== 星空柄（シネマティック・固定パターン） =====
 // 天の川＋星の軌跡＋星座線＋点描＋輝星を1枚のSVGに焼き、透明オーバーレイとして全光グラデの上に重ねる。
 // 固定シード＝毎回同じ配置。data-URI 化して applyEventPageBg で背景の最上層に使う。
-const STAR_BG_URI = (function buildStarBgUri() {
+function buildStarBgUri(withLabels) {
   const W = 1600, H = 800;
   const seededRand = (seed) => { let s = 9301 + seed * 233; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; };
   // 星の軌跡（右上を天の極とした同心円アーク）
@@ -16839,7 +17476,7 @@ const STAR_BG_URI = (function buildStarBgUri() {
     }
     return out;
   }
-  // 星座線＋ラベル（うっすら）
+  // 星座線＋ラベル（うっすら）。withLabels=false ならラベル<text>を省く（縮尺の小さいバナー用・文字ゴミ防止）
   function constellations(seed) {
     const r = seededRand(seed); let out = ''; const labels = ['Ursa Major', 'Canes Venatici', 'Bootes', 'Lyra', 'Draco'];
     for (let k = 0; k < 5; k++) {
@@ -16847,7 +17484,9 @@ const STAR_BG_URI = (function buildStarBgUri() {
       for (let j = 0; j < n; j++) { x += (r() - 0.5) * 260; y += (r() - 0.5) * 180; pts.push([Math.max(20, Math.min(W - 20, x)).toFixed(0), Math.max(20, Math.min(H * 0.85, y)).toFixed(0)]); }
       out += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#eef3ff" stroke-width="1" opacity="0.16"/>`;
       pts.forEach(p => out += `<circle cx="${p[0]}" cy="${p[1]}" r="1.6" fill="#fff" opacity="0.7"/>`);
-      out += `<text x="${pts[0][0]}" y="${(+pts[0][1] + 16)}" fill="#eef3ff" opacity="0.24" font-size="15" font-style="italic" font-family="Georgia,serif">${labels[k]}</text>`;
+      if (withLabels) {
+        out += `<text x="${pts[0][0]}" y="${(+pts[0][1] + 16)}" fill="#eef3ff" opacity="0.24" font-size="15" font-style="italic" font-family="Georgia,serif">${labels[k]}</text>`;
+      }
     }
     return out;
   }
@@ -16874,8 +17513,12 @@ const STAR_BG_URI = (function buildStarBgUri() {
     `<g transform="translate(1060,270) rotate(-30)" filter="url(#mwb)"><ellipse cx="0" cy="0" rx="620" ry="140" fill="#fff" opacity="0.09"/><ellipse cx="60" cy="-20" rx="230" ry="90" fill="#efe6d6" opacity="0.30"/></g>` +
     trails(5) + constellations(6) + dots(7) + bright() +
     `</svg>`;
-  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
-})();
+  // url()はシングルクォート包み：HTMLのstyle="..."属性（ダブルクォート）に埋め込んでも属性が分断されないため
+  return `url('data:image/svg+xml,${encodeURIComponent(svg)}')`;
+}
+const STAR_BG_URI = buildStarBgUri(true);
+// ラベルなし版：階級の空バナー用（縮尺が小さく星座名の英字ラベルが文字ゴミに見えるための措置）
+const STAR_BG_URI_PLAIN = buildStarBgUri(false);
 
 // パターン（SVG）10種 - 壁紙風の装飾柄
 // apply=本番適用用(透明背景・控えめな色)、swatch=パレット表示用(ベース色+明るい柄で視認性優先)
@@ -17757,7 +18400,7 @@ function toggleEventSettingsScope(eventId) {
 // ===== イベントシェア機能（URLシート） =====
 function openEvShareSheet(eventId) {
   const body = document.getElementById('evShareSheetBody');
-  const url = 'https://hyperay.app/e/' + eventId;
+  const url = 'https://conseq.app/e/' + eventId;
   body.innerHTML = `
     <div class="ev-share-url-row">
       <input type="text" class="ev-share-url-input" id="evShareUrlInput" value="${url}" readonly onclick="this.select()">
@@ -17771,7 +18414,7 @@ function closeEvShareSheet() {
 }
 function evShareCopyLink(eventId) {
   closeEvShareSheet();
-  const dummyUrl = 'https://hyperay.app/e/' + eventId;
+  const dummyUrl = 'https://conseq.app/e/' + eventId;
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(dummyUrl).then(() => {
       showToast('リンクをコピーしました');
@@ -18467,10 +19110,10 @@ function openAttendeesSheet(eventId, filterStatus) {
 
   bodyEl.innerHTML = targetIds.map(id => {
     const m = resolveEvMember(id);
-    const titleInfo = (typeof getTitle === 'function') ? getTitle(
+    const titleInfo = (typeof tierBrightInfo === 'function') ? tierBrightInfo(
       (typeof userProfiles !== 'undefined' && userProfiles[id]) ? userProfiles[id].score : 0
-    ) : { emoji: '', name: '' };
-    const tierLabel = titleInfo.emoji + ' ' + titleInfo.name;
+    ) : { color: 'rgba(255,255,255,0.45)', label: '' };
+    const tierLabel = titleInfo.label;
     const isSelf = (id === (typeof EV_SELF_ID !== 'undefined' ? EV_SELF_ID : ''));
     const isFollowed = !isSelf && (typeof followState !== 'undefined') && followState[id];
     const followBtnCls = isSelf ? 'display:none;' : '';
@@ -18482,7 +19125,7 @@ function openAttendeesSheet(eventId, filterStatus) {
           <div class="ev-attendees-sheet-avatar">${m.avatar}</div>
           <div class="ev-attendees-sheet-name-wrap">
             <div class="ev-attendees-sheet-name">${escapeHtml(m.name)}</div>
-            <div class="ev-attendees-sheet-tier" style="color:${titleInfo.color || 'rgba(255,255,255,0.45)'};">${tierLabel}</div>
+            <div class="ev-attendees-sheet-tier" style="color:${titleInfo.color || 'rgba(255,255,255,0.45)'};font-weight:800;">${tierLabel}</div>
           </div>
         </div>
         <button class="ev-attendees-follow-btn ${btnStateClass}" style="${followBtnCls}" onclick="toggleFollowFromSheet('${id}', this)">${btnLabel}</button>

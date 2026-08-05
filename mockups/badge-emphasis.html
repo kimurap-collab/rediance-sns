@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>バッジ強調見本 — 4案</title>
+<style>
+  :root {
+    --primary: #1E3A5F;
+    --bg: #FFFFFF;
+    --border: #E8E8E8;
+    --text-main: #000000;
+    --text-sub: #555555;
+    --success: #10B981;
+    --header-height: 56px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: #E9ECEF;
+    padding: 32px 20px 80px;
+    color: var(--text-main);
+  }
+
+  /* ===== page chrome (this comparison doc only) ===== */
+  .page-title {
+    font-size: 22px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .page-sub {
+    font-size: 13px;
+    color: #6B7280;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .variants {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .variant {
+    width: 390px;
+    max-width: 100%;
+  }
+  .variant-label {
+    font-size: 15px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 2px;
+  }
+  .variant-desc {
+    font-size: 12.5px;
+    color: #6B7280;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .phone-frame {
+    background: var(--bg);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.16);
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+
+  /* ===== copied verbatim from app.html (screen-my, L8753-8802) ===== */
+
+  /* .ig-top-bar / .ig-top-bar .handle / .icon-btn — app.html L2364-2380, L202-216 */
+  .ig-top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--header-height);
+    background: #FFFFFF;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+  }
+  .ig-top-bar .handle {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: background 0.15s;
+    color: #ffffff;
+  }
+  .icon-btn:active { background: rgba(255,255,255,0.25); }
+
+  /* .ig-header-row / .ig-avatar-ring / .ig-right-col / .ig-name / .ig-stats / .ig-stat*
+     — app.html L2381-2439 */
+  .ig-header-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 16px 16px 0;
+  }
+  .ig-avatar-ring {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    padding: 2px;
+    flex-shrink: 0;
+    position: relative; /* この見本のみ：案1/案4のアバター角バッジの絶対配置基点にするための追加。app.htmlには無い */
+  }
+  .ig-avatar-ring img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+  .ig-right-col {
+    flex: 1;
+    padding-top: 6px;
+  }
+  .ig-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 12px;
+  }
+  .ig-stats {
+    display: flex;
+  }
+  .ig-stat {
+    flex: 1;
+    text-align: center;
+  }
+  .ig-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.25;
+  }
+  .ig-stat-value.is-trend { color: var(--success); }
+  .ig-stat-label {
+    font-size: 13px;
+    color: var(--text-sub);
+    margin-top: 3px;
+  }
+
+  /* .ig-bio-block / .ig-action-row / .ig-action-btn — app.html L2440-2472 */
+  .ig-bio-block {
+    padding: 12px 16px 4px;
+  }
+  .ig-bio-category {
+    font-size: 13px;
+    color: var(--text-sub);
+    margin-bottom: 2px;
+  }
+  .ig-bio-text {
+    font-size: 14px;
+    color: var(--text-main);
+    line-height: 1.5;
+  }
+  .ig-action-row {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+  .ig-action-btn {
+    flex: 1;
+    height: 34px;
+    background: #F3F4F6;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* .rs-tier-grad / .rs-tg-star — app.html L2739-2750 */
+  .rs-tier-grad {
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .rs-tg-star { background-image: linear-gradient(135deg,#1E40AF,#06B6D4); color: #1E40AF; }
+
+  /* .my-profile-tab-bar / .my-profile-tab — app.html L2796-2821 */
+  .my-profile-tab-bar {
+    display: flex;
+    border-bottom: 1.5px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 5;
+  }
+  .my-profile-tab {
+    flex: 1;
+    padding: 12px 0;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-sub);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1.5px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .my-profile-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+  .feed-placeholder {
+    padding: 60px 16px;
+    text-align: center;
+    font-size: 13px;
+    color: #999999;
+  }
+
+  /* ===== new-to-this-doc pieces（4案の差分のみ・app.htmlには存在しない） ===== */
+
+  /* 案1・案4：アバター右下角の白い円チップ */
+  .badge-corner-chip {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  .badge-corner-chip .rs-tier-grad {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  /* 案3・案4：ティア色グロー */
+  .badge-glow {
+    filter: drop-shadow(0 0 6px rgba(6,182,212,0.55));
+  }
+</style>
+</head>
+<body>
+
+  <div class="page-title">バッジ強調見本 — 4案</div>
+  <div class="page-sub">自分プロフのフルヘッダーで、階級バッジ（⭐グラデアイコン）の見せ方を4パターン比較。</div>
+
+  <div class="variants">
+
+    <!-- ============ 案1: アバター角バッジ ============ -->
+    <div class="variant">
+      <div class="variant-label">案1 — アバター角バッジ</div>
+      <div class="variant-desc">バッジをスタッツ行から外し、アバター右下角の白い円チップ（36px）に集約。階級枠の上段は「STAR」グラデ文字のみ・下段ラベルは高さ揃えのため「階級」を復活。</div>
+      <div class="phone-frame">
+        <div class="ig-top-bar">
+          <div style="width:32px;"></div>
+          <div class="handle" style="position:absolute;left:50%;transform:translateX(-50%);">@taisho_k</div>
+          <button class="icon-btn" style="font-size:22px;color:var(--text-main);background:transparent;">☰</button>
+        </div>
+
+        <div class="ig-header-row">
+          <div class="ig-avatar-ring">
+            <img src="../assets/img/u16.jpg" alt="木村 誠司">
+            <div class="badge-corner-chip">
+              <span class="rs-tier-grad rs-tg-star">⭐</span>
+            </div>
+          </div>
+          <div class="ig-right-col">
+            <div class="ig-name">木村 誠司</div>
+            <div class="ig-stats">
+              <div class="ig-stat">
+                <div class="ig-stat-value rs-tier-grad rs-tg-star">STAR</div>
+                <div class="ig-stat-label">階級</div>
+              </div>
+              <div class="ig-stat">
+                <div class="ig-stat-value">50.9K</div>
+                <div class="ig-stat-label">影響力</div>
+              </div>
+              <div class="ig-stat">
+                <div class="ig-stat-value is-trend">▲ +12%</div>
+                <div class="ig-stat-label">前日比</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ig-bio-block">
+          <div class="ig-bio-category">経営者・AIテック</div>
+          <div class="ig-bio-text">シンガポール🇸🇬 ↔ 日本🇯🇵で活動中</div>
+        </div>
+
+        <div class="ig-action-row">
+          <button class="ig-action-btn">Edit Profile</button>
+          <button class="ig-action-btn">Circle Settings</button>
+          <button class="ig-action-btn">Group Settings</button>
+        </div>
+
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+        <div class="feed-placeholder">（投稿フィード）</div>
+      </div>
+    </div>
+
+    <!-- ============ 案2: 枠内で上下逆転 ============ -->
+    <div class="variant">
+      <div class="variant-label">案2 — 枠内で上下逆転</div>
+      <div class="variant-desc">スタッツの階級枠だけ、上段＝グラデ⭐（24px）・下段＝STAR（13px・グラデ文字）に入れ替え。他2枠は現行のまま。3枠の上段ベースラインが揃うようline-heightを調整。</div>
+      <div class="phone-frame">
+        <div class="ig-top-bar">
+          <div style="width:32px;"></div>
+          <div class="handle" style="position:absolute;left:50%;transform:translateX(-50%);">@taisho_k</div>
+          <button class="icon-btn" style="font-size:22px;color:var(--text-main);background:transparent;">☰</button>
+        </div>
+
+        <div class="ig-header-row">
+          <div class="ig-avatar-ring">
+            <img src="../assets/img/u16.jpg" alt="木村 誠司">
+          </div>
+          <div class="ig-right-col">
+            <div class="ig-name">木村 誠司</div>
+            <div class="ig-stats">
+              <div class="ig-stat">
+                <div class="ig-stat-value rs-tier-grad rs-tg-star" style="font-size:24px;line-height:23px;">⭐</div>
+                <div class="ig-stat-label rs-tier-grad rs-tg-star" style="font-size:13px;font-weight:700;">STAR</div>
+              </div>
+              <div class="ig-stat">
+                <div class="ig-stat-value">50.9K</div>
+                <div class="ig-stat-label">影響力</div>
+              </div>
+              <div class="ig-stat">
+                <div class="ig-stat-value is-trend">▲ +12%</div>
+                <div class="ig-stat-label">前日比</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ig-bio-block">
+          <div class="ig-bio-category">経営者・AIテック</div>
+          <div class="ig-bio-text">シンガポール🇸🇬 ↔ 日本🇯🇵で活動中</div>
+        </div>
+
+        <div class="ig-action-row">
+          <button class="ig-action-btn">Edit Profile</button>
+          <button class="ig-action-btn">Circle Settings</button>
+          <button class="ig-action-btn">Group Settings</button>
+        </div>
+
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+        <div class="feed-placeholder">（投稿フィード）</div>
+      </div>
+    </div>
+
+    <!-- ============ 案3: グロー（発光） ============ -->
+    <div class="variant">
+      <div class="variant-label">案3 — グロー（発光）</div>
+      <div class="variant-desc">現行レイアウトのまま、下段のグラデ⭐にティア色（シアン）の発光フィルターを付与。サイズ変更なし。</div>
+      <div class="phone-frame">
+        <div class="ig-top-bar">
+          <div style="width:32px;"></div>
+          <div class="handle" style="position:absolute;left:50%;transform:translateX(-50%);">@taisho_k</div>
+          <button class="icon-btn" style="font-size:22px;color:var(--text-main);background:transparent;">☰</button>
+        </div>
+
+        <div class="ig-header-row">
+          <div class="ig-avatar-ring">
+            <img src="../assets/img/u16.jpg" alt="木村 誠司">
+          </div>
+          <div class="ig-right-col">
+            <div class="ig-name">木村 誠司</div>
+            <div class="ig-stats">
+              <div class="ig-stat">
+                <div class="ig-stat-value rs-tier-grad rs-tg-star">STAR</div>
+                <div class="ig-stat-label rs-tier-grad rs-tg-star badge-glow">⭐</div>
+              </div>
+              <div class="ig-stat">
+                <div class="ig-stat-value">50.9K</div>
+                <div class="ig-stat-label">影響力</div>
+              </div>
+              <div class="ig-stat">
+                <div class="ig-stat-value is-trend">▲ +12%</div>
+                <div class="ig-stat-label">前日比</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ig-bio-block">
+          <div class="ig-bio-category">経営者・AIテック</div>
+          <div class="ig-bio-text">シンガポール🇸🇬 ↔ 日本🇯🇵で活動中</div>
+        </div>
+
+        <div class="ig-action-row">
+          <button class="ig-action-btn">Edit Profile</button>
+          <button class="ig-action-btn">Circle Settings</button>
+          <button class="ig-action-btn">Group Settings</button>
+        </div>
+
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+        <div class="feed-placeholder">（投稿フィード）</div>
+      </div>
+    </div>
+
+    <!-- ============ 案4: 1＋3の合わせ技 ============ -->
+    <div class="variant">
+      <div class="variant-label">案4 — 1＋3の合わせ技</div>
+      <div class="variant-desc">案1のアバター角チップのグラデ⭐に、案3のグローを付けたもの。</div>
+      <div class="phone-frame">
+        <div class="ig-top-bar">
+          <div style="width:32px;"></div>
+          <div class="handle" style="position:absolute;left:50%;transform:translateX(-50%);">@taisho_k</div>
+          <button class="icon-btn" style="font-size:22px;color:var(--text-main);background:transparent;">☰</button>
+        </div>
+
+        <div class="ig-header-row">
+          <div class="ig-avatar-ring">
+            <img src="../assets/img/u16.jpg" alt="木村 誠司">
+            <div class="badge-corner-chip">
+              <span class="rs-tier-grad rs-tg-star badge-glow">⭐</span>
+            </div>
+          </div>
+          <div class="ig-right-col">
+            <div class="ig-name">木村 誠司</div>
+            <div class="ig-stats">
+              <div class="ig-stat">
+                <div class="ig-stat-value rs-tier-grad rs-tg-star">STAR</div>
+                <div class="ig-stat-label">階級</div>
+              </div>
+              <div class="ig-stat">
+                <div class="ig-stat-value">50.9K</div>
+                <div class="ig-stat-label">影響力</div>
+              </div>
+              <div class="ig-stat">
+                <div class="ig-stat-value is-trend">▲ +12%</div>
+                <div class="ig-stat-label">前日比</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ig-bio-block">
+          <div class="ig-bio-category">経営者・AIテック</div>
+          <div class="ig-bio-text">シンガポール🇸🇬 ↔ 日本🇯🇵で活動中</div>
+        </div>
+
+        <div class="ig-action-row">
+          <button class="ig-action-btn">Edit Profile</button>
+          <button class="ig-action-btn">Circle Settings</button>
+          <button class="ig-action-btn">Group Settings</button>
+        </div>
+
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+        <div class="feed-placeholder">（投稿フィード）</div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,280 @@
+<title>CONSEQ タイポロゴ第3弾：文字を彫る6案</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --deep-green:#1A2E05;
+    --lime:#84CC16;
+    --teal:#0D9488;
+    --purple:#4C1D95;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;overflow-x:hidden;}
+  body{
+    background:#F2F2F4;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    color:#1A1A1A;
+    padding:32px 20px 80px;
+  }
+  header{max-width:1080px;margin:0 auto 40px;}
+  header h1{font-size:26px;font-weight:700;margin:0 0 8px;}
+  header p{font-size:14px;color:#555;margin:0;line-height:1.6;}
+
+  main{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:44px;}
+
+  section.case{background:#fff;border-radius:20px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+  section.case h2{font-size:18px;font-weight:700;margin:0 0 4px;}
+  section.case .concept{font-size:13px;color:#666;margin:0 0 18px;}
+
+  .pair{display:flex;gap:20px;flex-wrap:wrap;align-items:stretch;}
+  .card{
+    height:170px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:1 1 300px;
+    min-width:280px;
+  }
+  .light{background:#FFFFFF;}
+  .card.light{border:1px solid #E5E5E7;}
+  .dark{background:#0B0F1A;}
+
+  /* アプリアイコン風カード */
+  .icon-holder{
+    flex:0 0 130px;
+    border-radius:16px;
+    border:1px dashed #D5D5DA;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    height:170px;
+  }
+  .icon-holder .label{font-size:11px;color:#888;}
+  .app-icon{
+    width:64px;height:64px;border-radius:15px;
+    background:#0B0F1A;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .app-icon svg{width:40px;height:40px;overflow:visible;display:block;}
+
+  /* ---- ワードマーク共通（em基準） ---- */
+  .wm{font-size:40px;line-height:1;white-space:nowrap;display:inline-block;}
+  .light .wm{color:var(--deep-green);}
+  .dark .wm{color:#FFFFFF;}
+  .wm svg{overflow:visible;display:inline-block;}
+  .bg-punch{fill:#FFFFFF;}
+  .dark .bg-punch{fill:#0B0F1A;}
+  .app-icon .bg-punch{fill:#0B0F1A;}
+
+  /* F-1〜F-4：グリフ1文字置換系（Bold） */
+  .wmG{font-weight:700;letter-spacing:0.05em;}
+  .wmG .glyph{width:0.72em;height:0.72em;margin-bottom:-0.01em;}
+  .wmG .glyph.gfirst{margin-right:0.05em;}
+  .wmG .glyph.gmid{margin-right:0.05em;}
+  .wmG .glyph.gwide{width:0.84em;}
+
+  /* F-5：全文字組み立て */
+  .wmF5{font-weight:700;}
+  .wmF5 svg{width:0.66em;height:0.66em;margin-right:0.1em;margin-bottom:-0.008em;}
+  .wmF5 svg:last-child{margin-right:0;}
+  .wmF5 .stroke{fill:none;stroke:currentColor;stroke-width:4.5;}
+  .wmF5 .fillp{fill:currentColor;}
+  .light .wmF5{color:var(--deep-green);}
+  .dark .wmF5{color:#FFFFFF;}
+  .app-icon .wmF5-q{color:#FFFFFF;}
+
+  /* F-6：ネオン */
+  .wm6{font-weight:500;letter-spacing:0.12em;}
+  .dark .wm6, .app-icon .wm6{
+    color:#FFFFFF;
+    text-shadow:
+      0 0 3px rgba(132,204,22,0.9),
+      0 0 8px rgba(132,204,22,0.8),
+      0 0 18px rgba(132,204,22,0.6),
+      0 0 34px rgba(132,204,22,0.45);
+  }
+  .light .wm6{
+    color:transparent;
+    -webkit-text-stroke:0.04em var(--deep-green);
+  }
+  .app-icon .wm6{font-size:38px;line-height:1;}
+
+  /* ---- 縮小耐性チェック行 ---- */
+  section.mini-check{background:#fff;border-radius:20px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+  section.mini-check h2{font-size:18px;font-weight:700;margin:0 0 4px;}
+  section.mini-check .concept{font-size:13px;color:#666;margin:0 0 18px;}
+  .strip{
+    border-radius:12px;padding:18px 20px;
+    display:flex;align-items:center;gap:28px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .strip.light{border:1px solid #E5E5E7;}
+  .strip .wm{font-size:18px;}
+  .strip .wm6{font-size:18px;}
+
+  @media (prefers-color-scheme: dark){
+    body{background:#161618;color:#EDEDED;}
+    section.case,section.mini-check{background:#1E1E22;box-shadow:none;}
+    section.case .concept,section.mini-check .concept{color:#9A9AA0;}
+    .card.light,.strip.light{border-color:#333;}
+    .icon-holder{border-color:#444;}
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="ltGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#84CC16"/>
+      <stop offset="100%" stop-color="#0D9488"/>
+    </linearGradient>
+    <linearGradient id="ptGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4C1D95"/>
+      <stop offset="100%" stop-color="#0D9488"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<header>
+  <h1>CONSEQ タイポロゴ第3弾：文字を彫る6案</h1>
+  <p>「文字そのものを大胆に作り変えて、1文字がブランド記号を兼ねる」方向の6案。各案とも白/濃紺黒の2カード（40px）＋その案の記号文字を単体でアプリアイコン風（角丸正方形64px）にした検証カードを添える。最下部に18px縮小耐性行を白・黒各1本。</p>
+</header>
+
+<main>
+
+  <!-- ===== F-1 Cは月 ===== -->
+  <section class="case">
+    <h2>F-1「Cは月」</h2>
+    <p class="concept">先頭のCを太い塗りの三日月グリフに（開口は右・字高は他文字と揃える）。三日月はライム→ティールグラデ。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wmG"><svg class="glyph gfirst" viewBox="0 0 26 26"><circle cx="13" cy="13" r="13" fill="url(#ltGrad)"/><circle cx="21" cy="13" r="11" class="bg-punch"/></svg>ONSEQ</span>
+      </div>
+      <div class="card dark">
+        <span class="wm wmG"><svg class="glyph gfirst" viewBox="0 0 26 26"><circle cx="13" cy="13" r="13" fill="url(#ltGrad)"/><circle cx="21" cy="13" r="11" class="bg-punch"/></svg>ONSEQ</span>
+      </div>
+      <div class="icon-holder">
+        <div class="app-icon"><svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="13" fill="url(#ltGrad)"/><circle cx="21" cy="13" r="11" class="bg-punch"/></svg></div>
+        <div class="label">アイコン単体</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== F-2 Oは惑星 ===== -->
+  <section class="case">
+    <h2>F-2「Oは惑星」</h2>
+    <p class="concept">Oを塗り円＋斜め45度の細いリングの惑星グリフに。円はグラデ・リングはティール。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wmG">C<svg class="glyph gmid" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10.5" fill="url(#ltGrad)"/><ellipse cx="13" cy="13" rx="15.5" ry="4.2" fill="none" stroke="#0D9488" stroke-width="1.7" transform="rotate(-25 13 13)"/></svg>NSEQ</span>
+      </div>
+      <div class="card dark">
+        <span class="wm wmG">C<svg class="glyph gmid" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10.5" fill="url(#ltGrad)"/><ellipse cx="13" cy="13" rx="15.5" ry="4.2" fill="none" stroke="#0D9488" stroke-width="1.7" transform="rotate(-25 13 13)"/></svg>NSEQ</span>
+      </div>
+      <div class="icon-holder">
+        <div class="app-icon"><svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="10.5" fill="url(#ltGrad)"/><ellipse cx="13" cy="13" rx="15.5" ry="4.2" fill="none" stroke="#0D9488" stroke-width="1.7" transform="rotate(-25 13 13)"/></svg></div>
+        <div class="label">アイコン単体</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== F-3 Qは惑星と衛星 ===== -->
+  <section class="case">
+    <h2>F-3「Qは惑星と衛星」</h2>
+    <p class="concept">Qを塗り円＋周回軌道の細線＋右下の衛星ドット（テールの代わり）に。円は深紫→ティール・衛星ライム。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wmG">CONSE<svg class="glyph" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10.5" fill="url(#ptGrad)"/><ellipse cx="13" cy="13" rx="15" ry="5.2" fill="none" stroke="#0D9488" stroke-width="1.2" stroke-opacity="0.8" transform="rotate(-30 13 13)"/><circle cx="18.3" cy="15.8" r="2" fill="#84CC16"/></svg></span>
+      </div>
+      <div class="card dark">
+        <span class="wm wmG">CONSE<svg class="glyph" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10.5" fill="url(#ptGrad)"/><ellipse cx="13" cy="13" rx="15" ry="5.2" fill="none" stroke="#0D9488" stroke-width="1.2" stroke-opacity="0.8" transform="rotate(-30 13 13)"/><circle cx="18.3" cy="15.8" r="2" fill="#84CC16"/></svg></span>
+      </div>
+      <div class="icon-holder">
+        <div class="app-icon"><svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="10.5" fill="url(#ptGrad)"/><ellipse cx="13" cy="13" rx="15" ry="5.2" fill="none" stroke="#0D9488" stroke-width="1.2" stroke-opacity="0.8" transform="rotate(-30 13 13)"/><circle cx="18.3" cy="15.8" r="2" fill="#84CC16"/></svg></div>
+        <div class="label">アイコン単体</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== F-4 Eは影響波 ===== -->
+  <section class="case">
+    <h2>F-4「Eは影響波」</h2>
+    <p class="concept">Eを縦棒＋右へ広がる3本の弧（電波マーク的・上から短中長）の自作グリフに。弧はライム→ティールグラデ。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wmG">CONS<svg class="glyph gmid gwide" viewBox="0 0 26 26"><rect x="2" y="0" width="4.5" height="26" rx="1.5" fill="currentColor"/><path d="M 8 6.2 Q 12 5.8 14.8 4.4" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/><path d="M 8 14.4 Q 14 14 18.8 12.2" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/><path d="M 8 22.6 Q 16 22.4 23 20.2" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/></svg>Q</span>
+      </div>
+      <div class="card dark">
+        <span class="wm wmG">CONS<svg class="glyph gmid gwide" viewBox="0 0 26 26"><rect x="2" y="0" width="4.5" height="26" rx="1.5" fill="currentColor"/><path d="M 8 6.2 Q 12 5.8 14.8 4.4" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/><path d="M 8 14.4 Q 14 14 18.8 12.2" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/><path d="M 8 22.6 Q 16 22.4 23 20.2" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/></svg>Q</span>
+      </div>
+      <div class="icon-holder">
+        <div class="app-icon"><svg viewBox="0 0 30 26" style="color:#fff"><rect x="2" y="0" width="4.5" height="26" rx="1.5" fill="currentColor"/><path d="M 8 6.2 Q 12 5.8 14.8 4.4" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/><path d="M 8 14.4 Q 14 14 18.8 12.2" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/><path d="M 8 22.6 Q 16 22.4 23 20.2" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/></svg></div>
+        <div class="label">アイコン単体</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== F-5 組み立て文字 ===== -->
+  <section class="case">
+    <h2>F-5「組み立て文字」</h2>
+    <p class="concept">6文字全部を幾何学プリミティブで再構成。線幅は全文字統一の極太・単色、Qの太線だけライム。一番フォントっぽくない「彫った」案。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wmF5"><svg viewBox="0 0 26 26"><path class="stroke" d="M 21.08 19.81 A 10.25 10.25 0 1 1 21.08 7.19"/></svg><svg viewBox="0 0 26 26"><circle class="stroke" cx="13" cy="13.5" r="10.25"/></svg><svg viewBox="0 0 26 26"><rect class="fillp" x="2" y="1" width="4.5" height="25" rx="1"/><rect class="fillp" x="19.5" y="1" width="4.5" height="25" rx="1"/><line x1="4.25" y1="3" x2="21.75" y2="24" stroke="currentColor" stroke-width="4.5"/></svg><svg viewBox="0 0 26 26"><path class="stroke" d="M 13 3.5 A 5.6 5.6 0 0 0 13 14.7 A 5.6 5.6 0 0 1 13 25.9"/></svg><svg viewBox="0 0 26 26"><rect class="fillp" x="2" y="1" width="4.5" height="25" rx="1"/><rect class="fillp" x="2" y="1" width="10" height="4.5" rx="1"/><rect class="fillp" x="2" y="10.75" width="14" height="4.5" rx="1"/><rect class="fillp" x="2" y="21.5" width="18" height="4.5" rx="1"/></svg><svg viewBox="0 0 26 26"><circle class="stroke" cx="13" cy="13.5" r="10.25"/><line x1="19.5" y1="20" x2="25.5" y2="26" stroke="#84CC16" stroke-width="4.5" stroke-linecap="round"/></svg></span>
+      </div>
+      <div class="card dark">
+        <span class="wm wmF5"><svg viewBox="0 0 26 26"><path class="stroke" d="M 21.08 19.81 A 10.25 10.25 0 1 1 21.08 7.19"/></svg><svg viewBox="0 0 26 26"><circle class="stroke" cx="13" cy="13.5" r="10.25"/></svg><svg viewBox="0 0 26 26"><rect class="fillp" x="2" y="1" width="4.5" height="25" rx="1"/><rect class="fillp" x="19.5" y="1" width="4.5" height="25" rx="1"/><line x1="4.25" y1="3" x2="21.75" y2="24" stroke="currentColor" stroke-width="4.5"/></svg><svg viewBox="0 0 26 26"><path class="stroke" d="M 13 3.5 A 5.6 5.6 0 0 0 13 14.7 A 5.6 5.6 0 0 1 13 25.9"/></svg><svg viewBox="0 0 26 26"><rect class="fillp" x="2" y="1" width="4.5" height="25" rx="1"/><rect class="fillp" x="2" y="1" width="10" height="4.5" rx="1"/><rect class="fillp" x="2" y="10.75" width="14" height="4.5" rx="1"/><rect class="fillp" x="2" y="21.5" width="18" height="4.5" rx="1"/></svg><svg viewBox="0 0 26 26"><circle class="stroke" cx="13" cy="13.5" r="10.25"/><line x1="19.5" y1="20" x2="25.5" y2="26" stroke="#84CC16" stroke-width="4.5" stroke-linecap="round"/></svg></span>
+      </div>
+      <div class="icon-holder">
+        <div class="app-icon"><svg viewBox="0 0 26 26" class="wmF5-q" style="color:#fff"><circle cx="13" cy="13.5" r="10.25" fill="none" stroke="currentColor" stroke-width="4.5"/><line x1="19.5" y1="20" x2="25.5" y2="26" stroke="#84CC16" stroke-width="4.5" stroke-linecap="round"/></svg></div>
+        <div class="label">アイコン単体（Q）</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== F-6 ネオンCONSEQ ===== -->
+  <section class="case">
+    <h2>F-6「ネオンCONSEQ」</h2>
+    <p class="concept">文字をライムのネオン管風に（白コア＋ライムの発光）。暗背景が主役。白背景版は深緑の細アウトライン文字で代用。テクノの黄緑を一番直球で背負う案。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wm6">CONSEQ</span>
+      </div>
+      <div class="card dark">
+        <span class="wm wm6">CONSEQ</span>
+      </div>
+      <div class="icon-holder">
+        <div class="app-icon"><span class="wm6" style="font-weight:500;">C</span></div>
+        <div class="label">アイコン単体（C）</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 縮小耐性チェック ===== -->
+  <section class="mini-check">
+    <h2>縮小耐性チェック（18px）</h2>
+    <p class="concept">採用時のヘッダー・ファビコン隣接サイズを想定し、6案を18pxで横一列に並べた確認行。上=白背景、下=濃紺黒背景。</p>
+
+    <div class="strip light">
+      <span class="wm wmG"><svg class="glyph gfirst" viewBox="0 0 26 26"><circle cx="13" cy="13" r="13" fill="url(#ltGrad)"/><circle cx="21" cy="13" r="11" class="bg-punch"/></svg>ONSEQ</span>
+      <span class="wm wmG">C<svg class="glyph gmid" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10.5" fill="url(#ltGrad)"/><ellipse cx="13" cy="13" rx="15.5" ry="4.2" fill="none" stroke="#0D9488" stroke-width="1.7" transform="rotate(-25 13 13)"/></svg>NSEQ</span>
+      <span class="wm wmG">CONSE<svg class="glyph" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10.5" fill="url(#ptGrad)"/><ellipse cx="13" cy="13" rx="15" ry="5.2" fill="none" stroke="#0D9488" stroke-width="1.2" stroke-opacity="0.8" transform="rotate(-30 13 13)"/><circle cx="18.3" cy="15.8" r="2" fill="#84CC16"/></svg></span>
+      <span class="wm wmG">CONS<svg class="glyph gmid gwide" viewBox="0 0 26 26"><rect x="2" y="0" width="4.5" height="26" rx="1.5" fill="currentColor"/><path d="M 8 6.2 Q 12 5.8 14.8 4.4" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/><path d="M 8 14.4 Q 14 14 18.8 12.2" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/><path d="M 8 22.6 Q 16 22.4 23 20.2" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/></svg>Q</span>
+      <span class="wm wmF5"><svg viewBox="0 0 26 26"><path class="stroke" d="M 21.08 19.81 A 10.25 10.25 0 1 1 21.08 7.19"/></svg><svg viewBox="0 0 26 26"><circle class="stroke" cx="13" cy="13.5" r="10.25"/></svg><svg viewBox="0 0 26 26"><rect class="fillp" x="2" y="1" width="4.5" height="25" rx="1"/><rect class="fillp" x="19.5" y="1" width="4.5" height="25" rx="1"/><line x1="4.25" y1="3" x2="21.75" y2="24" stroke="currentColor" stroke-width="4.5"/></svg><svg viewBox="0 0 26 26"><path class="stroke" d="M 13 3.5 A 5.6 5.6 0 0 0 13 14.7 A 5.6 5.6 0 0 1 13 25.9"/></svg><svg viewBox="0 0 26 26"><rect class="fillp" x="2" y="1" width="4.5" height="25" rx="1"/><rect class="fillp" x="2" y="1" width="10" height="4.5" rx="1"/><rect class="fillp" x="2" y="10.75" width="14" height="4.5" rx="1"/><rect class="fillp" x="2" y="21.5" width="18" height="4.5" rx="1"/></svg><svg viewBox="0 0 26 26"><circle class="stroke" cx="13" cy="13.5" r="10.25"/><line x1="19.5" y1="20" x2="25.5" y2="26" stroke="#84CC16" stroke-width="4.5" stroke-linecap="round"/></svg></span>
+      <span class="wm wm6">CONSEQ</span>
+    </div>
+
+    <div class="strip dark">
+      <span class="wm wmG"><svg class="glyph gfirst" viewBox="0 0 26 26"><circle cx="13" cy="13" r="13" fill="url(#ltGrad)"/><circle cx="21" cy="13" r="11" class="bg-punch"/></svg>ONSEQ</span>
+      <span class="wm wmG">C<svg class="glyph gmid" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10.5" fill="url(#ltGrad)"/><ellipse cx="13" cy="13" rx="15.5" ry="4.2" fill="none" stroke="#0D9488" stroke-width="1.7" transform="rotate(-25 13 13)"/></svg>NSEQ</span>
+      <span class="wm wmG">CONSE<svg class="glyph" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10.5" fill="url(#ptGrad)"/><ellipse cx="13" cy="13" rx="15" ry="5.2" fill="none" stroke="#0D9488" stroke-width="1.2" stroke-opacity="0.8" transform="rotate(-30 13 13)"/><circle cx="18.3" cy="15.8" r="2" fill="#84CC16"/></svg></span>
+      <span class="wm wmG">CONS<svg class="glyph gmid gwide" viewBox="0 0 26 26"><rect x="2" y="0" width="4.5" height="26" rx="1.5" fill="currentColor"/><path d="M 8 6.2 Q 12 5.8 14.8 4.4" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/><path d="M 8 14.4 Q 14 14 18.8 12.2" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/><path d="M 8 22.6 Q 16 22.4 23 20.2" fill="none" stroke="url(#ltGrad)" stroke-width="4" stroke-linecap="round"/></svg>Q</span>
+      <span class="wm wmF5"><svg viewBox="0 0 26 26"><path class="stroke" d="M 21.08 19.81 A 10.25 10.25 0 1 1 21.08 7.19"/></svg><svg viewBox="0 0 26 26"><circle class="stroke" cx="13" cy="13.5" r="10.25"/></svg><svg viewBox="0 0 26 26"><rect class="fillp" x="2" y="1" width="4.5" height="25" rx="1"/><rect class="fillp" x="19.5" y="1" width="4.5" height="25" rx="1"/><line x1="4.25" y1="3" x2="21.75" y2="24" stroke="currentColor" stroke-width="4.5"/></svg><svg viewBox="0 0 26 26"><path class="stroke" d="M 13 3.5 A 5.6 5.6 0 0 0 13 14.7 A 5.6 5.6 0 0 1 13 25.9"/></svg><svg viewBox="0 0 26 26"><rect class="fillp" x="2" y="1" width="4.5" height="25" rx="1"/><rect class="fillp" x="2" y="1" width="10" height="4.5" rx="1"/><rect class="fillp" x="2" y="10.75" width="14" height="4.5" rx="1"/><rect class="fillp" x="2" y="21.5" width="18" height="4.5" rx="1"/></svg><svg viewBox="0 0 26 26"><circle class="stroke" cx="13" cy="13.5" r="10.25"/><line x1="19.5" y1="20" x2="25.5" y2="26" stroke="#84CC16" stroke-width="4.5" stroke-linecap="round"/></svg></span>
+      <span class="wm wm6">CONSEQ</span>
+    </div>
+  </section>
+
+</main>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>プロフィールヘッダー見本（現行インスタ完コピ）</title>
+<style>
+  /* ===== app.html :root から必要分のみ抜粋（profile-ig-stats.html準拠） ===== */
+  :root {
+    --primary: #1E3A5F;
+    --bg: #FFFFFF;
+    --surface: #F5F5F5;
+    --border: #E8E8E8;
+    --text-main: #000000;
+    --text-sub: #555555;
+    --text-light: #999999;
+    --success: #10B981;
+    --header-height: 56px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    letter-spacing: -0.14px;
+    background: #EFEFEF;
+    color: var(--text-main);
+    padding: 32px 16px 80px;
+  }
+
+  .page-head { max-width: 420px; margin: 0 auto 20px; }
+  .page-head h1 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+  .page-head p { font-size: 12.5px; color: var(--text-sub); line-height: 1.6; }
+
+  .phone-frame {
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--bg);
+    border: 1px solid #DADADA;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  }
+
+  /* ===== トップバー：現行インスタ完コピにつき白ベース＋黒文字（ブランドグラデ不使用） ===== */
+  .ig-top-bar {
+    height: var(--header-height);
+    background: #FFFFFF;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    position: relative;
+  }
+  .ig-top-bar .back-btn {
+    width: 32px;
+    font-size: 22px;
+    color: var(--text-main);
+    background: none;
+    border: none;
+  }
+  .ig-top-bar .handle {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+  .ig-top-bar .menu-btn {
+    width: 32px;
+    text-align: right;
+    font-size: 20px;
+    color: var(--text-main);
+    background: none;
+    border: none;
+  }
+
+  /* ===== ヘッダー行：アバター88px（左・薄グレー細リング＋2px隙間）＋右カラム（名前→スタッツ） ===== */
+  .ig-header-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 16px 16px 0;
+  }
+  .ig-avatar-ring {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    padding: 2px;
+    flex-shrink: 0;
+  }
+  .ig-avatar-ring img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+  .ig-right-col {
+    flex: 1;
+    padding-top: 6px;
+  }
+  .ig-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 12px;
+  }
+  .ig-stats {
+    display: flex;
+  }
+  .ig-stat {
+    flex: 1;
+    text-align: center;
+  }
+  .ig-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.25;
+  }
+  .ig-stat-value.is-trend { color: var(--success); }
+  .ig-stat-label {
+    font-size: 13px;
+    color: var(--text-sub);
+    margin-top: 3px;
+  }
+
+  /* ===== app.html 104〜110行：階級グラデ（グラデ文字は background-image 必須） ===== */
+  .rs-tier-grad { -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .rs-tg-star { background-image: linear-gradient(135deg,#1E40AF,#06B6D4); color: #1E40AF; }
+
+  /* ===== bioブロック：全幅・左寄せ・左右余白16px ===== */
+  .ig-bio-block {
+    padding: 12px 16px 4px;
+  }
+  .ig-bio-category {
+    font-size: 13px;
+    color: var(--text-sub);
+    margin-bottom: 2px;
+  }
+  .ig-bio-text {
+    font-size: 14px;
+    color: var(--text-main);
+    line-height: 1.5;
+  }
+
+  /* ===== ボタン行：グレー地・角丸8px・14px semibold・高さ34px前後 ===== */
+  .ig-action-row {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+  .ig-action-btn {
+    flex: 1;
+    height: 34px;
+    background: #F3F4F6;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ===== app.html 112〜118行：タブバー ===== */
+  .my-profile-tab-bar { display: flex; border-bottom: 1.5px solid var(--border); }
+  .my-profile-tab { flex: 1; padding: 12px 0; text-align: center; font-size: 13px; font-weight: 600; color: var(--text-sub); border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -1.5px; }
+  .my-profile-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  .ig-feed-placeholder {
+    padding: 40px 16px;
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--text-light);
+  }
+</style>
+</head>
+<body>
+
+  <div class="page-head">
+    <h1>プロフィールヘッダー見本（現行インスタ完コピ）</h1>
+    <p>2026年iOS版インスタのプロフィール画面構造を完全コピー。アバターの右に名前→その真下にスタッツ3枠が入る現行レイアウト（旧・名前がアバター行の下ではない）。トップバーも白＋黒文字でインスタ準拠、階級の独立行は置かずスタッツ内グラデ表記に統合。</p>
+  </div>
+
+  <div class="phone-frame">
+    <div class="ig-top-bar">
+      <button class="back-btn">‹</button>
+      <div class="handle">@taisho_k</div>
+      <button class="menu-btn">☰</button>
+    </div>
+
+    <div class="ig-header-row">
+      <div class="ig-avatar-ring">
+        <img src="../assets/img/u16.jpg" alt="木村 誠司">
+      </div>
+      <div class="ig-right-col">
+        <div class="ig-name">木村 誠司</div>
+        <div class="ig-stats">
+          <div class="ig-stat">
+            <div class="ig-stat-value rs-tier-grad rs-tg-star">⭐ STAR</div>
+            <div class="ig-stat-label">階級</div>
+          </div>
+          <div class="ig-stat">
+            <div class="ig-stat-value">50.9K</div>
+            <div class="ig-stat-label">影響力</div>
+          </div>
+          <div class="ig-stat ig-stat-sub">
+            <div class="ig-stat-value is-trend">▲ +12%</div>
+            <div class="ig-stat-label">前日比</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ig-bio-block">
+      <div class="ig-bio-category">経営者・AIテック</div>
+      <div class="ig-bio-text">シンガポール🇸🇬 ↔ 日本🇯🇵で活動中</div>
+    </div>
+
+    <div class="ig-action-row">
+      <div class="ig-action-btn">Edit Profile</div>
+      <div class="ig-action-btn">Circle Settings</div>
+      <div class="ig-action-btn">Group Settings</div>
+    </div>
+
+    <div class="my-profile-tab-bar">
+      <button class="my-profile-tab active">Posts</button>
+      <button class="my-profile-tab">Identity</button>
+    </div>
+
+    <div class="ig-feed-placeholder">（投稿フィード）</div>
+  </div>
+
+</body>
+</html>

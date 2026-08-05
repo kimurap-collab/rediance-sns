@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>階級ハロー見本 — リングと衝突しない階級表現</title>
+<style>
+  :root {
+    --primary: #1E3A5F;
+    --primary-bg: #EEF3FB;
+    --bg: #FFFFFF;
+    --surface: #F5F5F5;
+    --border: #E8E8E8;
+    --text-main: #000000;
+    --text-sub: #555555;
+    --text-light: #999999;
+    --header-height: 56px;
+    --num-font: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: #E9ECEF;
+    padding: 32px 20px 80px;
+    color: var(--text-main);
+  }
+
+  /* ===== page chrome (this comparison doc only) ===== */
+  .page-title {
+    font-size: 22px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .page-sub {
+    font-size: 13px;
+    color: #6B7280;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .variants {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .variant {
+    width: 390px;
+    max-width: 100%;
+  }
+  .variant-label {
+    font-size: 15px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 2px;
+  }
+  .variant-desc {
+    font-size: 12.5px;
+    color: #6B7280;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .phone-frame {
+    background: var(--bg);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.16);
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+
+  /* ===== copied verbatim from tier-sky-banner.html（案1フレーム／修正済み現行版） ===== */
+
+  /* home-header — app.html L288-300 */
+  .home-header {
+    position: sticky;
+    top: 0;
+    height: var(--header-height);
+    background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 50;
+    flex-shrink: 0;
+  }
+  /* header-logo — app.html L192-197 */
+  .header-logo {
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+  }
+  /* icon-btn — app.html L202-216 */
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: background 0.15s;
+    color: #ffffff;
+  }
+  .icon-btn:active { background: rgba(255,255,255,0.25); }
+
+  /* upx-* — 他人プロフヘッダー。app.html L2305-2359（my-profile-clean.html の「案2」骨格をそのまま流用） */
+  .upx-banner {
+    height: 100px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  .upx-avatar-row {
+    padding: 0 16px;
+    margin-top: -32px;
+    position: relative;
+    z-index: 2;
+  }
+  .upx-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid var(--bg);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    overflow: hidden;
+    background: var(--surface);
+    position: relative;
+    z-index: 1;
+  }
+  .upx-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .upx-white-header {
+    padding: 8px 16px 12px;
+  }
+  .upx-name-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .upx-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+  .upx-handle {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-top: 2px;
+  }
+  .upx-score-col {
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .upx-score-label {
+    font-size: 10px;
+    color: var(--text-light);
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+  .upx-bio {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.5;
+    margin-top: 10px;
+  }
+
+  /* insta-rs-score-val — app.html L2606-2610 */
+  .insta-rs-score-val {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+
+  /* rs-tier-line / rs-tier-grad / rs-tg-* / rs-tier-caption — app.html L2617-2657
+     グラデ文字は background-image:（background: ショートハンドは background-clip:text をリセットするため厳禁） */
+  .rs-tier-line {
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 900;
+  }
+  .rs-tier-grad {
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .rs-tg-star       { background-image: linear-gradient(135deg,#1E40AF,#06B6D4); color: #1E40AF; }
+  .rs-tg-human      { background-image: linear-gradient(135deg,#4B5563,#6B7280); color: #4B5563; }
+  .rs-tg-supernova  { background-image: linear-gradient(135deg,#BE123C,#F97316); color: #BE123C; }
+  .rs-tg-universe   { background-image: linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%); color: #1A2E05; }
+  .rs-tier-caption {
+    color: #64748B;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    -webkit-text-fill-color: initial;
+  }
+
+  /* my-profile-tab-bar / my-profile-tab — app.html L2682-2707 */
+  .my-profile-tab-bar {
+    display: flex;
+    border-bottom: 1.5px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 5;
+  }
+  .my-profile-tab {
+    flex: 1;
+    padding: 12px 0;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-sub);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1.5px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .my-profile-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+
+  .feed-placeholder {
+    padding: 60px 16px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-light);
+  }
+
+  /* バナー本体は data-tsb-sky で JS が STAR_BG_URI + ティアグラデを合成する */
+  .tsb-sky-banner {
+    background-color: var(--surface);
+  }
+
+  /* ===== 光背（ハロー）本体 ===== */
+  /* .upx-avatar / .tsb-compare-ring-inner を包むラッパー。::before でぼかしたティアグラデを
+     アバターの背後に敷く。「線」ではなく「にじみ」に見せるため blur を強めに掛ける。 */
+  .tsb-halo-wrap {
+    position: relative;
+    width: fit-content;
+    border-radius: 50%;
+  }
+  .tsb-halo-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    background-image: var(--tsb-halo-grad);
+    filter: blur(12px);
+    opacity: 0.8;
+    z-index: 0;
+  }
+
+  /* 案4比較用の小型ハロー（コンパクトリング相当のサイズ感に合わせてぼかし量を少し弱める） */
+  .tsb-compare-halo-wrap {
+    position: relative;
+    width: fit-content;
+    border-radius: 50%;
+  }
+  .tsb-compare-halo-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    background-image: var(--tsb-halo-grad);
+    filter: blur(9px);
+    opacity: 0.8;
+    z-index: 0;
+  }
+
+  /* 案4: コンパクト比較用（ヘッダー部のみ・小型） — tier-sky-banner.html の tsb-compare-* を流用 */
+  .tsb-compare-item + .tsb-compare-item {
+    border-top: 1px solid var(--border);
+  }
+  .tsb-compare-banner {
+    height: 56px;
+  }
+  .tsb-compare-avatar-row {
+    padding: 0 16px;
+    margin-top: -22px;
+    position: relative;
+    z-index: 2;
+  }
+  .tsb-compare-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 3px solid var(--bg);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    overflow: hidden;
+    background: var(--surface);
+    position: relative;
+    z-index: 1;
+  }
+  .tsb-compare-white-header {
+    padding: 6px 16px 14px;
+  }
+  .tsb-compare-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+  .tsb-compare-handle {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 1px;
+  }
+  .tsb-compare-score-val {
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+
+  /* ===== 案4: 未読リングとの共存デモ ===== */
+  .coexist-card {
+    background: var(--bg);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    padding: 28px 20px 22px;
+  }
+  .coexist-row {
+    display: flex;
+    justify-content: center;
+    gap: 56px;
+  }
+  .coexist-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .coexist-col-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+  .coexist-col-sub {
+    font-size: 10.5px;
+    color: var(--text-light);
+  }
+
+  /* story-avatar-wrap / story-ring / story-ring-inner / story-avatar — app.html L1493-1528（未読レイの実物文法） */
+  .story-avatar-wrap {
+    position: relative;
+    width: 54px;
+    height: 54px;
+  }
+  .story-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: var(--primary-bg);
+    overflow: hidden;
+  }
+  .story-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .story-ring {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    padding: 2px;
+  }
+  .story-ring.has-new {
+    background: conic-gradient(#1A2E05, #84CC16, #0D9488, #4C1D95, #1A2E05);
+  }
+  .story-ring-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 案4右側：階級ハロー版アバター（54pxのstory-avatar-wrapとサイズを揃える） */
+  .coexist-halo-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 3px solid var(--bg);
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+  .coexist-halo-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .coexist-caption {
+    text-align: center;
+    font-size: 12px;
+    color: #6B7280;
+    margin-top: 22px;
+    line-height: 1.6;
+  }
+  .coexist-caption b {
+    color: var(--text-main);
+  }
+</style>
+</head>
+<body>
+
+  <div class="page-title">階級ハロー見本 — リングと衝突しない階級表現</div>
+  <div class="page-sub">「くっきりした円線＝未読レイ」「ふわっとした光＝階級」で視覚語彙を分離する</div>
+
+  <div class="variants">
+
+    <!-- ============ 案1: 白縁（リングなし） ============ -->
+    <div class="variant">
+      <div class="variant-label">案1 — 白縁（リングなし）</div>
+      <div class="variant-desc">比較基準。空バナー＋グラデ文字だけで階級を表現し、アバターは素の白3px縁のまま。</div>
+      <div class="phone-frame">
+        <div class="home-header">
+          <div style="width:32px;"></div>
+          <div class="header-logo" style="position:absolute;left:50%;transform:translateX(-50%);">@taisho_k</div>
+          <button class="icon-btn" style="font-size:22px;">☰</button>
+        </div>
+
+        <div class="upx-banner tsb-sky-banner" data-tsb-sky="star"></div>
+        <div class="upx-avatar-row">
+          <div class="upx-avatar"><img src="../assets/img/u16.jpg" alt="木村 誠司"></div>
+        </div>
+        <div class="upx-white-header">
+          <div class="upx-name-row">
+            <div>
+              <div class="upx-name">木村 誠司</div>
+              <div class="rs-tier-line">
+                <span class="rs-tier-grad rs-tg-star">⭐ STAR</span>
+                <span class="rs-tier-caption">階級</span>
+              </div>
+              <div class="upx-handle">@taisho_k</div>
+            </div>
+            <div class="upx-score-col">
+              <div style="display:flex;align-items:baseline;gap:8px;justify-content:flex-end;">
+                <span class="insta-rs-score-val">50.9K</span>
+                <span style="font-family:var(--num-font);font-size:13px;font-weight:700;color:#10B981;white-space:nowrap;">▲ +12%</span>
+              </div>
+              <div class="upx-score-label">影響力</div>
+            </div>
+          </div>
+          <div class="upx-bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+        </div>
+
+        <div style="display:flex;gap:8px;padding:4px 16px 12px;">
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Edit Profile</button>
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Circle Settings</button>
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Group Settings</button>
+        </div>
+
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+        <div class="feed-placeholder">（投稿フィード）</div>
+      </div>
+    </div>
+
+    <!-- ============ 案2: 光背（ハロー） ============ -->
+    <div class="variant">
+      <div class="variant-label">案2 — 光背（ハロー）★本命</div>
+      <div class="variant-desc">案1と同じフレームに、アバター背後へStarティアグラデの柔らかい発光を追加。アバター本体は白3px縁のまま、輪郭線は増やさない。</div>
+      <div class="phone-frame">
+        <div class="home-header">
+          <div style="width:32px;"></div>
+          <div class="header-logo" style="position:absolute;left:50%;transform:translateX(-50%);">@taisho_k</div>
+          <button class="icon-btn" style="font-size:22px;">☰</button>
+        </div>
+
+        <div class="upx-banner tsb-sky-banner" data-tsb-sky="star"></div>
+        <div class="upx-avatar-row">
+          <div class="tsb-halo-wrap" data-tsb-halo="star">
+            <div class="upx-avatar"><img src="../assets/img/u16.jpg" alt="木村 誠司"></div>
+          </div>
+        </div>
+        <div class="upx-white-header">
+          <div class="upx-name-row">
+            <div>
+              <div class="upx-name">木村 誠司</div>
+              <div class="rs-tier-line">
+                <span class="rs-tier-grad rs-tg-star">⭐ STAR</span>
+                <span class="rs-tier-caption">階級</span>
+              </div>
+              <div class="upx-handle">@taisho_k</div>
+            </div>
+            <div class="upx-score-col">
+              <div style="display:flex;align-items:baseline;gap:8px;justify-content:flex-end;">
+                <span class="insta-rs-score-val">50.9K</span>
+                <span style="font-family:var(--num-font);font-size:13px;font-weight:700;color:#10B981;white-space:nowrap;">▲ +12%</span>
+              </div>
+              <div class="upx-score-label">影響力</div>
+            </div>
+          </div>
+          <div class="upx-bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+        </div>
+
+        <div style="display:flex;gap:8px;padding:4px 16px 12px;">
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Edit Profile</button>
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Circle Settings</button>
+          <button style="flex:1;padding:8px 0;background:#F3F4F6;border:none;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-main);cursor:pointer;">Group Settings</button>
+        </div>
+
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+        <div class="feed-placeholder">（投稿フィード）</div>
+      </div>
+    </div>
+
+    <!-- ============ 案3: 他ティアの光背 比較 ============ -->
+    <div class="variant">
+      <div class="variant-label">案3 — 他ティアの光背 比較</div>
+      <div class="variant-desc">tier-sky-banner.html 案4のコンパクト3連構成を流用。白縁アバター＋各ティア色の光背に差し替え、空と光背がティアで連動して変わることを見せる。</div>
+      <div class="phone-frame">
+        <div class="home-header">
+          <div style="width:32px;"></div>
+          <div class="header-logo" style="position:absolute;left:50%;transform:translateX(-50%);">Compare</div>
+          <button class="icon-btn" style="font-size:22px;">☰</button>
+        </div>
+
+        <!-- 👤 HUMAN -->
+        <div class="tsb-compare-item">
+          <div class="upx-banner tsb-sky-banner tsb-compare-banner" data-tsb-sky="human"></div>
+          <div class="tsb-compare-avatar-row">
+            <div class="tsb-compare-halo-wrap" data-tsb-halo="human">
+              <div class="tsb-compare-avatar">👤</div>
+            </div>
+          </div>
+          <div class="tsb-compare-white-header">
+            <div class="upx-name-row">
+              <div>
+                <div class="tsb-compare-name">新人ユーザー</div>
+                <div class="rs-tier-line">
+                  <span class="rs-tier-grad rs-tg-human">👤 HUMAN</span>
+                  <span class="rs-tier-caption">階級</span>
+                </div>
+                <div class="tsb-compare-handle">@new_member</div>
+              </div>
+              <div class="upx-score-col">
+                <span class="tsb-compare-score-val">820</span>
+                <div class="upx-score-label">影響力</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 💥 SUPERNOVA -->
+        <div class="tsb-compare-item">
+          <div class="upx-banner tsb-sky-banner tsb-compare-banner" data-tsb-sky="supernova"></div>
+          <div class="tsb-compare-avatar-row">
+            <div class="tsb-compare-halo-wrap" data-tsb-halo="supernova">
+              <div class="tsb-compare-avatar">💥</div>
+            </div>
+          </div>
+          <div class="tsb-compare-white-header">
+            <div class="upx-name-row">
+              <div>
+                <div class="tsb-compare-name">人気インフルエンサー</div>
+                <div class="rs-tier-line">
+                  <span class="rs-tier-grad rs-tg-supernova">💥 SUPERNOVA</span>
+                  <span class="rs-tier-caption">階級</span>
+                </div>
+                <div class="tsb-compare-handle">@viral_creator</div>
+              </div>
+              <div class="upx-score-col">
+                <span class="tsb-compare-score-val">612K</span>
+                <div class="upx-score-label">影響力</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ♾️ UNIVERSE -->
+        <div class="tsb-compare-item">
+          <div class="upx-banner tsb-sky-banner tsb-compare-banner" data-tsb-sky="universe"></div>
+          <div class="tsb-compare-avatar-row">
+            <div class="tsb-compare-halo-wrap" data-tsb-halo="universe">
+              <div class="tsb-compare-avatar">♾️</div>
+            </div>
+          </div>
+          <div class="tsb-compare-white-header">
+            <div class="upx-name-row">
+              <div>
+                <div class="tsb-compare-name">殿堂ユーザー</div>
+                <div class="rs-tier-line">
+                  <span class="rs-tier-grad rs-tg-universe">♾️ UNIVERSE</span>
+                  <span class="rs-tier-caption">階級</span>
+                </div>
+                <div class="tsb-compare-handle">@legend_status</div>
+              </div>
+              <div class="upx-score-col">
+                <span class="tsb-compare-score-val">8.2M</span>
+                <div class="upx-score-label">影響力</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 案4: 未読リングとの共存デモ ============ -->
+    <div class="variant">
+      <div class="variant-label">案4 — 未読リングとの共存デモ</div>
+      <div class="variant-desc">左＝未読ストーリーのくっきりリング（app.htmlの story-ring 文法そのまま）／右＝階級のふわっとした光背。2つの記号が並んでも混同しないことを確認する。</div>
+      <div class="coexist-card">
+        <div class="coexist-row">
+          <div class="coexist-col">
+            <div class="story-avatar-wrap">
+              <div class="story-ring has-new">
+                <div class="story-ring-inner">
+                  <div class="story-avatar"><img src="../assets/img/u09.jpg" alt="未読ユーザー"></div>
+                </div>
+              </div>
+            </div>
+            <div class="coexist-col-label">未読ストーリーあり</div>
+            <div class="coexist-col-sub">brand conic-gradient・線</div>
+          </div>
+          <div class="coexist-col">
+            <div class="tsb-compare-halo-wrap" data-tsb-halo="star">
+              <div class="coexist-halo-avatar"><img src="../assets/img/u16.jpg" alt="木村 誠司"></div>
+            </div>
+            <div class="coexist-col-label">階級：STAR</div>
+            <div class="coexist-col-sub">tier gradient・光</div>
+          </div>
+        </div>
+        <div class="coexist-caption">
+          <b>線＝未読レイ</b> ／ <b>光＝階級</b><br>
+          くっきりした円の輪郭は「新着ストーリー」の合図、にじんだ光は「階級」の合図。形が違うため隣り合っても意味が衝突しない。
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+// ===== STAR_BG_URI — tier-sky-banner.html（app.html L16906-16956 の buildStarBgUri()）を無改変で移植 =====
+const STAR_BG_URI = (function buildStarBgUri() {
+  const W = 1600, H = 800;
+  const seededRand = (seed) => { let s = 9301 + seed * 233; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; };
+  // 星の軌跡（右上を天の極とした同心円アーク）
+  function trails(seed) {
+    const cx = 1680, cy = -120; let out = ''; const r = seededRand(seed);
+    for (let R = 360; R < 1700; R += 28) {
+      const a0 = 62 * Math.PI / 180, a1 = (206 + r() * 6) * Math.PI / 180;
+      const x0 = (cx + R * Math.cos(a0)).toFixed(1), y0 = (cy + R * Math.sin(a0)).toFixed(1);
+      const x1 = (cx + R * Math.cos(a1)).toFixed(1), y1 = (cy + R * Math.sin(a1)).toFixed(1);
+      out += `<path d="M${x0} ${y0} A ${R} ${R} 0 0 1 ${x1} ${y1}" fill="none" stroke="#fff" stroke-width="1" opacity="${(0.05 + r() * 0.11).toFixed(2)}"/>`;
+    }
+    return out;
+  }
+  // 星座線＋ラベル（うっすら）
+  function constellations(seed) {
+    const r = seededRand(seed); let out = ''; const labels = ['Ursa Major', 'Canes Venatici', 'Bootes', 'Lyra', 'Draco'];
+    for (let k = 0; k < 5; k++) {
+      const n = 3 + Math.floor(r() * 3); const pts = []; let x = r() * W * 0.8 + W * 0.05, y = r() * H * 0.6 + H * 0.05;
+      for (let j = 0; j < n; j++) { x += (r() - 0.5) * 260; y += (r() - 0.5) * 180; pts.push([Math.max(20, Math.min(W - 20, x)).toFixed(0), Math.max(20, Math.min(H * 0.85, y)).toFixed(0)]); }
+      out += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#eef3ff" stroke-width="1" opacity="0.16"/>`;
+      pts.forEach(p => out += `<circle cx="${p[0]}" cy="${p[1]}" r="1.6" fill="#fff" opacity="0.7"/>`);
+      // バナー用途では星座名ラベルは描かない（縮尺が小さく文字ゴミに見えるため）
+    }
+    return out;
+  }
+  // 点描の星（密）
+  function dots(seed) {
+    const r = seededRand(seed); let out = '';
+    for (let i = 0; i < 360; i++) {
+      const x = (r() * W).toFixed(0), y = (r() * H).toFixed(0), t = r();
+      const rad = t > 0.96 ? 1.7 : (t > 0.74 ? 1.05 : 0.6);
+      out += `<circle cx="${x}" cy="${y}" r="${rad}" fill="#fff" opacity="${(0.32 + t * 0.6).toFixed(2)}"/>`;
+    }
+    return out;
+  }
+  // 輝星（十字グレア）
+  function bright() {
+    return [[1490, 70, 6], [300, 150, 4], [880, 110, 3.4], [120, 430, 3], [1180, 280, 3]].map(([x, y, sz]) => {
+      const g = sz * 3.2;
+      return `<g opacity="0.95"><circle cx="${x}" cy="${y}" r="${sz}" fill="#fff"/><circle cx="${x}" cy="${y}" r="${sz * 1.9}" fill="#cfe0ff" opacity="0.35"/><path d="M${x - g} ${y} H${x + g} M${x} ${y - g} V${y + g}" stroke="#eef4ff" stroke-width="${(sz * 0.5).toFixed(2)}" stroke-linecap="round" opacity="0.7"/></g>`;
+    }).join('');
+  }
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice">` +
+    `<defs><filter id="mwb" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="26"/></filter></defs>` +
+    `<g transform="translate(1060,270) rotate(-30)" filter="url(#mwb)"><ellipse cx="0" cy="0" rx="620" ry="140" fill="#fff" opacity="0.09"/><ellipse cx="60" cy="-20" rx="230" ry="90" fill="#efe6d6" opacity="0.30"/></g>` +
+    trails(5) + constellations(6) + dots(7) + bright() +
+    `</svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+})();
+
+// ティアグラデ（app.html .rs-tg-* と同じ値。L2632-2650）
+const TSB_TIER_GRADIENTS = {
+  star:      'linear-gradient(135deg,#1E40AF,#06B6D4)',
+  human:     'linear-gradient(135deg,#4B5563,#6B7280)',
+  supernova: 'linear-gradient(135deg,#BE123C,#F97316)',
+  universe:  'linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%)',
+};
+
+// バナー＝星空SVGオーバーレイ（手前）+ ティアグラデ（奥）。カンマ重ねで background-image を2層にする。
+document.querySelectorAll('[data-tsb-sky]').forEach((el) => {
+  const grad = TSB_TIER_GRADIENTS[el.dataset.tsbSky];
+  el.style.background = `${STAR_BG_URI} center / cover no-repeat, linear-gradient(rgba(2,6,23,0.5),rgba(2,6,23,0.35)), ${grad}`;
+});
+
+// 光背（ハロー）：ラッパーの --tsb-halo-grad カスタムプロパティにティアグラデを渡す（::before が blur して描画）
+document.querySelectorAll('[data-tsb-halo]').forEach((el) => {
+  el.style.setProperty('--tsb-halo-grad', TSB_TIER_GRADIENTS[el.dataset.tsbHalo]);
+});
+</script>
+
+</body>
+</html>

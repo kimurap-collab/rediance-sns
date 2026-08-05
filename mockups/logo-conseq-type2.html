@@ -1,0 +1,262 @@
+<title>CONSEQ タイポロゴ第2弾：O月相×E光線の派生7案</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --deep-green:#1A2E05;
+    --lime:#84CC16;
+    --teal:#0D9488;
+    --purple:#4C1D95;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;overflow-x:hidden;}
+  body{
+    background:#F2F2F4;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    color:#1A1A1A;
+    padding:32px 20px 80px;
+  }
+  header{max-width:960px;margin:0 auto 40px;}
+  header h1{font-size:26px;font-weight:700;margin:0 0 8px;}
+  header p{font-size:14px;color:#555;margin:0;line-height:1.6;}
+
+  main{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:44px;}
+
+  section.case{background:#fff;border-radius:20px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+  section.case h2{font-size:18px;font-weight:700;margin:0 0 4px;}
+  section.case .concept{font-size:13px;color:#666;margin:0 0 18px;}
+
+  .pair{display:flex;gap:20px;flex-wrap:wrap;}
+  .card{
+    width:min(340px,100%);
+    height:170px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:1 1 300px;
+  }
+  .light{background:#FFFFFF;}
+  .card.light{border:1px solid #E5E5E7;}
+  .dark{background:#0B0F1A;}
+
+  /* ---- ワードマーク共通（em基準：縮小行でもそのままスケール） ---- */
+  .wm{font-size:36px;line-height:1;white-space:nowrap;display:inline-block;}
+  .light .wm{color:var(--deep-green);}
+  .dark .wm{color:#FFFFFF;}
+  .wm svg{overflow:visible;display:inline-block;}
+  .bg-punch{fill:#FFFFFF;}
+  .dark .bg-punch{fill:#0B0F1A;}
+
+  /* O月相系ベース（D-3流用：Medium・字間0.12em） */
+  .wmO{font-weight:500;letter-spacing:0.12em;}
+  .wmO .og{width:0.74em;height:0.74em;margin-right:0.12em;margin-bottom:-0.015em;}
+
+  /* E-2 白銀の月（暗背景では白） */
+  .moon-silver{fill:url(#silverGrad);}
+  .dark .moon-silver{fill:#FFFFFF;}
+
+  /* E光線系ベース（D-5流用：SemiBold・字間0.06em） */
+  .wmE{font-weight:600;letter-spacing:0.06em;position:relative;padding-right:0.18em;}
+  .wmE .e5{position:relative;display:inline-block;}
+  .wmE .patch{
+    position:absolute;left:0.13em;top:0.395em;
+    width:0.44em;height:0.11em;
+  }
+  .light .wmE .patch{background:#FFFFFF;}
+  .dark .wmE .patch{background:#0B0F1A;}
+  .wmE .beam{
+    position:absolute;left:0.13em;top:0.425em;
+    height:0.052em;border-radius:0.03em;
+  }
+  /* D-5そのまま：ライム＋先端光点 */
+  .beam-lime{width:0.56em;background:var(--lime);}
+  .beam-lime::after{
+    content:"";position:absolute;right:-0.05em;top:50%;
+    width:0.1em;height:0.1em;border-radius:50%;
+    transform:translateY(-50%);
+    background:var(--lime);
+  }
+  /* E-5 彗星の尾：長め・ライム→透明・光点なし */
+  .beam-comet{
+    width:0.85em;
+    background:linear-gradient(90deg,#84CC16 0%,#84CC16 50%,rgba(132,204,22,0.55) 72%,rgba(132,204,22,0) 100%);
+  }
+  /* E-6 グラデ光線：ライム→ティール＋先端光点（ティール） */
+  .beam-grad{width:0.56em;background:linear-gradient(90deg,#84CC16,#0D9488);}
+  .beam-grad::after{
+    content:"";position:absolute;right:-0.05em;top:50%;
+    width:0.1em;height:0.1em;border-radius:50%;
+    transform:translateY(-50%);
+    background:var(--teal);
+  }
+
+  /* E-7 合体（E光線系の字組にO月相を同居） */
+  .wmE .og{width:0.74em;height:0.74em;margin-right:0.06em;margin-bottom:-0.015em;}
+
+  /* ---- 縮小耐性チェック行 ---- */
+  section.mini-check{background:#fff;border-radius:20px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+  section.mini-check h2{font-size:18px;font-weight:700;margin:0 0 4px;}
+  section.mini-check .concept{font-size:13px;color:#666;margin:0 0 18px;}
+  .strip{
+    border-radius:12px;padding:18px 20px;
+    display:flex;align-items:center;gap:28px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .strip.light{border:1px solid #E5E5E7;}
+  .strip .wm{font-size:18px;}
+
+  @media (prefers-color-scheme: dark){
+    body{background:#161618;color:#EDEDED;}
+    section.case,section.mini-check{background:#1E1E22;box-shadow:none;}
+    section.case .concept,section.mini-check .concept{color:#9A9AA0;}
+    .card.light,.strip.light{border-color:#333;}
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="ltGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#84CC16"/>
+      <stop offset="100%" stop-color="#0D9488"/>
+    </linearGradient>
+    <linearGradient id="silverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E2E8F0"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<header>
+  <h1>CONSEQ タイポロゴ第2弾：O月相×E光線の派生7案</h1>
+  <p>D-3「満ち欠けのO」とD-5「星降るE」を見本にした派生。O月相系4案（E-1〜E-4）、E光線系2案（E-5〜E-6）、合体1案（E-7）。各案とも左=白背景・右=濃紺黒(#0B0F1A)背景の36px表示。最下部に18px縮小耐性チェック行を白・黒各1本置く。</p>
+</header>
+
+<main>
+
+  <!-- ===== E-1 三日月深め ===== -->
+  <section class="case">
+    <h2>E-1「三日月深め」</h2>
+    <p class="concept">O月相系。D-3の欠けを深くし、右に細い三日月だけを残す。月はライム→ティールグラデのまま。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="9.5" cy="13" r="13" class="bg-punch"/></svg>NSEQ</span>
+      </div>
+      <div class="card dark">
+        <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="9.5" cy="13" r="13" class="bg-punch"/></svg>NSEQ</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== E-2 ほぼ満月 ===== -->
+  <section class="case">
+    <h2>E-2「ほぼ満月」</h2>
+    <p class="concept">O月相系。左端が微かに欠けるだけの満月感。月色は白銀（暗背景では白）で「月」の色に寄せる。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" class="moon-silver"/><circle cx="-10" cy="13" r="13" class="bg-punch"/></svg>NSEQ</span>
+      </div>
+      <div class="card dark">
+        <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" class="moon-silver"/><circle cx="-10" cy="13" r="13" class="bg-punch"/></svg>NSEQ</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== E-3 右欠け ===== -->
+  <section class="case">
+    <h2>E-3「右欠け」</h2>
+    <p class="concept">O月相系。D-3と同じ欠け深さで向きを反転。影が右から差し、左に三日月が残る。月色はD-3のまま。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="21.5" cy="13" r="12.5" class="bg-punch"/></svg>NSEQ</span>
+      </div>
+      <div class="card dark">
+        <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="21.5" cy="13" r="12.5" class="bg-punch"/></svg>NSEQ</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== E-4 月と星 ===== -->
+  <section class="case">
+    <h2>E-4「月と星」</h2>
+    <p class="concept">O月相系。D-3の月相Oの欠けた暗部側に、極小のライム星点をひとつ。月の影に星が見える。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="4.5" cy="13" r="12.5" class="bg-punch"/><circle cx="6.5" cy="9.5" r="0.9" fill="#84CC16"/></svg>NSEQ</span>
+      </div>
+      <div class="card dark">
+        <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="4.5" cy="13" r="12.5" class="bg-punch"/><circle cx="6.5" cy="9.5" r="0.9" fill="#84CC16"/></svg>NSEQ</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== E-5 彗星のE ===== -->
+  <section class="case">
+    <h2>E-5「彗星のE」</h2>
+    <p class="concept">E光線系。Eの光線を右へ長めに突き抜けさせ、ライム→透明のグラデで彗星の尾に。先端光点なし。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wmE">CONS<span class="e5">E<span class="patch"></span><span class="beam beam-comet"></span></span>Q</span>
+      </div>
+      <div class="card dark">
+        <span class="wm wmE">CONS<span class="e5">E<span class="patch"></span><span class="beam beam-comet"></span></span>Q</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== E-6 グラデ光線 ===== -->
+  <section class="case">
+    <h2>E-6「グラデ光線」</h2>
+    <p class="concept">E光線系・D-5の正統強化。文字は白/深緑のまま、Eの線だけライム→ティールのグラデ＋先端光点。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wmE">CONS<span class="e5">E<span class="patch"></span><span class="beam beam-grad"></span></span>Q</span>
+      </div>
+      <div class="card dark">
+        <span class="wm wmE">CONS<span class="e5">E<span class="patch"></span><span class="beam beam-grad"></span></span>Q</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== E-7 月相O×光線E ===== -->
+  <section class="case">
+    <h2>E-7「月相O×光線E」</h2>
+    <p class="concept">合体。D-3のOとD-5のEを同時搭載（月ライム→ティール・E線ライム）。両立してうるさくならないかの検証案。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm wmE">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="4.5" cy="13" r="12.5" class="bg-punch"/></svg>NS<span class="e5">E<span class="patch"></span><span class="beam beam-lime"></span></span>Q</span>
+      </div>
+      <div class="card dark">
+        <span class="wm wmE">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="4.5" cy="13" r="12.5" class="bg-punch"/></svg>NS<span class="e5">E<span class="patch"></span><span class="beam beam-lime"></span></span>Q</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 縮小耐性チェック ===== -->
+  <section class="mini-check">
+    <h2>縮小耐性チェック（18px）</h2>
+    <p class="concept">採用時のヘッダー・ファビコン隣接サイズを想定し、7案を18pxで横一列に並べた確認行。上=白背景、下=濃紺黒背景。</p>
+
+    <div class="strip light">
+      <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="9.5" cy="13" r="13" class="bg-punch"/></svg>NSEQ</span>
+      <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" class="moon-silver"/><circle cx="-10" cy="13" r="13" class="bg-punch"/></svg>NSEQ</span>
+      <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="21.5" cy="13" r="12.5" class="bg-punch"/></svg>NSEQ</span>
+      <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="4.5" cy="13" r="12.5" class="bg-punch"/><circle cx="6.5" cy="9.5" r="0.9" fill="#84CC16"/></svg>NSEQ</span>
+      <span class="wm wmE">CONS<span class="e5">E<span class="patch"></span><span class="beam beam-comet"></span></span>Q</span>
+      <span class="wm wmE">CONS<span class="e5">E<span class="patch"></span><span class="beam beam-grad"></span></span>Q</span>
+      <span class="wm wmE">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="4.5" cy="13" r="12.5" class="bg-punch"/></svg>NS<span class="e5">E<span class="patch"></span><span class="beam beam-lime"></span></span>Q</span>
+    </div>
+
+    <div class="strip dark">
+      <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="9.5" cy="13" r="13" class="bg-punch"/></svg>NSEQ</span>
+      <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" class="moon-silver"/><circle cx="-10" cy="13" r="13" class="bg-punch"/></svg>NSEQ</span>
+      <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="21.5" cy="13" r="12.5" class="bg-punch"/></svg>NSEQ</span>
+      <span class="wm wmO">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="4.5" cy="13" r="12.5" class="bg-punch"/><circle cx="6.5" cy="9.5" r="0.9" fill="#84CC16"/></svg>NSEQ</span>
+      <span class="wm wmE">CONS<span class="e5">E<span class="patch"></span><span class="beam beam-comet"></span></span>Q</span>
+      <span class="wm wmE">CONS<span class="e5">E<span class="patch"></span><span class="beam beam-grad"></span></span>Q</span>
+      <span class="wm wmE">C<svg class="og" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="4.5" cy="13" r="12.5" class="bg-punch"/></svg>NS<span class="e5">E<span class="patch"></span><span class="beam beam-lime"></span></span>Q</span>
+    </div>
+  </section>
+
+</main>

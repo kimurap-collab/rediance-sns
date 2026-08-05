@@ -1,0 +1,238 @@
+<title>CONSEQ タイポロゴ：文字×宇宙 5案</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --deep-green:#1A2E05;
+    --lime:#84CC16;
+    --teal:#0D9488;
+    --purple:#4C1D95;
+    --brand-grad:linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;overflow-x:hidden;}
+  body{
+    background:#F2F2F4;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    color:#1A1A1A;
+    padding:32px 20px 80px;
+  }
+  header{max-width:960px;margin:0 auto 40px;}
+  header h1{font-size:26px;font-weight:700;margin:0 0 8px;}
+  header p{font-size:14px;color:#555;margin:0;line-height:1.6;}
+
+  main{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:44px;}
+
+  section.case{background:#fff;border-radius:20px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+  section.case h2{font-size:18px;font-weight:700;margin:0 0 4px;}
+  section.case .concept{font-size:13px;color:#666;margin:0 0 18px;}
+
+  .pair{display:flex;gap:20px;flex-wrap:wrap;}
+  .card{
+    width:min(340px,100%);
+    height:170px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:1 1 300px;
+  }
+  .light{background:#FFFFFF;}
+  .card.light{border:1px solid #E5E5E7;}
+  .dark{background:#0B0F1A;}
+
+  /* ---- ワードマーク共通（em基準：縮小行でもそのままスケール） ---- */
+  .wm{font-size:36px;line-height:1;white-space:nowrap;display:inline-block;}
+  .light .wm{color:var(--deep-green);}
+  .dark .wm{color:#FFFFFF;}
+  .wm svg{overflow:visible;display:inline-block;}
+  .bg-punch{fill:#FFFFFF;}
+  .dark .bg-punch{fill:#0B0F1A;}
+
+  /* ===== D-1 Light Cut 磨き ===== */
+  .d1{font-weight:600;letter-spacing:0.08em;position:relative;padding-right:0.42em;}
+  .d1 .qtail{
+    position:absolute;right:0;top:0.12em;
+    width:0.44em;height:0.075em;border-radius:0.05em;
+    transform:rotate(-45deg);transform-origin:0% 50%;
+  }
+  .d1 .cutline{
+    position:absolute;left:44%;top:0.30em;
+    width:44%;height:0.045em;
+    transform:rotate(-9deg);
+  }
+  .light .d1{background:var(--brand-grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .light .d1 .qtail{background:var(--brand-grad);}
+  .light .d1 .cutline{background:#FFFFFF;}
+  .dark .d1{color:#FFFFFF;}
+  .dark .d1 .qtail{background:#FFFFFF;}
+  .dark .d1 .cutline{background:var(--brand-grad);}
+
+  /* ===== D-2 Qclipse ワードマーク ===== */
+  .d2{font-weight:300;letter-spacing:0.18em;}
+  .d2 .qglyph{width:0.76em;height:0.76em;margin-left:0.02em;margin-bottom:-0.02em;}
+
+  /* ===== D-3 満ち欠けのO ===== */
+  .d3{font-weight:500;letter-spacing:0.12em;}
+  .d3 .oglyph{width:0.74em;height:0.74em;margin-right:0.12em;margin-bottom:-0.015em;}
+
+  /* ===== D-4 軌道のQ ===== */
+  .d4{font-weight:500;letter-spacing:0.1em;}
+  .d4 .qglyph{width:0.74em;height:0.74em;margin-left:0.02em;margin-bottom:-0.015em;}
+  .d4 .qring{stroke:currentColor;}
+
+  /* ===== D-5 星降るE ===== */
+  .d5{font-weight:600;letter-spacing:0.06em;position:relative;padding-right:0.18em;}
+  .d5 .e5{position:relative;display:inline-block;}
+  .d5 .patch{
+    position:absolute;left:0.13em;top:0.395em;
+    width:0.44em;height:0.11em;
+  }
+  .light .d5 .patch{background:#FFFFFF;}
+  .dark .d5 .patch{background:#0B0F1A;}
+  .d5 .beam{
+    position:absolute;left:0.13em;top:0.425em;
+    width:0.56em;height:0.052em;border-radius:0.03em;
+    background:var(--lime);
+  }
+  .d5 .beam::after{
+    content:"";position:absolute;right:-0.05em;top:50%;
+    width:0.1em;height:0.1em;border-radius:50%;
+    transform:translateY(-50%);
+    background:var(--lime);
+  }
+
+  /* ---- 縮小耐性チェック行 ---- */
+  section.mini-check{background:#fff;border-radius:20px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+  section.mini-check h2{font-size:18px;font-weight:700;margin:0 0 4px;}
+  section.mini-check .concept{font-size:13px;color:#666;margin:0 0 18px;}
+  .strip{
+    border-radius:12px;padding:18px 20px;
+    display:flex;align-items:center;gap:28px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .strip.light{border:1px solid #E5E5E7;}
+  .strip .wm{font-size:18px;}
+
+  @media (prefers-color-scheme: dark){
+    body{background:#161618;color:#EDEDED;}
+    section.case,section.mini-check{background:#1E1E22;box-shadow:none;}
+    section.case .concept,section.mini-check .concept{color:#9A9AA0;}
+    .card.light,.strip.light{border-color:#333;}
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="tpGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0D9488"/>
+      <stop offset="100%" stop-color="#4C1D95"/>
+    </linearGradient>
+    <linearGradient id="ltGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#84CC16"/>
+      <stop offset="100%" stop-color="#0D9488"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<header>
+  <h1>CONSEQ タイポロゴ：文字×宇宙 5案</h1>
+  <p>案1「Light Cut」と案8「Qclipse」の方向性を受けた派生。シンボル別置きなしのワードマーク単体で、文字の中に月・宇宙を宿す5案。各案とも左=白背景・右=濃紺黒(#0B0F1A)背景。最下部に採用時の縮小耐性チェック用として5案を18pxで並べた行を白・黒各1本置く。</p>
+</header>
+
+<main>
+
+  <!-- ===== D-1 Light Cut 磨き ===== -->
+  <section class="case">
+    <h2>D-1「Light Cut 磨き」</h2>
+    <p class="concept">案1の正統進化。グラデ文字にSからQへ貫く光の切り欠きを、前回より細く浅い角度で通す。Qテールの右上45度は維持。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm d1">CONSEQ<span class="qtail"></span><span class="cutline"></span></span>
+      </div>
+      <div class="card dark">
+        <span class="wm d1">CONSEQ<span class="qtail"></span><span class="cutline"></span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== D-2 Qclipse ワードマーク ===== -->
+  <section class="case">
+    <h2>D-2「Qclipse ワードマーク」</h2>
+    <p class="concept">本命。C〜Eは細身の文字のまま、最後のQだけ月食グリフに。右下に残る三日月とテール、左上に浮かぶライムの光点。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm d2">CONSE<svg class="qglyph" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="url(#tpGrad)"/><circle cx="9.5" cy="9.5" r="13" class="bg-punch"/><line x1="23.90" y1="23.90" x2="28.85" y2="28.85" stroke="url(#tpGrad)" stroke-width="2.4" stroke-linecap="round"/><circle cx="2.33" cy="2.33" r="1.7" fill="#84CC16"/></svg></span>
+      </div>
+      <div class="card dark">
+        <span class="wm d2">CONSE<svg class="qglyph" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="url(#tpGrad)"/><circle cx="9.5" cy="9.5" r="13" class="bg-punch"/><line x1="23.90" y1="23.90" x2="28.85" y2="28.85" stroke="url(#tpGrad)" stroke-width="2.4" stroke-linecap="round"/><circle cx="2.33" cy="2.33" r="1.7" fill="#84CC16"/></svg></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== D-3 満ち欠けのO ===== -->
+  <section class="case">
+    <h2>D-3「満ち欠けのO」</h2>
+    <p class="concept">Oだけ月相に。ライム→ティールの満月に左から影が差し、右側に三日月が残る。他の文字は通常のまま。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm d3">C<svg class="oglyph" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="4.5" cy="13" r="12.5" class="bg-punch"/></svg>NSEQ</span>
+      </div>
+      <div class="card dark">
+        <span class="wm d3">C<svg class="oglyph" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="4.5" cy="13" r="12.5" class="bg-punch"/></svg>NSEQ</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== D-4 軌道のQ ===== -->
+  <section class="case">
+    <h2>D-4「軌道のQ」</h2>
+    <p class="concept">Qのテールを土星の環のような楕円軌道に置き換える。軌道はティール、右上に小さなライムの衛星が灯る。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm d4">CONSE<svg class="qglyph" viewBox="0 0 26 26"><circle cx="13" cy="13" r="11.3" fill="none" class="qring" stroke-width="2.6"/><ellipse cx="13" cy="13" rx="17" ry="4.5" fill="none" stroke="#0D9488" stroke-width="1.2" transform="rotate(-25 13 13)"/><circle cx="28.41" cy="5.82" r="1.6" fill="#84CC16"/></svg></span>
+      </div>
+      <div class="card dark">
+        <span class="wm d4">CONSE<svg class="qglyph" viewBox="0 0 26 26"><circle cx="13" cy="13" r="11.3" fill="none" class="qring" stroke-width="2.6"/><ellipse cx="13" cy="13" rx="17" ry="4.5" fill="none" stroke="#0D9488" stroke-width="1.2" transform="rotate(-25 13 13)"/><circle cx="28.41" cy="5.82" r="1.6" fill="#84CC16"/></svg></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== D-5 星降るE ===== -->
+  <section class="case">
+    <h2>D-5「星降るE」</h2>
+    <p class="concept">変化球・最小構成。Eの中央横線だけがライムの光の線になり、右へ突き抜けた先端に小さな光が灯る。</p>
+    <div class="pair">
+      <div class="card light">
+        <span class="wm d5">CONS<span class="e5">E<span class="patch"></span><span class="beam"></span></span>Q</span>
+      </div>
+      <div class="card dark">
+        <span class="wm d5">CONS<span class="e5">E<span class="patch"></span><span class="beam"></span></span>Q</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 縮小耐性チェック ===== -->
+  <section class="mini-check">
+    <h2>縮小耐性チェック（18px）</h2>
+    <p class="concept">採用時のヘッダー・ファビコン隣接サイズを想定し、5案を18pxで横一列に並べた確認行。上=白背景、下=濃紺黒背景。</p>
+
+    <div class="strip light">
+      <span class="wm d1">CONSEQ<span class="qtail"></span><span class="cutline"></span></span>
+      <span class="wm d2">CONSE<svg class="qglyph" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="url(#tpGrad)"/><circle cx="9.5" cy="9.5" r="13" class="bg-punch"/><line x1="23.90" y1="23.90" x2="28.85" y2="28.85" stroke="url(#tpGrad)" stroke-width="2.4" stroke-linecap="round"/><circle cx="2.33" cy="2.33" r="1.7" fill="#84CC16"/></svg></span>
+      <span class="wm d3">C<svg class="oglyph" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="4.5" cy="13" r="12.5" class="bg-punch"/></svg>NSEQ</span>
+      <span class="wm d4">CONSE<svg class="qglyph" viewBox="0 0 26 26"><circle cx="13" cy="13" r="11.3" fill="none" class="qring" stroke-width="2.6"/><ellipse cx="13" cy="13" rx="17" ry="4.5" fill="none" stroke="#0D9488" stroke-width="1.2" transform="rotate(-25 13 13)"/><circle cx="28.41" cy="5.82" r="1.6" fill="#84CC16"/></svg></span>
+      <span class="wm d5">CONS<span class="e5">E<span class="patch"></span><span class="beam"></span></span>Q</span>
+    </div>
+
+    <div class="strip dark">
+      <span class="wm d1">CONSEQ<span class="qtail"></span><span class="cutline"></span></span>
+      <span class="wm d2">CONSE<svg class="qglyph" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="url(#tpGrad)"/><circle cx="9.5" cy="9.5" r="13" class="bg-punch"/><line x1="23.90" y1="23.90" x2="28.85" y2="28.85" stroke="url(#tpGrad)" stroke-width="2.4" stroke-linecap="round"/><circle cx="2.33" cy="2.33" r="1.7" fill="#84CC16"/></svg></span>
+      <span class="wm d3">C<svg class="oglyph" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12.5" fill="url(#ltGrad)"/><circle cx="4.5" cy="13" r="12.5" class="bg-punch"/></svg>NSEQ</span>
+      <span class="wm d4">CONSE<svg class="qglyph" viewBox="0 0 26 26"><circle cx="13" cy="13" r="11.3" fill="none" class="qring" stroke-width="2.6"/><ellipse cx="13" cy="13" rx="17" ry="4.5" fill="none" stroke="#0D9488" stroke-width="1.2" transform="rotate(-25 13 13)"/><circle cx="28.41" cy="5.82" r="1.6" fill="#84CC16"/></svg></span>
+      <span class="wm d5">CONS<span class="e5">E<span class="patch"></span><span class="beam"></span></span>Q</span>
+    </div>
+  </section>
+
+</main>

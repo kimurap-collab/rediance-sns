@@ -1,0 +1,465 @@
+<title>CONSEQ ロゴ見本 10案</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --deep-green:#1A2E05;
+    --lime:#84CC16;
+    --teal:#0D9488;
+    --purple:#4C1D95;
+    --brand-grad:linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;overflow-x:hidden;}
+  body{
+    background:#F2F2F4;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    color:#1A1A1A;
+    padding:32px 20px 80px;
+  }
+  header{max-width:960px;margin:0 auto 40px;}
+  header h1{font-size:26px;font-weight:700;margin:0 0 8px;}
+  header p{font-size:14px;color:#555;margin:0;line-height:1.6;}
+
+  main{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:44px;}
+
+  section.case{background:#fff;border-radius:20px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+  section.case h2{font-size:18px;font-weight:700;margin:0 0 4px;}
+  section.case .concept{font-size:13px;color:#666;margin:0 0 18px;}
+
+  .pair{display:flex;gap:20px;flex-wrap:wrap;}
+  .card{
+    width:min(340px,100%);
+    height:190px;
+    border-radius:16px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    flex:1 1 300px;
+  }
+  .card.light{background:#FFFFFF;border:1px solid #E5E5E7;}
+  .card.dark{background:#0B0F1A;}
+
+  .symbol svg{width:64px;height:64px;display:block;overflow:visible;}
+
+  .wordmark{font-size:28px;line-height:1;white-space:nowrap;}
+  .card.light .wordmark{color:var(--deep-green);}
+  .card.dark .wordmark{color:#FFFFFF;}
+
+  /* case1: Light Cut */
+  .wm1{position:relative;display:inline-block;font-weight:600;letter-spacing:0.08em;padding-right:14px;}
+  .wm1 .qtail{position:absolute;right:-2px;top:5px;width:16px;height:3px;border-radius:2px;transform:rotate(-45deg);transform-origin:0% 50%;}
+  .wm1 .cutline{position:absolute;left:28%;top:36%;width:48%;height:2px;transform:rotate(-18deg);}
+  .card.light .wm1{background:var(--brand-grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .card.light .wm1 .qtail{background:var(--brand-grad);}
+  .card.light .wm1 .cutline{background:#fff;}
+  .card.dark .wm1{color:#fff;}
+  .card.dark .wm1 .qtail{background:#fff;}
+  .card.dark .wm1 .cutline{background:var(--brand-grad);}
+
+  /* case2 */
+  .wm2{font-weight:500;letter-spacing:0.04em;}
+
+  /* case3 */
+  .wm3{font-weight:500;letter-spacing:0.1em;}
+
+  /* case4 */
+  .wm4{font-weight:500;letter-spacing:0.08em;}
+
+  /* case5 */
+  .wm5{font-weight:600;letter-spacing:0.08em;}
+
+  /* case6: Aurora Veil */
+  .wm6{font-weight:400;letter-spacing:0.05em;text-transform:none;position:relative;display:inline-flex;align-items:baseline;}
+  .wm6 .qletter{position:relative;display:inline-block;}
+  .wm6 .qdesc{position:absolute;left:2px;top:14px;width:20px;height:30px;overflow:visible;}
+
+  /* case7 */
+  .wm7{font-weight:500;letter-spacing:0.12em;}
+
+  /* case8: Qclipse */
+  .wm8{font-weight:300;letter-spacing:0.20em;}
+  .wm8 .qbold{font-weight:500;}
+
+  /* case9 */
+  .wm9{font-weight:500;letter-spacing:0.14em;}
+
+  /* case10: Rising Baseline */
+  .wm10{display:inline-flex;font-weight:700;letter-spacing:0;}
+  .wm10 span{
+    display:inline-block;
+    margin-right:1.3px;
+    background-image:var(--brand-grad);
+    background-repeat:no-repeat;
+    background-size:150px 40px;
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  .bg-punch{fill:#fff;}
+  .card.dark .bg-punch{fill:#0B0F1A;}
+
+  @media (prefers-color-scheme: dark){
+    body{background:#161618;color:#EDEDED;}
+    section.case{background:#1E1E22;box-shadow:none;}
+    section.case .concept{color:#9A9AA0;}
+    .card.light{border-color:#333;}
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="brandGradSvg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A2E05"/>
+      <stop offset="38%" stop-color="#84CC16"/>
+      <stop offset="65%" stop-color="#0D9488"/>
+      <stop offset="100%" stop-color="#4C1D95"/>
+    </linearGradient>
+    <linearGradient id="tealPurple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0D9488"/>
+      <stop offset="100%" stop-color="#4C1D95"/>
+    </linearGradient>
+    <linearGradient id="case6Grad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1A2E05"/>
+      <stop offset="38%" stop-color="#84CC16"/>
+      <stop offset="65%" stop-color="#0D9488"/>
+      <stop offset="100%" stop-color="#4C1D95"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<header>
+  <h1>CONSEQ ロゴ見本 10案</h1>
+  <p>ChatGPT（デザイナー役）が起こしたロゴコンセプト10案をSVG/CSSで再現したモックアップ。各案とも左=白背景・右=濃紺黒(#0B0F1A)背景の2カードで表示。ブランドカラーは深緑(#1A2E05)・ライム(#84CC16)・ティール(#0D9488)・深紫(#4C1D95)、ブランドグラデは135度で4色を通過する。</p>
+</header>
+
+<main>
+
+  <!-- ===== 案1 Light Cut ===== -->
+  <section class="case">
+    <h2>案1「Light Cut」</h2>
+    <p class="concept">タイポのみ。全大文字CONSEQ、Qのテールを右上へ伸ばし、SからQ上部へ細い斜めの切り欠きを通す。</p>
+    <div class="pair">
+      <div class="card light">
+        <div class="wordmark wm1">CONSEQ<span class="qtail"></span><span class="cutline"></span></div>
+      </div>
+      <div class="card dark">
+        <div class="wordmark wm1">CONSEQ<span class="qtail"></span><span class="cutline"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 案2 C / Influence Orbit ===== -->
+  <section class="case">
+    <h2>案2「C / Influence Orbit」</h2>
+    <p class="concept">モノグラム。太い円弧のCに内側の細い同心円弧とライムの光点を添えたシンボル＋ワードマーク。</p>
+    <div class="pair">
+      <div class="card light">
+        <div class="symbol">
+          <svg viewBox="0 0 64 64">
+            <path d="M 49.32 42.00 A 20 20 0 1 1 46.14 17.86" stroke="url(#brandGradSvg)" stroke-width="7" fill="none" stroke-linecap="butt"/>
+            <path d="M 40.43 39.07 A 11 11 0 1 1 38.31 22.99" stroke="#0D9488" stroke-width="2.5" fill="none" stroke-linecap="butt"/>
+            <circle cx="46.14" cy="17.86" r="4.55" fill="#84CC16"/>
+          </svg>
+        </div>
+        <div class="wordmark wm2">CONSEQ</div>
+      </div>
+      <div class="card dark">
+        <div class="symbol">
+          <svg viewBox="0 0 64 64">
+            <path d="M 49.32 42.00 A 20 20 0 1 1 46.14 17.86" stroke="url(#brandGradSvg)" stroke-width="7" fill="none" stroke-linecap="butt"/>
+            <path d="M 40.43 39.07 A 11 11 0 1 1 38.31 22.99" stroke="#0D9488" stroke-width="2.5" fill="none" stroke-linecap="butt"/>
+            <circle cx="46.14" cy="17.86" r="4.55" fill="#84CC16"/>
+          </svg>
+        </div>
+        <div class="wordmark wm2">CONSEQ</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 案3 Consequence Nova ===== -->
+  <section class="case">
+    <h2>案3「Consequence Nova」</h2>
+    <p class="concept">宇宙モチーフ。中心のライム光点から3本の楕円軌道が伸び、右上45度に光の尾を放つ。</p>
+    <div class="pair">
+      <div class="card light">
+        <div class="symbol">
+          <svg viewBox="0 0 48 48">
+            <ellipse cx="24" cy="24" rx="16" ry="5" fill="none" stroke="#1A2E05" stroke-width="1.3" opacity="0.8" transform="rotate(-30 24 24)"/>
+            <ellipse cx="24" cy="24" rx="16" ry="5" fill="none" stroke="#0D9488" stroke-width="1.3" opacity="0.8" transform="rotate(30 24 24)"/>
+            <ellipse cx="24" cy="24" rx="16" ry="5" fill="none" stroke="#4C1D95" stroke-width="1.3" opacity="0.8" transform="rotate(90 24 24)"/>
+            <line x1="24" y1="24" x2="35.88" y2="12.12" stroke="url(#tealPurple)" stroke-width="1"/>
+            <rect x="33.88" y="10.12" width="4" height="4" fill="url(#tealPurple)" transform="rotate(45 35.88 12.12)"/>
+            <circle cx="37.86" cy="16.00" r="1.8" fill="#84CC16"/>
+            <circle cx="24" cy="24" r="3" fill="#84CC16"/>
+          </svg>
+        </div>
+        <div class="wordmark wm3">CONSEQ</div>
+      </div>
+      <div class="card dark">
+        <div class="symbol">
+          <svg viewBox="0 0 48 48">
+            <ellipse cx="24" cy="24" rx="16" ry="5" fill="none" stroke="#1A2E05" stroke-width="1.3" opacity="0.8" transform="rotate(-30 24 24)"/>
+            <ellipse cx="24" cy="24" rx="16" ry="5" fill="none" stroke="#0D9488" stroke-width="1.3" opacity="0.8" transform="rotate(30 24 24)"/>
+            <ellipse cx="24" cy="24" rx="16" ry="5" fill="none" stroke="#4C1D95" stroke-width="1.3" opacity="0.8" transform="rotate(90 24 24)"/>
+            <line x1="24" y1="24" x2="35.88" y2="12.12" stroke="url(#tealPurple)" stroke-width="1"/>
+            <rect x="33.88" y="10.12" width="4" height="4" fill="url(#tealPurple)" transform="rotate(45 35.88 12.12)"/>
+            <circle cx="37.86" cy="16.00" r="1.8" fill="#84CC16"/>
+            <circle cx="24" cy="24" r="3" fill="#84CC16"/>
+          </svg>
+        </div>
+        <div class="wordmark wm3">CONSEQ</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 案4 光の波紋 ===== -->
+  <section class="case">
+    <h2>案4「光の波紋」</h2>
+    <p class="concept">中心のライム光点から右上40度の扇状に10本の同心円弧が波紋のように広がる。</p>
+    <div class="pair">
+      <div class="card light">
+        <div class="symbol">
+          <svg viewBox="0 0 48 48">
+            <path d="M 26.11 19.47 A 5 5 0 0 1 28.53 21.89" stroke="#84CC16" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <path d="M 26.82 18.70 A 6 6 0 0 1 29.56 21.75" stroke="#6AC02F" stroke-width="1.69" fill="none" stroke-linecap="round"/>
+            <path d="M 27.61 18.00 A 7 7 0 0 1 30.62 21.72" stroke="#4FB349" stroke-width="1.58" fill="none" stroke-linecap="round"/>
+            <path d="M 28.47 17.37 A 8 8 0 0 1 31.69 21.79" stroke="#35A762" stroke-width="1.47" fill="none" stroke-linecap="round"/>
+            <path d="M 29.42 16.81 A 9 9 0 0 1 32.77 21.98" stroke="#1A9A7B" stroke-width="1.36" fill="none" stroke-linecap="round"/>
+            <path d="M 30.43 16.34 A 10 10 0 0 1 33.85 22.26" stroke="#148789" stroke-width="1.24" fill="none" stroke-linecap="round"/>
+            <path d="M 31.50 15.96 A 11 11 0 0 1 34.92 22.66" stroke="#226C8C" stroke-width="1.13" fill="none" stroke-linecap="round"/>
+            <path d="M 32.63 15.66 A 12 12 0 0 1 35.97 23.16" stroke="#30528F" stroke-width="1.02" fill="none" stroke-linecap="round"/>
+            <path d="M 33.81 15.47 A 13 13 0 0 1 37.00 23.77" stroke="#3E3792" stroke-width="0.91" fill="none" stroke-linecap="round"/>
+            <path d="M 35.03 15.38 A 14 14 0 0 1 37.99 24.49" stroke="#4C1D95" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+            <circle cx="24" cy="24" r="3" fill="#84CC16"/>
+          </svg>
+        </div>
+        <div class="wordmark wm4">CONSEQ</div>
+      </div>
+      <div class="card dark">
+        <div class="symbol">
+          <svg viewBox="0 0 48 48">
+            <path d="M 26.11 19.47 A 5 5 0 0 1 28.53 21.89" stroke="#84CC16" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <path d="M 26.82 18.70 A 6 6 0 0 1 29.56 21.75" stroke="#6AC02F" stroke-width="1.69" fill="none" stroke-linecap="round"/>
+            <path d="M 27.61 18.00 A 7 7 0 0 1 30.62 21.72" stroke="#4FB349" stroke-width="1.58" fill="none" stroke-linecap="round"/>
+            <path d="M 28.47 17.37 A 8 8 0 0 1 31.69 21.79" stroke="#35A762" stroke-width="1.47" fill="none" stroke-linecap="round"/>
+            <path d="M 29.42 16.81 A 9 9 0 0 1 32.77 21.98" stroke="#1A9A7B" stroke-width="1.36" fill="none" stroke-linecap="round"/>
+            <path d="M 30.43 16.34 A 10 10 0 0 1 33.85 22.26" stroke="#148789" stroke-width="1.24" fill="none" stroke-linecap="round"/>
+            <path d="M 31.50 15.96 A 11 11 0 0 1 34.92 22.66" stroke="#226C8C" stroke-width="1.13" fill="none" stroke-linecap="round"/>
+            <path d="M 32.63 15.66 A 12 12 0 0 1 35.97 23.16" stroke="#30528F" stroke-width="1.02" fill="none" stroke-linecap="round"/>
+            <path d="M 33.81 15.47 A 13 13 0 0 1 37.00 23.77" stroke="#3E3792" stroke-width="0.91" fill="none" stroke-linecap="round"/>
+            <path d="M 35.03 15.38 A 14 14 0 0 1 37.99 24.49" stroke="#4C1D95" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+            <circle cx="24" cy="24" r="3" fill="#84CC16"/>
+          </svg>
+        </div>
+        <div class="wordmark wm4">CONSEQ</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 案5 Nova Rank ===== -->
+  <section class="case">
+    <h2>案5「Nova Rank」</h2>
+    <p class="concept">中心から4方向に伸びる細長い光の菱形を45度回転。右上の光が最長でライムに輝く。</p>
+    <div class="pair">
+      <div class="card light">
+        <div class="symbol">
+          <svg viewBox="0 0 48 48">
+            <polygon points="25.06,25.06 34.61,13.39 22.94,22.94" fill="#84CC16"/>
+            <polygon points="22.94,25.06 34.61,34.61 25.06,22.94" fill="#0D9488"/>
+            <polygon points="22.94,22.94 18.34,29.66 25.06,25.06" fill="#1A2E05"/>
+            <polygon points="25.06,22.94 18.34,18.34 22.94,25.06" fill="#0D9488"/>
+            <circle cx="24" cy="24" r="2" fill="#4C1D95"/>
+          </svg>
+        </div>
+        <div class="wordmark wm5">CONSEQ</div>
+      </div>
+      <div class="card dark">
+        <div class="symbol">
+          <svg viewBox="0 0 48 48">
+            <polygon points="25.06,25.06 34.61,13.39 22.94,22.94" fill="#84CC16"/>
+            <polygon points="22.94,25.06 34.61,34.61 25.06,22.94" fill="#0D9488"/>
+            <polygon points="22.94,22.94 18.34,29.66 25.06,25.06" fill="#1A2E05"/>
+            <polygon points="25.06,22.94 18.34,18.34 22.94,25.06" fill="#0D9488"/>
+            <circle cx="24" cy="24" r="2" fill="#4C1D95"/>
+          </svg>
+        </div>
+        <div class="wordmark wm5">CONSEQ</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 案6 Aurora Veil ===== -->
+  <section class="case">
+    <h2>案6「Aurora Veil」</h2>
+    <p class="concept">小文字conseq、qのディセンダーを伸ばしティールへ。シンボルは左下から右上へ流れる3本のS字光条。</p>
+    <div class="pair">
+      <div class="card light">
+        <div class="symbol">
+          <svg viewBox="0 0 40 30">
+            <path d="M 4 22 C 15.20 20.40 24.80 2.60 36 1" stroke="url(#case6Grad)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <path d="M 4 23 C 15.20 21.40 24.80 7.60 36 6" stroke="url(#case6Grad)" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M 4 24 C 15.20 22.40 24.80 12.60 36 11" stroke="url(#case6Grad)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="wordmark wm6">conse<span class="qletter">q<svg class="qdesc" viewBox="0 0 20 34">
+          <path d="M13 4 C13 14 11 22 5 28" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M6.3 27 C5.3 28.4 4.2 29.2 3 29.8" stroke="#0D9488" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg></span></div>
+      </div>
+      <div class="card dark">
+        <div class="symbol">
+          <svg viewBox="0 0 40 30">
+            <path d="M 4 22 C 15.20 20.40 24.80 2.60 36 1" stroke="url(#case6Grad)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <path d="M 4 23 C 15.20 21.40 24.80 7.60 36 6" stroke="url(#case6Grad)" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M 4 24 C 15.20 22.40 24.80 12.60 36 11" stroke="url(#case6Grad)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="wordmark wm6">conse<span class="qletter">q<svg class="qdesc" viewBox="0 0 20 34">
+          <path d="M13 4 C13 14 11 22 5 28" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M6.3 27 C5.3 28.4 4.2 29.2 3 29.8" stroke="#0D9488" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 案7 Influence Lens ===== -->
+  <section class="case">
+    <h2>案7「Influence Lens」</h2>
+    <p class="concept">同心の二重円に、右上へ伸びる短い光の線と、内円をよけて左右に分かれた水平線を添えたレンズ状シンボル。</p>
+    <div class="pair">
+      <div class="card light">
+        <div class="symbol">
+          <svg viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="15" fill="none" stroke="#1A2E05" stroke-width="2"/>
+            <circle cx="24" cy="24" r="8" fill="none" stroke="#0D9488" stroke-width="1.5"/>
+            <line x1="34.61" y1="13.39" x2="38.85" y2="9.15" stroke="#84CC16" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="14" y1="24" x2="16" y2="24" stroke="#4C1D95" stroke-width="1"/>
+            <line x1="32" y1="24" x2="34" y2="24" stroke="#4C1D95" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="wordmark wm7">CONSEQ</div>
+      </div>
+      <div class="card dark">
+        <div class="symbol">
+          <svg viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="15" fill="none" stroke="#1A2E05" stroke-width="2"/>
+            <circle cx="24" cy="24" r="8" fill="none" stroke="#0D9488" stroke-width="1.5"/>
+            <line x1="34.61" y1="13.39" x2="38.85" y2="9.15" stroke="#84CC16" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="14" y1="24" x2="16" y2="24" stroke="#4C1D95" stroke-width="1"/>
+            <line x1="32" y1="24" x2="34" y2="24" stroke="#4C1D95" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="wordmark wm7">CONSEQ</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 案8 Qclipse ===== -->
+  <section class="case">
+    <h2>案8「Qclipse」</h2>
+    <p class="concept">円が欠けて三日月状のQに。三日月の右下からテールが伸び、左上にライムの光点が浮かぶ。</p>
+    <div class="pair">
+      <div class="card light">
+        <div class="symbol">
+          <svg viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="14" fill="url(#tealPurple)"/>
+            <circle cx="19" cy="19" r="13" class="bg-punch"/>
+            <line x1="33.90" y1="33.90" x2="39.56" y2="39.56" stroke="url(#tealPurple)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="12.33" cy="12.33" r="1.8" fill="#84CC16"/>
+          </svg>
+        </div>
+        <div class="wordmark wm8">CONSE<span class="qbold">Q</span></div>
+      </div>
+      <div class="card dark">
+        <div class="symbol">
+          <svg viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="14" fill="url(#tealPurple)"/>
+            <circle cx="19" cy="19" r="13" class="bg-punch"/>
+            <line x1="33.90" y1="33.90" x2="39.56" y2="39.56" stroke="url(#tealPurple)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="12.33" cy="12.33" r="1.8" fill="#84CC16"/>
+          </svg>
+        </div>
+        <div class="wordmark wm8">CONSE<span class="qbold">Q</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 案9 Signal Constellation ===== -->
+  <section class="case">
+    <h2>案9「Signal Constellation」</h2>
+    <p class="concept">中心のライム光点から5方向へ星座のように信号線が伸び、最長の枝からさらに小枝が分岐する。</p>
+    <div class="pair">
+      <div class="card light">
+        <div class="symbol">
+          <svg viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="3" fill="#84CC16"/>
+            <line x1="26.72" y1="25.27" x2="36.69" y2="29.92" stroke="#0D9488" stroke-width="1.5" stroke-opacity="0.55"/>
+            <circle cx="36.69" cy="29.92" r="1.5" fill="#1A2E05"/>
+            <line x1="23.74" y1="26.99" x2="23.22" y2="32.97" stroke="#0D9488" stroke-width="1.5" stroke-opacity="0.55"/>
+            <circle cx="23.22" cy="32.97" r="1.8" fill="#84CC16"/>
+            <line x1="21.10" y1="24.78" x2="12.41" y2="27.11" stroke="#0D9488" stroke-width="1.5" stroke-opacity="0.55"/>
+            <circle cx="12.41" cy="27.11" r="2.1" fill="#0D9488"/>
+            <line x1="21.88" y1="21.88" x2="19.05" y2="19.05" stroke="#0D9488" stroke-width="1.5" stroke-opacity="0.55"/>
+            <circle cx="19.05" cy="19.05" r="2.3" fill="#4C1D95"/>
+            <line x1="26.12" y1="21.88" x2="35.31" y2="12.69" stroke="#0D9488" stroke-width="1.5" stroke-opacity="0.55"/>
+            <circle cx="35.31" cy="12.69" r="2.5" fill="#0D9488"/>
+            <line x1="35.31" y1="12.69" x2="38.31" y2="17.88" stroke="#0D9488" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="wordmark wm9">CONSEQ</div>
+      </div>
+      <div class="card dark">
+        <div class="symbol">
+          <svg viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="3" fill="#84CC16"/>
+            <line x1="26.72" y1="25.27" x2="36.69" y2="29.92" stroke="#0D9488" stroke-width="1.5" stroke-opacity="0.55"/>
+            <circle cx="36.69" cy="29.92" r="1.5" fill="#1A2E05"/>
+            <line x1="23.74" y1="26.99" x2="23.22" y2="32.97" stroke="#0D9488" stroke-width="1.5" stroke-opacity="0.55"/>
+            <circle cx="23.22" cy="32.97" r="1.8" fill="#84CC16"/>
+            <line x1="21.10" y1="24.78" x2="12.41" y2="27.11" stroke="#0D9488" stroke-width="1.5" stroke-opacity="0.55"/>
+            <circle cx="12.41" cy="27.11" r="2.1" fill="#0D9488"/>
+            <line x1="21.88" y1="21.88" x2="19.05" y2="19.05" stroke="#0D9488" stroke-width="1.5" stroke-opacity="0.55"/>
+            <circle cx="19.05" cy="19.05" r="2.3" fill="#4C1D95"/>
+            <line x1="26.12" y1="21.88" x2="35.31" y2="12.69" stroke="#0D9488" stroke-width="1.5" stroke-opacity="0.55"/>
+            <circle cx="35.31" cy="12.69" r="2.5" fill="#0D9488"/>
+            <line x1="35.31" y1="12.69" x2="38.31" y2="17.88" stroke="#0D9488" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="wordmark wm9">CONSEQ</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 案10 Rising Baseline ===== -->
+  <section class="case">
+    <h2>案10「Rising Baseline」</h2>
+    <p class="concept">タイポのみ。全大文字CONSEQ、各文字のベースラインをC→Qへ段階的に持ち上げ、左下から右上へブランドグラデを通す。</p>
+    <div class="pair">
+      <div class="card light">
+        <div class="wordmark wm10">
+          <span style="transform:translateY(0px);background-position:-0.00px 0;">C</span>
+          <span style="transform:translateY(-1px);background-position:-24.28px 0;">O</span>
+          <span style="transform:translateY(-2px);background-position:-50.56px 0;">N</span>
+          <span style="transform:translateY(-4px);background-position:-75.84px 0;">S</span>
+          <span style="transform:translateY(-7px);background-position:-99.12px 0;">E</span>
+          <span style="transform:translateY(-11px);background-position:-120.40px 0;">Q</span>
+        </div>
+      </div>
+      <div class="card dark">
+        <div class="wordmark wm10">
+          <span style="transform:translateY(0px);background-position:-0.00px 0;">C</span>
+          <span style="transform:translateY(-1px);background-position:-24.28px 0;">O</span>
+          <span style="transform:translateY(-2px);background-position:-50.56px 0;">N</span>
+          <span style="transform:translateY(-4px);background-position:-75.84px 0;">S</span>
+          <span style="transform:translateY(-7px);background-position:-99.12px 0;">E</span>
+          <span style="transform:translateY(-11px);background-position:-120.40px 0;">Q</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>

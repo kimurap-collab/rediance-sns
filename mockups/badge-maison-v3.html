@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>階級章 第3案 — メゾン・コスミック改（Tier1-8再設計）</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --page: #08090b;
+      --panel: #101216;
+      --panel-soft: #15181d;
+      --line: rgba(255, 255, 255, 0.09);
+      --text: #f3efe5;
+      --muted: #94989f;
+      --gold: #c8ad78;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(124, 58, 237, 0.12), transparent 32rem),
+        var(--page);
+      color: var(--text);
+      font-family:
+        Inter, "Helvetica Neue", "Hiragino Sans", "Yu Gothic",
+        "Noto Sans JP", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .svg-definitions {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 72px 0 88px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 900px;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", "Yu Mincho", serif;
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 400;
+      line-height: 1.25;
+      letter-spacing: 0.015em;
+    }
+
+    .lead {
+      max-width: 720px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.9;
+    }
+
+    section {
+      margin-top: 64px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", "Yu Mincho", serif;
+      font-size: 23px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+    }
+
+    .section-note {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+    }
+
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .tier-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      min-height: 132px;
+      padding: 24px;
+      overflow: hidden;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.035), transparent 48%),
+        var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .tier-card::after {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 50%, rgba(255,255,255,0.018));
+      content: "";
+      pointer-events: none;
+    }
+
+    .tier-card.is-frozen {
+      border-color: rgba(200, 173, 120, 0.24);
+    }
+
+    .icon-pair {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge {
+      display: block;
+      flex: 0 0 auto;
+      overflow: visible;
+    }
+
+    .badge--48 {
+      width: 48px;
+      height: 48px;
+    }
+
+    .badge--24 {
+      width: 24px;
+      height: 24px;
+    }
+
+    .tier-copy {
+      align-self: center;
+      min-width: 0;
+    }
+
+    .tier-kicker {
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .tier-name {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+    }
+
+    .tier-intent {
+      margin: 8px 0 0;
+      color: #a9adb4;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .freeze-label {
+      color: var(--gold);
+    }
+
+    .progression-shell,
+    .profile-shell {
+      padding: 28px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.025), transparent 55%),
+        var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .progression {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 4px 2px 8px;
+    }
+
+    .progression-item {
+      display: grid;
+      flex: 0 0 72px;
+      place-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .progression-name {
+      color: #777d86;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-align: center;
+    }
+
+    .profile-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      max-width: 560px;
+      min-height: 82px;
+      padding: 18px 20px;
+      background: var(--panel-soft);
+      border: 1px solid rgba(255, 255, 255, 0.075);
+      border-radius: 16px;
+    }
+
+    .profile-identity {
+      display: grid;
+      gap: 3px;
+      min-width: 80px;
+      padding-right: 18px;
+      border-right: 1px solid var(--line);
+    }
+
+    .star-word {
+      width: fit-content;
+      background: linear-gradient(135deg, #1e40af, #06b6d4);
+      background-clip: text;
+      color: transparent;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .metric {
+      display: grid;
+      gap: 3px;
+    }
+
+    .metric-value {
+      color: #f7f4ec;
+      font-size: 17px;
+      font-weight: 650;
+      letter-spacing: 0.02em;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+    }
+
+    .metric-growth {
+      margin-left: auto;
+      color: #5bd6a2;
+      text-align: right;
+    }
+
+    .metric-growth .metric-value {
+      color: inherit;
+      font-size: 14px;
+    }
+
+    @media (max-width: 760px) {
+      main {
+        width: min(100% - 24px, 560px);
+        padding-top: 48px;
+      }
+
+      .tier-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .progression-shell {
+        padding-inline: 18px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .tier-card {
+        grid-template-columns: 64px minmax(0, 1fr);
+        padding: 20px;
+      }
+
+      .icon-pair {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .profile-card {
+        flex-wrap: wrap;
+      }
+
+      .metric-growth {
+        margin-left: 38px;
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <svg class="svg-definitions" aria-hidden="true">
+    <defs>
+      <linearGradient id="gradient-human" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#4B5563"/>
+        <stop offset="1" stop-color="#6B7280"/>
+      </linearGradient>
+      <linearGradient id="gradient-leader" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#92400E"/>
+        <stop offset="1" stop-color="#F59E0B"/>
+      </linearGradient>
+      <linearGradient id="gradient-icon" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#047857"/>
+        <stop offset="1" stop-color="#34D399"/>
+      </linearGradient>
+      <linearGradient id="gradient-rising" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#0D9488"/>
+        <stop offset="1" stop-color="#84CC16"/>
+      </linearGradient>
+      <linearGradient id="gradient-star" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#1E40AF"/>
+        <stop offset="1" stop-color="#06B6D4"/>
+      </linearGradient>
+      <linearGradient id="gradient-nova" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#6D28D9"/>
+        <stop offset="1" stop-color="#C026D3"/>
+      </linearGradient>
+      <linearGradient id="gradient-supernova" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#BE123C"/>
+        <stop offset="1" stop-color="#F97316"/>
+      </linearGradient>
+      <linearGradient id="gradient-gravity" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#312E81"/>
+        <stop offset="1" stop-color="#0D9488"/>
+      </linearGradient>
+      <linearGradient id="gradient-singularity" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#0F172A"/>
+        <stop offset="1" stop-color="#7C3AED"/>
+      </linearGradient>
+      <linearGradient id="gradient-universe" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#1A2E05"/>
+        <stop offset="38%" stop-color="#84CC16"/>
+        <stop offset="65%" stop-color="#0D9488"/>
+        <stop offset="100%" stop-color="#4C1D95"/>
+      </linearGradient>
+
+      <g id="shape-human" fill="currentColor">
+        <circle cx="12" cy="6.35" r="3.45"/>
+        <path d="M3.45 21.65 C3.75 15.1 6.9 11.55 12 11.55 C17.1 11.55 20.25 15.1 20.55 21.65 Z"/>
+      </g>
+
+      <g id="shape-leader" fill="currentColor">
+        <path fill-rule="evenodd" d="M12 4.15 A8.85 8.85 0 1 1 12 21.85 A8.85 8.85 0 1 1 12 4.15 Z M12 8 A5 5 0 1 0 12 18 A5 5 0 1 0 12 8 Z"/>
+        <path d="M12 1.05 L16.65 5.7 L14.2 8.15 L12 5.95 L9.8 8.15 L7.35 5.7 Z"/>
+      </g>
+
+      <g id="shape-icon" fill="currentColor">
+        <path fill-rule="evenodd" d="M1.15 12 C4.25 6.85 7.85 4.35 12 4.35 C16.15 4.35 19.75 6.85 22.85 12 C19.75 17.15 16.15 19.65 12 19.65 C7.85 19.65 4.25 17.15 1.15 12 Z M5.35 12 C7.35 14.65 9.45 15.95 12 15.95 C14.55 15.95 16.65 14.65 18.65 12 C16.65 9.35 14.55 8.05 12 8.05 C9.45 8.05 7.35 9.35 5.35 12 Z"/>
+        <circle cx="12" cy="12" r="2.15"/>
+      </g>
+
+      <g id="shape-rising" fill="currentColor">
+        <path fill-rule="evenodd" d="M12 1.05 C17.55 6.05 20.45 10.55 20.45 15.25 C20.45 20.05 16.75 23 12 23 C7.25 23 3.55 20.05 3.55 15.25 C3.55 10.55 6.45 6.05 12 1.05 Z M12 6.25 C8.7 9.65 7.05 12.55 7.05 15.35 C7.05 18.05 9.15 19.75 12 19.75 C14.85 19.75 16.95 18.05 16.95 15.35 C16.95 12.55 15.3 9.65 12 6.25 Z"/>
+        <circle cx="12" cy="15.15" r="2.2"/>
+      </g>
+
+      <g id="shape-star" fill="currentColor">
+        <path fill-rule="evenodd" d="M12 1.05 L14.65 8.15 L22.25 8.5 L16.3 13.25 L18.35 20.55 L12 16.4 L5.65 20.55 L7.7 13.25 L1.75 8.5 L9.35 8.15 Z M12 7.8 A4.2 4.2 0 1 0 12 16.2 A4.2 4.2 0 1 0 12 7.8 Z"/>
+        <circle cx="12" cy="12" r="2.2"/>
+      </g>
+
+      <g id="shape-nova" fill="currentColor">
+        <path fill-rule="evenodd" d="M12 .75 C13.55 6.1 15.15 8.45 23.25 12 C15.15 15.55 13.55 17.9 12 23.25 C10.45 17.9 8.85 15.55 .75 12 C8.85 8.45 10.45 6.1 12 .75 Z M12 7.85 A4.15 4.15 0 1 0 12 16.15 A4.15 4.15 0 1 0 12 7.85 Z"/>
+        <circle cx="12" cy="12" r="2.3"/>
+      </g>
+
+      <g id="shape-supernova" fill="currentColor">
+        <path fill-rule="evenodd" d="M12 .45 L14.65 6.35 L19.85 4.15 L17.65 9.35 L23.55 12 L17.65 14.65 L19.85 19.85 L14.65 17.65 L12 23.55 L9.35 17.65 L4.15 19.85 L6.35 14.65 L.45 12 L6.35 9.35 L4.15 4.15 L9.35 6.35 Z M12 7.15 A4.85 4.85 0 1 0 12 16.85 A4.85 4.85 0 1 0 12 7.15 Z"/>
+        <path d="M12 8.55 L15.45 12 L12 15.45 L8.55 12 Z"/>
+      </g>
+
+      <g id="shape-gravity" fill="currentColor">
+        <path fill-rule="evenodd" d="M12 1.25 A10.75 10.75 0 1 1 12 22.75 A10.75 10.75 0 1 1 12 1.25 Z M12 4.35 A7.65 7.65 0 1 0 12 19.65 A7.65 7.65 0 1 0 12 4.35 Z"/>
+        <path fill-rule="evenodd" transform="rotate(-28 12 12)" d="M2.7 12 A9.3 4.35 0 1 0 21.3 12 A9.3 4.35 0 1 0 2.7 12 Z M5.55 12 A6.45 1.7 0 1 1 18.45 12 A6.45 1.7 0 1 1 5.55 12 Z"/>
+        <circle cx="12" cy="12" r="2.2"/>
+      </g>
+
+      <g id="shape-singularity" fill="currentColor">
+  <path fill-rule="evenodd" d="M12 1.4 A10.6 10.6 0 1 1 12 22.6 A10.6 10.6 0 1 1 12 1.4 Z M12 4.45 A7.55 7.55 0 1 0 12 19.55 A7.55 7.55 0 1 0 12 4.45 Z"/>
+  <rect x="1.35" y="10.55" width="21.3" height="2.9" rx="1.45"/>
+  <circle cx="12" cy="12" r="3.65"/>
+  <circle cx="12" cy="5.7" r="1.05"/>
+  <circle cx="12" cy="18.3" r="1.05"/>
+</g>
+
+      <g id="shape-universe" fill="currentColor">
+  <path fill-rule="evenodd" d="M12 1 A11 11 0 1 1 12 23 A11 11 0 1 1 12 1 Z M12 3.55 A8.45 8.45 0 1 0 12 20.45 A8.45 8.45 0 1 0 12 3.55 Z"/>
+  <path fill-rule="evenodd" d="M12 9.42 C10.28 7.15 8.58 5.95 6.45 5.95 C3.15 5.95 .9 8.42 .9 12 C.9 15.58 3.15 18.05 6.45 18.05 C8.58 18.05 10.28 16.85 12 14.58 C13.72 16.85 15.42 18.05 17.55 18.05 C20.85 18.05 23.1 15.58 23.1 12 C23.1 8.42 20.85 5.95 17.55 5.95 C15.42 5.95 13.72 7.15 12 9.42 Z M6.5 8.78 C7.68 8.78 8.75 9.72 10.15 12 C8.75 14.28 7.68 15.22 6.5 15.22 C4.82 15.22 3.72 13.93 3.72 12 C3.72 10.07 4.82 8.78 6.5 8.78 Z M17.5 8.78 C19.18 8.78 20.28 10.07 20.28 12 C20.28 13.93 19.18 15.22 17.5 15.22 C16.32 15.22 15.25 14.28 13.85 12 C15.25 9.72 16.32 8.78 17.5 8.78 Z"/>
+  <circle cx="12" cy="1.35" r="1.25"/>
+  <circle cx="22.65" cy="12" r="1.25"/>
+  <circle cx="12" cy="22.65" r="1.25"/>
+  <circle cx="1.35" cy="12" r="1.25"/>
+</g>
+
+      <mask id="mask-human" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+        <use href="#shape-human" color="#fff"/>
+      </mask>
+      <mask id="mask-leader" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+        <use href="#shape-leader" color="#fff"/>
+      </mask>
+      <mask id="mask-icon" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+        <use href="#shape-icon" color="#fff"/>
+      </mask>
+      <mask id="mask-rising" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+        <use href="#shape-rising" color="#fff"/>
+      </mask>
+      <mask id="mask-star" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+        <use href="#shape-star" color="#fff"/>
+      </mask>
+      <mask id="mask-nova" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+        <use href="#shape-nova" color="#fff"/>
+      </mask>
+      <mask id="mask-supernova" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+        <use href="#shape-supernova" color="#fff"/>
+      </mask>
+      <mask id="mask-gravity" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+        <use href="#shape-gravity" color="#fff"/>
+      </mask>
+      <mask id="mask-singularity" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+        <use href="#shape-singularity" color="#fff"/>
+      </mask>
+      <mask id="mask-universe" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+        <use href="#shape-universe" color="#fff"/>
+      </mask>
+    </defs>
+  </svg>
+
+  <main>
+    <header>
+      <p class="eyebrow">CONSEQ · Maison Cosmique</p>
+      <h1>階級章 第3案 — メゾン・コスミック改（Tier1-8再設計）</h1>
+      <p class="lead">
+        単体の強い幾何、中央核、静かな対称性を共通言語とし、
+        人の輪郭から宇宙の無限結びへ段階的に構造を深める10階級。
+      </p>
+    </header>
+
+    <section aria-labelledby="tier-heading">
+      <div class="section-heading">
+        <h2 id="tier-heading">全10階級</h2>
+        <span class="section-note">48px / 実寸24px</span>
+      </div>
+
+      <div class="tier-grid">
+        <article class="tier-card">
+          <div class="icon-pair">
+            <svg class="badge badge--48" viewBox="0 0 24 24" role="img" aria-label="HUMAN">
+              <rect width="24" height="24" fill="url(#gradient-human)" mask="url(#mask-human)"/>
+            </svg>
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true">
+              <rect width="24" height="24" fill="url(#gradient-human)" mask="url(#mask-human)"/>
+            </svg>
+          </div>
+          <div class="tier-copy">
+            <p class="tier-kicker">Tier 01</p>
+            <h3 class="tier-name">HUMAN</h3>
+            <p class="tier-intent">頭部と一枚の肩形だけで、宇宙階級の出発点となる「個」を示す。</p>
+          </div>
+        </article>
+
+        <article class="tier-card">
+          <div class="icon-pair">
+            <svg class="badge badge--48" viewBox="0 0 24 24" role="img" aria-label="LEADER">
+              <rect width="24" height="24" fill="url(#gradient-leader)" mask="url(#mask-leader)"/>
+            </svg>
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true">
+              <rect width="24" height="24" fill="url(#gradient-leader)" mask="url(#mask-leader)"/>
+            </svg>
+          </div>
+          <div class="tier-copy">
+            <p class="tier-kicker">Tier 02</p>
+            <h3 class="tier-name">LEADER</h3>
+            <p class="tier-intent">ひとつの円章に上向きの冠軸を接続し、最初の叙勲を表す。</p>
+          </div>
+        </article>
+
+        <article class="tier-card">
+          <div class="icon-pair">
+            <svg class="badge badge--48" viewBox="0 0 24 24" role="img" aria-label="ICON">
+              <rect width="24" height="24" fill="url(#gradient-icon)" mask="url(#mask-icon)"/>
+            </svg>
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true">
+              <rect width="24" height="24" fill="url(#gradient-icon)" mask="url(#mask-icon)"/>
+            </svg>
+          </div>
+          <div class="tier-copy">
+            <p class="tier-kicker">Tier 03</p>
+            <h3 class="tier-name">ICON</h3>
+            <p class="tier-intent">視線を集める大きなレンズと核で、知名度が芽吹く瞬間を示す。</p>
+          </div>
+        </article>
+
+        <article class="tier-card">
+          <div class="icon-pair">
+            <svg class="badge badge--48" viewBox="0 0 24 24" role="img" aria-label="RISING">
+              <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising)"/>
+            </svg>
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true">
+              <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising)"/>
+            </svg>
+          </div>
+          <div class="tier-copy">
+            <p class="tier-kicker">Tier 04</p>
+            <h3 class="tier-name">RISING</h3>
+            <p class="tier-intent">上方へ絞られる一枚の雫形に核を収め、静かな上昇力を表す。</p>
+          </div>
+        </article>
+
+        <article class="tier-card">
+          <div class="icon-pair">
+            <svg class="badge badge--48" viewBox="0 0 24 24" role="img" aria-label="STAR">
+              <rect width="24" height="24" fill="url(#gradient-star)" mask="url(#mask-star)"/>
+            </svg>
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true">
+              <rect width="24" height="24" fill="url(#gradient-star)" mask="url(#mask-star)"/>
+            </svg>
+          </div>
+          <div class="tier-copy">
+            <p class="tier-kicker">Tier 05</p>
+            <h3 class="tier-name">STAR</h3>
+            <p class="tier-intent">五芒の星冠と孤立した恒星核だけで、確立された輝きを示す。</p>
+          </div>
+        </article>
+
+        <article class="tier-card">
+          <div class="icon-pair">
+            <svg class="badge badge--48" viewBox="0 0 24 24" role="img" aria-label="NOVA">
+              <rect width="24" height="24" fill="url(#gradient-nova)" mask="url(#mask-nova)"/>
+            </svg>
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true">
+              <rect width="24" height="24" fill="url(#gradient-nova)" mask="url(#mask-nova)"/>
+            </svg>
+          </div>
+          <div class="tier-copy">
+            <p class="tier-kicker">Tier 06</p>
+            <h3 class="tier-name">NOVA</h3>
+            <p class="tier-intent">四方へ伸びる連続光冠と核で、光量が一段跳ねる状態を表す。</p>
+          </div>
+        </article>
+
+        <article class="tier-card">
+          <div class="icon-pair">
+            <svg class="badge badge--48" viewBox="0 0 24 24" role="img" aria-label="SUPERNOVA">
+              <rect width="24" height="24" fill="url(#gradient-supernova)" mask="url(#mask-supernova)"/>
+            </svg>
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true">
+              <rect width="24" height="24" fill="url(#gradient-supernova)" mask="url(#mask-supernova)"/>
+            </svg>
+          </div>
+          <div class="tier-copy">
+            <p class="tier-kicker">Tier 07</p>
+            <h3 class="tier-name">SUPERNOVA</h3>
+            <p class="tier-intent">八方向の臨界光冠と菱形核で、境界を破る爆発密度を示す。</p>
+          </div>
+        </article>
+
+        <article class="tier-card">
+          <div class="icon-pair">
+            <svg class="badge badge--48" viewBox="0 0 24 24" role="img" aria-label="GRAVITY">
+              <rect width="24" height="24" fill="url(#gradient-gravity)" mask="url(#mask-gravity)"/>
+            </svg>
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true">
+              <rect width="24" height="24" fill="url(#gradient-gravity)" mask="url(#mask-gravity)"/>
+            </svg>
+          </div>
+          <div class="tier-copy">
+            <p class="tier-kicker">Tier 08</p>
+            <h3 class="tier-name">GRAVITY</h3>
+            <p class="tier-intent">外環・傾斜軌道・核の三層で、すべてを引き寄せる場を表す。</p>
+          </div>
+        </article>
+
+        <article class="tier-card is-frozen">
+          <div class="icon-pair">
+            <svg class="badge badge--48" viewBox="0 0 24 24" role="img" aria-label="SINGULARITY">
+              <rect width="24" height="24" fill="url(#gradient-singularity)" mask="url(#mask-singularity)"/>
+            </svg>
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true">
+              <rect width="24" height="24" fill="url(#gradient-singularity)" mask="url(#mask-singularity)"/>
+            </svg>
+          </div>
+          <div class="tier-copy">
+            <p class="tier-kicker freeze-label">Tier 09 · Frozen</p>
+            <h3 class="tier-name">SINGULARITY</h3>
+            <p class="tier-intent">円環・事象面・高密度核が重なり、影響力が一点へ収束する。</p>
+          </div>
+        </article>
+
+        <article class="tier-card is-frozen">
+          <div class="icon-pair">
+            <svg class="badge badge--48" viewBox="0 0 24 24" role="img" aria-label="UNIVERSE">
+              <rect width="24" height="24" fill="url(#gradient-universe)" mask="url(#mask-universe)"/>
+            </svg>
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true">
+              <rect width="24" height="24" fill="url(#gradient-universe)" mask="url(#mask-universe)"/>
+            </svg>
+          </div>
+          <div class="tier-copy">
+            <p class="tier-kicker freeze-label">Tier 10 · Frozen</p>
+            <h3 class="tier-name">UNIVERSE</h3>
+            <p class="tier-intent">宇宙環と無限結びが融合し、影響力が閉じた世界そのものになる。</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="progression-heading">
+      <div class="section-heading">
+        <h2 id="progression-heading">昇格の流れ</h2>
+        <span class="section-note">Tier 01 → Tier 10</span>
+      </div>
+
+      <div class="progression-shell">
+        <div class="progression">
+          <div class="progression-item">
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="url(#gradient-human)" mask="url(#mask-human)"/></svg>
+            <span class="progression-name">HUMAN</span>
+          </div>
+          <div class="progression-item">
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="url(#gradient-leader)" mask="url(#mask-leader)"/></svg>
+            <span class="progression-name">LEADER</span>
+          </div>
+          <div class="progression-item">
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="url(#gradient-icon)" mask="url(#mask-icon)"/></svg>
+            <span class="progression-name">ICON</span>
+          </div>
+          <div class="progression-item">
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising)"/></svg>
+            <span class="progression-name">RISING</span>
+          </div>
+          <div class="progression-item">
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="url(#gradient-star)" mask="url(#mask-star)"/></svg>
+            <span class="progression-name">STAR</span>
+          </div>
+          <div class="progression-item">
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="url(#gradient-nova)" mask="url(#mask-nova)"/></svg>
+            <span class="progression-name">NOVA</span>
+          </div>
+          <div class="progression-item">
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="url(#gradient-supernova)" mask="url(#mask-supernova)"/></svg>
+            <span class="progression-name">SUPERNOVA</span>
+          </div>
+          <div class="progression-item">
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="url(#gradient-gravity)" mask="url(#mask-gravity)"/></svg>
+            <span class="progression-name">GRAVITY</span>
+          </div>
+          <div class="progression-item">
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="url(#gradient-singularity)" mask="url(#mask-singularity)"/></svg>
+            <span class="progression-name">SINGULARITY</span>
+          </div>
+          <div class="progression-item">
+            <svg class="badge badge--24" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="url(#gradient-universe)" mask="url(#mask-universe)"/></svg>
+            <span class="progression-name">UNIVERSE</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="profile-heading">
+      <div class="section-heading">
+        <h2 id="profile-heading">プロフィール文脈</h2>
+        <span class="section-note">実使用スケール</span>
+      </div>
+
+      <div class="profile-shell">
+        <div class="profile-card">
+          <svg class="badge badge--24" viewBox="0 0 24 24" role="img" aria-label="STAR階級章">
+            <rect width="24" height="24" fill="url(#gradient-star)" mask="url(#mask-star)"/>
+          </svg>
+
+          <div class="profile-identity">
+            <span class="star-word">STAR</span>
+          </div>
+
+          <div class="metric">
+            <span class="metric-value">50.9K</span>
+            <span class="metric-label">影響力</span>
+          </div>
+
+          <div class="metric metric-growth">
+            <span class="metric-value">▲ +12%</span>
+            <span class="metric-label">前日比</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

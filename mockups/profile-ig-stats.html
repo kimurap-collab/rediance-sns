@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGスタッツ横並び見本</title>
+<style>
+  /* ===== app.html :root から必要分のみ抜粋（profile-no-banner.html準拠） ===== */
+  :root {
+    --primary: #1E3A5F;
+    --bg: #FFFFFF;
+    --surface: #F5F5F5;
+    --border: #E8E8E8;
+    --text-main: #000000;
+    --text-sub: #555555;
+    --text-light: #999999;
+    --success: #10B981;
+    --header-height: 56px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    letter-spacing: -0.14px;
+    background: #EFEFEF;
+    color: var(--text-main);
+    padding: 32px 16px 80px;
+  }
+
+  .page-head { max-width: 900px; margin: 0 auto 28px; }
+  .page-head h1 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+  .page-head p { font-size: 13px; color: var(--text-sub); line-height: 1.6; }
+
+  .grid {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 28px;
+    align-items: start;
+  }
+
+  .card-label { margin-bottom: 10px; }
+  .card-label .tag { font-size: 11px; font-weight: 800; color: #fff; background: var(--primary); border-radius: 4px; padding: 3px 8px; display: inline-block; letter-spacing: 0.5px; }
+  .card-label .name { font-size: 15px; font-weight: 800; margin: 6px 0 2px; }
+  .card-label .desc { font-size: 12.5px; color: var(--text-sub); line-height: 1.5; }
+
+  .phone-frame {
+    background: var(--bg);
+    border: 1px solid #DADADA;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  }
+
+  /* ===== app.html 289〜309, 8644〜8647行：トップバー（.home-header、MY PAGE ☰版）実物準拠 ===== */
+  .home-header {
+    height: var(--header-height);
+    background: linear-gradient(135deg, #1A2E05 0%, #84CC16 38%, #0D9488 65%, #4C1D95 100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    text-shadow: 0 1px 2px rgba(0,0,0,.35);
+  }
+  .home-header .header-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+  }
+  .home-header { position: relative; }
+  .home-header .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #ffffff;
+  }
+
+  /* ===== app.html 65〜85行：upx-avatar（img対応・サイズはケースごとにinline上書き） ===== */
+  .upx-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid var(--bg);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #DCE3EA;
+    overflow: hidden;
+  }
+  .upx-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  /* ===== 共通タイポ確定版：名前20px bold・handle14px・bio14px・左右余白16px ===== */
+  .rsh-header { padding: 16px 16px 12px; }
+  .upx-name { font-size: 20px; font-weight: 700; color: var(--text-main); }
+  .upx-handle { font-size: 14px; color: var(--text-light); }
+  .upx-bio { font-size: 14px; color: var(--text-sub); line-height: 1.6; margin-top: 10px; }
+
+  /* ===== app.html 104〜110行：階級グラデ行（グラデ文字は background-image 必須） ===== */
+  .rs-tier-line { min-height: 20px; display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 900; white-space: nowrap; }
+  .rs-tier-grad { -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .rs-tg-star { background-image: linear-gradient(135deg,#1E40AF,#06B6D4); color: #1E40AF; }
+  .rs-tier-caption { color: #64748B; font-size: 9px; font-weight: 700; letter-spacing: 1.1px; -webkit-text-fill-color: initial; }
+
+  /* ===== app.html 112〜118行：ボタン行・タブバー ===== */
+  .action-row { display: flex; gap: 8px; padding: 4px 16px 12px; }
+  .action-btn { flex: 1; padding: 8px 0; background: #F3F4F6; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--text-main); text-align: center; }
+  .my-profile-tab-bar { display: flex; border-bottom: 1.5px solid var(--border); }
+  .my-profile-tab { flex: 1; padding: 12px 0; text-align: center; font-size: 13px; font-weight: 600; color: var(--text-sub); border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -1.5px; }
+  .my-profile-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  /* ===== IGスタッツ行（両案共通）：アバター左＋残り幅にスタッツ等間隔横並び ===== */
+  .rsIG-top-row { display: flex; align-items: center; gap: 24px; }
+  .rsIG-stats { flex: 1; display: flex; }
+  .rsIG-stat { flex: 1; text-align: center; }
+  .rsIG-stat-value { font-size: 18px; font-weight: 800; color: var(--text-main); line-height: 1.25; }
+  .rsIG-stat-value.is-trend { color: var(--success); }
+  .rsIG-stat-label { font-size: 12.5px; color: var(--text-sub); margin-top: 3px; }
+
+  /* 案1：階級もスタッツ内なので2行目は名前のみ */
+  .rsIG-name-row { margin-top: 14px; }
+
+  /* 案2：階級は名前の右横に維持 */
+  .rsIG-name-tier-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+</style>
+</head>
+<body>
+
+  <div class="page-head">
+    <h1>IGスタッツ横並び見本</h1>
+    <p>「インスタは名前の横に全部の数値並んでるでしょ」を受けて、インスタのプロフィール構造を完コピ。1行目はアバター（左）＋残り幅にスタッツを横一列（数字bold上段・ラベル下段の縦2段、等間隔）。案1はスタッツを3枠にして階級もそこへ統合、案2はスタッツ2枠＋階級グラデ行は名前の右横に維持。</p>
+  </div>
+
+  <div class="grid">
+
+    <div>
+      <div class="card-label">
+        <span class="tag">案1</span>
+        <div class="name">3枠（階級もスタッツに）</div>
+        <div class="desc">インスタの「投稿 フォロワー フォロー中」と同じ3項目リズム。50.9K／影響力・▲+12%／前日比・⭐STAR／階級の3枠を等間隔に並べる。階級がスタッツに移ったので名前行には付けない。</div>
+      </div>
+      <div class="phone-frame">
+        <div class="home-header">
+          <div style="width:32px;"></div>
+          <div class="header-logo">@taisho_k</div>
+          <button class="icon-btn">☰</button>
+        </div>
+        <div class="rsh-header">
+          <div class="rsIG-top-row">
+            <div class="upx-avatar" style="width:80px;height:80px;">
+              <img src="../assets/img/u16.jpg" alt="木村 誠司">
+            </div>
+            <div class="rsIG-stats">
+              <div class="rsIG-stat">
+                <div class="rsIG-stat-value">50.9K</div>
+                <div class="rsIG-stat-label">影響力</div>
+              </div>
+              <div class="rsIG-stat">
+                <div class="rsIG-stat-value is-trend">▲ +12%</div>
+                <div class="rsIG-stat-label">前日比</div>
+              </div>
+              <div class="rsIG-stat">
+                <div class="rsIG-stat-value rs-tier-grad rs-tg-star">⭐ STAR</div>
+                <div class="rsIG-stat-label">階級</div>
+              </div>
+            </div>
+          </div>
+          <div class="rsIG-name-row">
+            <div class="upx-name">木村 誠司</div>
+          </div>
+          <div class="upx-handle" style="margin-top:8px;">@taisho_k</div>
+          <div class="upx-bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+        </div>
+        <div class="action-row">
+          <div class="action-btn">Edit Profile</div>
+          <div class="action-btn">Circle Settings</div>
+          <div class="action-btn">Group Settings</div>
+        </div>
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card-label">
+        <span class="tag">案2</span>
+        <div class="name">2枠＋名前横に階級</div>
+        <div class="desc">スタッツは50.9K／影響力・▲+12%／前日比の2枠のみ。等間隔に配置し左寄りに詰めない。階級グラデ行は現行通り名前の右横に維持する。</div>
+      </div>
+      <div class="phone-frame">
+        <div class="home-header">
+          <div style="width:32px;"></div>
+          <div class="header-logo">@taisho_k</div>
+          <button class="icon-btn">☰</button>
+        </div>
+        <div class="rsh-header">
+          <div class="rsIG-top-row">
+            <div class="upx-avatar" style="width:80px;height:80px;">
+              <img src="../assets/img/u16.jpg" alt="木村 誠司">
+            </div>
+            <div class="rsIG-stats">
+              <div class="rsIG-stat">
+                <div class="rsIG-stat-value">50.9K</div>
+                <div class="rsIG-stat-label">影響力</div>
+              </div>
+              <div class="rsIG-stat">
+                <div class="rsIG-stat-value is-trend">▲ +12%</div>
+                <div class="rsIG-stat-label">前日比</div>
+              </div>
+            </div>
+          </div>
+          <div class="rsIG-name-tier-row">
+            <div class="upx-name">木村 誠司</div>
+            <div class="rs-tier-line">
+              <span class="rs-tier-grad rs-tg-star">⭐ STAR</span>
+              <span class="rs-tier-caption">階級</span>
+            </div>
+          </div>
+          <div class="upx-handle" style="margin-top:8px;">@taisho_k</div>
+          <div class="upx-bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+        </div>
+        <div class="action-row">
+          <div class="action-btn">Edit Profile</div>
+          <div class="action-btn">Circle Settings</div>
+          <div class="action-btn">Group Settings</div>
+        </div>
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

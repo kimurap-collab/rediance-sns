@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RISING章 代替5案</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #15201d;
+    --muted: #64706c;
+    --line: #e5ebe8;
+    --panel: #ffffff;
+    --soft: #f7faf8;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: #ffffff;
+    color: var(--ink);
+    font-family:
+      Inter, "Helvetica Neue", Arial, "Hiragino Sans",
+      "Yu Gothic", YuGothic, Meiryo, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  main {
+    width: min(1120px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 52px 0 72px;
+  }
+
+  header {
+    margin-bottom: 30px;
+  }
+
+  h1 {
+    margin: 0 0 8px;
+    font-size: clamp(25px, 4vw, 36px);
+    line-height: 1.2;
+    letter-spacing: .04em;
+  }
+
+  .lead {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .card {
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--panel);
+    box-shadow: 0 8px 28px rgba(24, 55, 44, .055);
+  }
+
+  .card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .proposal {
+    display: grid;
+    grid-template-columns: 72px 40px minmax(0, 1fr);
+    align-items: center;
+    gap: 16px;
+  }
+
+  .preview-large,
+  .preview-small {
+    display: grid;
+    place-items: center;
+    background: var(--soft);
+    border: 1px solid #edf1ef;
+  }
+
+  .preview-large {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+  }
+
+  .preview-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  .glyph {
+    display: block;
+    flex: none;
+    overflow: visible;
+  }
+
+  .glyph-48 {
+    width: 48px;
+    height: 48px;
+  }
+
+  .glyph-24 {
+    width: 24px;
+    height: 24px;
+  }
+
+  .number {
+    margin: 0 0 5px;
+    color: #0d9488;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .14em;
+  }
+
+  h2 {
+    margin: 0 0 7px;
+    font-size: 20px;
+    line-height: 1.25;
+    letter-spacing: .045em;
+  }
+
+  .intent {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  .context {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-top: 21px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--line);
+    border-radius: 0 0 14px 14px;
+    background: #fbfcfb;
+  }
+
+  .context-title {
+    flex: none;
+    color: #77827e;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+  }
+
+  .lineage {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .arrow {
+    color: #aeb8b4;
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .legend {
+    display: flex;
+    gap: 18px;
+    margin-top: 22px;
+    color: #7b8581;
+    font-size: 11px;
+  }
+
+  .legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .swatch {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+  }
+
+  .swatch-icon {
+    background: linear-gradient(135deg, #047857, #34d399);
+  }
+
+  .swatch-rising {
+    background: linear-gradient(135deg, #0d9488, #84cc16);
+  }
+
+  .swatch-star {
+    background: linear-gradient(135deg, #1e40af, #06b6d4);
+  }
+
+  .svg-library {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  @media (max-width: 760px) {
+    main {
+      width: min(100% - 24px, 560px);
+      padding-top: 34px;
+    }
+
+    .grid {
+      grid-template-columns: 1fr;
+    }
+
+    .card:last-child:nth-child(odd) {
+      grid-column: auto;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .card {
+      padding: 19px;
+    }
+
+    .proposal {
+      grid-template-columns: 68px 36px minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .preview-large {
+      width: 68px;
+      height: 68px;
+    }
+
+    .preview-small {
+      width: 36px;
+      height: 36px;
+    }
+
+    .context {
+      gap: 10px;
+      padding-inline: 12px;
+    }
+
+    .context-title {
+      font-size: 9px;
+    }
+
+    .lineage {
+      gap: 6px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<svg class="svg-library" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="gradient-icon" gradientUnits="userSpaceOnUse"
+      x1="0" y1="0" x2="24" y2="24">
+      <stop offset="0" stop-color="#047857"/>
+      <stop offset="1" stop-color="#34D399"/>
+    </linearGradient>
+
+    <linearGradient id="gradient-rising" gradientUnits="userSpaceOnUse"
+      x1="0" y1="0" x2="24" y2="24">
+      <stop offset="0" stop-color="#0D9488"/>
+      <stop offset="1" stop-color="#84CC16"/>
+    </linearGradient>
+
+    <linearGradient id="gradient-star" gradientUnits="userSpaceOnUse"
+      x1="0" y1="0" x2="24" y2="24">
+      <stop offset="0" stop-color="#1E40AF"/>
+      <stop offset="1" stop-color="#06B6D4"/>
+    </linearGradient>
+
+    <!-- 合格済み Tier03 ICON -->
+    <g id="shape-icon" fill="currentColor">
+      <path fill-rule="evenodd"
+        d="M1.15 12 C4.25 6.85 7.85 4.35 12 4.35 C16.15 4.35 19.75 6.85 22.85 12 C19.75 17.15 16.15 19.65 12 19.65 C7.85 19.65 4.25 17.15 1.15 12 Z M5.35 12 C7.35 14.65 9.45 15.95 12 15.95 C14.55 15.95 16.65 14.65 18.65 12 C16.65 9.35 14.55 8.05 12 8.05 C9.45 8.05 7.35 9.35 5.35 12 Z"/>
+      <circle cx="12" cy="12" r="2.15"/>
+    </g>
+
+    <!-- 合格済み Tier05 STAR -->
+    <g id="shape-star" fill="currentColor">
+      <path fill-rule="evenodd"
+        d="M12 1.05 L14.65 8.15 L22.25 8.5 L16.3 13.25 L18.35 20.55 L12 16.4 L5.65 20.55 L7.7 13.25 L1.75 8.5 L9.35 8.15 Z M12 7.8 A4.2 4.2 0 1 0 12 16.2 A4.2 4.2 0 1 0 12 7.8 Z"/>
+      <circle cx="12" cy="12" r="2.2"/>
+    </g>
+
+    <!-- A：傾斜軌道＋上昇核 -->
+    <g id="shape-rising-orbit" fill="currentColor">
+      <path fill-rule="evenodd"
+        d="M12 5.65
+           A9.6 5.95 0 1 1 12 18.35
+           A9.6 5.95 0 1 1 12 5.65 Z
+           M12 8.65
+           A6.4 3.15 0 1 0 12 15.35
+           A6.4 3.15 0 1 0 12 8.65 Z"
+        transform="rotate(-24 12 12)"/>
+      <circle cx="17.55" cy="6.95" r="2.2"/>
+    </g>
+
+    <!-- B：上向き三日月＋上昇核 -->
+    <g id="shape-rising-crescent" fill="currentColor">
+      <path fill-rule="evenodd"
+        d="M12 1.5
+           A10.5 10.5 0 1 1 12 22.5
+           A10.5 10.5 0 1 1 12 1.5 Z
+           M12 -1.2
+           A8.4 8.4 0 1 0 12 15.6
+           A8.4 8.4 0 1 0 12 -1.2 Z"/>
+      <circle cx="12" cy="7.55" r="2.2"/>
+    </g>
+
+    <!-- C：半円光冠＋垂直光条＋核 -->
+    <g id="shape-rising-dawn" fill="currentColor">
+      <path fill-rule="evenodd"
+        d="M2.5 19
+           A9.5 9.5 0 0 1 21.5 19
+           H18
+           A6 6 0 0 0 6 19
+           Z
+           M10.5 1.35
+           H13.5
+           L14.15 10.1
+           H9.85
+           Z"/>
+      <circle cx="12" cy="17.25" r="2.2"/>
+    </g>
+
+    <!-- D：円環＋左右対称の彗尾＋核 -->
+    <g id="shape-rising-comet" fill="currentColor">
+      <path fill-rule="evenodd"
+        d="M12 1.2
+           A10.8 10.8 0 1 1 12 22.8
+           A10.8 10.8 0 1 1 12 1.2 Z
+           M12 4.55
+           A7.45 7.45 0 1 0 12 19.45
+           A7.45 7.45 0 1 0 12 4.55 Z"/>
+      <path d="M12 8.65 L15.75 18.05 L12 16.4 L8.25 18.05 Z"/>
+      <circle cx="12" cy="7.05" r="2.2"/>
+    </g>
+
+    <!-- E：左右対称の階＋頂点核 -->
+    <g id="shape-rising-stair" fill="currentColor">
+      <path d="M2.15 21.5
+               V17.35 H5.65
+               V13.25 H9.15
+               V9.15 H14.85
+               V13.25 H18.35
+               V17.35 H21.85
+               V21.5 Z"/>
+      <circle cx="12" cy="5.05" r="2.2"/>
+    </g>
+
+    <mask id="mask-icon" maskUnits="userSpaceOnUse"
+      x="0" y="0" width="24" height="24">
+      <use href="#shape-icon" color="#fff"/>
+    </mask>
+
+    <mask id="mask-star" maskUnits="userSpaceOnUse"
+      x="0" y="0" width="24" height="24">
+      <use href="#shape-star" color="#fff"/>
+    </mask>
+
+    <mask id="mask-rising-orbit" maskUnits="userSpaceOnUse"
+      x="0" y="0" width="24" height="24">
+      <use href="#shape-rising-orbit" color="#fff"/>
+    </mask>
+
+    <mask id="mask-rising-crescent" maskUnits="userSpaceOnUse"
+      x="0" y="0" width="24" height="24">
+      <use href="#shape-rising-crescent" color="#fff"/>
+    </mask>
+
+    <mask id="mask-rising-dawn" maskUnits="userSpaceOnUse"
+      x="0" y="0" width="24" height="24">
+      <use href="#shape-rising-dawn" color="#fff"/>
+    </mask>
+
+    <mask id="mask-rising-comet" maskUnits="userSpaceOnUse"
+      x="0" y="0" width="24" height="24">
+      <use href="#shape-rising-comet" color="#fff"/>
+    </mask>
+
+    <mask id="mask-rising-stair" maskUnits="userSpaceOnUse"
+      x="0" y="0" width="24" height="24">
+      <use href="#shape-rising-stair" color="#fff"/>
+    </mask>
+  </defs>
+</svg>
+
+<main>
+  <header>
+    <h1>RISING章 代替5案</h1>
+    <p class="lead">
+      Tier03 ICONからTier05 STARへ至る「上昇」の中間章。48pxと実寸24px、ならびに両隣との家系を比較します。
+    </p>
+
+    <div class="legend" aria-label="階級別カラー">
+      <span><i class="swatch swatch-icon"></i>ICON</span>
+      <span><i class="swatch swatch-rising"></i>RISING</span>
+      <span><i class="swatch swatch-star"></i>STAR</span>
+    </div>
+  </header>
+
+  <section class="grid" aria-label="RISING代替案一覧">
+
+    <article class="card">
+      <div class="proposal">
+        <div class="preview-large">
+          <svg class="glyph glyph-48" viewBox="0 0 24 24" role="img" aria-label="昇軌 48ピクセル">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-orbit)"/>
+          </svg>
+        </div>
+        <div class="preview-small">
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" role="img" aria-label="昇軌 24ピクセル">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-orbit)"/>
+          </svg>
+        </div>
+        <div>
+          <p class="number">PROPOSAL A</p>
+          <h2>昇軌 — ASCENDING ORBIT</h2>
+          <p class="intent">レンズを傾斜軌道へ変え、右上の核だけで明確な上昇運動を刻む。</p>
+        </div>
+      </div>
+
+      <div class="context">
+        <span class="context-title">文脈確認</span>
+        <div class="lineage" aria-label="ICON、昇軌、STAR">
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-icon)" mask="url(#mask-icon)"/>
+          </svg>
+          <span class="arrow">→</span>
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-orbit)"/>
+          </svg>
+          <span class="arrow">→</span>
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-star)" mask="url(#mask-star)"/>
+          </svg>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="proposal">
+        <div class="preview-large">
+          <svg class="glyph glyph-48" viewBox="0 0 24 24" role="img" aria-label="月昇 48ピクセル">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-crescent)"/>
+          </svg>
+        </div>
+        <div class="preview-small">
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" role="img" aria-label="月昇 24ピクセル">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-crescent)"/>
+          </svg>
+        </div>
+        <div>
+          <p class="number">PROPOSAL B</p>
+          <h2>月昇 — RISING CRESCENT</h2>
+          <p class="intent">上向きの月冠から核が昇る、カボションジュエリーに近い静かな構成。</p>
+        </div>
+      </div>
+
+      <div class="context">
+        <span class="context-title">文脈確認</span>
+        <div class="lineage" aria-label="ICON、月昇、STAR">
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-icon)" mask="url(#mask-icon)"/>
+          </svg>
+          <span class="arrow">→</span>
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-crescent)"/>
+          </svg>
+          <span class="arrow">→</span>
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-star)" mask="url(#mask-star)"/>
+          </svg>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="proposal">
+        <div class="preview-large">
+          <svg class="glyph glyph-48" viewBox="0 0 24 24" role="img" aria-label="曙光 48ピクセル">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-dawn)"/>
+          </svg>
+        </div>
+        <div class="preview-small">
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" role="img" aria-label="曙光 24ピクセル">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-dawn)"/>
+          </svg>
+        </div>
+        <div>
+          <p class="number">PROPOSAL C</p>
+          <h2>曙光 — DAWN HALO</h2>
+          <p class="intent">半円の光冠と太い天頂光条で、核が恒星化を始める瞬間を表す。</p>
+        </div>
+      </div>
+
+      <div class="context">
+        <span class="context-title">文脈確認</span>
+        <div class="lineage" aria-label="ICON、曙光、STAR">
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-icon)" mask="url(#mask-icon)"/>
+          </svg>
+          <span class="arrow">→</span>
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-dawn)"/>
+          </svg>
+          <span class="arrow">→</span>
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-star)" mask="url(#mask-star)"/>
+          </svg>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="proposal">
+        <div class="preview-large">
+          <svg class="glyph glyph-48" viewBox="0 0 24 24" role="img" aria-label="彗環 48ピクセル">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-comet)"/>
+          </svg>
+        </div>
+        <div class="preview-small">
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" role="img" aria-label="彗環 24ピクセル">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-comet)"/>
+          </svg>
+        </div>
+        <div>
+          <p class="number">PROPOSAL D</p>
+          <h2>彗環 — COMET SEAL</h2>
+          <p class="intent">完成した円環の内側で、左右対称の彗尾と核が上方へ凝縮していく。</p>
+        </div>
+      </div>
+
+      <div class="context">
+        <span class="context-title">文脈確認</span>
+        <div class="lineage" aria-label="ICON、彗環、STAR">
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-icon)" mask="url(#mask-icon)"/>
+          </svg>
+          <span class="arrow">→</span>
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-comet)"/>
+          </svg>
+          <span class="arrow">→</span>
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-star)" mask="url(#mask-star)"/>
+          </svg>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="proposal">
+        <div class="preview-large">
+          <svg class="glyph glyph-48" viewBox="0 0 24 24" role="img" aria-label="天階 48ピクセル">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-stair)"/>
+          </svg>
+        </div>
+        <div class="preview-small">
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" role="img" aria-label="天階 24ピクセル">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-stair)"/>
+          </svg>
+        </div>
+        <div>
+          <p class="number">PROPOSAL E</p>
+          <h2>天階 — CELESTIAL STEPS</h2>
+          <p class="intent">左右対称の階を上り切った核で、獲得型の上昇と次位への到達を示す。</p>
+        </div>
+      </div>
+
+      <div class="context">
+        <span class="context-title">文脈確認</span>
+        <div class="lineage" aria-label="ICON、天階、STAR">
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-icon)" mask="url(#mask-icon)"/>
+          </svg>
+          <span class="arrow">→</span>
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-rising)" mask="url(#mask-rising-stair)"/>
+          </svg>
+          <span class="arrow">→</span>
+          <svg class="glyph glyph-24" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" fill="url(#gradient-star)" mask="url(#mask-star)"/>
+          </svg>
+        </div>
+      </div>
+    </article>
+
+  </section>
+</main>
+</body>
+</html>

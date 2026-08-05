@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>オリジナル階級章見本 — A進化型／B天体型</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family:
+        Inter, "SF Pro Display", "SF Pro Text", "Hiragino Sans",
+        "Yu Gothic UI", "Yu Gothic", Meiryo, sans-serif;
+      color: #111827;
+      background: #fff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #fff;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 52px 0 72px;
+    }
+
+    .page-header {
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(24px, 3vw, 38px);
+      line-height: 1.2;
+      letter-spacing: -0.045em;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin: 0;
+      color: #6b7280;
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .design-section {
+      margin-top: 42px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 21px;
+      letter-spacing: -0.025em;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .rank-scroll {
+      overflow-x: auto;
+      padding: 2px 2px 10px;
+      scrollbar-width: thin;
+    }
+
+    .rank-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(178px, 1fr));
+      gap: 12px;
+      min-width: 938px;
+    }
+
+    .rank-card {
+      min-height: 226px;
+      padding: 25px 16px 18px;
+      text-align: center;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      box-shadow: 0 3px 12px rgba(17, 24, 39, 0.035);
+    }
+
+    .icon-stage {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 17px;
+      min-height: 64px;
+      margin-bottom: 17px;
+    }
+
+    .size-sample {
+      display: grid;
+      justify-items: center;
+      gap: 5px;
+    }
+
+    .size-label {
+      color: #b0b6c0;
+      font-size: 9px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.08em;
+    }
+
+    .emblem {
+      display: inline-flex;
+      flex: 0 0 auto;
+      color: #111827;
+      line-height: 0;
+    }
+
+    .emblem svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .emblem-48 {
+      width: 48px;
+      height: 48px;
+    }
+
+    .emblem-24 {
+      width: 24px;
+      height: 24px;
+    }
+
+    .rank-name {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: 0.12em;
+    }
+
+    .rank-intent {
+      min-height: 42px;
+      margin: 10px auto 0;
+      color: #808894;
+      font-size: 10.5px;
+      line-height: 1.55;
+    }
+
+    .profile-section {
+      margin-top: 50px;
+      padding-top: 34px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .profile-section h2 {
+      margin: 0 0 6px;
+      font-size: 21px;
+      letter-spacing: -0.025em;
+    }
+
+    .profile-note {
+      margin: 0 0 18px;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .profile-frame {
+      width: min(560px, 100%);
+      padding: 9px;
+      background: #f5f6f8;
+      border: 1px solid #e5e7eb;
+      border-radius: 17px;
+    }
+
+    .profile-row {
+      display: grid;
+      grid-template-columns: 43px repeat(3, minmax(0, 1fr));
+      gap: 7px;
+      align-items: stretch;
+    }
+
+    .profile-row + .profile-row {
+      margin-top: 8px;
+    }
+
+    .proposal-tag {
+      display: grid;
+      place-items: center;
+      color: #6b7280;
+      font-size: 11px;
+      font-weight: 800;
+      background: #fff;
+      border: 1px solid #e7e9ed;
+      border-radius: 11px;
+    }
+
+    .stat-box {
+      min-height: 75px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: 1px solid #e7e9ed;
+      border-radius: 11px;
+    }
+
+    .rank-stat {
+      gap: 4px;
+    }
+
+    .gradient-text {
+      color: transparent;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gradient-star {
+      background-image: linear-gradient(135deg, #1E40AF, #06B6D4);
+    }
+
+    .profile-rank-name {
+      font-size: 13px;
+      font-weight: 850;
+      line-height: 1;
+      letter-spacing: 0.08em;
+    }
+
+    .stat-value {
+      color: #111827;
+      font-size: 17px;
+      font-weight: 820;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+    }
+
+    .stat-value.up {
+      color: #0d9488;
+      font-size: 15px;
+    }
+
+    .stat-label {
+      margin-top: 5px;
+      color: #9ca3af;
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .symbol-library {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 24px, 1180px);
+        padding-top: 32px;
+      }
+
+      .section-heading {
+        display: block;
+      }
+
+      .section-heading p {
+        margin-top: 5px;
+      }
+
+      .profile-frame {
+        overflow-x: auto;
+      }
+
+      .profile-row {
+        min-width: 420px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!--
+    形状定義はすべて fill="currentColor"。
+    表示時に同形状をSVGマスクとして使い、指定グラデーションを流し込む。
+  -->
+  <svg class="symbol-library" aria-hidden="true" focusable="false">
+    <defs>
+      <!-- A案：共通の縦長コアと下向きの台座を段階的に拡張 -->
+      <symbol id="a-human" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12 1.8 16.8 6.6 16 16.7 12 22.2 8 16.7 7.2 6.6 12 1.8Zm0 5.1L10 9v6.4l2 2.8 2-2.8V9l-2-2.1Z"/>
+      </symbol>
+
+      <symbol id="a-star" viewBox="0 0 24 24">
+        <path fill="currentColor" d="m12 1 1.45 3.3L17 5.2l-2.7 2.3.2 3.6-2.5-1.7-2.5 1.7.2-3.6L7 5.2l3.55-.9L12 1Z"/>
+        <path fill="currentColor" d="m7.9 8.4-5.5 2.2 4.2 2.2.7 4.6L12 22.3l4.7-4.9.7-4.6 4.2-2.2-5.5-2.2-.7 8.1-3.4 3.2-3.4-3.2-.7-8.1Z"/>
+      </symbol>
+
+      <symbol id="a-supernova" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12 .5 13.5 4 17 2.2l-.5 4 4.1.1-2.8 3 4.3 2.2-5 1.2-.8 5.2L12 23.5l-4.3-5.6-.8-5.2-5-1.2 4.3-2.2-2.8-3 4.1-.1-.5-4L10.5 4 12 .5Z"/>
+        <path fill="currentColor" d="m12 6.3 2.5 3.4-.6 6.1-1.9 3-1.9-3-.6-6.1L12 6.3Z"/>
+      </symbol>
+
+      <symbol id="a-gravity" viewBox="0 0 24 24">
+        <path fill="currentColor" fill-rule="evenodd" d="M12 1.2c5.95 0 10.8 3.35 10.8 7.5 0 2.15-1.3 4.08-3.38 5.45l-.48-3.12c.75-.69 1.16-1.48 1.16-2.33 0-2.34-3.56-4.8-8.1-4.8S3.9 6.36 3.9 8.7c0 .85.41 1.64 1.16 2.33l-.48 3.12C2.5 12.78 1.2 10.85 1.2 8.7c0-4.15 4.85-7.5 10.8-7.5Z"/>
+        <path fill="currentColor" d="M12 4.8 15.8 9l-.7 8.4-3.1 5.4-3.1-5.4L8.2 9 12 4.8ZM6.3 11.5l-4.8 3 4 1 .9 4.4 3-3.1-3.1-5.3Zm11.4 0 4.8 3-4 1-.9 4.4-3-3.1 3.1-5.3Z"/>
+      </symbol>
+
+      <symbol id="a-universe" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12 .4 14 3l3.2-1.5-.3 3.7 4-.4-1.7 3.4 3.7 1.3-3.2 2.3 2.6 2.8-4 .6.4 4.1-4.2-2.1L12 23.6l-2.5-6.4-4.2 2.1.4-4.1-4-.6 2.6-2.8-3.2-2.3 3.7-1.3-1.7-3.4 4 .4-.3-3.7L10 3l2-2.6Z"/>
+        <path fill="currentColor" fill-rule="evenodd" d="M12 4.6c3.62 0 6.55 2.56 6.55 5.72 0 1.95-1.1 3.66-2.79 4.7l-.32-2.89c.45-.53.71-1.15.71-1.81 0-1.76-1.86-3.18-4.15-3.18s-4.15 1.42-4.15 3.18c0 .66.26 1.28.71 1.81l-.32 2.89c-1.69-1.04-2.79-2.75-2.79-4.7C5.45 7.16 8.38 4.6 12 4.6Z"/>
+        <path fill="currentColor" d="m12 7.5 2.7 3.3-.55 6.1L12 21.1l-2.15-4.2-.55-6.1L12 7.5Z"/>
+      </symbol>
+
+      <!-- B案：階級ごとに異なる天体・物理現象を記号化 -->
+      <symbol id="b-human" viewBox="0 0 24 24">
+        <circle fill="currentColor" cx="12" cy="5" r="3.2"/>
+        <path fill="currentColor" d="M7.5 9.1 12 11l4.5-1.9 3 4.2-2.4 1.55-1.35-1.9v5.3L12 22l-3.75-3.75v-5.3l-1.35 1.9-2.4-1.55 3-4.2Z"/>
+      </symbol>
+
+      <symbol id="b-star" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12 .8 14.05 7 20 4l-3 5.95 6.2 2.05-6.2 2.05L20 20l-5.95-3L12 23.2 9.95 17 4 20l3-5.95L.8 12 7 9.95 4 4l5.95 3L12 .8Z"/>
+        <path fill="currentColor" d="m12 7.2 1.35 3.45L16.8 12l-3.45 1.35L12 16.8l-1.35-3.45L7.2 12l3.45-1.35L12 7.2Z"/>
+      </symbol>
+
+      <symbol id="b-supernova" viewBox="0 0 24 24">
+        <path fill="currentColor" d="m12 .4 1.65 5.15L17.8 2.1l-.35 5.4 5.2-1.35-3.4 4.2 4.35 2.8-5.3.8 2.05 4.9-4.75-2.45-.65 5.35L12 17.3l-2.95 4.45-.65-5.35-4.75 2.45 2.05-4.9-5.3-.8 4.35-2.8-3.4-4.2 5.2 1.35-.35-5.4 4.15 3.45L12 .4Z"/>
+        <circle fill="currentColor" cx="12" cy="11.8" r="4.05"/>
+      </symbol>
+
+      <symbol id="b-gravity" viewBox="0 0 24 24">
+        <path fill="currentColor" fill-rule="evenodd" d="M12 1.1c6.02 0 10.9 4.88 10.9 10.9S18.02 22.9 12 22.9 1.1 18.02 1.1 12 5.98 1.1 12 1.1Zm0 3.25A7.65 7.65 0 1 0 12 19.65 7.65 7.65 0 0 0 12 4.35Z"/>
+        <path fill="currentColor" d="M12 5.6 15.7 12 12 18.4 8.3 12 12 5.6ZM1.7 8.4h5v2.8h-5V8.4Zm15.6 4.4h5v2.8h-5v-2.8Z"/>
+      </symbol>
+
+      <symbol id="b-universe" viewBox="0 0 24 24">
+        <path fill="currentColor" fill-rule="evenodd" d="M4.1 6.1c2.9-2.55 5.52-1.23 7.9 1.87 2.38-3.1 5-4.42 7.9-1.87 3.68 3.24 3.68 8.56 0 11.8-2.9 2.55-5.52 1.23-7.9-1.87-2.38 3.1-5 4.42-7.9 1.87-3.68-3.24-3.68-8.56 0-11.8Zm2.18 3.12c-1.57 1.38-1.57 4.18 0 5.56 1.25 1.1 2.42.62 3.92-1.2L11.48 12l-1.28-1.58c-1.5-1.82-2.67-2.3-3.92-1.2Zm11.44 0c-1.25-1.1-2.42-.62-3.92 1.2L12.52 12l1.28 1.58c1.5 1.82 2.67 2.3 3.92 1.2 1.57-1.38 1.57-4.18 0-5.56Z"/>
+        <path fill="currentColor" d="M10.55.4h2.9v4h-2.9v-4Zm0 19.2h2.9v4h-2.9v-4ZM.4 10.55h3.4v2.9H.4v-2.9Zm19.8 0h3.4v2.9h-3.4v-2.9Z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <main class="page">
+    <header class="page-header">
+      <h1>オリジナル階級章見本 — A進化型／B天体型</h1>
+      <p class="lead">
+        13〜24pxでも階級の輪郭が判別できるよう、線ではなく面と大きな切り欠きで構成。
+        48pxの鑑賞性と、プロフィール実寸での識別性を同時に比較します。
+      </p>
+    </header>
+
+    <section class="design-section" aria-labelledby="heading-a">
+      <div class="section-heading">
+        <h2 id="heading-a">A案「進化型」</h2>
+        <p>縦長のコア章を共通DNAに、光条・翼・環・冠を加えて格を上げる。</p>
+      </div>
+
+      <div class="rank-scroll">
+        <div class="rank-grid">
+          <article class="rank-card">
+            <div class="icon-stage">
+              <div class="size-sample">
+                <span class="emblem emblem-48" data-design="a" data-rank="human" role="img" aria-label="A案 HUMAN階級章"></span>
+                <span class="size-label">48PX</span>
+              </div>
+              <div class="size-sample">
+                <span class="emblem emblem-24" data-design="a" data-rank="human" role="img" aria-label="A案 HUMAN階級章 実寸"></span>
+                <span class="size-label">24PX</span>
+              </div>
+            </div>
+            <h3 class="rank-name">HUMAN</h3>
+            <p class="rank-intent">未装飾の盾と人型コアで、全階級の原型を示す。</p>
+          </article>
+
+          <article class="rank-card">
+            <div class="icon-stage">
+              <div class="size-sample">
+                <span class="emblem emblem-48" data-design="a" data-rank="star" role="img" aria-label="A案 STAR階級章"></span>
+                <span class="size-label">48PX</span>
+              </div>
+              <div class="size-sample">
+                <span class="emblem emblem-24" data-design="a" data-rank="star" role="img" aria-label="A案 STAR階級章 実寸"></span>
+                <span class="size-label">24PX</span>
+              </div>
+            </div>
+            <h3 class="rank-name">STAR</h3>
+            <p class="rank-intent">コア上部の恒星冠と肩翼で、最初の顕著な昇格を表す。</p>
+          </article>
+
+          <article class="rank-card">
+            <div class="icon-stage">
+              <div class="size-sample">
+                <span class="emblem emblem-48" data-design="a" data-rank="supernova" role="img" aria-label="A案 SUPERNOVA階級章"></span>
+                <span class="size-label">48PX</span>
+              </div>
+              <div class="size-sample">
+                <span class="emblem emblem-24" data-design="a" data-rank="supernova" role="img" aria-label="A案 SUPERNOVA階級章 実寸"></span>
+                <span class="size-label">24PX</span>
+              </div>
+            </div>
+            <h3 class="rank-name">SUPERNOVA</h3>
+            <p class="rank-intent">全方向へ突き出す爆発翼で、影響力の臨界突破を示す。</p>
+          </article>
+
+          <article class="rank-card">
+            <div class="icon-stage">
+              <div class="size-sample">
+                <span class="emblem emblem-48" data-design="a" data-rank="gravity" role="img" aria-label="A案 GRAVITY階級章"></span>
+                <span class="size-label">48PX</span>
+              </div>
+              <div class="size-sample">
+                <span class="emblem emblem-24" data-design="a" data-rank="gravity" role="img" aria-label="A案 GRAVITY階級章 実寸"></span>
+                <span class="size-label">24PX</span>
+              </div>
+            </div>
+            <h3 class="rank-name">GRAVITY</h3>
+            <p class="rank-intent">コアを囲う重力環と下向きの翼で、引力と重量感を作る。</p>
+          </article>
+
+          <article class="rank-card">
+            <div class="icon-stage">
+              <div class="size-sample">
+                <span class="emblem emblem-48" data-design="a" data-rank="universe" role="img" aria-label="A案 UNIVERSE階級章"></span>
+                <span class="size-label">48PX</span>
+              </div>
+              <div class="size-sample">
+                <span class="emblem emblem-24" data-design="a" data-rank="universe" role="img" aria-label="A案 UNIVERSE階級章 実寸"></span>
+                <span class="size-label">24PX</span>
+              </div>
+            </div>
+            <h3 class="rank-name">UNIVERSE</h3>
+            <p class="rank-intent">全周冠・宇宙環・最大コアを重ねた、系統の完成形。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="design-section" aria-labelledby="heading-b">
+      <div class="section-heading">
+        <h2 id="heading-b">B案「天体型」</h2>
+        <p>各階級の意味を、人物・恒星・爆発・重力井戸・無限宇宙として描き分ける。</p>
+      </div>
+
+      <div class="rank-scroll">
+        <div class="rank-grid">
+          <article class="rank-card">
+            <div class="icon-stage">
+              <div class="size-sample">
+                <span class="emblem emblem-48" data-design="b" data-rank="human" role="img" aria-label="B案 HUMAN階級章"></span>
+                <span class="size-label">48PX</span>
+              </div>
+              <div class="size-sample">
+                <span class="emblem emblem-24" data-design="b" data-rank="human" role="img" aria-label="B案 HUMAN階級章 実寸"></span>
+                <span class="size-label">24PX</span>
+              </div>
+            </div>
+            <h3 class="rank-name">HUMAN</h3>
+            <p class="rank-intent">頭・肩・脚を幾何化し、宇宙へ向かう起点の人物像にする。</p>
+          </article>
+
+          <article class="rank-card">
+            <div class="icon-stage">
+              <div class="size-sample">
+                <span class="emblem emblem-48" data-design="b" data-rank="star" role="img" aria-label="B案 STAR階級章"></span>
+                <span class="size-label">48PX</span>
+              </div>
+              <div class="size-sample">
+                <span class="emblem emblem-24" data-design="b" data-rank="star" role="img" aria-label="B案 STAR階級章 実寸"></span>
+                <span class="size-label">24PX</span>
+              </div>
+            </div>
+            <h3 class="rank-name">STAR</h3>
+            <p class="rank-intent">八光星と中心核を重ね、絵文字より鋭い恒星紋章にする。</p>
+          </article>
+
+          <article class="rank-card">
+            <div class="icon-stage">
+              <div class="size-sample">
+                <span class="emblem emblem-48" data-design="b" data-rank="supernova" role="img" aria-label="B案 SUPERNOVA階級章"></span>
+                <span class="size-label">48PX</span>
+              </div>
+              <div class="size-sample">
+                <span class="emblem emblem-24" data-design="b" data-rank="supernova" role="img" aria-label="B案 SUPERNOVA階級章 実寸"></span>
+                <span class="size-label">24PX</span>
+              </div>
+            </div>
+            <h3 class="rank-name">SUPERNOVA</h3>
+            <p class="rank-intent">不均等な十二方向の衝撃波で、制御不能な爆発力を表す。</p>
+          </article>
+
+          <article class="rank-card">
+            <div class="icon-stage">
+              <div class="size-sample">
+                <span class="emblem emblem-48" data-design="b" data-rank="gravity" role="img" aria-label="B案 GRAVITY階級章"></span>
+                <span class="size-label">48PX</span>
+              </div>
+              <div class="size-sample">
+                <span class="emblem emblem-24" data-design="b" data-rank="gravity" role="img" aria-label="B案 GRAVITY階級章 実寸"></span>
+                <span class="size-label">24PX</span>
+              </div>
+            </div>
+            <h3 class="rank-name">GRAVITY</h3>
+            <p class="rank-intent">厚い重力レンズと圧縮核で、周囲を引き込む力を可視化。</p>
+          </article>
+
+          <article class="rank-card">
+            <div class="icon-stage">
+              <div class="size-sample">
+                <span class="emblem emblem-48" data-design="b" data-rank="universe" role="img" aria-label="B案 UNIVERSE階級章"></span>
+                <span class="size-label">48PX</span>
+              </div>
+              <div class="size-sample">
+                <span class="emblem emblem-24" data-design="b" data-rank="universe" role="img" aria-label="B案 UNIVERSE階級章 実寸"></span>
+                <span class="size-label">24PX</span>
+              </div>
+            </div>
+            <h3 class="rank-name">UNIVERSE</h3>
+            <p class="rank-intent">無限軌道と四方の境界点で、閉じない宇宙そのものを示す。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="profile-section" aria-labelledby="profile-heading">
+      <h2 id="profile-heading">プロフィール文脈</h2>
+      <p class="profile-note">STAR章を24px、階級名を13pxで使用したスタッツ3枠の比較。</p>
+
+      <div class="profile-frame">
+        <div class="profile-row">
+          <div class="proposal-tag">A案</div>
+          <div class="stat-box rank-stat">
+            <span class="emblem emblem-24" data-design="a" data-rank="star" role="img" aria-label="A案 STAR階級章"></span>
+            <span class="profile-rank-name gradient-text gradient-star">STAR</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value">50.9K</span>
+            <span class="stat-label">影響力</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value up">▲+12%</span>
+            <span class="stat-label">前日比</span>
+          </div>
+        </div>
+
+        <div class="profile-row">
+          <div class="proposal-tag">B案</div>
+          <div class="stat-box rank-stat">
+            <span class="emblem emblem-24" data-design="b" data-rank="star" role="img" aria-label="B案 STAR階級章"></span>
+            <span class="profile-rank-name gradient-text gradient-star">STAR</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value">50.9K</span>
+            <span class="stat-label">影響力</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value up">▲+12%</span>
+            <span class="stat-label">前日比</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const palettes = {
+        human: [
+          ["0%", "#4B5563"],
+          ["100%", "#6B7280"]
+        ],
+        star: [
+          ["0%", "#1E40AF"],
+          ["100%", "#06B6D4"]
+        ],
+        supernova: [
+          ["0%", "#BE123C"],
+          ["100%", "#F97316"]
+        ],
+        gravity: [
+          ["0%", "#312E81"],
+          ["100%", "#0D9488"]
+        ],
+        universe: [
+          ["0%", "#1A2E05"],
+          ["38%", "#84CC16"],
+          ["65%", "#0D9488"],
+          ["100%", "#4C1D95"]
+        ]
+      };
+
+      let serial = 0;
+
+      document.querySelectorAll("[data-design][data-rank]").forEach((host) => {
+        const design = host.dataset.design;
+        const rank = host.dataset.rank;
+        const colors = palettes[rank];
+        const uid = `emblem-${design}-${rank}-${serial++}`;
+        const gradientId = `${uid}-gradient`;
+        const maskId = `${uid}-mask`;
+
+        const stops = colors
+          .map(([offset, color]) =>
+            `<stop offset="${offset}" stop-color="${color}"></stop>`
+          )
+          .join("");
+
+        host.innerHTML = `
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <defs>
+              <linearGradient
+                id="${gradientId}"
+                x1="0" y1="0" x2="1" y2="1"
+                gradientUnits="objectBoundingBox"
+              >
+                ${stops}
+              </linearGradient>
+              <mask
+                id="${maskId}"
+                x="0" y="0" width="24" height="24"
+                maskUnits="userSpaceOnUse"
+                style="mask-type: alpha"
+              >
+                <use
+                  href="#${design}-${rank}"
+                  fill="currentColor"
+                  style="color: #fff"
+                ></use>
+              </mask>
+            </defs>
+            <rect
+              x="0" y="0" width="24" height="24"
+              fill="url(#${gradientId})"
+              mask="url(#${maskId})"
+            ></rect>
+          </svg>
+        `;
+      });
+    })();
+  </script>
+</body>
+</html>

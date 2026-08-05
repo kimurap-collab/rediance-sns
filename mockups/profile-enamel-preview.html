@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>プロフィール比較 — 現行グラデ章 vs エナメル案</title>
+<style>
+  body { margin: 0; padding: 28px 16px 60px; background: #F0F0F0; font-family: -apple-system, "Hiragino Sans", sans-serif; }
+  h1 { font-size: 20px; margin: 0 0 6px; text-align: center; }
+  .note { font-size: 13px; color: #6B7280; text-align: center; margin-bottom: 22px; }
+  .frame { max-width: 400px; margin: 0 auto 26px; background: #fff; border-radius: 16px; box-shadow: 0 6px 22px rgba(0,0,0,0.12); overflow: hidden; }
+  .tag { display: inline-block; margin: 14px 0 0 16px; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #fff; background: #1E3A5F; border-radius: 999px; padding: 4px 12px; }
+  .row { display: flex; align-items: center; gap: 16px; padding: 16px; }
+  .avatar { width: 88px; height: 88px; border-radius: 50%; border: 1px solid #E5E7EB; padding: 2px; box-sizing: border-box; flex-shrink: 0; }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .col { flex: 1; min-width: 0; }
+  .name { font-size: 16px; font-weight: 600; color: #17171B; margin-bottom: 8px; }
+  .stats { display: flex; }
+  .stat { flex: 1; text-align: center; }
+  .val { font-size: 18px; font-weight: 700; color: #17171B; line-height: 1.25; height: 26px; display: flex; align-items: center; justify-content: center; }
+  .val.trend { color: #10B981; }
+  .lbl { font-size: 13px; color: #6B7280; margin-top: 3px; }
+  .lbl.grad, .gradtxt { font-weight: 700; background-image: linear-gradient(135deg,#1E40AF,#06B6D4); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+</style>
+</head>
+<body>
+<h1>プロフィール比較</h1>
+<div class="note">上＝現行（グラデ章そのまま）／下＝（２）エナメル統一案</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="gradient-star" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#1E40AF"/><stop offset="1" stop-color="#06B6D4"/>
+  </linearGradient>
+  <g id="shape-star" fill="currentColor">
+    <path fill-rule="evenodd" d="M12 1.05 L14.65 8.15 L22.25 8.5 L16.3 13.25 L18.35 20.55 L12 16.4 L5.65 20.55 L7.7 13.25 L1.75 8.5 L9.35 8.15 Z M12 7.8 A4.2 4.2 0 1 0 12 16.2 A4.2 4.2 0 1 0 12 7.8 Z"/>
+    <circle cx="12" cy="12" r="2.2"/>
+  </g>
+  <mask id="mask-star" x="0" y="0" width="24" height="24" maskUnits="userSpaceOnUse" style="mask-type:alpha">
+    <use href="#shape-star" style="color:#fff"/>
+  </mask>
+</defs></svg>
+
+<div class="frame">
+  <span class="tag">現行</span>
+  <div class="row">
+    <div class="avatar"><img src="../assets/img/u16.jpg" alt=""></div>
+    <div class="col">
+      <div class="name">木村 誠司</div>
+      <div class="stats">
+        <div class="stat">
+          <div class="val"><svg width="24" height="24" viewBox="0 0 24 24"><rect width="24" height="24" fill="url(#gradient-star)" mask="url(#mask-star)"/></svg></div>
+          <div class="lbl grad">STAR</div>
+        </div>
+        <div class="stat"><div class="val">50.9K</div><div class="lbl">影響力</div></div>
+        <div class="stat"><div class="val trend">▲ +12%</div><div class="lbl">前日比</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="frame">
+  <span class="tag" style="background:#0D9488;">（２）エナメル統一案</span>
+  <div class="row">
+    <div class="avatar"><img src="../assets/img/u16.jpg" alt=""></div>
+    <div class="col">
+      <div class="name">木村 誠司</div>
+      <div class="stats">
+        <div class="stat">
+          <div class="val"><svg width="26" height="26" viewBox="0 0 24 24" style="filter:drop-shadow(0 0 1px rgba(23,23,27,0.35));"><circle cx="12" cy="12" r="11.4" fill="#fff"/><circle cx="12" cy="12" r="10.6" fill="url(#gradient-star)"/><g transform="translate(3.6,3.6) scale(0.7)"><use href="#shape-star" style="color:#fff"/></g></svg></div>
+          <div class="lbl grad">STAR</div>
+        </div>
+        <div class="stat"><div class="val">50.9K</div><div class="lbl">影響力</div></div>
+        <div class="stat"><div class="val trend">▲ +12%</div><div class="lbl">前日比</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

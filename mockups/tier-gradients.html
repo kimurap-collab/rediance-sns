@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>階級グラデ見本 — 全10ティア</title>
+<style>
+  :root {
+    --primary-bg: #EEF3FB;
+    --bg: #FFFFFF;
+    --surface: #F5F5F5;
+    --border: #E8E8E8;
+    --text-main: #000000;
+    --text-sub: #555555;
+    --text-light: #999999;
+    --header-height: 56px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: #F0F0F0;
+    color: #1A1A1A;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans",
+      "Yu Gothic", sans-serif;
+    padding: 40px 20px 80px;
+  }
+
+  .page-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .page-desc {
+    max-width: 640px;
+    margin: 0 auto 48px;
+    color: #666;
+    font-size: 13px;
+    line-height: 1.7;
+    text-align: center;
+  }
+
+  .section-title {
+    max-width: 700px;
+    margin: 0 auto 16px;
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  /* ===== 案4のグラデ文字マークアップ（tier-display-options.html準拠） ===== */
+  .tier-gradient-line {
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  .tier-gradient-text {
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .tier-gradient-caption {
+    color: #64748B;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    -webkit-text-fill-color: initial;
+  }
+
+  /* 10ティアのグラデ定義 */
+  .tier-human    { background-image: linear-gradient(135deg, #4B5563, #6B7280); color: #4B5563; }
+  .tier-leader   { background-image: linear-gradient(135deg, #92400E, #F59E0B); color: #92400E; }
+  .tier-icon     { background-image: linear-gradient(135deg, #047857, #34D399); color: #047857; }
+  .tier-rising   { background-image: linear-gradient(135deg, #0D9488, #84CC16); color: #0D9488; }
+  .tier-star     { background-image: linear-gradient(135deg, #1E40AF, #06B6D4); color: #1E40AF; }
+  .tier-nova     { background-image: linear-gradient(135deg, #6D28D9, #C026D3); color: #6D28D9; }
+  .tier-supernova { background-image: linear-gradient(135deg, #BE123C, #F97316); color: #BE123C; }
+  .tier-gravity  { background-image: linear-gradient(135deg, #312E81, #0D9488); color: #312E81; }
+  .tier-singularity { background-image: linear-gradient(135deg, #0F172A, #7C3AED); color: #0F172A; }
+  .tier-universe {
+    background-image: linear-gradient(
+      135deg,
+      #1A2E05 0%,
+      #84CC16 38%,
+      #0D9488 65%,
+      #4C1D95 100%
+    );
+    color: #1A2E05;
+  }
+
+  /* ===== セクション1：全10ティア一覧 ===== */
+  .tier-list-card {
+    max-width: 700px;
+    margin: 0 auto 64px;
+    padding: 8px 24px;
+    background: var(--bg);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .06);
+  }
+
+  .tier-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tier-row:last-child {
+    border-bottom: 0;
+  }
+
+  .tier-row-badge {
+    flex: 0 0 150px;
+  }
+
+  .tier-row-sample {
+    flex: 1;
+    min-width: 0;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: .3px;
+  }
+
+  .tier-row-hex {
+    flex: 0 0 230px;
+    color: #999;
+    font-size: 11px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    text-align: right;
+    white-space: pre-line;
+  }
+
+  @media (max-width: 640px) {
+    .tier-row {
+      flex-wrap: wrap;
+    }
+
+    .tier-row-badge {
+      flex: 1 1 auto;
+    }
+
+    .tier-row-sample {
+      flex: 1 1 100%;
+      order: 3;
+    }
+
+    .tier-row-hex {
+      flex: 0 0 auto;
+      text-align: left;
+    }
+  }
+
+  /* ===== セクション2：プロフィール文脈 ===== */
+  .profile-grid {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    justify-items: center;
+  }
+
+  @media (max-width: 700px) {
+    .profile-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .phone-frame {
+    width: 390px;
+    max-width: 100%;
+    overflow: hidden;
+    position: relative;
+    background: var(--bg);
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+  }
+
+  .home-header {
+    height: var(--header-height);
+    padding: 0 16px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-image: linear-gradient(
+      135deg,
+      #1A2E05 0%,
+      #84CC16 38%,
+      #0D9488 65%,
+      #4C1D95 100%
+    );
+  }
+
+  .header-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #FFF;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -.5px;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, .15);
+    color: #FFF;
+    font-size: 22px;
+  }
+
+  .profile-block {
+    padding: 12px 16px 16px;
+    background-image: linear-gradient(
+      135deg,
+      var(--surface) 0%,
+      var(--primary-bg) 100%
+    );
+  }
+
+  .profile-main {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+  }
+
+  .avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+
+  .avatar-emoji {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    background: #F3F4F6;
+  }
+
+  .identity {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .name-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+  }
+
+  .profile-name {
+    color: var(--text-main);
+    font-size: 16px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .handle {
+    color: var(--text-light);
+    font-size: 13px;
+  }
+
+  .score {
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .score-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .score-value {
+    color: var(--text-main);
+    font-size: 26px;
+    font-weight: 900;
+  }
+
+  .score-delta {
+    color: #10B981;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .score-label {
+    color: var(--text-light);
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  @media (max-width: 430px) {
+    body {
+      padding: 28px 10px 64px;
+    }
+
+    .page-title {
+      font-size: 21px;
+    }
+
+    .phone-frame {
+      border-radius: 20px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">階級グラデ見本 — 全10ティア</h1>
+<p class="page-desc">
+  無色の出発点から、金属・成長の緑・空・宇宙へと深まり、頂点はブランドグラデーションと同化する——10ティアのグラデーション文字色見本。
+</p>
+
+<h2 class="section-title">全10ティア一覧</h2>
+<div class="tier-list-card">
+
+  <div class="tier-row">
+    <div class="tier-row-badge">
+      <div class="tier-gradient-line">
+        <span class="tier-gradient-text tier-human">👤 HUMAN</span>
+        <span class="tier-gradient-caption">階級</span>
+      </div>
+    </div>
+    <div class="tier-row-sample tier-gradient-text tier-human">👤 HUMAN</div>
+    <div class="tier-row-hex">#4B5563 → #6B7280</div>
+  </div>
+
+  <div class="tier-row">
+    <div class="tier-row-badge">
+      <div class="tier-gradient-line">
+        <span class="tier-gradient-text tier-leader">🔱 LEADER</span>
+        <span class="tier-gradient-caption">階級</span>
+      </div>
+    </div>
+    <div class="tier-row-sample tier-gradient-text tier-leader">🔱 LEADER</div>
+    <div class="tier-row-hex">#92400E → #F59E0B</div>
+  </div>
+
+  <div class="tier-row">
+    <div class="tier-row-badge">
+      <div class="tier-gradient-line">
+        <span class="tier-gradient-text tier-icon">✨ ICON</span>
+        <span class="tier-gradient-caption">階級</span>
+      </div>
+    </div>
+    <div class="tier-row-sample tier-gradient-text tier-icon">✨ ICON</div>
+    <div class="tier-row-hex">#047857 → #34D399</div>
+  </div>
+
+  <div class="tier-row">
+    <div class="tier-row-badge">
+      <div class="tier-gradient-line">
+        <span class="tier-gradient-text tier-rising">🚀 RISING</span>
+        <span class="tier-gradient-caption">階級</span>
+      </div>
+    </div>
+    <div class="tier-row-sample tier-gradient-text tier-rising">🚀 RISING</div>
+    <div class="tier-row-hex">#0D9488 → #84CC16</div>
+  </div>
+
+  <div class="tier-row">
+    <div class="tier-row-badge">
+      <div class="tier-gradient-line">
+        <span class="tier-gradient-text tier-star">⭐ STAR</span>
+        <span class="tier-gradient-caption">階級</span>
+      </div>
+    </div>
+    <div class="tier-row-sample tier-gradient-text tier-star">⭐ STAR</div>
+    <div class="tier-row-hex">#1E40AF → #06B6D4&#10;（実装済み・変更なし）</div>
+  </div>
+
+  <div class="tier-row">
+    <div class="tier-row-badge">
+      <div class="tier-gradient-line">
+        <span class="tier-gradient-text tier-nova">💫 NOVA</span>
+        <span class="tier-gradient-caption">階級</span>
+      </div>
+    </div>
+    <div class="tier-row-sample tier-gradient-text tier-nova">💫 NOVA</div>
+    <div class="tier-row-hex">#6D28D9 → #C026D3</div>
+  </div>
+
+  <div class="tier-row">
+    <div class="tier-row-badge">
+      <div class="tier-gradient-line">
+        <span class="tier-gradient-text tier-supernova">💥 SUPERNOVA</span>
+        <span class="tier-gradient-caption">階級</span>
+      </div>
+    </div>
+    <div class="tier-row-sample tier-gradient-text tier-supernova">💥 SUPERNOVA</div>
+    <div class="tier-row-hex">#BE123C → #F97316</div>
+  </div>
+
+  <div class="tier-row">
+    <div class="tier-row-badge">
+      <div class="tier-gradient-line">
+        <span class="tier-gradient-text tier-gravity">🌀 GRAVITY</span>
+        <span class="tier-gradient-caption">階級</span>
+      </div>
+    </div>
+    <div class="tier-row-sample tier-gradient-text tier-gravity">🌀 GRAVITY</div>
+    <div class="tier-row-hex">#312E81 → #0D9488</div>
+  </div>
+
+  <div class="tier-row">
+    <div class="tier-row-badge">
+      <div class="tier-gradient-line">
+        <span class="tier-gradient-text tier-singularity">🌐 SINGULARITY</span>
+        <span class="tier-gradient-caption">階級</span>
+      </div>
+    </div>
+    <div class="tier-row-sample tier-gradient-text tier-singularity">🌐 SINGULARITY</div>
+    <div class="tier-row-hex">#0F172A → #7C3AED</div>
+  </div>
+
+  <div class="tier-row">
+    <div class="tier-row-badge">
+      <div class="tier-gradient-line">
+        <span class="tier-gradient-text tier-universe">♾️ UNIVERSE</span>
+        <span class="tier-gradient-caption">階級</span>
+      </div>
+    </div>
+    <div class="tier-row-sample tier-gradient-text tier-universe">♾️ UNIVERSE</div>
+    <div class="tier-row-hex">#1A2E05 0% → #84CC16 38%&#10;→ #0D9488 65% → #4C1D95 100%&#10;（ブランドグラデL-4と同化）</div>
+  </div>
+
+</div>
+
+<h2 class="section-title">プロフィール文脈で確認</h2>
+<div class="profile-grid">
+
+  <!-- HUMAN -->
+  <div class="phone-frame">
+    <header class="home-header">
+      <div style="width:32px;"></div>
+      <div class="header-logo">@newbie_2026</div>
+      <button class="icon-btn" type="button" aria-label="メニュー">☰</button>
+    </header>
+    <div class="profile-block">
+      <div class="profile-main">
+        <div class="avatar-emoji">🙂</div>
+        <div class="identity">
+          <div class="name-row">
+            <span class="profile-name">新人ユーザー</span>
+          </div>
+          <div class="tier-gradient-line">
+            <span class="tier-gradient-text tier-human">👤 HUMAN</span>
+            <span class="tier-gradient-caption">階級</span>
+          </div>
+          <div class="handle">@newbie_2026</div>
+        </div>
+        <div class="score">
+          <div class="score-row">
+            <span class="score-value">820</span>
+            <span class="score-delta">▲ +5%</span>
+          </div>
+          <div class="score-label">影響力</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAR -->
+  <div class="phone-frame">
+    <header class="home-header">
+      <div style="width:32px;"></div>
+      <div class="header-logo">@taisho_k</div>
+      <button class="icon-btn" type="button" aria-label="メニュー">☰</button>
+    </header>
+    <div class="profile-block">
+      <div class="profile-main">
+        <img class="avatar" src="../assets/img/u16.jpg" alt="木村 誠司">
+        <div class="identity">
+          <div class="name-row">
+            <span class="profile-name">木村 誠司</span>
+          </div>
+          <div class="tier-gradient-line">
+            <span class="tier-gradient-text tier-star">⭐ STAR</span>
+            <span class="tier-gradient-caption">階級</span>
+          </div>
+          <div class="handle">@taisho_k</div>
+        </div>
+        <div class="score">
+          <div class="score-row">
+            <span class="score-value">50.9K</span>
+            <span class="score-delta">▲ +12%</span>
+          </div>
+          <div class="score-label">影響力</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUPERNOVA -->
+  <div class="phone-frame">
+    <header class="home-header">
+      <div style="width:32px;"></div>
+      <div class="header-logo">@supernova_taro</div>
+      <button class="icon-btn" type="button" aria-label="メニュー">☰</button>
+    </header>
+    <div class="profile-block">
+      <div class="profile-main">
+        <div class="avatar-emoji">💥</div>
+        <div class="identity">
+          <div class="name-row">
+            <span class="profile-name">人気インフルエンサー</span>
+          </div>
+          <div class="tier-gradient-line">
+            <span class="tier-gradient-text tier-supernova">💥 SUPERNOVA</span>
+            <span class="tier-gradient-caption">階級</span>
+          </div>
+          <div class="handle">@supernova_taro</div>
+        </div>
+        <div class="score">
+          <div class="score-row">
+            <span class="score-value">612K</span>
+            <span class="score-delta">▲ +8%</span>
+          </div>
+          <div class="score-label">影響力</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UNIVERSE -->
+  <div class="phone-frame">
+    <header class="home-header">
+      <div style="width:32px;"></div>
+      <div class="header-logo">@universe_top</div>
+      <button class="icon-btn" type="button" aria-label="メニュー">☰</button>
+    </header>
+    <div class="profile-block">
+      <div class="profile-main">
+        <div class="avatar-emoji">♾️</div>
+        <div class="identity">
+          <div class="name-row">
+            <span class="profile-name">殿堂ユーザー</span>
+          </div>
+          <div class="tier-gradient-line">
+            <span class="tier-gradient-text tier-universe">♾️ UNIVERSE</span>
+            <span class="tier-gradient-caption">階級</span>
+          </div>
+          <div class="handle">@universe_top</div>
+        </div>
+        <div class="score">
+          <div class="score-row">
+            <span class="score-value">8.2M</span>
+            <span class="score-delta">▲ +3%</span>
+          </div>
+          <div class="score-label">影響力</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

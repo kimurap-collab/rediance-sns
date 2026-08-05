@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>プロフィールタイポ見本 — IG準拠＋スコア配置</title>
+<style>
+  /* ===== app.html :root から必要分のみ抜粋（2305〜2360, 2600〜2710行付近を参照） ===== */
+  :root {
+    --primary: #1E3A5F;
+    --bg: #FFFFFF;
+    --surface: #F5F5F5;
+    --border: #E8E8E8;
+    --text-main: #000000;
+    --text-sub: #555555;
+    --text-light: #999999;
+    --success: #10B981;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    letter-spacing: -0.14px;
+    background: #EFEFEF;
+    color: var(--text-main);
+    padding: 32px 16px 80px;
+  }
+
+  .page-head { max-width: 1200px; margin: 0 auto 28px; }
+  .page-head h1 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+  .page-head p { font-size: 13px; color: var(--text-sub); line-height: 1.6; }
+
+  .grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 28px;
+    align-items: start;
+  }
+  .grid.ref-grid { grid-template-columns: minmax(340px, 400px); margin-top: 40px; }
+
+  .card-label { margin-bottom: 10px; }
+  .card-label .tag { font-size: 11px; font-weight: 800; color: #fff; background: var(--primary); border-radius: 4px; padding: 3px 8px; display: inline-block; letter-spacing: 0.5px; }
+  .card-label .name { font-size: 15px; font-weight: 800; margin: 6px 0 2px; }
+  .card-label .desc { font-size: 12.5px; color: var(--text-sub); line-height: 1.5; }
+
+  .phone-frame {
+    background: var(--bg);
+    border: 1px solid #DADADA;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  }
+
+  /* ===== app.html 2303〜2360行：USER PROFILE HEADER（X-style）骨格 ===== */
+  .upx-banner {
+    height: 100px;
+    background-size: cover;
+    background-position: center;
+  }
+  .upx-avatar-row {
+    padding: 0 16px;
+    margin-top: -32px;
+  }
+  .upx-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid var(--bg);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    background: #DCE3EA;
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+  }
+  .upx-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .upx-white-header { padding: 8px 16px 12px; }
+  .upx-name-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .upx-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-main);
+    white-space: nowrap;
+  }
+  .upx-handle { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+  .upx-score-col { flex-shrink: 0; text-align: right; }
+  .upx-score-label { font-size: 10px; color: var(--text-light); letter-spacing: 1px; margin-top: 2px; }
+  .upx-bio { font-size: 13px; color: var(--text-sub); line-height: 1.5; margin-top: 10px; }
+
+  /* ===== app.html 2607, 2618〜2659行：階級グラデ文字・スコア数値 ===== */
+  .insta-rs-score-val { font-size: 22px; font-weight: 900; color: var(--text-main); }
+  .rs-tier-line { min-height: 20px; display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 900; white-space: nowrap; }
+  .rs-tier-grad { -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  /* グラデ文字は background-image 必須（background ショートハンド禁止・app.html注記踏襲） */
+  .rs-tg-star { background-image: linear-gradient(135deg,#1E40AF,#06B6D4); color: #1E40AF; }
+  .rs-tier-caption { color: #64748B; font-size: 9px; font-weight: 700; letter-spacing: 1.1px; -webkit-text-fill-color: initial; }
+
+  /* ===== app.html 2684〜2709行：タブバー ===== */
+  .my-profile-tab-bar { display: flex; border-bottom: 1.5px solid var(--border); }
+  .my-profile-tab { flex: 1; padding: 12px 0; text-align: center; font-size: 13px; font-weight: 600; color: var(--text-sub); border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -1.5px; }
+  .my-profile-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  .action-row { display: flex; gap: 8px; padding: 4px 16px 12px; }
+  .action-btn { flex: 1; padding: 8px 0; background: #F3F4F6; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--text-main); text-align: center; }
+
+  /* ===== 共通タイポ（案1〜3）：名前20px/700・@handle14px・bio14px（インスタ上部ユーザー名スケール） ===== */
+  .typo-ig .upx-name { font-size: 20px; font-weight: 700; }
+  .typo-ig .upx-handle { font-size: 14px; margin-top: 3px; }
+  .typo-ig .upx-bio { font-size: 14px; line-height: 1.6; margin-top: 10px; }
+
+  /* ===== 案1：右列・内側に引く ===== */
+  .v1 .upx-white-header { padding: 8px 20px 12px; }
+  .v1 .upx-avatar-row { padding: 0 20px; }
+
+  /* ===== 案2：IGスタッツ行（右列廃止） ===== */
+  .v2 .upx-name-row { justify-content: flex-start; }
+  .v2-stats-row { display: flex; align-items: baseline; gap: 10px; margin-top: 10px; }
+  .v2-stat-num { font-size: 20px; font-weight: 800; color: var(--text-main); }
+  .v2-stat-label { font-size: 13px; color: var(--text-sub); margin-left: 4px; }
+  .v2-stat-trend { font-size: 13px; font-weight: 700; color: var(--success); }
+  .v2 .upx-bio { margin-top: 10px; }
+
+  /* ===== 案3：名前直下スタック（右列廃止） ===== */
+  .v3 .upx-name-row { justify-content: flex-start; }
+  .v3-score-stack { margin-top: 8px; }
+  .v3-stat-num { font-size: 28px; font-weight: 900; color: var(--text-main); line-height: 1.1; }
+  .v3-stat-trend { font-size: 13px; font-weight: 700; color: var(--success); margin-top: 2px; }
+  .v3-stat-label { font-size: 11px; color: var(--text-light); letter-spacing: 0.5px; margin-top: 1px; }
+  .v3 .upx-handle { margin-top: 8px; }
+
+  /* ===== 参考枠：IG厳密寸法（名前14px semibold＝インスタbio欄表示名の実寸） ===== */
+  .ref-card .upx-name { font-size: 14px; font-weight: 600; }
+  .ref-card .upx-handle { font-size: 14px; margin-top: 3px; }
+  .ref-card .upx-bio { font-size: 14px; line-height: 1.6; margin-top: 8px; }
+
+  .section-title { max-width: 1200px; margin: 0 auto; font-size: 14px; font-weight: 800; color: var(--text-sub); padding: 4px 0 4px; border-top: 1px solid #DADADA; padding-top: 20px; }
+</style>
+</head>
+<body>
+
+  <div class="page-head">
+    <h1>プロフィールタイポ見本 — IG準拠＋スコア配置</h1>
+    <p>ベースは app.html の自分プロフ（screen-my）現行構造をそのまま複製。案1〜3は共通で名前20px/700・@handle14px・bio14pxに統一し、スコア（50.9K／▲+12%／影響力）の配置だけを変えた比較。最後に参考枠として、名前をインスタのbio欄表示名の実寸である14px semiboldで置いた場合も示す。</p>
+  </div>
+
+  <div class="grid">
+
+    <div>
+      <div class="card-label">
+        <span class="tag">案1</span>
+        <div class="name">右列・内側に引く</div>
+        <div class="desc">現行の右列（50.9K/▲+12%/影響力の縦積み）は維持。ヘッダー左右余白を20pxに広げ、数字を縁から離す。数字サイズは26px維持。</div>
+      </div>
+      <div class="phone-frame typo-ig v1">
+        <div class="upx-banner mock-banner"></div>
+        <div class="upx-avatar-row">
+          <div class="upx-avatar"><img src="../assets/img/u16.jpg" alt="木村 誠司"></div>
+        </div>
+        <div class="upx-white-header">
+          <div class="upx-name-row">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <div class="upx-name">木村 誠司</div>
+                <div class="rs-tier-line">
+                  <span class="rs-tier-grad rs-tg-star">⭐ STAR</span>
+                  <span class="rs-tier-caption">階級</span>
+                </div>
+              </div>
+              <div class="upx-handle">@taisho_k</div>
+            </div>
+            <div class="upx-score-col">
+              <span class="insta-rs-score-val" style="font-size:26px;">50.9K</span>
+              <div style="font-size:13px;font-weight:700;color:var(--success);white-space:nowrap;">▲ +12%</div>
+              <div class="upx-score-label">影響力</div>
+            </div>
+          </div>
+          <div class="upx-bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+        </div>
+        <div class="action-row">
+          <div class="action-btn">Edit Profile</div>
+          <div class="action-btn">Circle Settings</div>
+          <div class="action-btn">Group Settings</div>
+        </div>
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card-label">
+        <span class="tag">案2</span>
+        <div class="name">IGスタッツ行</div>
+        <div class="desc">右列を廃止。bioの下にインスタの投稿/フォロワー行と同じ文法でスタッツ行を配置：50.9K（20px bold）＋影響力（13pxグレー）＋▲+12%（13px緑）。</div>
+      </div>
+      <div class="phone-frame typo-ig v2">
+        <div class="upx-banner mock-banner"></div>
+        <div class="upx-avatar-row">
+          <div class="upx-avatar"><img src="../assets/img/u16.jpg" alt="木村 誠司"></div>
+        </div>
+        <div class="upx-white-header">
+          <div class="upx-name-row">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <div class="upx-name">木村 誠司</div>
+                <div class="rs-tier-line">
+                  <span class="rs-tier-grad rs-tg-star">⭐ STAR</span>
+                  <span class="rs-tier-caption">階級</span>
+                </div>
+              </div>
+              <div class="upx-handle">@taisho_k</div>
+            </div>
+          </div>
+          <div class="upx-bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+          <div class="v2-stats-row">
+            <div><span class="v2-stat-num">50.9K</span><span class="v2-stat-label">影響力</span></div>
+            <div class="v2-stat-trend">▲ +12%</div>
+          </div>
+        </div>
+        <div class="action-row">
+          <div class="action-btn">Edit Profile</div>
+          <div class="action-btn">Circle Settings</div>
+          <div class="action-btn">Group Settings</div>
+        </div>
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card-label">
+        <span class="tag">案3</span>
+        <div class="name">名前直下スタック</div>
+        <div class="desc">右列を廃止。名前＋階級の直下に50.9K（28px bold）＋▲+12%＋影響力を左寄せで積む。@handle→bioはその下。アイデンティティとスコアが縦一列に流れる。</div>
+      </div>
+      <div class="phone-frame typo-ig v3">
+        <div class="upx-banner mock-banner"></div>
+        <div class="upx-avatar-row">
+          <div class="upx-avatar"><img src="../assets/img/u16.jpg" alt="木村 誠司"></div>
+        </div>
+        <div class="upx-white-header">
+          <div class="upx-name-row">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <div class="upx-name">木村 誠司</div>
+                <div class="rs-tier-line">
+                  <span class="rs-tier-grad rs-tg-star">⭐ STAR</span>
+                  <span class="rs-tier-caption">階級</span>
+                </div>
+              </div>
+              <div class="v3-score-stack">
+                <div class="v3-stat-num">50.9K</div>
+                <div class="v3-stat-trend">▲ +12%</div>
+                <div class="v3-stat-label">影響力</div>
+              </div>
+              <div class="upx-handle">@taisho_k</div>
+            </div>
+          </div>
+          <div class="upx-bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+        </div>
+        <div class="action-row">
+          <div class="action-btn">Edit Profile</div>
+          <div class="action-btn">Circle Settings</div>
+          <div class="action-btn">Group Settings</div>
+        </div>
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title">参考枠：IG厳密寸法（名前14px semibold＝インスタbio欄表示名の実寸）</div>
+
+  <div class="grid ref-grid">
+    <div>
+      <div class="card-label">
+        <span class="tag">参考</span>
+        <div class="name">厳密準拠やとこう見える</div>
+        <div class="desc">配置は案1（右列）のまま、名前だけをインスタのbio欄表示名の実寸＝14px semiboldに縮小。案1〜3の20pxと見比べるための対照枠。</div>
+      </div>
+      <div class="phone-frame ref-card v1">
+        <div class="upx-banner mock-banner"></div>
+        <div class="upx-avatar-row">
+          <div class="upx-avatar"><img src="../assets/img/u16.jpg" alt="木村 誠司"></div>
+        </div>
+        <div class="upx-white-header">
+          <div class="upx-name-row">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <div class="upx-name">木村 誠司</div>
+                <div class="rs-tier-line">
+                  <span class="rs-tier-grad rs-tg-star">⭐ STAR</span>
+                  <span class="rs-tier-caption">階級</span>
+                </div>
+              </div>
+              <div class="upx-handle">@taisho_k</div>
+            </div>
+            <div class="upx-score-col">
+              <span class="insta-rs-score-val" style="font-size:26px;">50.9K</span>
+              <div style="font-size:13px;font-weight:700;color:var(--success);white-space:nowrap;">▲ +12%</div>
+              <div class="upx-score-label">影響力</div>
+            </div>
+          </div>
+          <div class="upx-bio">シンガポール🇸🇬 ↔ 日本🇯🇵 / 経営者 / AI・テック</div>
+        </div>
+        <div class="action-row">
+          <div class="action-btn">Edit Profile</div>
+          <div class="action-btn">Circle Settings</div>
+          <div class="action-btn">Group Settings</div>
+        </div>
+        <div class="my-profile-tab-bar">
+          <button class="my-profile-tab active">Posts</button>
+          <button class="my-profile-tab">Identity</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ===== app.html 16990〜17046行：buildStarBgUri をそのまま移植（STARティアの階級バナーを静的再現） =====
+  function buildStarBgUri(withLabels) {
+    const W = 1600, H = 800;
+    const seededRand = (seed) => { let s = 9301 + seed * 233; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; };
+    function trails(seed) {
+      const cx = 1680, cy = -120; let out = ''; const r = seededRand(seed);
+      for (let R = 360; R < 1700; R += 28) {
+        const a0 = 62 * Math.PI / 180, a1 = (206 + r() * 6) * Math.PI / 180;
+        const x0 = (cx + R * Math.cos(a0)).toFixed(1), y0 = (cy + R * Math.sin(a0)).toFixed(1);
+        const x1 = (cx + R * Math.cos(a1)).toFixed(1), y1 = (cy + R * Math.sin(a1)).toFixed(1);
+        out += `<path d="M${x0} ${y0} A ${R} ${R} 0 0 1 ${x1} ${y1}" fill="none" stroke="#fff" stroke-width="1" opacity="${(0.05 + r() * 0.11).toFixed(2)}"/>`;
+      }
+      return out;
+    }
+    function constellations(seed) {
+      const r = seededRand(seed); let out = ''; const labels = ['Ursa Major', 'Canes Venatici', 'Bootes', 'Lyra', 'Draco'];
+      for (let k = 0; k < 5; k++) {
+        const n = 3 + Math.floor(r() * 3); const pts = []; let x = r() * W * 0.8 + W * 0.05, y = r() * H * 0.6 + H * 0.05;
+        for (let j = 0; j < n; j++) { x += (r() - 0.5) * 260; y += (r() - 0.5) * 180; pts.push([Math.max(20, Math.min(W - 20, x)).toFixed(0), Math.max(20, Math.min(H * 0.85, y)).toFixed(0)]); }
+        out += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#eef3ff" stroke-width="1" opacity="0.16"/>`;
+        pts.forEach(p => out += `<circle cx="${p[0]}" cy="${p[1]}" r="1.6" fill="#fff" opacity="0.7"/>`);
+        if (withLabels) {
+          out += `<text x="${pts[0][0]}" y="${(+pts[0][1] + 16)}" fill="#eef3ff" opacity="0.24" font-size="15" font-style="italic" font-family="Georgia,serif">${labels[k]}</text>`;
+        }
+      }
+      return out;
+    }
+    function dots(seed) {
+      const r = seededRand(seed); let out = '';
+      for (let i = 0; i < 360; i++) {
+        const x = (r() * W).toFixed(0), y = (r() * H).toFixed(0), t = r();
+        const rad = t > 0.96 ? 1.7 : (t > 0.74 ? 1.05 : 0.6);
+        out += `<circle cx="${x}" cy="${y}" r="${rad}" fill="#fff" opacity="${(0.32 + t * 0.6).toFixed(2)}"/>`;
+      }
+      return out;
+    }
+    function bright() {
+      return [[1490, 70, 6], [300, 150, 4], [880, 110, 3.4], [120, 430, 3], [1180, 280, 3]].map(([x, y, sz]) => {
+        const g = sz * 3.2;
+        return `<g opacity="0.95"><circle cx="${x}" cy="${y}" r="${sz}" fill="#fff"/><circle cx="${x}" cy="${y}" r="${sz * 1.9}" fill="#cfe0ff" opacity="0.35"/><path d="M${x - g} ${y} H${x + g} M${x} ${y - g} V${y + g}" stroke="#eef4ff" stroke-width="${(sz * 0.5).toFixed(2)}" stroke-linecap="round" opacity="0.7"/></g>`;
+      }).join('');
+    }
+    const svg =
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice">` +
+      `<defs><filter id="mwb" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="26"/></filter></defs>` +
+      `<g transform="translate(1060,270) rotate(-30)" filter="url(#mwb)"><ellipse cx="0" cy="0" rx="620" ry="140" fill="#fff" opacity="0.09"/><ellipse cx="60" cy="-20" rx="230" ry="90" fill="#efe6d6" opacity="0.30"/></g>` +
+      trails(5) + constellations(6) + dots(7) + bright() +
+      `</svg>`;
+    return `url('data:image/svg+xml,${encodeURIComponent(svg)}')`;
+  }
+  const STAR_BG_URI_PLAIN = buildStarBgUri(false);
+
+  // ===== app.html 10162, 10171〜10174行：tierSkyBg（STARティア固定版） =====
+  const STAR_GRAD = 'linear-gradient(135deg,#1E40AF,#06B6D4)';
+  const STAR_SKY_BG = `${STAR_BG_URI_PLAIN} center/cover no-repeat, linear-gradient(rgba(2,6,23,0.5),rgba(2,6,23,0.35)), ${STAR_GRAD}`;
+
+  document.querySelectorAll('.mock-banner').forEach(el => { el.style.background = STAR_SKY_BG; });
+</script>
+
+</body>
+</html>
