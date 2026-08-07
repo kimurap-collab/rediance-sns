@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新規コネクト トリアージ見本</title>
+<style>
+  /* ===== app.html から流用した基礎トークン・部品 ===== */
+  :root {
+    --primary: #1E3A5F;
+    --bg: #FFFFFF;
+    --surface: #F5F5F5;
+    --border: #E8E8E8;
+    --text-main: #000000;
+    --text-sub: #555555;
+    --text-light: #999999;
+    --success: #10B981;
+    --danger: #EF4444;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    letter-spacing: -0.14px;
+    background: #F0F0F0;
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 32px 16px 80px;
+  }
+  .page-title {
+    font-size: 20px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .page-sub {
+    font-size: 12px;
+    color: var(--text-sub);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .frame-block { max-width: 430px; margin: 0 auto 48px; }
+  .frame-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 2px;
+  }
+  .frame-desc {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  /* 階級グラデ文字（app.html 2743〜2758行を流用。background-imageショートハンド禁止のルールに準拠） */
+  .rs-tier-grad {
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .rs-tg-human  { background-image: linear-gradient(135deg,#4B5563,#6B7280); color: #4B5563; }
+  .rs-tg-leader { background-image: linear-gradient(135deg,#92400E,#F59E0B); color: #92400E; }
+  .rs-tg-icon   { background-image: linear-gradient(135deg,#047857,#34D399); color: #047857; }
+  .rs-tg-rising { background-image: linear-gradient(135deg,#0D9488,#84CC16); color: #0D9488; }
+  .rs-tg-star   { background-image: linear-gradient(135deg,#1E40AF,#06B6D4); color: #1E40AF; }
+  .rs-tg-nova   { background-image: linear-gradient(135deg,#6D28D9,#C026D3); color: #6D28D9; }
+
+  /* ===== フレーム1: スマホ枠 ===== */
+  .phone {
+    width: 390px;
+    max-width: 100%;
+    margin: 0 auto;
+    background: var(--bg);
+    border-radius: 24px;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    max-height: 780px;
+    overflow-y: auto;
+  }
+  .tri-topbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 50px;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 3;
+  }
+  .tri-back { font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 4px; }
+  .tri-topbar-title { font-size: 16px; font-weight: 700; }
+
+  .tri-capacity-bar {
+    position: sticky;
+    top: 50px;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    font-size: 11px;
+    color: var(--text-sub);
+    background: #FAFAFA;
+    border-bottom: 1px solid var(--border);
+    padding: 8px 14px;
+  }
+  .tri-capacity-bar span.dot { color: var(--text-light); }
+
+  .tri-section-heading {
+    font-size: 14px;
+    font-weight: 700;
+    padding: 14px 14px 8px;
+  }
+
+  .tri-row {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    transition: opacity 150ms ease;
+  }
+  .tri-row.is-confirmed { opacity: 0.55; }
+  .tri-row-default { display: block; }
+  .tri-row.is-confirmed .tri-row-default { display: none; }
+  .tri-row-confirmed {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    height: 36px;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 120ms ease;
+  }
+  .tri-row.is-confirmed .tri-row-confirmed { display: flex; }
+  .tri-row-confirmed:hover { background: #F6F7F9; }
+  .tri-reopen-hint { font-size: 11px; color: var(--text-light); margin-left: 6px; }
+  .tri-confirmed-text { color: var(--text-sub); }
+  .tri-confirmed-check { color: var(--success); font-weight: 700; }
+  .tri-undo {
+    color: var(--primary);
+    font-size: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .tri-row-main { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .tri-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .tri-name { font-size: 15px; font-weight: 700; color: var(--text-main); }
+  .tri-meta { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; margin-top: 2px; }
+  .tri-score { color: var(--text-light); font-weight: 600; }
+
+  .tri-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tri-chip {
+    height: 30px;
+    padding: 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text-main);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background 120ms ease, border-color 120ms ease, transform 80ms ease;
+  }
+  .tri-chip:hover:not(.is-full) { border-color: var(--primary); background: #EEF2F7; }
+  .tri-chip:active:not(.is-full) { background: #E2E8F0; transform: translateY(1px); }
+  .tri-chip.is-full {
+    color: var(--text-light);
+    background: var(--surface);
+    border-color: var(--border);
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .tri-footnote {
+    font-size: 11px;
+    color: var(--text-light);
+    padding: 12px 14px 16px;
+  }
+
+  /* ===== フレーム2 ===== */
+  .frame2-shell {
+    width: 300px;
+    max-width: 100%;
+    margin: 0 auto;
+    background: var(--bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    padding: 16px;
+  }
+  .ig-action-row { display: flex; gap: 8px; }
+  .ig-action-btn {
+    flex: 1;
+    height: 34px;
+    width: 100%;
+    background: #F3F4F6;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+  }
+  .ig-action-btn-wrap { position: relative; flex: 1; }
+  .tri-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--danger);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    box-shadow: 0 0 0 2px #fff;
+  }
+</style>
+</head>
+<body>
+
+  <div class="page-title">新規コネクト トリアージ見本</div>
+  <div class="page-sub">タップで配置が確定するインタラクションの動く見本</div>
+
+  <div class="frame-block">
+    <div class="frame-label">フレーム1: トリアージ一覧</div>
+    <div class="frame-desc">新規コネクト20人を一覧で見ながら、行ごとにチップをタップして階級（Circle）へ即配置する画面。枠残数はライブ更新され、満杯になった階級のチップは自動でグレーアウトする。</div>
+
+    <div class="phone">
+      <div class="tri-topbar">
+        <div class="tri-back">← 戻る</div>
+        <div class="tri-topbar-title">Circle Settings</div>
+      </div>
+
+      <div class="tri-capacity-bar" id="tri-capacity-bar">
+        <span id="cap-core">Core 7/10</span>
+        <span class="dot">・</span>
+        <span id="cap-orbit">Orbit 12/15</span>
+        <span class="dot">・</span>
+        <span id="cap-halo">Halo 31/50</span>
+        <span class="dot">・</span>
+        <span id="cap-galaxy">Galaxy 88/150</span>
+      </div>
+
+      <div class="tri-section-heading">🆕 新規コネクト（<span id="tri-new-count">20</span>）</div>
+
+      <div id="tri-list"></div>
+
+      <div class="tri-footnote">※配置は相手には見えません</div>
+    </div>
+  </div>
+
+  <div class="frame-block">
+    <div class="frame-label">フレーム2: 入口バッジ（参考）</div>
+    <div class="frame-desc">自分プロフィールのボタン行。Circle Settingsに新規コネクト件数の赤バッジが付き、トリアージ画面への入口になる。</div>
+
+    <div class="frame2-shell">
+      <div class="ig-action-row">
+        <button class="ig-action-btn">Edit Profile</button>
+        <div class="ig-action-btn-wrap">
+          <button class="ig-action-btn">Circle Settings</button>
+          <span class="tri-badge">20</span>
+        </div>
+        <button class="ig-action-btn">Group Settings</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ===== 階級の定義（app.html の circleTiers を流用。Core=10/Orbit=15/Halo=50/Galaxy=150） =====
+  const tiers = {
+    core:    { label: 'Core',    max: 10,       current: 7  },
+    orbit:   { label: 'Orbit',   max: 15,       current: 12 },
+    halo:    { label: 'Halo',    max: 50,       current: 31 },
+    galaxy:  { label: 'Galaxy',  max: 150,      current: 88 },
+    connect: { label: 'Connect', max: Infinity, current: 0  },  // Circleに入れず「コネクトのまま」の正式な選択肢（枠なし）
+  };
+  const tierOrder = ['core', 'orbit', 'halo', 'galaxy'];          // 枠残数バーの対象（Connectは枠なしのため対象外）
+  const chipOrder = ['core', 'orbit', 'halo', 'galaxy', 'connect'];
+
+  // ===== 階級グラデ（rs-tg-*）判定。app.html の getTitle 閾値と同一
+  // Human<1,000 / Leader>=1,000 / Icon>=5,000 / Rising>=20,000 / Star>=50,000 / Nova>=150,000 =====
+  function getTier(score) {
+    if (score >= 150000) return { emoji: '💫', name: 'NOVA',   cls: 'rs-tg-nova'   };
+    if (score >= 50000)  return { emoji: '⭐', name: 'STAR',   cls: 'rs-tg-star'   };
+    if (score >= 20000)  return { emoji: '🚀', name: 'RISING', cls: 'rs-tg-rising' };
+    if (score >= 5000)   return { emoji: '✨', name: 'ICON',   cls: 'rs-tg-icon'   };
+    if (score >= 1000)   return { emoji: '🔱', name: 'LEADER', cls: 'rs-tg-leader' };
+    return                      { emoji: '👤', name: 'HUMAN',  cls: 'rs-tg-human'  };
+  }
+  function fmtScore(n) {
+    return n >= 1000 ? (n / 1000).toFixed(1) + 'K' : String(n);
+  }
+
+  // ===== デモデータ 20人（日本人名・外国名混在、HUMAN〜NOVAに分散） =====
+  const people = [
+    { id: 'p1',  name: '田中 悠',        avatar: '🧑',    score: 820    },
+    { id: 'p2',  name: 'Sofia Martinez', avatar: '👩',    score: 340    },
+    { id: 'p3',  name: '岡田 真由',      avatar: '👧',    score: 610    },
+    { id: 'p4',  name: 'Noah Garcia',    avatar: '🧑',    score: 95     },
+    { id: 'p5',  name: '鈴木 里奈',      avatar: '👩',    score: 1200   },
+    { id: 'p6',  name: 'Daniel Kim',     avatar: '🧑',    score: 2650   },
+    { id: 'p7',  name: '渡辺 彩',        avatar: '👩',    score: 4100   },
+    { id: 'p8',  name: 'James Anderson', avatar: '👨',    score: 1780   },
+    { id: 'p9',  name: '佐藤 健太',      avatar: '🧑',    score: 6300   },
+    { id: 'p10', name: 'Emma Wilson',    avatar: '👩',    score: 8900   },
+    { id: 'p11', name: '山田 彩香',      avatar: '👩',    score: 15200  },
+    { id: 'p12', name: 'Lucas Silva',    avatar: '🧔',    score: 11400  },
+    { id: 'p13', name: '伊藤 大輔',      avatar: '🧑',    score: 24700  },
+    { id: 'p14', name: 'Olivia Brown',   avatar: '👩',    score: 38200  },
+    { id: 'p15', name: '中島 誠',        avatar: '👨',    score: 45600  },
+    { id: 'p16', name: '高橋 美咲',      avatar: '👱‍♀️', score: 68400  },
+    { id: 'p17', name: 'Mia Chen',       avatar: '👧',    score: 92100  },
+    { id: 'p18', name: '森 拓也',        avatar: '👨',    score: 121000 },
+    { id: 'p19', name: 'Alex Johnson',   avatar: '🧑‍🚀', score: 187000 },
+    { id: 'p20', name: '藤田 悠斗',      avatar: '👨',    score: 312000 },
+  ];
+
+  let confirmedCount = 0;
+  const assignedTier = {}; // personId -> tierKey（未配置は undefined）
+
+  function renderList() {
+    const list = document.getElementById('tri-list');
+    const rowsHtml = people.map(p => {
+      const t = getTier(p.score);
+      const chipsHtml = chipOrder.map(key => {
+        const label = tiers[key].label;
+        return `<button type="button" class="tri-chip" data-tier="${key}" onclick="placeChip('${p.id}','${key}')">${label}</button>`;
+      }).join('');
+      return `
+        <div class="tri-row" id="row-${p.id}">
+          <div class="tri-row-default">
+            <div class="tri-row-main">
+              <div class="tri-avatar">${p.avatar}</div>
+              <div class="tri-info">
+                <div class="tri-name">${p.name}</div>
+                <div class="tri-meta">
+                  <span class="rs-tier-grad ${t.cls}">${t.emoji} ${t.name}</span>
+                  <span class="tri-score">${fmtScore(p.score)}</span>
+                </div>
+              </div>
+            </div>
+            <div class="tri-chips">${chipsHtml}</div>
+          </div>
+          <div class="tri-row-confirmed" onclick="undoChip('${p.id}')">
+            <span class="tri-confirmed-text"><span class="tri-confirmed-check">✓</span> <span class="tri-confirmed-tier-label"></span>｜${p.name}<span class="tri-reopen-hint">タップで選び直し</span></span>
+            <a class="tri-undo">取り消し</a>
+          </div>
+        </div>`;
+    }).join('');
+    list.innerHTML = rowsHtml;
+  }
+
+  function placeChip(personId, tierKey) {
+    const row = document.getElementById('row-' + personId);
+    if (!row || row.classList.contains('is-confirmed')) return;
+    const t = tiers[tierKey];
+    if (t.current >= t.max) return; // 満杯ガード（チップは非活性表示済みだが二重防御）
+
+    t.current++;
+    assignedTier[personId] = tierKey;
+    row.querySelector('.tri-confirmed-tier-label').textContent = t.label;
+    row.classList.add('is-confirmed');
+    confirmedCount++;
+    refreshUI();
+  }
+
+  function undoChip(personId) {
+    const row = document.getElementById('row-' + personId);
+    if (!row || !row.classList.contains('is-confirmed')) return;
+    const tierKey = assignedTier[personId];
+    if (tierKey) tiers[tierKey].current--;
+    delete assignedTier[personId];
+    row.classList.remove('is-confirmed');
+    confirmedCount--;
+    refreshUI();
+  }
+
+  function refreshUI() {
+    tierOrder.forEach(key => {
+      const t = tiers[key];
+      document.getElementById('cap-' + key).textContent = `${t.label} ${t.current}/${t.max}`;
+    });
+    document.getElementById('tri-new-count').textContent = people.length - confirmedCount;
+    tierOrder.forEach(key => {
+      const isFull = tiers[key].current >= tiers[key].max;
+      document.querySelectorAll('.tri-chip[data-tier="' + key + '"]').forEach(btn => {
+        btn.classList.toggle('is-full', isFull);
+        btn.disabled = isFull;
+      });
+    });
+  }
+
+  renderList();
+  refreshUI();
+</script>
+</body>
+</html>

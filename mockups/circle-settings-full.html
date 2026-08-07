@@ -1,0 +1,2171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CONSEQ — Circle Settings</title>
+<style>
+  :root {
+    --ink: #111318;
+    --ink-soft: #565b65;
+    --muted: #9297a1;
+    --line: #e9e9eb;
+    --line-strong: #d9dadd;
+    --paper: #fff;
+    --wash: #f7f7f8;
+    --success: #167a54;
+    --danger: #d83c42;
+    --gold: #aa8a51;
+    --serif: "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue",
+      "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 38px 16px 72px;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255,255,255,.96), rgba(255,255,255,0) 440px),
+      #efeff0;
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button {
+    color: inherit;
+    font: inherit;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+  }
+
+  .showcase {
+    width: min(430px, 100%);
+    margin: 0 auto;
+  }
+
+  .showcase + .showcase {
+    margin-top: 48px;
+  }
+
+  .frame-caption {
+    width: min(390px, 100%);
+    margin: 0 auto 12px;
+  }
+
+  .frame-caption__eyebrow {
+    margin: 0 0 5px;
+    color: #777b83;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+  }
+
+  .frame-caption__title {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: .03em;
+  }
+
+  .phone {
+    position: relative;
+    width: 390px;
+    max-width: 100%;
+    height: 820px;
+    margin: 0 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--paper);
+    border: 1px solid rgba(20,22,28,.08);
+    border-radius: 30px;
+    box-shadow:
+      0 28px 70px rgba(18,20,26,.12),
+      0 3px 10px rgba(18,20,26,.05);
+    scrollbar-width: none;
+  }
+
+  .phone::-webkit-scrollbar {
+    display: none;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: 72px 1fr 72px;
+    align-items: center;
+    height: 54px;
+    padding: 0 14px;
+    background: rgba(255,255,255,.95);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    width: max-content;
+    padding: 8px 4px 8px 0;
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  .back-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .back-button:hover {
+    color: #626771;
+  }
+
+  .back-button:active {
+    opacity: .58;
+    transform: translateX(-1px);
+  }
+
+  .topbar__title {
+    overflow: hidden;
+    font-size: 16px;
+    font-weight: 680;
+    letter-spacing: -.02em;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .capacity {
+    position: sticky;
+    top: 54px;
+    z-index: 19;
+    padding: 11px 13px 12px;
+    background: rgba(251,251,252,.96);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .capacity__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 2px 9px;
+  }
+
+  .capacity__label {
+    color: #777b83;
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: .16em;
+  }
+
+  .capacity__progress {
+    color: var(--muted);
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .capacity__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+  }
+
+  .capacity-card {
+    position: relative;
+    min-width: 0;
+    height: 37px;
+    padding: 0 7px 6px;
+    border-right: 1px solid var(--line);
+  }
+
+  .capacity-card:last-child {
+    border-right: 0;
+  }
+
+  .capacity-card__line {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 3px;
+  }
+
+  .capacity-card__name {
+    font-family: var(--serif);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .02em;
+  }
+
+  .capacity-card__count {
+    color: #6f737c;
+    font-size: 10px;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .capacity-card__track {
+    position: absolute;
+    right: 7px;
+    bottom: 1px;
+    left: 7px;
+    height: 2px;
+    overflow: hidden;
+    background: #e4e5e8;
+    border-radius: 2px;
+  }
+
+  .capacity-card__fill {
+    display: block;
+    width: var(--fill);
+    height: 100%;
+    border-radius: inherit;
+    transition: width 260ms cubic-bezier(.22,.8,.24,1);
+  }
+
+  .capacity-card--core .capacity-card__fill {
+    background: linear-gradient(90deg, #17191e, #a98a54);
+  }
+
+  .capacity-card--orbit .capacity-card__fill {
+    background: linear-gradient(90deg, #334963, #8da4bb);
+  }
+
+  .capacity-card--halo .capacity-card__fill {
+    background: linear-gradient(90deg, #858992, #c6c8cc);
+  }
+
+  .capacity-card--galaxy .capacity-card__fill {
+    background: linear-gradient(90deg, #6d657a, #b7adbf);
+  }
+
+  .capacity-card.is-full .capacity-card__name,
+  .capacity-card.is-full .capacity-card__count {
+    color: #a1a3a8;
+  }
+
+  .capacity-card.is-full .capacity-card__fill {
+    background: #b8bbc1;
+  }
+
+  .intro {
+    padding: 25px 15px 17px;
+    background:
+      radial-gradient(circle at 91% 18%, rgba(170,138,81,.075), transparent 70px),
+      #fff;
+  }
+
+  .intro__kicker,
+  .management-head__kicker {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 6px;
+    color: #777b83;
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: .17em;
+    text-transform: uppercase;
+  }
+
+  .orbit-mark {
+    position: relative;
+    width: 13px;
+    height: 13px;
+    border: 1px solid #b9a276;
+    border-radius: 50%;
+  }
+
+  .orbit-mark::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 3px;
+    background: #2a2d33;
+    border-radius: 50%;
+    content: "";
+    transform: translate(-50%, -50%);
+  }
+
+  .intro__line {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .intro h1,
+  .management-head h2 {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 25px;
+    font-weight: 500;
+    letter-spacing: .025em;
+    line-height: 1.22;
+  }
+
+  .intro__count {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    padding-bottom: 2px;
+    white-space: nowrap;
+  }
+
+  .intro__count strong {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .intro__count span {
+    color: var(--muted);
+    font-size: 10px;
+  }
+
+  .intro__description,
+  .management-head__description {
+    margin: 9px 0 0;
+    color: #777b83;
+    font-size: 11px;
+    line-height: 1.65;
+  }
+
+  .triage-list {
+    border-top: 1px solid var(--line);
+  }
+
+  .person-row {
+    position: relative;
+    min-height: 105px;
+    padding: 14px 14px 13px;
+    overflow: hidden;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    transition:
+      min-height 220ms cubic-bezier(.22,.8,.24,1),
+      padding 220ms cubic-bezier(.22,.8,.24,1),
+      background 160ms ease,
+      opacity 160ms ease;
+  }
+
+  .person-row.is-confirmed {
+    min-height: 62px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background: #fafafa;
+    opacity: .72;
+  }
+
+  .person-default {
+    transition: opacity 100ms ease, transform 180ms ease;
+  }
+
+  .person-row.is-confirmed .person-default {
+    display: none;
+  }
+
+  .person-main {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    margin-bottom: 12px;
+  }
+
+  .avatar {
+    position: relative;
+    display: grid;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    margin-right: 11px;
+    place-items: center;
+    overflow: hidden;
+    color: rgba(255,255,255,.97);
+    background: var(--avatar-bg);
+    border: 1px solid rgba(0,0,0,.035);
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
+    font-family: var(--serif);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .02em;
+  }
+
+  .avatar::before {
+    position: absolute;
+    top: -15%;
+    left: -5%;
+    width: 70%;
+    height: 70%;
+    background: rgba(255,255,255,.22);
+    border-radius: 50%;
+    content: "";
+    filter: blur(9px);
+  }
+
+  .avatar span {
+    position: relative;
+  }
+
+  .person-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .person-name {
+    overflow: hidden;
+    font-size: 16px;
+    font-weight: 650;
+    letter-spacing: -.025em;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .person-meta {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    margin-top: 5px;
+  }
+
+  .enamel {
+    position: relative;
+    display: inline-grid;
+    flex: 0 0 19px;
+    width: 19px;
+    height: 19px;
+    margin-right: 5px;
+    place-items: center;
+    color: #fff;
+    background: var(--enamel);
+    border: 1px solid rgba(255,255,255,.95);
+    border-radius: 50%;
+    box-shadow:
+      0 1px 2px rgba(19,21,27,.24),
+      inset 0 1px 1px rgba(255,255,255,.22);
+  }
+
+  .enamel::after {
+    position: absolute;
+    inset: 1.5px;
+    border: .5px solid rgba(255,255,255,.28);
+    border-radius: inherit;
+    content: "";
+  }
+
+  .enamel svg {
+    position: relative;
+    z-index: 1;
+    width: 11px;
+    height: 11px;
+    overflow: visible;
+  }
+
+  .enamel--human { --enamel: linear-gradient(135deg, #6b7280, #4b5563); }
+  .enamel--leader { --enamel: linear-gradient(135deg, #b45309, #78350f); }
+  .enamel--icon { --enamel: linear-gradient(135deg, #0f8b6d, #065f46); }
+  .enamel--rising { --enamel: linear-gradient(135deg, #168c84, #3f6212); }
+  .enamel--star { --enamel: linear-gradient(135deg, #2563a8, #155e75); }
+  .enamel--nova { --enamel: linear-gradient(135deg, #7c3aed, #86198f); }
+  .enamel--supernova { --enamel: linear-gradient(135deg, #be3655, #9a3412); }
+  .enamel--gravity { --enamel: linear-gradient(135deg, #4338a8, #115e59); }
+  .enamel--singularity { --enamel: linear-gradient(135deg, #475569, #4c1d95); }
+  .enamel--universe {
+    --enamel: linear-gradient(135deg, #4d7c0f, #0f766e 52%, #3b0764);
+  }
+
+  .tier-name {
+    font-size: 10px;
+    font-weight: 820;
+    letter-spacing: .055em;
+    white-space: nowrap;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .tier--human { background-image: linear-gradient(135deg, #4b5563, #7d8590); }
+  .tier--leader { background-image: linear-gradient(135deg, #92400e, #e6a01c); }
+  .tier--icon { background-image: linear-gradient(135deg, #047857, #34d399); }
+  .tier--rising { background-image: linear-gradient(135deg, #0d9488, #84cc16); }
+  .tier--star { background-image: linear-gradient(135deg, #1e40af, #06b6d4); }
+  .tier--nova { background-image: linear-gradient(135deg, #6d28d9, #c026d3); }
+  .tier--supernova { background-image: linear-gradient(135deg, #be123c, #f97316); }
+  .tier--gravity { background-image: linear-gradient(135deg, #312e81, #0d9488); }
+  .tier--singularity { background-image: linear-gradient(135deg, #0f172a, #7c3aed); }
+  .tier--universe {
+    background-image: linear-gradient(135deg, #1a2e05, #84cc16 37%, #0d9488 65%, #4c1d95);
+  }
+
+  .score {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 6px;
+    color: var(--muted);
+    font-size: 10.5px;
+    font-weight: 620;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .score::before {
+    width: 2px;
+    height: 2px;
+    margin-right: 6px;
+    background: #bbbfc6;
+    border-radius: 50%;
+    content: "";
+  }
+
+  .tier-chips {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .tier-chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    height: 29px;
+    padding: 0 2px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #dfe0e3;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 10.5px;
+    font-weight: 680;
+    letter-spacing: -.01em;
+    white-space: nowrap;
+    transition:
+      color 130ms ease,
+      background 130ms ease,
+      border-color 130ms ease,
+      box-shadow 130ms ease,
+      transform 80ms ease;
+  }
+
+  .tier-chip::after {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    content: "";
+    opacity: 0;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.65);
+    transition: opacity 130ms ease;
+  }
+
+  .tier-chip:hover:not(:disabled) {
+    z-index: 1;
+    background: #f7f7f8;
+    border-color: #9ea2aa;
+    box-shadow: 0 3px 8px rgba(20,22,27,.07);
+  }
+
+  .tier-chip:hover:not(:disabled)::after {
+    opacity: 1;
+  }
+
+  .tier-chip:active:not(:disabled) {
+    background: #ededee;
+    box-shadow: none;
+    transform: scale(.965);
+  }
+
+  .tier-chip--core {
+    color: #17191e;
+    border-color: #30333a;
+    box-shadow: inset 0 0 0 1px rgba(170,138,81,.18);
+  }
+
+  .tier-chip--core::before {
+    width: 5px;
+    height: 5px;
+    margin-right: 4px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    content: "";
+    box-shadow: 0 0 0 2px rgba(170,138,81,.12);
+  }
+
+  .tier-chip--core:hover:not(:disabled) {
+    color: #fff;
+    background: #1c1e23;
+    border-color: #1c1e23;
+  }
+
+  .tier-chip--orbit {
+    color: #40546b;
+    border-color: #c8d0d8;
+    background: #fbfcfd;
+  }
+
+  .tier-chip--halo {
+    color: #666a72;
+  }
+
+  .tier-chip--galaxy {
+    color: #665d70;
+    border-color: #d9d4dc;
+    background: #fdfcfd;
+  }
+
+  .tier-chip--connect {
+    color: #777b83;
+    border-style: dashed;
+  }
+
+  .tier-chip:disabled {
+    color: #b0b2b7;
+    background: #f3f3f4;
+    border-color: #e4e4e6;
+    border-style: solid;
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: .68;
+  }
+
+  .tier-chip--core:disabled::before {
+    border-color: #b9bbc0;
+    box-shadow: none;
+  }
+
+  .confirmed-view {
+    display: none;
+    align-items: center;
+    width: 100%;
+    min-height: 45px;
+  }
+
+  .person-row.is-confirmed .confirmed-view {
+    display: flex;
+  }
+
+  .confirmed-main {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    align-items: center;
+    align-self: stretch;
+    padding: 4px 7px 4px 2px;
+    background: transparent;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 130ms ease, transform 80ms ease;
+  }
+
+  .confirmed-main:hover {
+    background: #f0f0f1;
+  }
+
+  .confirmed-main:active {
+    background: #e8e8ea;
+    transform: scale(.99);
+  }
+
+  .confirmed-orbit {
+    position: relative;
+    display: grid;
+    flex: 0 0 29px;
+    width: 29px;
+    height: 29px;
+    margin-right: 9px;
+    place-items: center;
+    border: 1px solid #aeb2b9;
+    border-radius: 50%;
+  }
+
+  .confirmed-orbit::before {
+    width: 5px;
+    height: 5px;
+    background: #71757d;
+    border-radius: 50%;
+    content: "";
+  }
+
+  .confirmed-orbit::after {
+    position: absolute;
+    top: -2px;
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border: 1px solid #747881;
+    border-radius: 50%;
+    content: "";
+  }
+
+  .person-row[data-assigned="core"] .confirmed-orbit {
+    border-color: #8d7448;
+    box-shadow: inset 0 0 0 3px rgba(170,138,81,.1);
+  }
+
+  .person-row[data-assigned="orbit"] .confirmed-orbit { border-color: #70859c; }
+  .person-row[data-assigned="halo"] .confirmed-orbit { border-color: #aaaeb5; }
+  .person-row[data-assigned="galaxy"] .confirmed-orbit { border-color: #8c8195; }
+
+  .person-row[data-assigned="connect"] .confirmed-orbit {
+    border-style: dashed;
+    border-color: #afb1b6;
+  }
+
+  .confirmed-copy {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .confirmed-copy__top {
+    display: flex;
+    align-items: baseline;
+    min-width: 0;
+    gap: 6px;
+  }
+
+  .confirmed-check {
+    color: var(--success);
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .confirmed-tier {
+    font-family: var(--serif);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .04em;
+  }
+
+  .confirmed-divider {
+    color: #c1c3c7;
+    font-size: 11px;
+  }
+
+  .confirmed-name {
+    overflow: hidden;
+    color: #555a63;
+    font-size: 13px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .confirmed-hint {
+    display: block;
+    margin: 3px 0 0 18px;
+    color: #a0a3a9;
+    font-size: 9.5px;
+  }
+
+  .undo-button {
+    flex: 0 0 auto;
+    padding: 10px 3px 10px 9px;
+    color: #6f737b;
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 10px;
+    text-decoration: underline;
+    text-decoration-color: #b9bbc0;
+    text-underline-offset: 3px;
+  }
+
+  .undo-button:hover {
+    color: #17191e;
+    background: #eeeeef;
+  }
+
+  .undo-button:active {
+    transform: scale(.94);
+  }
+
+  .footnote {
+    margin: 0;
+    padding: 18px 15px 24px;
+    color: #989ba2;
+    font-size: 10.5px;
+    text-align: center;
+  }
+
+  /* Existing members */
+  .member-management {
+    background:
+      radial-gradient(circle at 0 0, rgba(170,138,81,.055), transparent 165px),
+      #f8f8f9;
+    border-top: 9px solid #f1f1f2;
+  }
+
+  .management-head {
+    padding: 29px 15px 21px;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .management-head__line {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .management-head__note {
+    padding-bottom: 3px;
+    color: #9a9da3;
+    font-size: 9px;
+    letter-spacing: .04em;
+    white-space: nowrap;
+  }
+
+  .circle-groups {
+    padding: 12px 10px 25px;
+  }
+
+  .circle-group {
+    margin-bottom: 9px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #e5e5e7;
+    border-radius: 15px;
+    box-shadow: 0 2px 9px rgba(20,22,27,.025);
+  }
+
+  .circle-group--core {
+    border-color: rgba(126,100,55,.29);
+    box-shadow:
+      inset 0 1px 0 rgba(170,138,81,.08),
+      0 3px 12px rgba(52,43,29,.035);
+  }
+
+  .circle-group__toggle {
+    display: flex;
+    width: 100%;
+    min-height: 59px;
+    align-items: center;
+    padding: 0 13px;
+    background: #fff;
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+    transition: background 130ms ease;
+  }
+
+  .circle-group__toggle:hover {
+    background: #fafafa;
+  }
+
+  .circle-group__toggle:active {
+    background: #f3f3f4;
+  }
+
+  .group-orbit {
+    position: relative;
+    display: grid;
+    flex: 0 0 31px;
+    width: 31px;
+    height: 31px;
+    margin-right: 10px;
+    place-items: center;
+    border: 1px solid #aeb2b9;
+    border-radius: 50%;
+  }
+
+  .group-orbit::before {
+    width: 5px;
+    height: 5px;
+    background: #6d7179;
+    border-radius: 50%;
+    content: "";
+  }
+
+  .group-orbit::after {
+    position: absolute;
+    top: -2px;
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    content: "";
+  }
+
+  .circle-group--core .group-orbit {
+    color: #8d7448;
+    border-color: #8d7448;
+    box-shadow: inset 0 0 0 4px rgba(170,138,81,.09);
+  }
+
+  .circle-group--orbit .group-orbit {
+    color: #70859c;
+    border-color: #70859c;
+  }
+
+  .circle-group--halo .group-orbit {
+    color: #969aa2;
+    border-color: #aaaeb5;
+  }
+
+  .circle-group--galaxy .group-orbit {
+    color: #8c8195;
+    border-color: #8c8195;
+  }
+
+  .circle-group--connect .group-orbit {
+    color: #9a9da4;
+    border-style: dashed;
+  }
+
+  .circle-group__identity {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .circle-group__name-line {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+  }
+
+  .circle-group__name {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: .025em;
+  }
+
+  .circle-group--core .circle-group__name::after {
+    display: inline-block;
+    width: 3px;
+    height: 3px;
+    margin: 0 0 4px 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(170,138,81,.12);
+    content: "";
+  }
+
+  .circle-group__sub {
+    display: block;
+    margin-top: 3px;
+    color: #9a9da4;
+    font-size: 9.5px;
+  }
+
+  .circle-group__usage {
+    color: #696d75;
+    font-size: 11px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .circle-group__chevron {
+    width: 17px;
+    height: 17px;
+    margin-left: 8px;
+    color: #8f939a;
+    transition: transform 190ms ease;
+  }
+
+  .circle-group.is-open .circle-group__chevron {
+    transform: rotate(180deg);
+  }
+
+  .circle-group__body {
+    border-top: 1px solid var(--line);
+  }
+
+  .circle-group:not(.is-open) .circle-group__body {
+    display: none;
+  }
+
+  .member-row {
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    transition: background 140ms ease;
+  }
+
+  .member-row:last-of-type {
+    border-bottom: 0;
+  }
+
+  .member-row.is-editing {
+    background: #fbfbfc;
+  }
+
+  .member-row__main {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: center;
+    padding: 12px 13px 11px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+    transition: background 130ms ease, transform 80ms ease;
+  }
+
+  .member-row__main:hover {
+    background: #f8f8f9;
+  }
+
+  .member-row__main:active {
+    background: #f1f1f2;
+    transform: scale(.995);
+  }
+
+  .member-row .avatar {
+    flex-basis: 39px;
+    width: 39px;
+    height: 39px;
+    margin-right: 10px;
+    font-size: 12px;
+  }
+
+  .member-row .person-name {
+    font-size: 14.5px;
+  }
+
+  .member-row .person-meta {
+    margin-top: 4px;
+  }
+
+  .move-cue {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 5px;
+    margin-left: 7px;
+    color: #8b8f97;
+    font-size: 9px;
+    white-space: nowrap;
+  }
+
+  .move-cue svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .member-row.is-editing .move-cue {
+    color: #41454d;
+  }
+
+  .member-editor {
+    display: none;
+    padding: 0 13px 13px 62px;
+  }
+
+  .member-row.is-editing .member-editor {
+    display: block;
+    animation: editor-in 170ms ease both;
+  }
+
+  @keyframes editor-in {
+    from {
+      opacity: 0;
+      transform: translateY(-3px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .member-editor__label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 1px 8px;
+    color: #777b83;
+    font-size: 9.5px;
+  }
+
+  .member-editor__label strong {
+    color: #3e4249;
+    font-weight: 700;
+  }
+
+  .member-editor .tier-chips {
+    margin-left: -48px;
+  }
+
+  .member-editor .tier-chip.is-current:disabled {
+    color: #fff;
+    background: #303238;
+    border-color: #303238;
+    border-style: solid;
+    cursor: default;
+    opacity: 1;
+  }
+
+  .member-editor .tier-chip--core.is-current:disabled::before {
+    border-color: #c7aa72;
+    box-shadow: 0 0 0 2px rgba(199,170,114,.14);
+  }
+
+  .remove-member {
+    display: block;
+    margin: 10px 0 0 auto;
+    padding: 5px 3px;
+    color: #b14b50;
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 9.5px;
+    text-decoration: underline;
+    text-decoration-color: rgba(177,75,80,.35);
+    text-underline-offset: 3px;
+  }
+
+  .remove-member:hover {
+    color: #d1252d;
+    background: rgba(216,60,66,.055);
+  }
+
+  .remove-member:active {
+    transform: scale(.96);
+  }
+
+  .group-remainder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    color: #989ba2;
+    background:
+      linear-gradient(90deg, transparent, rgba(247,247,248,.85), transparent);
+    border-top: 1px solid #f0f0f1;
+    font-family: var(--serif);
+    font-size: 11px;
+    letter-spacing: .04em;
+  }
+
+  .group-empty {
+    margin: 0;
+    padding: 23px 15px;
+    color: #999ca3;
+    font-size: 10.5px;
+    text-align: center;
+  }
+
+  .management-footnote {
+    margin: 0;
+    padding: 2px 15px 29px;
+    color: #9a9da3;
+    font-size: 10px;
+    line-height: 1.7;
+    text-align: center;
+  }
+
+  /* Profile reference */
+  .profile-reference {
+    width: 390px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 24px 16px 22px;
+    background: #fff;
+    border: 1px solid rgba(20,22,28,.07);
+    border-radius: 22px;
+    box-shadow: 0 12px 34px rgba(18,20,26,.08);
+  }
+
+  .profile-reference__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: -4px 0 19px;
+  }
+
+  .profile-reference__handle {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .profile-reference__menu {
+    color: #62666e;
+    font-size: 19px;
+    letter-spacing: -.18em;
+  }
+
+  .profile-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .profile-button-wrap {
+    position: relative;
+    min-width: 0;
+  }
+
+  .profile-button {
+    width: 100%;
+    height: 34px;
+    padding: 0 5px;
+    overflow: hidden;
+    background: #f3f4f6;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 650;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: background 120ms ease, transform 80ms ease;
+  }
+
+  .profile-button:hover {
+    background: #e9eaec;
+  }
+
+  .profile-button:active {
+    background: #dfe1e4;
+    transform: scale(.98);
+  }
+
+  .new-badge {
+    position: absolute;
+    top: -8px;
+    right: -7px;
+    z-index: 2;
+    display: grid;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    place-items: center;
+    color: #fff;
+    background: var(--danger);
+    border: 2px solid #fff;
+    border-radius: 999px;
+    box-shadow: 0 2px 5px rgba(190,22,29,.22);
+    font-size: 9px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .back-button:focus-visible,
+  .tier-chip:focus-visible,
+  .confirmed-main:focus-visible,
+  .undo-button:focus-visible,
+  .circle-group__toggle:focus-visible,
+  .member-row__main:focus-visible,
+  .remove-member:focus-visible,
+  .profile-button:focus-visible {
+    outline: 2px solid #181a1f;
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 420px) {
+    body {
+      padding-right: 8px;
+      padding-left: 8px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: .01ms !important;
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<svg class="sr-only" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="mark-human" viewBox="0 0 24 24">
+      <circle cx="12" cy="6.9" r="3.15" fill="currentColor"/>
+      <path d="M5 21c.3-6.25 2.9-9.4 7-9.4s6.7 3.15 7 9.4Z" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="mark-leader" viewBox="0 0 24 24">
+      <circle cx="12" cy="13.1" r="7.25" fill="none" stroke="currentColor" stroke-width="3"/>
+      <path d="M12 1.7 16.4 6.1 14.15 8.35 12 6.2 9.85 8.35 7.6 6.1Z" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="mark-icon" viewBox="0 0 24 24">
+      <path fill="currentColor" fill-rule="evenodd"
+        d="M1.6 12C4.55 7.2 7.95 4.9 12 4.9S19.45 7.2 22.4 12c-2.95 4.8-6.35 7.1-10.4 7.1S4.55 16.8 1.6 12Zm4.45 0c1.75 2.25 3.7 3.35 5.95 3.35s4.2-1.1 5.95-3.35C16.2 9.75 14.25 8.65 12 8.65S7.8 9.75 6.05 12Z"/>
+      <circle cx="12" cy="12" r="2.25" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="mark-rising" viewBox="0 0 24 24">
+      <path fill="currentColor" fill-rule="evenodd"
+        d="M12 1.55c5.1 4.65 7.75 8.7 7.75 13.05 0 4.65-3.35 7.7-7.75 7.7s-7.75-3.05-7.75-7.7C4.25 10.25 6.9 6.2 12 1.55Zm0 5.15c-2.8 2.95-4.15 5.45-4.15 7.9 0 2.55 1.7 4.15 4.15 4.15s4.15-1.6 4.15-4.15c0-2.45-1.35-4.95-4.15-7.9Z"/>
+      <circle cx="12" cy="14.8" r="2.15" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="mark-star" viewBox="0 0 24 24">
+      <path fill="currentColor" fill-rule="evenodd"
+        d="m12 1.7 2.5 6.6 7.05.35-5.5 4.4 1.9 6.8L12 16l-5.95 3.85 1.9-6.8-5.5-4.4 7.05-.35L12 1.7Zm0 6.05a4.25 4.25 0 1 0 0 8.5 4.25 4.25 0 0 0 0-8.5Z"/>
+      <circle cx="12" cy="12" r="2.2" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="mark-nova" viewBox="0 0 24 24">
+      <path fill="currentColor" fill-rule="evenodd"
+        d="M12 1.15c1.4 4.95 3.1 7.2 10.85 10.85C15.1 15.65 13.4 17.9 12 22.85 10.6 17.9 8.9 15.65 1.15 12 8.9 8.35 10.6 6.1 12 1.15Zm0 6.55a4.3 4.3 0 1 0 0 8.6 4.3 4.3 0 0 0 0-8.6Z"/>
+      <circle cx="12" cy="12" r="2.3" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="mark-supernova" viewBox="0 0 24 24">
+      <path fill="currentColor" fill-rule="evenodd"
+        d="m12 1 2.5 5.55 5.35-2.4-2.4 5.35L23 12l-5.55 2.5 2.4 5.35-5.35-2.4L12 23l-2.5-5.55-5.35 2.4 2.4-5.35L1 12l5.55-2.5-2.4-5.35 5.35 2.4L12 1Zm0 6.55a4.45 4.45 0 1 0 0 8.9 4.45 4.45 0 0 0 0-8.9Z"/>
+      <path d="m12 8.75 3.25 3.25L12 15.25 8.75 12Z" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="mark-gravity" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9.15" fill="none" stroke="currentColor" stroke-width="2.8"/>
+      <ellipse cx="12" cy="12" rx="9.55" ry="4.15" fill="none"
+        stroke="currentColor" stroke-width="2.45" transform="rotate(-28 12 12)"/>
+      <circle cx="12" cy="12" r="2.25" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="mark-singularity" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8.85" fill="none" stroke="currentColor" stroke-width="2.85"/>
+      <rect x="2.05" y="10.55" width="19.9" height="2.9" rx="1.45" fill="currentColor"/>
+      <circle cx="12" cy="12" r="3.45" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="mark-universe" viewBox="0 0 24 24">
+      <path fill="currentColor" fill-rule="evenodd"
+        d="M12 9.4C10.25 7.1 8.55 5.9 6.4 5.9 3.15 5.9.9 8.4.9 12s2.25 6.1 5.5 6.1c2.15 0 3.85-1.2 5.6-3.5 1.75 2.3 3.45 3.5 5.6 3.5 3.25 0 5.5-2.5 5.5-6.1s-2.25-6.1-5.5-6.1c-2.15 0-3.85 1.2-5.6 3.5ZM6.45 8.75c1.2 0 2.25.95 3.7 3.25-1.45 2.3-2.5 3.25-3.7 3.25-1.65 0-2.75-1.3-2.75-3.25s1.1-3.25 2.75-3.25Zm11.1 0c1.65 0 2.75 1.3 2.75 3.25s-1.1 3.25-2.75 3.25c-1.2 0-2.25-.95-3.7-3.25 1.45-2.3 2.5-3.25 3.7-3.25Z"/>
+      <circle cx="12" cy="2.1" r="1.45" fill="currentColor"/>
+      <circle cx="12" cy="21.9" r="1.45" fill="currentColor"/>
+    </symbol>
+  </defs>
+</svg>
+
+<main>
+  <section class="showcase" aria-labelledby="circle-settings-frame-title">
+    <header class="frame-caption">
+      <p class="frame-caption__eyebrow">CONSEQ · Circle Settings</p>
+      <h2 class="frame-caption__title" id="circle-settings-frame-title">
+        Circle Settings 統合デザイン
+      </h2>
+    </header>
+
+    <div class="phone">
+      <header class="topbar">
+        <button class="back-button" type="button" aria-label="前の画面へ戻る">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m15 5-7 7 7 7" fill="none" stroke="currentColor"
+              stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>戻る</span>
+        </button>
+        <div class="topbar__title">Circle Settings</div>
+        <div aria-hidden="true"></div>
+      </header>
+
+      <section class="capacity" aria-label="Circle枠の使用状況">
+        <div class="capacity__head">
+          <span class="capacity__label">CIRCLE CAPACITY</span>
+          <span class="capacity__progress" id="assignment-progress">0 / 20 配置済み</span>
+        </div>
+
+        <div class="capacity__grid">
+          <div class="capacity-card capacity-card--core" id="capacity-core">
+            <div class="capacity-card__line">
+              <span class="capacity-card__name">Core</span>
+              <span class="capacity-card__count" id="cap-core">7/10</span>
+            </div>
+            <span class="capacity-card__track">
+              <span class="capacity-card__fill" style="--fill:70%"></span>
+            </span>
+          </div>
+
+          <div class="capacity-card capacity-card--orbit" id="capacity-orbit">
+            <div class="capacity-card__line">
+              <span class="capacity-card__name">Orbit</span>
+              <span class="capacity-card__count" id="cap-orbit">12/15</span>
+            </div>
+            <span class="capacity-card__track">
+              <span class="capacity-card__fill" style="--fill:80%"></span>
+            </span>
+          </div>
+
+          <div class="capacity-card capacity-card--halo" id="capacity-halo">
+            <div class="capacity-card__line">
+              <span class="capacity-card__name">Halo</span>
+              <span class="capacity-card__count" id="cap-halo">31/50</span>
+            </div>
+            <span class="capacity-card__track">
+              <span class="capacity-card__fill" style="--fill:62%"></span>
+            </span>
+          </div>
+
+          <div class="capacity-card capacity-card--galaxy" id="capacity-galaxy">
+            <div class="capacity-card__line">
+              <span class="capacity-card__name">Galaxy</span>
+              <span class="capacity-card__count" id="cap-galaxy">88/150</span>
+            </div>
+            <span class="capacity-card__track">
+              <span class="capacity-card__fill" style="--fill:58.67%"></span>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section class="intro" aria-labelledby="new-circle-heading">
+        <div class="intro__line">
+          <h1 id="new-circle-heading">New Circle</h1>
+          <div class="intro__count" aria-live="polite">
+            <strong id="remaining-count">20</strong>
+            <span>未配置</span>
+          </div>
+        </div>
+        <p class="intro__description">
+          一人ずつ、あなたとの距離を選んでください。
+        </p>
+      </section>
+
+      <div class="triage-list" id="triage-list"></div>
+
+      <p class="footnote">※配置は相手には見えません</p>
+
+      <section class="member-management" aria-labelledby="member-management-heading">
+        <header class="management-head">
+          <div class="management-head__kicker">
+            <span class="orbit-mark" aria-hidden="true"></span>
+            <span>Your Circle</span>
+          </div>
+
+          <div class="management-head__line">
+            <h2 id="member-management-heading">Circle Members</h2>
+            <span class="management-head__note">タップして距離を変更</span>
+          </div>
+
+          <p class="management-head__description">
+            いまの関係を見直し、必要な人の距離を整えられます。
+          </p>
+        </header>
+
+        <div class="circle-groups" id="circle-groups"></div>
+
+        <p class="management-footnote">
+          階層の変更や解除は相手に通知されません。
+        </p>
+      </section>
+
+      <div class="sr-only" id="live-status" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="showcase" aria-labelledby="reference-frame-title">
+    <header class="frame-caption">
+      <p class="frame-caption__eyebrow">Profile · Reference</p>
+      <h2 class="frame-caption__title" id="reference-frame-title">プロフィール入口</h2>
+    </header>
+
+    <div class="profile-reference">
+      <div class="profile-reference__bar">
+        <span class="profile-reference__handle">@taisho_k</span>
+        <span class="profile-reference__menu" aria-hidden="true">•••</span>
+      </div>
+
+      <div class="profile-actions">
+        <button class="profile-button" type="button">Edit Profile</button>
+
+        <div class="profile-button-wrap">
+          <button class="profile-button" type="button">Circle Settings</button>
+          <span class="new-badge" aria-label="新規コネクト20件">20</span>
+        </div>
+
+        <button class="profile-button" type="button">Group Settings</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  const circles = {
+    core:    { label: "Core",    current: 7,  max: 10 },
+    orbit:   { label: "Orbit",   current: 12, max: 15 },
+    halo:    { label: "Halo",    current: 31, max: 50 },
+    galaxy:  { label: "Galaxy",  current: 88, max: 150 },
+    connect: { label: "Connect", current: 15, max: Infinity }
+  };
+
+  const capacityOrder = ["core", "orbit", "halo", "galaxy"];
+  const chipOrder = ["core", "orbit", "halo", "galaxy", "connect"];
+
+  const newPeople = [
+    { id:"p01", name:"田中 悠", initials:"悠", score:820, avatar:"linear-gradient(145deg,#b8a995,#756e68)" },
+    { id:"p02", name:"Sofia Martinez", initials:"SM", score:340, avatar:"linear-gradient(145deg,#bd9d98,#79636a)" },
+    { id:"p03", name:"岡田 真由", initials:"真", score:1200, avatar:"linear-gradient(145deg,#b9a07d,#75604d)" },
+    { id:"p04", name:"Noah Garcia", initials:"NG", score:2650, avatar:"linear-gradient(145deg,#82959b,#526267)" },
+    { id:"p05", name:"鈴木 里奈", initials:"里", score:6300, avatar:"linear-gradient(145deg,#839c91,#4d655d)" },
+    { id:"p06", name:"Daniel Kim", initials:"DK", score:8900, avatar:"linear-gradient(145deg,#9290a5,#5f5d73)" },
+    { id:"p07", name:"渡辺 彩", initials:"彩", score:24700, avatar:"linear-gradient(145deg,#94a379,#5b6946)" },
+    { id:"p08", name:"James Anderson", initials:"JA", score:38200, avatar:"linear-gradient(145deg,#799c9c,#466566)" },
+    { id:"p09", name:"佐藤 健太", initials:"健", score:68400, avatar:"linear-gradient(145deg,#849bb4,#50657a)" },
+    { id:"p10", name:"Emma Wilson", initials:"EW", score:121000, avatar:"linear-gradient(145deg,#86a1ad,#526a77)" },
+    { id:"p11", name:"山田 彩香", initials:"香", score:187000, avatar:"linear-gradient(145deg,#a08ab2,#685878)" },
+    { id:"p12", name:"Lucas Silva", initials:"LS", score:312000, avatar:"linear-gradient(145deg,#a484aa,#65536d)" },
+    { id:"p13", name:"伊藤 大輔", initials:"大", score:620000, avatar:"linear-gradient(145deg,#ad7f7c,#704e4c)" },
+    { id:"p14", name:"Olivia Brown", initials:"OB", score:870000, avatar:"linear-gradient(145deg,#b18b7d,#755749)" },
+    { id:"p15", name:"中島 誠", initials:"誠", score:1200000, avatar:"linear-gradient(145deg,#777f9e,#484f6b)" },
+    { id:"p16", name:"高橋 美咲", initials:"美", score:1650000, avatar:"linear-gradient(145deg,#778f91,#485f60)" },
+    { id:"p17", name:"Mia Chen", initials:"MC", score:2400000, avatar:"linear-gradient(145deg,#7f829e,#4b4c69)" },
+    { id:"p18", name:"森 拓也", initials:"拓", score:3800000, avatar:"linear-gradient(145deg,#7f7895,#504961)" },
+    { id:"p19", name:"Alex Johnson", initials:"AJ", score:5800000, avatar:"linear-gradient(145deg,#748d7b,#475c4e)" },
+    { id:"p20", name:"藤田 悠斗", initials:"悠", score:8200000, avatar:"linear-gradient(145deg,#74758d,#46475b)" }
+  ];
+
+  const groups = {
+    core: {
+      open: true,
+      hidden: 0,
+      description: "もっとも近い関係",
+      members: [
+        { id:"m01", name:"佐々木 玲奈", initials:"玲", score:9200000, avatar:"linear-gradient(145deg,#756f88,#3f4055)" },
+        { id:"m02", name:"Ethan Williams", initials:"EW", score:2600000, avatar:"linear-gradient(145deg,#7a8a98,#465664)" },
+        { id:"m03", name:"小林 直樹", initials:"直", score:1380000, avatar:"linear-gradient(145deg,#82928e,#4a605c)" },
+        { id:"m04", name:"Amelia Rossi", initials:"AR", score:680000, avatar:"linear-gradient(145deg,#a47a81,#654b55)" },
+        { id:"m05", name:"松本 葵", initials:"葵", score:182000, avatar:"linear-gradient(145deg,#8e7ba0,#5b4d6b)" },
+        { id:"m06", name:"Liam Chen", initials:"LC", score:78400, avatar:"linear-gradient(145deg,#718fa4,#405d70)" },
+        { id:"m07", name:"井上 美月", initials:"月", score:29400, avatar:"linear-gradient(145deg,#869a76,#526444)" }
+      ]
+    },
+
+    orbit: {
+      open: true,
+      hidden: 7,
+      description: "日常的につながる関係",
+      members: [
+        { id:"m08", name:"長谷川 湊", initials:"湊", score:4100000, avatar:"linear-gradient(145deg,#7b7d9d,#484b69)" },
+        { id:"m09", name:"Charlotte Evans", initials:"CE", score:970000, avatar:"linear-gradient(145deg,#a47d89,#684c59)" },
+        { id:"m10", name:"加藤 結衣", initials:"結", score:286000, avatar:"linear-gradient(145deg,#9882a3,#63536e)" },
+        { id:"m11", name:"Mateo Hernández", initials:"MH", score:116000, avatar:"linear-gradient(145deg,#7896a4,#486571)" },
+        { id:"m12", name:"清水 遼", initials:"遼", score:13600, avatar:"linear-gradient(145deg,#849a8b,#506657)" }
+      ]
+    },
+
+    halo: {
+      open: false,
+      hidden: 26,
+      description: "ゆるやかに見守る関係",
+      members: [
+        { id:"m13", name:"吉田 奈緒", initials:"奈", score:2180000, avatar:"linear-gradient(145deg,#85849f,#50516e)" },
+        { id:"m14", name:"Oliver Smith", initials:"OS", score:542000, avatar:"linear-gradient(145deg,#a1837e,#66534e)" },
+        { id:"m15", name:"斎藤 優斗", initials:"優", score:164000, avatar:"linear-gradient(145deg,#8d80a3,#594d6c)" },
+        { id:"m16", name:"Isabella Lee", initials:"IL", score:35800, avatar:"linear-gradient(145deg,#78999a,#466566)" },
+        { id:"m17", name:"石井 香織", initials:"香", score:7400, avatar:"linear-gradient(145deg,#829b8c,#4d6658)" }
+      ]
+    },
+
+    galaxy: {
+      open: false,
+      hidden: 83,
+      description: "広くつながる関係",
+      members: [
+        { id:"m18", name:"Emily Johnson", initials:"EJ", score:1280000, avatar:"linear-gradient(145deg,#8186a0,#4e536b)" },
+        { id:"m19", name:"木村 修平", initials:"修", score:615000, avatar:"linear-gradient(145deg,#a07f78,#67514b)" },
+        { id:"m20", name:"Aarav Patel", initials:"AP", score:224000, avatar:"linear-gradient(145deg,#967ba2,#604e6a)" },
+        { id:"m21", name:"福田 さくら", initials:"桜", score:52300, avatar:"linear-gradient(145deg,#7895a8,#476476)" },
+        { id:"m22", name:"Nora Müller", initials:"NM", score:890, avatar:"linear-gradient(145deg,#a99787,#706154)" }
+      ]
+    },
+
+    connect: {
+      open: false,
+      hidden: 10,
+      description: "上位未配置の控え",
+      members: [
+        { id:"m23", name:"山口 海斗", initials:"海", score:386000, avatar:"linear-gradient(145deg,#8f7da0,#5a4f69)" },
+        { id:"m24", name:"Grace Thompson", initials:"GT", score:152000, avatar:"linear-gradient(145deg,#9b7d89,#644e59)" },
+        { id:"m25", name:"前田 花", initials:"花", score:44600, avatar:"linear-gradient(145deg,#809c8c,#4e6658)" },
+        { id:"m26", name:"Leo Wang", initials:"LW", score:6900, avatar:"linear-gradient(145deg,#8193a4,#506273)" },
+        { id:"m27", name:"高木 誠司", initials:"誠", score:720, avatar:"linear-gradient(145deg,#a29181,#6c5d51)" }
+      ]
+    }
+  };
+
+  const assignments = new Map();
+  const openEditors = new Set();
+  const triageList = document.getElementById("triage-list");
+  const circleGroups = document.getElementById("circle-groups");
+  const liveStatus = document.getElementById("live-status");
+
+  function getInfluenceTier(score) {
+    if (score >= 5000000) return { key:"universe", name:"UNIVERSE" };
+    if (score >= 2000000) return { key:"singularity", name:"SINGULARITY" };
+    if (score >= 1000000) return { key:"gravity", name:"GRAVITY" };
+    if (score >= 500000) return { key:"supernova", name:"SUPERNOVA" };
+    if (score >= 150000) return { key:"nova", name:"NOVA" };
+    if (score >= 50000) return { key:"star", name:"STAR" };
+    if (score >= 20000) return { key:"rising", name:"RISING" };
+    if (score >= 5000) return { key:"icon", name:"ICON" };
+    if (score >= 1000) return { key:"leader", name:"LEADER" };
+    return { key:"human", name:"HUMAN" };
+  }
+
+  function formatScore(score) {
+    if (score >= 1000000) {
+      return (score / 1000000).toFixed(1).replace(".0", "") + "M";
+    }
+    if (score >= 1000) {
+      return (score / 1000).toFixed(1).replace(".0", "") + "K";
+    }
+    return String(score);
+  }
+
+  function enamelHTML(tier) {
+    return `
+      <span class="enamel enamel--${tier.key}" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <use href="#mark-${tier.key}"></use>
+        </svg>
+      </span>
+    `;
+  }
+
+  function personIdentityHTML(person) {
+    const tier = getInfluenceTier(person.score);
+
+    return `
+      <div class="avatar" style="--avatar-bg:${person.avatar}" aria-hidden="true">
+        <span>${person.initials}</span>
+      </div>
+
+      <div class="person-info">
+        <div class="person-name">${person.name}</div>
+        <div class="person-meta">
+          ${enamelHTML(tier)}
+          <span class="tier-name tier--${tier.key}">${tier.name}</span>
+          <span class="score">${formatScore(person.score)}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function newChipHTML(person, circleKey) {
+    const circle = circles[circleKey];
+
+    return `
+      <button
+        class="tier-chip tier-chip--${circleKey}"
+        type="button"
+        data-action="assign-new"
+        data-person="${person.id}"
+        data-circle="${circleKey}"
+        aria-label="${person.name}を${circle.label}に配置"
+      >${circle.label}</button>
+    `;
+  }
+
+  function newPersonHTML(person) {
+    return `
+      <article class="person-row" id="row-${person.id}" data-person="${person.id}">
+        <div class="person-default">
+          <div class="person-main">
+            ${personIdentityHTML(person)}
+          </div>
+
+          <div class="tier-chips" aria-label="${person.name}の配置先">
+            ${chipOrder.map(key => newChipHTML(person, key)).join("")}
+          </div>
+        </div>
+
+        <div class="confirmed-view">
+          <button
+            class="confirmed-main"
+            type="button"
+            data-action="reopen-new"
+            data-person="${person.id}"
+            aria-label="${person.name}の配置先を選び直す"
+          >
+            <span class="confirmed-orbit" aria-hidden="true"></span>
+            <span class="confirmed-copy">
+              <span class="confirmed-copy__top">
+                <span class="confirmed-check">✓</span>
+                <span class="confirmed-tier"></span>
+                <span class="confirmed-divider">｜</span>
+                <span class="confirmed-name">${person.name}</span>
+              </span>
+              <span class="confirmed-hint">タップで選び直し</span>
+            </span>
+          </button>
+
+          <button
+            class="undo-button"
+            type="button"
+            data-action="undo-new"
+            data-person="${person.id}"
+            aria-label="${person.name}の配置を取り消す"
+          >取り消し</button>
+        </div>
+      </article>
+    `;
+  }
+
+  function memberChipHTML(person, currentKey, destinationKey) {
+    const destination = circles[destinationKey];
+    const isCurrent = destinationKey === currentKey;
+    const isFull = Number.isFinite(destination.max) &&
+      destination.current >= destination.max;
+    const disabled = isCurrent || isFull;
+    const title = isCurrent
+      ? `現在の階層：${destination.label}`
+      : isFull
+        ? `${destination.label}は満員です`
+        : "";
+
+    return `
+      <button
+        class="tier-chip tier-chip--${destinationKey}${isCurrent ? " is-current" : ""}"
+        type="button"
+        data-action="move-member"
+        data-person="${person.id}"
+        data-from="${currentKey}"
+        data-circle="${destinationKey}"
+        aria-label="${person.name}を${destination.label}へ移す"
+        ${disabled ? "disabled" : ""}
+        ${title ? `title="${title}"` : ""}
+      >${destination.label}</button>
+    `;
+  }
+
+  function memberRowHTML(person, groupKey) {
+    const editing = openEditors.has(person.id);
+
+    return `
+      <article
+        class="member-row${editing ? " is-editing" : ""}"
+        id="member-${person.id}"
+        data-member="${person.id}"
+      >
+        <button
+          class="member-row__main"
+          type="button"
+          data-action="toggle-editor"
+          data-person="${person.id}"
+          data-group="${groupKey}"
+          aria-expanded="${editing}"
+          aria-controls="editor-${person.id}"
+        >
+          ${personIdentityHTML(person)}
+
+          <span class="move-cue">
+            <span>${editing ? "閉じる" : "移す"}</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 7h10m0 0-3-3m3 3-3 3M16 17H6m0 0 3 3m-3-3 3-3"
+                fill="none" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+
+        <div class="member-editor" id="editor-${person.id}">
+          <div class="member-editor__label">
+            <span>別の階層へ移す</span>
+            <strong>現在：${circles[groupKey].label}</strong>
+          </div>
+
+          <div class="tier-chips" aria-label="${person.name}の移動先">
+            ${chipOrder.map(key => memberChipHTML(person, groupKey, key)).join("")}
+          </div>
+
+          <button
+            class="remove-member"
+            type="button"
+            data-action="remove-member"
+            data-person="${person.id}"
+            data-from="${groupKey}"
+            aria-label="${person.name}をこの階層から外す"
+          >この階層から外す</button>
+        </div>
+      </article>
+    `;
+  }
+
+  function groupTotal(groupKey) {
+    if (capacityOrder.includes(groupKey)) {
+      return circles[groupKey].current;
+    }
+    return groups[groupKey].members.length + groups[groupKey].hidden;
+  }
+
+  function groupHTML(groupKey) {
+    const group = groups[groupKey];
+    const circle = circles[groupKey];
+    const total = groupTotal(groupKey);
+    const usage = Number.isFinite(circle.max)
+      ? `${total}/${circle.max}`
+      : `${total}人`;
+    const remainder = group.hidden > 0
+      ? `<div class="group-remainder">他 ${group.hidden} 人</div>`
+      : "";
+    const memberRows = group.members.length
+      ? group.members.map(person => memberRowHTML(person, groupKey)).join("")
+      : `<p class="group-empty">表示できるメンバーはいません</p>`;
+
+    return `
+      <section
+        class="circle-group circle-group--${groupKey}${group.open ? " is-open" : ""}"
+        data-group="${groupKey}"
+      >
+        <button
+          class="circle-group__toggle"
+          type="button"
+          data-action="toggle-group"
+          data-group="${groupKey}"
+          aria-expanded="${group.open}"
+          aria-controls="group-body-${groupKey}"
+        >
+          <span class="group-orbit" aria-hidden="true"></span>
+
+          <span class="circle-group__identity">
+            <span class="circle-group__name-line">
+              <span class="circle-group__name">${circle.label}</span>
+            </span>
+            <span class="circle-group__sub">${group.description}</span>
+          </span>
+
+          <span class="circle-group__usage">${usage}</span>
+
+          <svg class="circle-group__chevron" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor"
+              stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="circle-group__body" id="group-body-${groupKey}">
+          ${memberRows}
+          ${remainder}
+        </div>
+      </section>
+    `;
+  }
+
+  function findMember(personId) {
+    for (const groupKey of chipOrder) {
+      const index = groups[groupKey].members.findIndex(
+        person => person.id === personId
+      );
+
+      if (index !== -1) {
+        return {
+          person: groups[groupKey].members[index],
+          groupKey,
+          index
+        };
+      }
+    }
+
+    return null;
+  }
+
+  function announce(message) {
+    liveStatus.textContent = "";
+    window.requestAnimationFrame(() => {
+      liveStatus.textContent = message;
+    });
+  }
+
+  function renderTriage() {
+    triageList.innerHTML = newPeople.map(newPersonHTML).join("");
+  }
+
+  function renderGroups() {
+    circleGroups.innerHTML = chipOrder.map(groupHTML).join("");
+  }
+
+  function assignNew(personId, circleKey) {
+    if (assignments.has(personId)) return;
+
+    const circle = circles[circleKey];
+    const person = newPeople.find(item => item.id === personId);
+    const row = document.getElementById(`row-${personId}`);
+
+    if (!circle || !person || !row) return;
+    if (Number.isFinite(circle.max) && circle.current >= circle.max) return;
+
+    circle.current += 1;
+    assignments.set(personId, circleKey);
+
+    row.dataset.assigned = circleKey;
+    row.querySelector(".confirmed-tier").textContent = circle.label;
+    row.classList.add("is-confirmed");
+
+    refreshAll(false);
+    announce(`${person.name}を${circle.label}に配置しました`);
+  }
+
+  function clearNewAssignment(personId, mode) {
+    const circleKey = assignments.get(personId);
+    const person = newPeople.find(item => item.id === personId);
+    const row = document.getElementById(`row-${personId}`);
+
+    if (!circleKey || !person || !row) return;
+
+    circles[circleKey].current = Math.max(
+      0,
+      circles[circleKey].current - 1
+    );
+    assignments.delete(personId);
+
+    row.classList.remove("is-confirmed");
+    row.removeAttribute("data-assigned");
+
+    refreshAll(false);
+
+    if (mode === "reopen") {
+      announce(`${person.name}の配置先を選び直せます`);
+
+      window.requestAnimationFrame(() => {
+        const firstAvailable = row.querySelector(".tier-chip:not(:disabled)");
+        if (firstAvailable) {
+          firstAvailable.focus({ preventScroll: true });
+        }
+      });
+    } else {
+      announce(`${person.name}の配置を取り消しました`);
+    }
+  }
+
+  function moveMember(personId, fromKey, destinationKey) {
+    if (fromKey === destinationKey) return;
+
+    const found = findMember(personId);
+    const destination = circles[destinationKey];
+
+    if (!found || found.groupKey !== fromKey || !destination) return;
+    if (Number.isFinite(destination.max) &&
+        destination.current >= destination.max) return;
+
+    const person = found.person;
+
+    groups[fromKey].members.splice(found.index, 1);
+    groups[destinationKey].members.unshift(person);
+
+    if (capacityOrder.includes(fromKey)) {
+      circles[fromKey].current = Math.max(
+        0,
+        circles[fromKey].current - 1
+      );
+    } else {
+      circles.connect.current = Math.max(
+        0,
+        circles.connect.current - 1
+      );
+    }
+
+    if (capacityOrder.includes(destinationKey)) {
+      circles[destinationKey].current += 1;
+    } else {
+      circles.connect.current += 1;
+    }
+
+    groups[fromKey].open = true;
+    groups[destinationKey].open = true;
+    openEditors.delete(personId);
+
+    refreshAll(true);
+    announce(
+      `${person.name}を${circles[fromKey].label}から` +
+      `${circles[destinationKey].label}へ移しました`
+    );
+
+    window.requestAnimationFrame(() => {
+      const movedRow = document.getElementById(`member-${personId}`);
+      if (movedRow) {
+        movedRow.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+    });
+  }
+
+  function removeMember(personId, fromKey) {
+    const found = findMember(personId);
+
+    if (!found || found.groupKey !== fromKey) return;
+
+    const person = found.person;
+    groups[fromKey].members.splice(found.index, 1);
+
+    if (capacityOrder.includes(fromKey)) {
+      circles[fromKey].current = Math.max(
+        0,
+        circles[fromKey].current - 1
+      );
+    } else {
+      circles.connect.current = Math.max(
+        0,
+        circles.connect.current - 1
+      );
+    }
+
+    openEditors.delete(personId);
+    refreshAll(true);
+    announce(`${person.name}を${circles[fromKey].label}から外しました`);
+  }
+
+  function refreshCapacity() {
+    capacityOrder.forEach(key => {
+      const circle = circles[key];
+      const card = document.getElementById(`capacity-${key}`);
+      const count = document.getElementById(`cap-${key}`);
+      const fill = card.querySelector(".capacity-card__fill");
+      const full = circle.current >= circle.max;
+
+      count.textContent = `${circle.current}/${circle.max}`;
+      fill.style.setProperty(
+        "--fill",
+        `${Math.min(100, circle.current / circle.max * 100)}%`
+      );
+
+      card.classList.toggle("is-full", full);
+      card.setAttribute(
+        "aria-label",
+        `${circle.label} ${circle.current}/${circle.max}` +
+        `${full ? "、満員" : ""}`
+      );
+    });
+  }
+
+  function refreshNewChips() {
+    capacityOrder.forEach(key => {
+      const circle = circles[key];
+      const full = circle.current >= circle.max;
+
+      triageList
+        .querySelectorAll(`.tier-chip[data-circle="${key}"]`)
+        .forEach(button => {
+          button.disabled = full;
+          button.title = full ? `${circle.label}は満員です` : "";
+        });
+    });
+  }
+
+  function refreshAll(renderMemberList) {
+    const remaining = newPeople.length - assignments.size;
+
+    document.getElementById("remaining-count").textContent = remaining;
+    document.getElementById("assignment-progress").textContent =
+      `${assignments.size} / ${newPeople.length} 配置済み`;
+
+    refreshCapacity();
+    refreshNewChips();
+
+    if (renderMemberList) {
+      renderGroups();
+    }
+  }
+
+  triageList.addEventListener("click", event => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+
+    const action = button.dataset.action;
+    const personId = button.dataset.person;
+
+    if (action === "assign-new") {
+      assignNew(personId, button.dataset.circle);
+    } else if (action === "reopen-new") {
+      clearNewAssignment(personId, "reopen");
+    } else if (action === "undo-new") {
+      clearNewAssignment(personId, "undo");
+    }
+  });
+
+  circleGroups.addEventListener("click", event => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+
+    const action = button.dataset.action;
+    const personId = button.dataset.person;
+
+    if (action === "toggle-group") {
+      const groupKey = button.dataset.group;
+      groups[groupKey].open = !groups[groupKey].open;
+      renderGroups();
+      return;
+    }
+
+    if (action === "toggle-editor") {
+      if (openEditors.has(personId)) {
+        openEditors.delete(personId);
+      } else {
+        openEditors.add(personId);
+      }
+
+      renderGroups();
+
+      if (openEditors.has(personId)) {
+        window.requestAnimationFrame(() => {
+          const firstChip = document.querySelector(
+            `#editor-${personId} .tier-chip:not(:disabled)`
+          );
+          if (firstChip) firstChip.focus({ preventScroll: true });
+        });
+      }
+      return;
+    }
+
+    if (action === "move-member") {
+      moveMember(
+        personId,
+        button.dataset.from,
+        button.dataset.circle
+      );
+      return;
+    }
+
+    if (action === "remove-member") {
+      removeMember(personId, button.dataset.from);
+    }
+  });
+
+  renderTriage();
+  renderGroups();
+  refreshAll(false);
+})();
+</script>
+</body>
+</html>
