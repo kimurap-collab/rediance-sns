@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CONSEQ — Circle Settings Face Grid</title>
+<title>CONSEQ — Circle Settings</title>
 <style>
 :root {
   --bg:#FFFFFF;
@@ -39,9 +39,11 @@ html {
 body {
   min-height:100vh;
   margin:0;
-  padding:28px 12px 64px;
   color:var(--text);
   background:#F0F0F0;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,
     "Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
   letter-spacing:-.14px;
@@ -107,24 +109,120 @@ input:focus-visible {
 }
 
 .phone {
+  width:100%;
+  max-width:430px;
+  min-height:100vh;
+  max-height:100vh;
+  background:#FFFFFF;
   position:relative;
-  width:390px;
-  max-width:100%;
-  height:820px;
-  margin:auto;
-  overflow-x:hidden;
-  overflow-y:auto;
-  overscroll-behavior:contain;
-  background:var(--bg);
-  border:1px solid var(--border);
-  border-radius:28px;
-  box-shadow:0 16px 44px rgba(0,0,0,.11);
-  scrollbar-width:none;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 0 40px rgba(0,0,0,0.15);
 }
 
-.phone::-webkit-scrollbar,
 .filters::-webkit-scrollbar {
   display:none;
+}
+
+/* ===== APP SHELL (status bar / tab bar) ===== */
+.status-bar {
+  height:44px;
+  background:linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+  flex-shrink:0;
+  z-index:100;
+}
+.status-time {
+  font-size:15px;
+  font-weight:700;
+  color:#fff;
+}
+.status-icons {
+  display:flex;
+  gap:6px;
+  align-items:center;
+  font-size:13px;
+  color:#fff;
+}
+
+.app-scroll {
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  scrollbar-width:none;
+}
+.app-scroll::-webkit-scrollbar {
+  display:none;
+}
+
+.tab-bar {
+  height:68px;
+  background:linear-gradient(135deg,#1A2E05 0%,#84CC16 38%,#0D9488 65%,#4C1D95 100%);
+  display:flex;
+  align-items:center;
+  flex-shrink:0;
+  z-index:100;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.tab-item {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  cursor:pointer;
+  padding:6px 0;
+  border:none;
+  background:none;
+  transition:all 0.15s;
+  color:rgba(255,255,255,0.5);
+}
+.tab-icon {
+  font-size:22px;
+  transition:transform 0.15s;
+}
+.tab-label {
+  font-size:10px;
+  font-weight:600;
+  color:rgba(255,255,255,0.5);
+  transition:color 0.15s;
+}
+.tab-item.active { color:#ffffff; }
+.tab-item.active .tab-label { color:#ffffff; }
+.tab-item.active .tab-icon { transform:scale(1.1); }
+.tab-post {
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border:none;
+  background:none;
+}
+.tab-post-btn {
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:#1E3A5F;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  color:white;
+  box-shadow:0 4px 12px rgba(0,0,0,0.25);
+  transition:transform 0.15s, box-shadow 0.15s;
+}
+.tab-post-btn:active {
+  transform:scale(0.93);
+  box-shadow:0 2px 6px rgba(0,0,0,0.15);
 }
 
 .topbar {
@@ -1352,13 +1450,18 @@ dialog {
 </svg>
 
 <main>
-  <section class="showcase" aria-labelledby="frame-title">
-    <header class="frame-caption">
-      <h2 id="frame-title">Circle Settings — Face Grid</h2>
-      <p>すべての距離を、同じ顔のリズムで見渡す。</p>
-    </header>
-
+  <section class="showcase">
     <div class="phone" id="phone">
+      <!-- STATUS BAR -->
+      <div class="status-bar">
+        <div class="status-time" id="statusTime">9:41</div>
+        <div class="status-icons">
+          <span>📶</span>
+          <span>🔋</span>
+        </div>
+      </div>
+
+      <div class="app-scroll">
       <header class="topbar">
         <button
           class="back-button"
@@ -1383,13 +1486,6 @@ dialog {
       </header>
 
       <div class="sticky-stack">
-        <section class="capacity" aria-label="Circle枠の使用状況">
-          <div class="capacity__head">
-            <span class="capacity__label">CIRCLE CAPACITY</span>
-            <span class="capacity__total" id="capacity-total"></span>
-          </div>
-          <div class="capacity__grid" id="capacity-grid"></div>
-        </section>
 
         <nav class="tabs" aria-label="Circle Settings">
           <button
@@ -1424,28 +1520,8 @@ dialog {
         <section class="intro">
           <div class="intro__line">
             <h1>New Circle</h1>
-            <div class="intro__count">
-              <strong id="remaining-count">20</strong>
-              <span>未配置</span>
-            </div>
           </div>
 
-          <p class="intro__description">
-            5つの距離から選び、コネクトを一気に配置できます。
-          </p>
-
-          <div class="assignment-progress">
-            <div class="assignment-progress__line">
-              <span>配置状況</span>
-              <strong id="assignment-progress"></strong>
-            </div>
-            <span class="assignment-progress__track">
-              <span
-                class="assignment-progress__fill"
-                id="assignment-progress-fill"
-              ></span>
-            </span>
-          </div>
         </section>
 
         <div class="triage-list" id="triage-list"></div>
@@ -1472,39 +1548,31 @@ dialog {
       </section>
 
       <div class="sr-only" id="live-status" aria-live="polite"></div>
-    </div>
-  </section>
-
-  <section class="showcase" aria-labelledby="badge-reference-title">
-    <header class="frame-caption">
-      <h2 id="badge-reference-title">赤バッジ参考フレーム</h2>
-      <p>未配置数をプロフィール入口と新規配置タブで同期</p>
-    </header>
-
-    <div class="profile-reference">
-      <div class="profile-reference__bar">
-        <span>@taisho_k</span>
-        <span aria-hidden="true">•••</span>
       </div>
 
-      <div class="profile-actions">
-        <button class="profile-button" type="button">Edit Profile</button>
-
-        <div class="profile-button-wrap">
-          <button
-            class="profile-button"
-            id="reference-circle-button"
-            type="button"
-          >
-            Circle Settings
-          </button>
-          <span class="red-badge" id="profile-new-badge">20</span>
-        </div>
-
-        <button class="profile-button" type="button">Group Settings</button>
+      <!-- TAB BAR -->
+      <div class="tab-bar">
+        <button class="tab-item" onclick="location.href='../app.html#screen-home'" id="tab-home">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+        </button>
+        <button class="tab-item" onclick="location.href='../app.html#screen-talk'" id="tab-talk">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>
+        </button>
+        <button class="tab-post" onclick="location.href='../app.html#screen-post'">
+          <div class="tab-post-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+          </div>
+        </button>
+        <button class="tab-item" onclick="location.href='../app.html#screen-events'" id="tab-events">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 18V6l11-2v11"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 8.5 20 6.5"/><ellipse cx="6.5" cy="18" rx="2.5" ry="2" fill="currentColor" stroke="none"/><ellipse cx="17.5" cy="16.5" rx="2.5" ry="2" fill="currentColor" stroke="none"/></svg>
+        </button>
+        <button class="tab-item active" onclick="location.href='../app.html#screen-my'" id="tab-my">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>
+        </button>
       </div>
     </div>
   </section>
+
 </main>
 
 <dialog
@@ -1563,7 +1631,6 @@ dialog {
   "use strict";
 
   const tierOrder = ["core","orbit","halo","galaxy","connect"];
-  const capacityOrder = ["core","orbit","halo","galaxy"];
 
   const tiers = {
     core:{
@@ -1892,45 +1959,6 @@ dialog {
     els.toast.classList.remove("is-visible");
   }
 
-  function capacityTone(ratio) {
-    if (ratio > .85) return "redorange";
-    if (ratio > .65) return "orange";
-    return "green";
-  }
-
-  function renderCapacity() {
-    const used = capacityOrder.reduce(
-      (sum,key) => sum + state.members[key].length,
-      0
-    );
-
-    document.getElementById("capacity-total").textContent =
-      used + " / 225";
-
-    document.getElementById("capacity-grid").innerHTML =
-      capacityOrder.map(key => {
-        const count = state.members[key].length;
-        const max = tiers[key].max;
-        const ratio = count / max;
-
-        return `
-          <div class="capacity-card" data-tone="${capacityTone(ratio)}">
-            <div class="capacity-card__line">
-              <span class="capacity-card__name">
-                ${tiers[key].label}
-              </span>
-              <span class="capacity-card__count">${count}/${max}</span>
-            </div>
-            <span class="capacity-card__track">
-              <span
-                class="capacity-card__fill"
-                style="width:${Math.min(100,ratio * 100)}%"
-              ></span>
-            </span>
-          </div>
-        `;
-      }).join("");
-  }
 
   function renderTabs() {
     const remaining = remainingPeople().length;
@@ -1939,11 +1967,7 @@ dialog {
       memberTotal();
     document.getElementById("new-tab-badge").textContent =
       remaining;
-    document.getElementById("profile-new-badge").textContent =
-      remaining;
     document.getElementById("new-tab-badge").hidden =
-      remaining === 0;
-    document.getElementById("profile-new-badge").hidden =
       remaining === 0;
   }
 
@@ -1970,16 +1994,6 @@ dialog {
     const active = newPeople.filter(
       person => !state.removedNewIds.has(person.id)
     );
-    const remaining = remainingPeople().length;
-    const assignedCount = state.assignments.size;
-
-    document.getElementById("remaining-count").textContent =
-      remaining;
-    document.getElementById("assignment-progress").textContent =
-      assignedCount + " / " + active.length + " 配置済み";
-    document.getElementById("assignment-progress-fill").style.width =
-      (active.length ? assignedCount / active.length * 100 : 100) + "%";
-
     els.triage.innerHTML = active.map(person => {
       const assignedTier = state.assignments.get(person.id);
 
@@ -2502,7 +2516,6 @@ dialog {
   }
 
   function refreshAll() {
-    renderCapacity();
     renderTabs();
     renderNew();
 
@@ -2709,19 +2722,6 @@ dialog {
     .getElementById("back-button")
     .addEventListener("click",() => {
       history.back();
-    });
-
-  document
-    .getElementById("reference-circle-button")
-    .addEventListener("click",() => {
-      setTab("members");
-      els.phone.scrollTo({
-        top:0,
-        behavior:"smooth"
-      });
-      document
-        .getElementById("frame-title")
-        .scrollIntoView({ behavior:"smooth" });
     });
 
   refreshAll();
