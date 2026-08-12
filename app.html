@@ -13596,6 +13596,10 @@
   function routeByHash() {
     const hash = (location.hash || '').replace(/^#/, '');
     if (!hash) return;
+    if (hash.startsWith('user-')) {
+      const uid = hash.slice(5);
+      if (typeof openUserProfile === 'function') { openUserProfile(uid); return; }
+    }
     if (HASH_TO_TAB[hash]) {
       switchTab(HASH_TO_TAB[hash]);
       return;

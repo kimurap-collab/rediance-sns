@@ -2307,7 +2307,7 @@ dialog {
         ${person.name}の操作
       </span>
 
-      <div class="sheet-person">
+      <div class="sheet-person" data-sheet-action="profile" role="button" tabindex="0">
         <div class="person-main">${identityHTML(person)}</div>
       </div>
 
@@ -2315,10 +2315,10 @@ dialog {
         <button
           class="sheet-action"
           type="button"
-          data-sheet-action="profile"
+          data-sheet-action="change-tier"
         >
-          <span>プロフィールを見る</span>
-          ${actionIcon("profile")}
+          <span>階層を変更</span>
+          ${actionIcon("tier")}
         </button>
 
         <button
@@ -2328,15 +2328,6 @@ dialog {
         >
           <span>メッセージ</span>
           ${actionIcon("message")}
-        </button>
-
-        <button
-          class="sheet-action"
-          type="button"
-          data-sheet-action="change-tier"
-        >
-          <span>階層を変更</span>
-          ${actionIcon("tier")}
         </button>
 
         <button
@@ -2629,8 +2620,7 @@ dialog {
     }
 
     if (action === "profile") {
-      closeActionSheet();
-      showToast(found.person.name + "さんのプロフィールを開きます");
+      location.href = "../app.html#user-yu_tanaka";
     } else if (action === "message") {
       closeActionSheet();
       showToast(found.person.name + "さんとのメッセージを開きます");
