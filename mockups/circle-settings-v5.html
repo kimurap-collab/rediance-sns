@@ -1,0 +1,2732 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CONSEQ — Circle Settings Face Grid</title>
+<style>
+:root {
+  --bg:#FFFFFF;
+  --surface:#F5F5F5;
+  --surface-strong:#EEF3F3;
+  --border:#E8E8E8;
+  --text:#000000;
+  --text-sub:#555555;
+  --text-light:#999999;
+  --primary:#1E3A5F;
+  --danger:#EF4444;
+  --pale-green:#C8E6C9;
+
+  /* 本番投稿パレット8色 */
+  --gekko:radial-gradient(circle at 30% 20%,#FFFFFF 0%,#EEF3F3 50%,#DFDAEE 100%);
+  --akatsuki:linear-gradient(135deg,#C2410C 0%,#F59E0B 100%);
+  --soukyu:linear-gradient(135deg,#3949AB 0%,#03A9F4 100%);
+  --akane:linear-gradient(135deg,#BE123C 0%,#F97316 100%);
+  --seiun:linear-gradient(135deg,#7C3AED 0%,#4F46E5 55%,#0EA5E9 100%);
+  --kyokko:linear-gradient(135deg,#0F766E 0%,#65A30D 100%);
+  --shinuchu:linear-gradient(135deg,#4C1D95 0%,#6D28D9 100%);
+  --hoshizora:linear-gradient(135deg,#020617 0%,#0F3D3E 45%,#2E1065 100%);
+}
+
+* {
+  box-sizing:border-box;
+}
+
+html {
+  color-scheme:light;
+}
+
+body {
+  min-height:100vh;
+  margin:0;
+  padding:28px 12px 64px;
+  color:var(--text);
+  background:#F0F0F0;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,
+    "Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  letter-spacing:-.14px;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+}
+
+button,
+input {
+  color:inherit;
+  font:inherit;
+}
+
+button {
+  cursor:pointer;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline:2px dashed var(--primary);
+  outline-offset:2px;
+}
+
+[hidden] {
+  display:none !important;
+}
+
+.sr-only {
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
+.showcase {
+  width:min(430px,100%);
+  margin:0 auto;
+}
+
+.showcase + .showcase {
+  margin-top:42px;
+}
+
+.frame-caption {
+  width:min(390px,100%);
+  margin:0 auto 11px;
+}
+
+.frame-caption h2 {
+  margin:0;
+  font-size:15px;
+  line-height:1.4;
+}
+
+.frame-caption p {
+  margin:4px 0 0;
+  color:var(--text-light);
+  font-size:10px;
+}
+
+.phone {
+  position:relative;
+  width:390px;
+  max-width:100%;
+  height:820px;
+  margin:auto;
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:28px;
+  box-shadow:0 16px 44px rgba(0,0,0,.11);
+  scrollbar-width:none;
+}
+
+.phone::-webkit-scrollbar,
+.filters::-webkit-scrollbar {
+  display:none;
+}
+
+.topbar {
+  position:sticky;
+  top:0;
+  z-index:30;
+  display:grid;
+  grid-template-columns:72px 1fr 72px;
+  align-items:center;
+  height:54px;
+  padding:0 14px;
+  background:rgba(255,255,255,.97);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(18px);
+}
+
+.back-button {
+  display:flex;
+  width:max-content;
+  align-items:center;
+  gap:1px;
+  padding:8px 4px 8px 0;
+  background:transparent;
+  border:0;
+  border-radius:8px;
+  font-size:13px;
+}
+
+.back-button svg {
+  width:19px;
+  height:19px;
+}
+
+.back-button:active {
+  opacity:.55;
+  transform:translateX(-1px);
+}
+
+.topbar__title {
+  overflow:hidden;
+  font-size:16px;
+  font-weight:650;
+  text-align:center;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.sticky-stack {
+  position:sticky;
+  top:54px;
+  z-index:29;
+  background:rgba(255,255,255,.97);
+  box-shadow:0 1px 0 var(--border);
+  backdrop-filter:blur(18px);
+}
+
+.capacity {
+  padding:11px 13px 12px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+}
+
+.capacity__head {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin:0 2px 9px;
+}
+
+.capacity__label {
+  color:var(--text-sub);
+  font-size:10px;
+  font-weight:750;
+  letter-spacing:.06em;
+}
+
+.capacity__total {
+  color:var(--text-light);
+  font-size:10px;
+  font-variant-numeric:tabular-nums;
+}
+
+.capacity__grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:4px;
+}
+
+.capacity-card {
+  position:relative;
+  min-width:0;
+  height:36px;
+  padding:0 7px 7px;
+  border-right:1px solid var(--border);
+}
+
+.capacity-card:last-child {
+  border-right:0;
+}
+
+.capacity-card__line {
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:3px;
+}
+
+.capacity-card__name {
+  font-size:11px;
+  font-weight:650;
+}
+
+.capacity-card__count {
+  color:var(--text-sub);
+  font-size:10px;
+  font-weight:650;
+  font-variant-numeric:tabular-nums;
+}
+
+.capacity-card__track {
+  position:absolute;
+  right:7px;
+  bottom:1px;
+  left:7px;
+  height:4px;
+  overflow:hidden;
+  background:var(--pale-green);
+  border-radius:999px;
+  opacity:.7;
+}
+
+.capacity-card__fill {
+  display:block;
+  width:0;
+  height:100%;
+  border-radius:inherit;
+  transition:width 240ms ease,background 240ms ease;
+}
+
+.capacity-card[data-tone="green"] .capacity-card__fill {
+  background:var(--kyokko);
+}
+
+.capacity-card[data-tone="orange"] .capacity-card__fill {
+  background:var(--akatsuki);
+}
+
+.capacity-card[data-tone="redorange"] .capacity-card__fill {
+  background:var(--akane);
+}
+
+.tabs {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  height:47px;
+  padding:0 11px;
+}
+
+.tab {
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:0 5px;
+  color:var(--text-light);
+  background:transparent;
+  border:0;
+  font-size:12px;
+  font-weight:650;
+}
+
+.tab::after {
+  position:absolute;
+  right:15px;
+  bottom:0;
+  left:15px;
+  height:2px;
+  background:var(--text);
+  content:"";
+  opacity:0;
+  transform:scaleX(.45);
+  transition:opacity 140ms,transform 160ms;
+}
+
+.tab[aria-selected="true"] {
+  color:var(--text);
+}
+
+.tab[aria-selected="true"]::after {
+  opacity:1;
+  transform:scaleX(1);
+}
+
+.tab__count {
+  color:var(--text-light);
+  font-size:10px;
+  font-variant-numeric:tabular-nums;
+}
+
+.red-badge {
+  display:inline-grid;
+  min-width:20px;
+  height:18px;
+  padding:0 5px;
+  place-items:center;
+  color:#FFF;
+  background:var(--danger);
+  border-radius:999px;
+  font-size:9px;
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+}
+
+.intro,
+.management-head {
+  padding:21px 15px 17px;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+}
+
+.intro__line,
+.management-head__line {
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:14px;
+}
+
+.intro h1,
+.management-head h1 {
+  margin:0;
+  font-size:22px;
+  line-height:1.25;
+  letter-spacing:-.02em;
+}
+
+.intro__count {
+  display:flex;
+  align-items:baseline;
+  gap:4px;
+  white-space:nowrap;
+}
+
+.intro__count strong {
+  font-size:20px;
+  font-variant-numeric:tabular-nums;
+}
+
+.intro__count span,
+.management-head__note {
+  color:var(--text-light);
+  font-size:10px;
+}
+
+.intro__description,
+.management-head__description {
+  margin:7px 0 0;
+  color:var(--text-sub);
+  font-size:12px;
+  line-height:1.6;
+}
+
+.assignment-progress {
+  margin-top:14px;
+}
+
+.assignment-progress__line {
+  display:flex;
+  justify-content:space-between;
+  color:var(--text-light);
+  font-size:10px;
+}
+
+.assignment-progress__line strong {
+  color:var(--text-sub);
+  font-variant-numeric:tabular-nums;
+}
+
+.assignment-progress__track {
+  display:block;
+  height:3px;
+  margin-top:7px;
+  overflow:hidden;
+  background:var(--border);
+  border-radius:999px;
+}
+
+.assignment-progress__fill {
+  display:block;
+  width:0;
+  height:100%;
+  background:var(--hoshizora);
+  transition:width 220ms;
+}
+
+.triage-list {
+  border-top:1px solid var(--border);
+}
+
+.person-row {
+  min-height:105px;
+  padding:13px 14px;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+}
+
+.person-main {
+  display:flex;
+  min-width:0;
+  align-items:center;
+  margin-bottom:11px;
+}
+
+.avatar {
+  position:relative;
+  display:grid;
+  flex:0 0 42px;
+  width:42px;
+  height:42px;
+  margin-right:11px;
+  place-items:center;
+  overflow:visible;
+  background:var(--avatar-bg);
+  border:1px solid rgba(0,0,0,.05);
+  border-radius:50%;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
+  transition:transform 120ms ease;
+}
+
+.avatar__face {
+  position:relative;
+  z-index:1;
+  font-size:25px;
+  line-height:1;
+  filter:saturate(.82);
+}
+
+.person-info {
+  min-width:0;
+  flex:1;
+}
+
+.person-name {
+  display:block;
+  overflow:hidden;
+  font-size:15px;
+  font-weight:650;
+  letter-spacing:-.02em;
+  line-height:1.25;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.person-meta {
+  display:flex;
+  align-items:center;
+  min-width:0;
+  margin-top:4px;
+}
+
+.enamel {
+  position:relative;
+  display:inline-grid;
+  flex:0 0 19px;
+  width:19px;
+  height:19px;
+  margin-right:5px;
+  place-items:center;
+  color:#FFF;
+  background:var(--enamel);
+  border:1px solid rgba(255,255,255,.95);
+  border-radius:50%;
+  box-shadow:
+    0 1px 2px rgba(19,21,27,.25),
+    inset 0 1px 1px rgba(255,255,255,.22);
+}
+
+.enamel::after {
+  position:absolute;
+  inset:1.5px;
+  border:.5px solid rgba(255,255,255,.3);
+  border-radius:inherit;
+  content:"";
+}
+
+.enamel svg {
+  position:relative;
+  z-index:1;
+  width:10px;
+  height:10px;
+}
+
+.enamel--human {
+  --enamel:linear-gradient(135deg,#6B7280,#4B5563);
+}
+
+.enamel--leader {
+  --enamel:linear-gradient(135deg,#B45309,#78350F);
+}
+
+.enamel--icon {
+  --enamel:linear-gradient(135deg,#0F8B6D,#065F46);
+}
+
+.enamel--rising {
+  --enamel:linear-gradient(135deg,#168C84,#3F6212);
+}
+
+.enamel--star {
+  --enamel:linear-gradient(135deg,#2563A8,#155E75);
+}
+
+.enamel--nova {
+  --enamel:linear-gradient(135deg,#7C3AED,#86198F);
+}
+
+.enamel--supernova {
+  --enamel:linear-gradient(135deg,#BE3655,#9A3412);
+}
+
+.enamel--gravity {
+  --enamel:linear-gradient(135deg,#4338A8,#115E59);
+}
+
+.enamel--singularity {
+  --enamel:linear-gradient(135deg,#475569,#4C1D95);
+}
+
+.enamel--universe {
+  --enamel:linear-gradient(135deg,#4D7C0F,#0F766E 52%,#3B0764);
+}
+
+.rank-name {
+  overflow:hidden;
+  color:var(--text-sub);
+  font-size:9.5px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.score {
+  margin-left:6px;
+  color:var(--text-light);
+  font-size:10.5px;
+  font-weight:650;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+
+.score::before {
+  margin-right:6px;
+  content:"·";
+}
+
+.tier-chips {
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:5px;
+}
+
+.tier-chip {
+  height:31px;
+  min-width:0;
+  padding:0 2px;
+  overflow:hidden;
+  color:var(--text-sub);
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:8px;
+  font-size:10px;
+  font-weight:650;
+  white-space:nowrap;
+}
+
+.tier-chip--core {
+  color:var(--primary);
+  border-color:rgba(30,58,95,.48);
+}
+
+.tier-chip--connect {
+  background:var(--surface);
+}
+
+.tier-chip:active:not(:disabled) {
+  transform:scale(.96);
+}
+
+.chip-full {
+  color: #BE123C;
+  font-weight: 700;
+  font-size: 10px;
+  margin-left: 4px;
+  letter-spacing: 0.02em;
+}
+.tier-chip:disabled {
+  color:var(--text-light);
+  background:var(--surface);
+  cursor:not-allowed;
+  opacity:.65;
+}
+
+.assigned-row {
+  display:flex;
+  min-height:62px;
+  align-items:center;
+  gap:9px;
+  padding:9px 14px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+}
+
+.assigned-orbit {
+  display:grid;
+  flex:0 0 29px;
+  width:29px;
+  height:29px;
+  place-items:center;
+  color:var(--primary);
+  border:1px solid currentColor;
+  border-radius:50%;
+}
+
+.assigned-orbit::before {
+  width:5px;
+  height:5px;
+  background:currentColor;
+  border-radius:50%;
+  content:"";
+}
+
+.assigned-copy {
+  min-width:0;
+  flex:1;
+}
+
+.assigned-copy strong {
+  display:block;
+  overflow:hidden;
+  font-size:12px;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.assigned-copy span {
+  color:var(--text-light);
+  font-size:9.5px;
+}
+
+.undo-inline {
+  padding:9px 2px 9px 8px;
+  color:var(--text-sub);
+  background:transparent;
+  border:0;
+  font-size:10px;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+
+.footnote,
+.member-footnote {
+  margin:0;
+  padding:18px 15px 26px;
+  color:var(--text-light);
+  font-size:10px;
+  line-height:1.7;
+  text-align:center;
+}
+
+.member-panel {
+  min-height:540px;
+  background:var(--surface);
+}
+
+.member-tools {
+  padding:12px 12px 10px;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+}
+
+.search-field {
+  position:relative;
+  display:block;
+}
+
+.search-field > svg {
+  position:absolute;
+  top:50%;
+  left:12px;
+  width:16px;
+  height:16px;
+  color:var(--text-light);
+  pointer-events:none;
+  transform:translateY(-50%);
+}
+
+.search-field input {
+  width:100%;
+  height:39px;
+  padding:0 35px 0 37px;
+  background:var(--surface);
+  border:1px solid transparent;
+  border-radius:10px;
+  outline:0;
+  font-size:13px;
+}
+
+.search-field input::placeholder {
+  color:var(--text-light);
+}
+
+.search-field input:focus {
+  background:var(--bg);
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(30,58,95,.08);
+}
+
+.search-clear {
+  position:absolute;
+  top:50%;
+  right:6px;
+  display:grid;
+  width:28px;
+  height:28px;
+  padding:0;
+  place-items:center;
+  color:var(--text-light);
+  background:transparent;
+  border:0;
+  border-radius:50%;
+  transform:translateY(-50%);
+}
+
+.filters {
+  display:flex;
+  gap:6px;
+  margin-top:10px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+
+.filter-chip {
+  flex:0 0 auto;
+  height:29px;
+  padding:0 12px;
+  color:var(--text-sub);
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:999px;
+  font-size:10.5px;
+  font-weight:650;
+}
+
+.filter-chip[aria-pressed="true"] {
+  color:#FFF;
+  background:var(--primary);
+  border-color:var(--primary);
+}
+
+.result-summary {
+  min-height:20px;
+  padding:8px 2px 0;
+  color:var(--text-light);
+  font-size:9.5px;
+  font-variant-numeric:tabular-nums;
+}
+
+.circle-groups {
+  padding:12px 10px 26px;
+}
+
+.circle-group {
+  margin-bottom:10px;
+  overflow:hidden;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+
+.circle-group__head {
+  display:flex;
+  width:100%;
+  min-height:58px;
+  align-items:center;
+  padding:0 12px;
+  background:var(--bg);
+  border:0;
+  border-bottom:1px solid var(--border);
+  text-align:left;
+}
+
+.circle-group.is-collapsed .circle-group__head {
+  border-bottom:0;
+}
+
+.group-orbit {
+  position:relative;
+  display:grid;
+  flex:0 0 30px;
+  width:30px;
+  height:30px;
+  margin-right:10px;
+  place-items:center;
+  color:var(--primary);
+  border:1px solid currentColor;
+  border-radius:50%;
+}
+
+.group-orbit::before {
+  width:5px;
+  height:5px;
+  background:currentColor;
+  border-radius:50%;
+  content:"";
+}
+
+.group-orbit::after {
+  position:absolute;
+  top:-2px;
+  width:4px;
+  height:4px;
+  background:var(--bg);
+  border:1px solid currentColor;
+  border-radius:50%;
+  content:"";
+}
+
+.circle-group--orbit .group-orbit {
+  opacity:.82;
+}
+
+.circle-group--halo .group-orbit {
+  opacity:.64;
+}
+
+.circle-group--galaxy .group-orbit {
+  opacity:.48;
+}
+
+.circle-group--connect .group-orbit {
+  color:var(--text-light);
+  border-style:dashed;
+  opacity:1;
+}
+
+.circle-group__identity {
+  min-width:0;
+  flex:1;
+}
+
+.circle-group__name {
+  display:block;
+  font-size:16px;
+  font-weight:750;
+}
+
+.circle-group__sub {
+  display:block;
+  margin-top:2px;
+  overflow:hidden;
+  color:var(--text-light);
+  font-size:9.5px;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.circle-group__usage {
+  margin-left:8px;
+  color:var(--text-sub);
+  font-size:11px;
+  font-weight:650;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+
+.group-chevron {
+  width:17px;
+  height:17px;
+  margin-left:5px;
+  color:var(--text-light);
+  transition:transform 150ms;
+}
+
+.circle-group.is-collapsed .group-chevron {
+  transform:rotate(-90deg);
+}
+
+/* 全5階層共通：6列の顔グリッド */
+.face-grid {
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:11px 5px;
+  padding:13px 10px 15px;
+}
+
+.face-card {
+  min-width:0;
+  padding:0;
+  background:transparent;
+  border:0;
+  text-align:center;
+}
+
+.face-card .avatar {
+  width:47px;
+  height:47px;
+  margin:0 auto;
+}
+
+.face-card .avatar__face {
+  font-size:28px;
+}
+
+.face-card .enamel {
+  position:absolute;
+  right:-2px;
+  bottom:-1px;
+  z-index:3;
+  width:14px;
+  height:14px;
+  margin:0;
+}
+
+.face-card .enamel svg {
+  width:7px;
+  height:7px;
+}
+
+.face-card__name {
+  display:block;
+  width:100%;
+  margin-top:5px;
+  overflow:hidden;
+  color:var(--text-sub);
+  font-size:8.5px;
+  font-weight:600;
+  line-height:1.2;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.face-card:active .avatar {
+  transform:scale(.94);
+}
+
+.show-all {
+  width:100%;
+  min-height:43px;
+  padding:0 13px;
+  color:var(--primary);
+  background:var(--bg);
+  border:0;
+  border-top:1px solid var(--border);
+  font-size:11px;
+  font-weight:700;
+}
+
+.show-all:active {
+  background:var(--surface);
+}
+
+.no-results {
+  margin:0;
+  padding:58px 24px 70px;
+  color:var(--text-light);
+  text-align:center;
+  font-size:11px;
+  line-height:1.7;
+}
+
+dialog {
+  color:var(--text);
+  font-family:inherit;
+}
+
+.modal-shell {
+  width:min(390px,calc(100vw - 20px));
+  height:min(820px,calc(100dvh - 20px));
+  max-width:none;
+  max-height:none;
+  margin:auto;
+  padding:0;
+  overflow:hidden;
+  background:transparent;
+  border:0;
+}
+
+.modal-shell::backdrop {
+  background:rgba(0,0,0,.34);
+}
+
+.modal-scrim {
+  position:absolute;
+  inset:0;
+  width:100%;
+  background:transparent;
+  border:0;
+}
+
+.action-sheet {
+  position:absolute;
+  right:0;
+  bottom:0;
+  left:0;
+  max-height:82%;
+  overflow-y:auto;
+  background:var(--surface);
+  border-radius:18px 18px 0 0;
+  box-shadow:0 -8px 30px rgba(0,0,0,.15);
+}
+
+.sheet-handle {
+  width:36px;
+  height:4px;
+  margin:9px auto 7px;
+  background:#C7C7CC;
+  border-radius:999px;
+}
+
+.sheet-person {
+  padding:10px 16px 14px;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+}
+
+.sheet-person .person-main {
+  margin:0;
+}
+
+.sheet-person .avatar {
+  width:43px;
+  height:43px;
+}
+
+.sheet-menu {
+  background:var(--bg);
+}
+
+.sheet-action {
+  display:flex;
+  width:100%;
+  min-height:52px;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 17px;
+  background:var(--bg);
+  border:0;
+  border-bottom:1px solid var(--border);
+  font-size:14px;
+  text-align:left;
+}
+
+.sheet-action svg {
+  width:20px;
+  height:20px;
+  color:var(--text-light);
+}
+
+.sheet-action--danger {
+  color:var(--danger);
+  border-top:6px solid var(--surface);
+}
+
+.sheet-action:disabled {
+  color:var(--text-light);
+  cursor:not-allowed;
+}
+
+.sheet-cancel {
+  width:calc(100% - 20px);
+  min-height:49px;
+  margin:9px 10px calc(10px + env(safe-area-inset-bottom));
+  background:var(--bg);
+  border:0;
+  border-radius:11px;
+  font-size:14px;
+  font-weight:700;
+}
+
+.sheet-titlebar {
+  display:grid;
+  grid-template-columns:75px 1fr 75px;
+  align-items:center;
+  min-height:48px;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+}
+
+.sheet-back {
+  padding:12px;
+  color:var(--primary);
+  background:transparent;
+  border:0;
+  text-align:left;
+}
+
+.sheet-title {
+  font-size:14px;
+  font-weight:750;
+  text-align:center;
+}
+
+.tier-option__copy {
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.tier-dot {
+  display:grid;
+  width:25px;
+  height:25px;
+  place-items:center;
+  color:var(--primary);
+  border:1px solid currentColor;
+  border-radius:50%;
+}
+
+.tier-dot::before {
+  width:4px;
+  height:4px;
+  background:currentColor;
+  border-radius:50%;
+  content:"";
+}
+
+.tier-dot--orbit {
+  opacity:.82;
+}
+
+.tier-dot--halo {
+  opacity:.64;
+}
+
+.tier-dot--galaxy {
+  opacity:.48;
+}
+
+.tier-dot--connect {
+  color:var(--text-light);
+  border-style:dashed;
+  opacity:1;
+}
+
+.tier-option__state {
+  color:var(--text-light);
+  font-size:11px;
+  font-variant-numeric:tabular-nums;
+}
+
+.confirm-box {
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:calc(100% - 42px);
+  padding:25px 20px 18px;
+  background:var(--bg);
+  border-radius:17px;
+  box-shadow:0 16px 45px rgba(0,0,0,.2);
+  text-align:center;
+  transform:translate(-50%,-50%);
+}
+
+.confirm-box__mark {
+  display:grid;
+  width:40px;
+  height:40px;
+  margin:0 auto 13px;
+  place-items:center;
+  color:var(--danger);
+  background:var(--surface);
+  border-radius:50%;
+  font-size:22px;
+}
+
+.confirm-box h2 {
+  margin:0;
+  font-size:17px;
+  line-height:1.5;
+}
+
+.confirm-box p {
+  margin:10px 0 18px;
+  color:var(--text-sub);
+  font-size:11px;
+  line-height:1.6;
+}
+
+.confirm-actions {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.confirm-button {
+  min-height:43px;
+  background:var(--surface);
+  border:0;
+  border-radius:9px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.confirm-button--danger {
+  color:#FFF;
+  background:var(--danger);
+}
+
+.toast {
+  position:fixed;
+  bottom:22px;
+  left:50%;
+  z-index:100;
+  display:flex;
+  width:min(356px,calc(100vw - 28px));
+  min-height:48px;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px 10px 15px;
+  color:#FFF;
+  background:var(--hoshizora);
+  border-radius:12px;
+  box-shadow:0 8px 28px rgba(0,0,0,.24);
+  opacity:0;
+  pointer-events:none;
+  transform:translate(-50%,12px);
+  transition:opacity 160ms,transform 160ms;
+}
+
+.toast.is-visible {
+  opacity:1;
+  pointer-events:auto;
+  transform:translate(-50%,0);
+}
+
+.toast__message {
+  min-width:0;
+  flex:1;
+  font-size:11px;
+  line-height:1.45;
+}
+
+.toast__undo {
+  padding:8px;
+  color:#FFF;
+  background:transparent;
+  border:0;
+  font-size:11px;
+  font-weight:800;
+  text-decoration:underline;
+}
+
+.profile-reference {
+  width:390px;
+  max-width:100%;
+  margin:auto;
+  padding:18px 15px 22px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:22px;
+  box-shadow:0 12px 32px rgba(0,0,0,.08);
+}
+
+.profile-reference__bar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:15px;
+  font-size:14px;
+  font-weight:700;
+}
+
+.profile-actions {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+}
+
+.profile-button-wrap {
+  position:relative;
+}
+
+.profile-button {
+  width:100%;
+  min-height:38px;
+  padding:0 5px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  font-size:9px;
+  font-weight:700;
+}
+
+.profile-button-wrap .red-badge {
+  position:absolute;
+  top:-8px;
+  right:-6px;
+  box-shadow:0 0 0 2px var(--bg);
+}
+
+@media (max-width:410px) {
+  body {
+    padding-right:0;
+    padding-left:0;
+  }
+
+  .phone {
+    border-right:0;
+    border-left:0;
+    border-radius:0;
+  }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <symbol id="rank-glyph" viewBox="0 0 12 12">
+    <path
+      d="M6 1.2 7.3 4.5 10.8 6 7.3 7.4 6 10.8 4.7 7.4 1.2 6l3.5-1.5Z"
+      fill="currentColor"
+    />
+  </symbol>
+</svg>
+
+<main>
+  <section class="showcase" aria-labelledby="frame-title">
+    <header class="frame-caption">
+      <h2 id="frame-title">Circle Settings — Face Grid</h2>
+      <p>すべての距離を、同じ顔のリズムで見渡す。</p>
+    </header>
+
+    <div class="phone" id="phone">
+      <header class="topbar">
+        <button
+          class="back-button"
+          id="back-button"
+          type="button"
+          aria-label="前の画面へ戻る"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="m15 5-7 7 7 7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>戻る</span>
+        </button>
+        <div class="topbar__title">Circle Settings</div>
+        <div aria-hidden="true"></div>
+      </header>
+
+      <div class="sticky-stack">
+        <section class="capacity" aria-label="Circle枠の使用状況">
+          <div class="capacity__head">
+            <span class="capacity__label">CIRCLE CAPACITY</span>
+            <span class="capacity__total" id="capacity-total"></span>
+          </div>
+          <div class="capacity__grid" id="capacity-grid"></div>
+        </section>
+
+        <nav class="tabs" aria-label="Circle Settings">
+          <button
+            class="tab"
+            type="button"
+            role="tab"
+            data-tab="members"
+            id="tab-members"
+            aria-controls="panel-members"
+            aria-selected="true"
+          >
+            <span>メンバー</span>
+            <span class="tab__count" id="member-tab-count"></span>
+          </button>
+
+          <button
+            class="tab"
+            type="button"
+            role="tab"
+            data-tab="new"
+            id="tab-new"
+            aria-controls="panel-new"
+            aria-selected="false"
+          >
+            <span>新規配置</span>
+            <span class="red-badge" id="new-tab-badge">20</span>
+          </button>
+        </nav>
+      </div>
+
+      <section id="panel-new" role="tabpanel" aria-labelledby="tab-new">
+        <section class="intro">
+          <div class="intro__line">
+            <h1>New Circle</h1>
+            <div class="intro__count">
+              <strong id="remaining-count">20</strong>
+              <span>未配置</span>
+            </div>
+          </div>
+
+          <p class="intro__description">
+            5つの距離から選び、コネクトを一気に配置できます。
+          </p>
+
+          <div class="assignment-progress">
+            <div class="assignment-progress__line">
+              <span>配置状況</span>
+              <strong id="assignment-progress"></strong>
+            </div>
+            <span class="assignment-progress__track">
+              <span
+                class="assignment-progress__fill"
+                id="assignment-progress-fill"
+              ></span>
+            </span>
+          </div>
+        </section>
+
+        <div class="triage-list" id="triage-list"></div>
+        <p class="footnote">
+          ※配置した距離と変更履歴は相手には表示されません
+        </p>
+      </section>
+
+      <section
+        class="member-panel"
+        id="panel-members"
+        role="tabpanel"
+        aria-labelledby="tab-members"
+        hidden
+      >
+        <header class="management-head">
+          <h1>Circle Members</h1>
+        </header>
+
+        <div class="circle-groups" id="circle-groups"></div>
+        <p class="member-footnote">
+          ※Circleの階層と変更履歴は相手には表示されません
+        </p>
+      </section>
+
+      <div class="sr-only" id="live-status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="showcase" aria-labelledby="badge-reference-title">
+    <header class="frame-caption">
+      <h2 id="badge-reference-title">赤バッジ参考フレーム</h2>
+      <p>未配置数をプロフィール入口と新規配置タブで同期</p>
+    </header>
+
+    <div class="profile-reference">
+      <div class="profile-reference__bar">
+        <span>@taisho_k</span>
+        <span aria-hidden="true">•••</span>
+      </div>
+
+      <div class="profile-actions">
+        <button class="profile-button" type="button">Edit Profile</button>
+
+        <div class="profile-button-wrap">
+          <button
+            class="profile-button"
+            id="reference-circle-button"
+            type="button"
+          >
+            Circle Settings
+          </button>
+          <span class="red-badge" id="profile-new-badge">20</span>
+        </div>
+
+        <button class="profile-button" type="button">Group Settings</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<dialog
+  class="modal-shell"
+  id="action-dialog"
+  aria-labelledby="sheet-title"
+>
+  <button
+    class="modal-scrim"
+    type="button"
+    data-sheet-action="close"
+    aria-label="閉じる"
+  ></button>
+  <section class="action-sheet" id="action-sheet"></section>
+</dialog>
+
+<dialog
+  class="modal-shell"
+  id="confirm-dialog"
+  aria-labelledby="confirm-title"
+>
+  <div class="modal-scrim" aria-hidden="true"></div>
+  <section class="confirm-box">
+    <div class="confirm-box__mark" aria-hidden="true">×</div>
+    <h2 id="confirm-title">
+      <span id="confirm-name"></span>さんとの<br>
+      コネクトを解除しますか？
+    </h2>
+    <p>
+      Circleからだけでなく、コネクト関係そのものが解除されます。
+    </p>
+    <div class="confirm-actions">
+      <button
+        class="confirm-button"
+        id="confirm-cancel"
+        type="button"
+      >キャンセル</button>
+      <button
+        class="confirm-button confirm-button--danger"
+        id="confirm-remove"
+        type="button"
+      >解除する</button>
+    </div>
+  </section>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span class="toast__message" id="toast-message"></span>
+  <button class="toast__undo" id="toast-undo" type="button" hidden>
+    Undo
+  </button>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const tierOrder = ["core","orbit","halo","galaxy","connect"];
+  const capacityOrder = ["core","orbit","halo","galaxy"];
+
+  const tiers = {
+    core:{
+      label:"Inner",
+      max:10,
+      description:"非常に近い関係",
+      preview:18
+    },
+    orbit:{
+      label:"Near",
+      max:15,
+      description:"親しい関係",
+      preview:18
+    },
+    halo:{
+      label:"Mid",
+      max:50,
+      description:"ゆるやかな関係",
+      preview:18
+    },
+    galaxy:{
+      label:"Wide",
+      max:150,
+      description:"広い関係",
+      preview:18
+    },
+    connect:{
+      label:"Connect",
+      max:500,
+      description:"認識しあう関係",
+      preview:12
+    }
+  };
+
+  const avatarBackgrounds = [
+    "var(--gekko)",
+    "var(--akatsuki)",
+    "var(--soukyu)",
+    "var(--akane)",
+    "var(--seiun)",
+    "var(--kyokko)",
+    "var(--shinuchu)",
+    "var(--hoshizora)"
+  ];
+
+  const faces = [
+    "🧑🏻","👩🏻","🧔🏻","👩🏽",
+    "👨🏻","🧑🏽","👩🏼","👨🏽",
+    "🧑🏼","👩🏾","👨🏼","🧕🏽",
+    "👩🏻‍🦱","👨🏾‍🦱","🧑🏻‍🦰","👩🏽‍🦳"
+  ];
+
+  const surnames = [
+    "佐々木","小林","松本","井上","長谷川","加藤","清水","吉田",
+    "斎藤","石井","木村","福田","山口","前田","高木","橋本",
+    "池田","阿部","山崎","中村","遠藤","青木","村上","近藤",
+    "坂本","藤井","西村","太田","三浦","岡本"
+  ];
+
+  const givenNames = [
+    "玲奈","直樹","葵","美月","湊","結衣","遼","奈緒","優斗","香織",
+    "修平","さくら","海斗","花","誠司","楓","颯太","陽菜","蓮","千尋"
+  ];
+
+  const worldFirst = [
+    "Ethan","Amelia","Liam","Charlotte","Mateo","Oliver","Isabella",
+    "Emily","Aarav","Nora","Grace","Leo","Camila","Henry","Chloe",
+    "Arthur","Elena"
+  ];
+
+  const worldLast = [
+    "Williams","Rossi","Chen","Evans","Hernández","Smith","Lee",
+    "Johnson","Patel","Müller","Thompson","Wang","Dubois",
+    "Kowalski","Santos","Nguyen"
+  ];
+
+  const newNames = [
+    "田中 悠","Sofia Martinez","岡田 真由","Noah Garcia","鈴木 里奈",
+    "Daniel Kim","渡辺 彩","James Anderson","佐藤 健太","Emma Wilson",
+    "山田 彩香","Lucas Silva","伊藤 大輔","Olivia Brown","中島 誠",
+    "高橋 美咲","Mia Chen","森 拓也","Alex Johnson","藤田 悠斗"
+  ];
+
+  function generatedName(index) {
+    if (index % 2 === 0) {
+      const n = index / 2;
+      return surnames[n % surnames.length] + " " +
+        givenNames[Math.floor(n / surnames.length) % givenNames.length];
+    }
+
+    const n = Math.floor(index / 2);
+    return worldFirst[n % worldFirst.length] + " " +
+      worldLast[Math.floor(n / worldFirst.length) % worldLast.length];
+  }
+
+  function scoreFor(tier,index) {
+    const ranges = {
+      core:[870000,9200000],
+      orbit:[152000,4100000],
+      halo:[4100,2180000],
+      galaxy:[340,1280000],
+      connect:[120,187000]
+    };
+
+    const range = ranges[tier];
+    const fraction = ((index * 37) % 101) / 100;
+    return Math.round(range[1] - (range[1] - range[0]) * fraction);
+  }
+
+  let sequence = 0;
+
+  function createMembers(tier,count) {
+    return Array.from({ length:count },(_,index) => {
+      const person = {
+        id:"m" + String(sequence + 1).padStart(3,"0"),
+        name:generatedName(sequence),
+        score:scoreFor(tier,index),
+        face:faces[sequence % faces.length],
+        avatar:avatarBackgrounds[sequence % avatarBackgrounds.length]
+      };
+
+      sequence += 1;
+      return person;
+    });
+  }
+
+  const newPeople = newNames.map((name,index) => ({
+    id:"p" + String(index + 1).padStart(2,"0"),
+    name,
+    score:[
+      820,340,1200,2650,6300,
+      8900,24700,38200,68400,121000,
+      187000,312000,620000,870000,1200000,
+      1650000,2400000,3800000,5800000,8200000
+    ][index],
+    face:faces[(index + 5) % faces.length],
+    avatar:avatarBackgrounds[(index + 3) % avatarBackgrounds.length]
+  }));
+
+  const state = {
+    activeTab:"members",
+    filter:"all",
+    query:"",
+    expanded:{
+      core:false,
+      orbit:false,
+      halo:false,
+      galaxy:false,
+      connect:false
+    },
+    collapsed:{
+      core:false,
+      orbit:false,
+      halo:false,
+      galaxy:false,
+      connect:false
+    },
+    members:{
+      core:createMembers("core",9),
+      orbit:createMembers("orbit",7),
+      halo:createMembers("halo",42),
+      galaxy:createMembers("galaxy",48),
+      connect:createMembers("connect",280)
+    },
+    assignments:new Map(),
+    removedNewIds:new Set(),
+    selectedMemberId:null,
+    pendingRemovalId:null,
+    lastMove:null
+  };
+
+  const els = {
+    phone:document.getElementById("phone"),
+    triage:document.getElementById("triage-list"),
+    groups:document.getElementById("circle-groups"),
+    actionDialog:document.getElementById("action-dialog"),
+    actionSheet:document.getElementById("action-sheet"),
+    confirmDialog:document.getElementById("confirm-dialog"),
+    search:document.getElementById("member-search"),
+    clear:document.getElementById("search-clear"),
+    live:document.getElementById("live-status"),
+    toast:document.getElementById("toast"),
+    toastMessage:document.getElementById("toast-message"),
+    toastUndo:document.getElementById("toast-undo")
+  };
+
+  let toastTimer = null;
+
+  function rankFor(score) {
+    if (score >= 5000000) {
+      return { key:"universe",name:"UNIVERSE" };
+    }
+    if (score >= 2000000) {
+      return { key:"singularity",name:"SINGULARITY" };
+    }
+    if (score >= 1000000) {
+      return { key:"gravity",name:"GRAVITY" };
+    }
+    if (score >= 500000) {
+      return { key:"supernova",name:"SUPERNOVA" };
+    }
+    if (score >= 150000) {
+      return { key:"nova",name:"NOVA" };
+    }
+    if (score >= 50000) {
+      return { key:"star",name:"STAR" };
+    }
+    if (score >= 20000) {
+      return { key:"rising",name:"RISING" };
+    }
+    if (score >= 5000) {
+      return { key:"icon",name:"ICON" };
+    }
+    if (score >= 1000) {
+      return { key:"leader",name:"LEADER" };
+    }
+    return { key:"human",name:"HUMAN" };
+  }
+
+  function formatScore(score) {
+    if (score >= 1000000) {
+      return (score / 1000000).toFixed(1).replace(".0","") + "M";
+    }
+    if (score >= 1000) {
+      return (score / 1000).toFixed(1).replace(".0","") + "K";
+    }
+    return String(score);
+  }
+
+  function enamelHTML(person) {
+    const rank = rankFor(person.score);
+
+    return `
+      <span class="enamel enamel--${rank.key}" aria-label="${rank.name}">
+        <svg viewBox="0 0 12 12" aria-hidden="true">
+          <use href="#rank-glyph"></use>
+        </svg>
+      </span>
+    `;
+  }
+
+  function avatarHTML(person,includeBadge = false) {
+    return `
+      <span class="avatar" style="--avatar-bg:${person.avatar}">
+        <span class="avatar__face" aria-hidden="true">${person.face}</span>
+        ${includeBadge ? enamelHTML(person) : ""}
+      </span>
+    `;
+  }
+
+  function identityHTML(person) {
+    const rank = rankFor(person.score);
+
+    return `
+      ${avatarHTML(person)}
+      <span class="person-info">
+        <span class="person-name">${person.name}</span>
+        <span class="person-meta">
+          ${enamelHTML(person)}
+          <span class="rank-name">${rank.name}</span>
+          <span class="score">${formatScore(person.score)}</span>
+        </span>
+      </span>
+    `;
+  }
+
+  function memberTotal() {
+    return tierOrder.reduce(
+      (sum,key) => sum + state.members[key].length,
+      0
+    );
+  }
+
+  function remainingPeople() {
+    return newPeople.filter(person =>
+      !state.assignments.has(person.id) &&
+      !state.removedNewIds.has(person.id)
+    );
+  }
+
+  function findMember(id) {
+    for (const tier of tierOrder) {
+      const index = state.members[tier].findIndex(
+        person => person.id === id
+      );
+
+      if (index >= 0) {
+        return {
+          tier,
+          index,
+          person:state.members[tier][index]
+        };
+      }
+    }
+
+    return null;
+  }
+
+  function normalize(value) {
+    return value
+      .normalize("NFKC")
+      .toLocaleLowerCase("ja")
+      .replace(/\s+/g,"");
+  }
+
+  function announce(message) {
+    els.live.textContent = "";
+    requestAnimationFrame(() => {
+      els.live.textContent = message;
+    });
+  }
+
+  function showToast(message,undo = false) {
+    clearTimeout(toastTimer);
+    els.toastMessage.textContent = message;
+    els.toastUndo.hidden = !undo;
+    els.toast.classList.add("is-visible");
+
+    toastTimer = setTimeout(() => {
+      els.toast.classList.remove("is-visible");
+    },4200);
+  }
+
+  function hideToast() {
+    clearTimeout(toastTimer);
+    els.toast.classList.remove("is-visible");
+  }
+
+  function capacityTone(ratio) {
+    if (ratio > .85) return "redorange";
+    if (ratio > .65) return "orange";
+    return "green";
+  }
+
+  function renderCapacity() {
+    const used = capacityOrder.reduce(
+      (sum,key) => sum + state.members[key].length,
+      0
+    );
+
+    document.getElementById("capacity-total").textContent =
+      used + " / 225";
+
+    document.getElementById("capacity-grid").innerHTML =
+      capacityOrder.map(key => {
+        const count = state.members[key].length;
+        const max = tiers[key].max;
+        const ratio = count / max;
+
+        return `
+          <div class="capacity-card" data-tone="${capacityTone(ratio)}">
+            <div class="capacity-card__line">
+              <span class="capacity-card__name">
+                ${tiers[key].label}
+              </span>
+              <span class="capacity-card__count">${count}/${max}</span>
+            </div>
+            <span class="capacity-card__track">
+              <span
+                class="capacity-card__fill"
+                style="width:${Math.min(100,ratio * 100)}%"
+              ></span>
+            </span>
+          </div>
+        `;
+      }).join("");
+  }
+
+  function renderTabs() {
+    const remaining = remainingPeople().length;
+
+    document.getElementById("member-tab-count").textContent =
+      memberTotal();
+    document.getElementById("new-tab-badge").textContent =
+      remaining;
+    document.getElementById("profile-new-badge").textContent =
+      remaining;
+    document.getElementById("new-tab-badge").hidden =
+      remaining === 0;
+    document.getElementById("profile-new-badge").hidden =
+      remaining === 0;
+  }
+
+  function tierChipHTML(person,tier) {
+    const full =
+      Number.isFinite(tiers[tier].max) &&
+      state.members[tier].length >= tiers[tier].max;
+
+    return `
+      <button
+        class="tier-chip tier-chip--${tier}"
+        type="button"
+        data-new-action="assign"
+        data-person="${person.id}"
+        data-tier="${tier}"
+        ${full ? "disabled" : ""}
+      >
+        ${tiers[tier].label}${full ? '<span class="chip-full">Full</span>' : ''}
+      </button>
+    `;
+  }
+
+  function renderNew() {
+    const active = newPeople.filter(
+      person => !state.removedNewIds.has(person.id)
+    );
+    const remaining = remainingPeople().length;
+    const assignedCount = state.assignments.size;
+
+    document.getElementById("remaining-count").textContent =
+      remaining;
+    document.getElementById("assignment-progress").textContent =
+      assignedCount + " / " + active.length + " 配置済み";
+    document.getElementById("assignment-progress-fill").style.width =
+      (active.length ? assignedCount / active.length * 100 : 100) + "%";
+
+    els.triage.innerHTML = active.map(person => {
+      const assignedTier = state.assignments.get(person.id);
+
+      if (assignedTier) {
+        return `
+          <article class="assigned-row">
+            <span class="assigned-orbit" aria-hidden="true"></span>
+            <span class="assigned-copy">
+              <strong>
+                ${tiers[assignedTier].label} ｜ ${person.name}
+              </strong>
+              <span>配置済み</span>
+            </span>
+            <button
+              class="undo-inline"
+              type="button"
+              data-new-action="undo"
+              data-person="${person.id}"
+            >取り消し</button>
+          </article>
+        `;
+      }
+
+      return `
+        <article class="person-row">
+          <div class="person-main">${identityHTML(person)}</div>
+          <div class="tier-chips" aria-label="${person.name}の配置先">
+            ${tierOrder.map(
+              key => tierChipHTML(person,key)
+            ).join("")}
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function assignNew(personId,tier) {
+    const person = newPeople.find(item => item.id === personId);
+
+    if (!person || state.assignments.has(personId)) return;
+
+    if (
+      Number.isFinite(tiers[tier].max) &&
+      state.members[tier].length >= tiers[tier].max
+    ) {
+      showToast(tiers[tier].label + "は満員です");
+      return;
+    }
+
+    const member = {
+      ...person,
+      id:"new-" + person.id,
+      sourceNewId:person.id
+    };
+
+    state.assignments.set(person.id,tier);
+    state.members[tier].unshift(member);
+    refreshAll();
+
+    const message =
+      person.name + "を" + tiers[tier].label + "に配置しました";
+    showToast(message);
+    announce(message);
+  }
+
+  function undoAssignment(personId) {
+    const tier = state.assignments.get(personId);
+    if (!tier) return;
+
+    state.members[tier] = state.members[tier].filter(
+      person => person.sourceNewId !== personId
+    );
+    state.assignments.delete(personId);
+    refreshAll();
+    showToast("配置を取り消しました");
+  }
+
+  function tierUsage(tier) {
+    const count = state.members[tier].length;
+
+    return Number.isFinite(tiers[tier].max)
+      ? count + "/" + tiers[tier].max
+      : count + "人";
+  }
+
+  function faceCardHTML(person) {
+    return `
+      <button
+        class="face-card"
+        type="button"
+        data-member-action="open"
+        data-person="${person.id}"
+        aria-label="${person.name}のアクションを開く"
+      >
+        ${avatarHTML(person,true)}
+        <span class="face-card__name">${person.name}</span>
+      </button>
+    `;
+  }
+
+  function groupHTML(tier,matching,searching) {
+    const previewCount = tiers[tier].preview;
+    const collapsed = state.collapsed[tier] && !searching;
+    const expanded = state.expanded[tier] || searching;
+    const visible = expanded
+      ? matching
+      : matching.slice(0,previewCount);
+    const hiddenCount = matching.length - visible.length;
+
+    let body = "";
+
+    if (!collapsed) {
+      body = `
+        <div class="face-grid">
+          ${visible.map(faceCardHTML).join("")}
+        </div>
+      `;
+
+      if (!searching && hiddenCount > 0) {
+        body += `
+          <button
+            class="show-all"
+            type="button"
+            data-member-action="show-all"
+            data-tier="${tier}"
+          >
+            すべて見る（あと${hiddenCount}人）
+          </button>
+        `;
+      } else if (
+        !searching &&
+        expanded &&
+        matching.length > previewCount
+      ) {
+        body += `
+          <button
+            class="show-all"
+            type="button"
+            data-member-action="show-less"
+            data-tier="${tier}"
+          >
+            先頭${previewCount}人に戻す
+          </button>
+        `;
+      }
+    }
+
+    return `
+      <section
+        class="circle-group circle-group--${tier}
+          ${collapsed ? "is-collapsed" : ""}"
+      >
+        <button
+          class="circle-group__head"
+          type="button"
+          data-member-action="toggle-group"
+          data-tier="${tier}"
+          aria-expanded="${!collapsed}"
+        >
+          <span class="circle-group__identity">
+            <span class="circle-group__name">
+              ${tiers[tier].label}
+            </span>
+            <span class="circle-group__sub">
+              ${tiers[tier].description}
+            </span>
+          </span>
+
+          <span class="circle-group__usage">
+            ${tierUsage(tier)}
+          </span>
+
+          <svg
+            class="group-chevron"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              d="m5 9 7 7 7-7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        ${body}
+      </section>
+    `;
+  }
+
+  function renderMembers() {
+    const query = normalize(state.query);
+    const searching = Boolean(query);
+    let html = "";
+
+    tierOrder.forEach(tier => {
+      if (
+        state.filter !== "all" &&
+        state.filter !== tier
+      ) return;
+
+      const matching = state.members[tier].filter(person =>
+        normalize(person.name).includes(query)
+      );
+
+      if (matching.length) {
+        html += groupHTML(tier,matching,searching);
+      }
+    });
+
+    els.groups.innerHTML = html || `
+      <p class="no-results">
+        条件に一致するメンバーはいません。<br>
+        検索語または階層を変更してください。
+      </p>
+    `;
+  }
+
+  function setTab(tab) {
+    state.activeTab = tab;
+
+    document.querySelectorAll("[data-tab]").forEach(button => {
+      const active = button.dataset.tab === tab;
+      button.setAttribute("aria-selected",String(active));
+      button.tabIndex = active ? 0 : -1;
+    });
+
+    document.getElementById("panel-new").hidden =
+      tab !== "new";
+    document.getElementById("panel-members").hidden =
+      tab !== "members";
+
+    if (tab === "members") {
+      renderMembers();
+    }
+  }
+
+  function setFilter(filter) {
+    state.filter = filter;
+
+    document.querySelectorAll("[data-filter]").forEach(button => {
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.filter === filter)
+      );
+    });
+
+    renderMembers();
+  }
+
+  function actionIcon(type) {
+    const paths = {
+      profile:`
+        <circle
+          cx="12" cy="8" r="3.2"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+        />
+        <path
+          d="M5.5 20c.4-4.8 2.6-7 6.5-7s6.1 2.2 6.5 7"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+        />
+      `,
+      message:`
+        <path
+          d="M4 5.5h16v11H9l-5 3v-14Z"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linejoin="round"
+        />
+      `,
+      tier:`
+        <circle
+          cx="12" cy="12" r="8"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        />
+        <circle cx="12" cy="12" r="2.2" fill="currentColor"/>
+        <circle cx="12" cy="4" r="1.5" fill="currentColor"/>
+      `,
+      remove:`
+        <path
+          d="M6 12h12"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+        />
+      `
+    };
+
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        ${paths[type]}
+      </svg>
+    `;
+  }
+
+  function renderActionMenu(person) {
+    els.actionSheet.innerHTML = `
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <span class="sr-only" id="sheet-title">
+        ${person.name}の操作
+      </span>
+
+      <div class="sheet-person">
+        <div class="person-main">${identityHTML(person)}</div>
+      </div>
+
+      <div class="sheet-menu">
+        <button
+          class="sheet-action"
+          type="button"
+          data-sheet-action="profile"
+        >
+          <span>プロフィールを見る</span>
+          ${actionIcon("profile")}
+        </button>
+
+        <button
+          class="sheet-action"
+          type="button"
+          data-sheet-action="message"
+        >
+          <span>メッセージ</span>
+          ${actionIcon("message")}
+        </button>
+
+        <button
+          class="sheet-action"
+          type="button"
+          data-sheet-action="change-tier"
+        >
+          <span>階層を変更</span>
+          ${actionIcon("tier")}
+        </button>
+
+        <button
+          class="sheet-action sheet-action--danger"
+          type="button"
+          data-sheet-action="remove"
+        >
+          <span>コネクトから外す</span>
+          ${actionIcon("remove")}
+        </button>
+      </div>
+
+      <button
+        class="sheet-cancel"
+        type="button"
+        data-sheet-action="close"
+      >キャンセル</button>
+    `;
+  }
+
+  function renderTierChooser(person,currentTier) {
+    els.actionSheet.innerHTML = `
+      <div class="sheet-handle" aria-hidden="true"></div>
+
+      <div class="sheet-titlebar">
+        <button
+          class="sheet-back"
+          type="button"
+          data-sheet-action="back"
+        >‹ 戻る</button>
+        <div class="sheet-title" id="sheet-title">階層を変更</div>
+        <span></span>
+      </div>
+
+      <div class="sheet-menu">
+        ${tierOrder.map(tier => {
+          const current = tier === currentTier;
+          const full =
+            Number.isFinite(tiers[tier].max) &&
+            state.members[tier].length >= tiers[tier].max &&
+            !current;
+          const status = current
+            ? "現在"
+            : full
+              ? "満員"
+              : tierUsage(tier);
+
+          return `
+            <button
+              class="sheet-action"
+              type="button"
+              data-sheet-action="select-tier"
+              data-tier="${tier}"
+              ${current || full ? "disabled" : ""}
+            >
+              <span class="tier-option__copy">
+                <span
+                  class="tier-dot tier-dot--${tier}"
+                  aria-hidden="true"
+                ></span>
+                <strong>${tiers[tier].label}</strong>
+              </span>
+              <span class="tier-option__state">${status}</span>
+            </button>
+          `;
+        }).join("")}
+      </div>
+
+      <button
+        class="sheet-cancel"
+        type="button"
+        data-sheet-action="close"
+      >キャンセル</button>
+    `;
+  }
+
+  function openActionSheet(personId) {
+    const found = findMember(personId);
+    if (!found) return;
+
+    state.selectedMemberId = personId;
+    renderActionMenu(found.person);
+
+    if (!els.actionDialog.open) {
+      els.actionDialog.showModal();
+    }
+  }
+
+  function closeActionSheet() {
+    if (els.actionDialog.open) {
+      els.actionDialog.close();
+    }
+  }
+
+  function moveMember(personId,destination,recordUndo = true) {
+    const found = findMember(personId);
+
+    if (!found || found.tier === destination) {
+      return null;
+    }
+
+    if (
+      Number.isFinite(tiers[destination].max) &&
+      state.members[destination].length >= tiers[destination].max
+    ) {
+      showToast(tiers[destination].label + "は満員です");
+      return null;
+    }
+
+    const from = found.tier;
+    const person = found.person;
+
+    state.members[from].splice(found.index,1);
+    state.members[destination].unshift(person);
+
+    if (person.sourceNewId) {
+      state.assignments.set(person.sourceNewId,destination);
+    }
+
+    if (recordUndo) {
+      state.lastMove = {
+        personId,
+        from,
+        to:destination
+      };
+    }
+
+    refreshAll();
+
+    return {
+      person,
+      from,
+      to:destination
+    };
+  }
+
+  function requestRemoval(personId) {
+    const found = findMember(personId);
+    if (!found) return;
+
+    state.pendingRemovalId = personId;
+    document.getElementById("confirm-name").textContent =
+      found.person.name;
+
+    closeActionSheet();
+
+    requestAnimationFrame(() => {
+      els.confirmDialog.showModal();
+      document.getElementById("confirm-cancel").focus();
+    });
+  }
+
+  function removeConnection() {
+    const found = findMember(state.pendingRemovalId);
+
+    if (!found) {
+      els.confirmDialog.close();
+      return;
+    }
+
+    const person = found.person;
+    state.members[found.tier].splice(found.index,1);
+
+    if (person.sourceNewId) {
+      state.assignments.delete(person.sourceNewId);
+      state.removedNewIds.add(person.sourceNewId);
+    }
+
+    state.pendingRemovalId = null;
+    els.confirmDialog.close();
+    refreshAll();
+
+    const message =
+      person.name + "さんとのコネクトを解除しました";
+    showToast(message);
+    announce(message);
+  }
+
+  function refreshAll() {
+    renderCapacity();
+    renderTabs();
+    renderNew();
+
+    if (state.activeTab === "members") {
+      renderMembers();
+    }
+  }
+
+  document.querySelector(".tabs").addEventListener("click",event => {
+    const button = event.target.closest("[data-tab]");
+    if (button) setTab(button.dataset.tab);
+  });
+
+  document.querySelector(".tabs").addEventListener("keydown",event => {
+    if (!["ArrowLeft","ArrowRight"].includes(event.key)) return;
+
+    event.preventDefault();
+
+    const next = state.activeTab === "new"
+      ? "members"
+      : "new";
+
+    setTab(next);
+    document.querySelector(`[data-tab="${next}"]`).focus();
+  });
+
+  els.triage.addEventListener("click",event => {
+    const button = event.target.closest("[data-new-action]");
+    if (!button) return;
+
+    if (button.dataset.newAction === "assign") {
+      assignNew(
+        button.dataset.person,
+        button.dataset.tier
+      );
+    } else if (button.dataset.newAction === "undo") {
+      undoAssignment(button.dataset.person);
+    }
+  });
+
+  if (els.search) {
+    els.search.addEventListener("input",event => {
+      state.query = event.target.value;
+      els.clear.hidden = !state.query;
+      renderMembers();
+    });
+  }
+
+  if (els.clear) {
+    els.clear.addEventListener("click",() => {
+      state.query = "";
+      els.search.value = "";
+      els.clear.hidden = true;
+      renderMembers();
+      els.search.focus();
+    });
+  }
+
+  document
+    .getElementById("tier-filters")
+    ?.addEventListener("click",event => {
+      const button = event.target.closest("[data-filter]");
+      if (button) setFilter(button.dataset.filter);
+    });
+
+  els.groups.addEventListener("click",event => {
+    const button = event.target.closest("[data-member-action]");
+    if (!button) return;
+
+    const action = button.dataset.memberAction;
+    const tier = button.dataset.tier;
+
+    if (action === "open") {
+      openActionSheet(button.dataset.person);
+    } else if (action === "toggle-group") {
+      state.collapsed[tier] = !state.collapsed[tier];
+      renderMembers();
+    } else if (action === "show-all") {
+      state.expanded[tier] = true;
+      renderMembers();
+    } else if (action === "show-less") {
+      state.expanded[tier] = false;
+      renderMembers();
+
+      requestAnimationFrame(() => {
+        document
+          .querySelector(".circle-group--" + tier)
+          ?.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+          });
+      });
+    }
+  });
+
+  els.actionDialog.addEventListener("click",event => {
+    const button = event.target.closest("[data-sheet-action]");
+    if (!button) return;
+
+    const action = button.dataset.sheetAction;
+    const found = findMember(state.selectedMemberId);
+
+    if (action === "close") {
+      closeActionSheet();
+      return;
+    }
+
+    if (!found) {
+      closeActionSheet();
+      return;
+    }
+
+    if (action === "profile") {
+      closeActionSheet();
+      showToast(found.person.name + "さんのプロフィールを開きます");
+    } else if (action === "message") {
+      closeActionSheet();
+      showToast(found.person.name + "さんとのメッセージを開きます");
+    } else if (action === "change-tier") {
+      renderTierChooser(found.person,found.tier);
+    } else if (action === "back") {
+      renderActionMenu(found.person);
+    } else if (action === "remove") {
+      requestRemoval(found.person.id);
+    } else if (action === "select-tier") {
+      const result = moveMember(
+        found.person.id,
+        button.dataset.tier,
+        true
+      );
+
+      if (!result) return;
+
+      closeActionSheet();
+
+      const message =
+        result.person.name + "を" +
+        tiers[result.from].label + "から" +
+        tiers[result.to].label + "へ変更しました";
+
+      showToast(message,true);
+      announce(message);
+    }
+  });
+
+  els.actionDialog.addEventListener("cancel",event => {
+    event.preventDefault();
+    closeActionSheet();
+  });
+
+  document
+    .getElementById("confirm-cancel")
+    .addEventListener("click",() => {
+      state.pendingRemovalId = null;
+      els.confirmDialog.close();
+    });
+
+  document
+    .getElementById("confirm-remove")
+    .addEventListener("click",removeConnection);
+
+  els.confirmDialog.addEventListener("cancel",event => {
+    event.preventDefault();
+    state.pendingRemovalId = null;
+    els.confirmDialog.close();
+  });
+
+  els.toastUndo.addEventListener("click",() => {
+    const move = state.lastMove;
+    if (!move) return;
+
+    const found = findMember(move.personId);
+
+    if (!found || found.tier !== move.to) {
+      state.lastMove = null;
+      hideToast();
+      return;
+    }
+
+    if (
+      Number.isFinite(tiers[move.from].max) &&
+      state.members[move.from].length >= tiers[move.from].max
+    ) {
+      state.lastMove = null;
+      showToast(
+        tiers[move.from].label +
+        "が満員のため元に戻せません"
+      );
+      return;
+    }
+
+    const person = found.person;
+    moveMember(move.personId,move.from,false);
+    state.lastMove = null;
+    hideToast();
+
+    showToast(
+      person.name + "を" +
+      tiers[move.from].label + "へ戻しました"
+    );
+  });
+
+  document
+    .getElementById("back-button")
+    .addEventListener("click",() => {
+      history.back();
+    });
+
+  document
+    .getElementById("reference-circle-button")
+    .addEventListener("click",() => {
+      setTab("members");
+      els.phone.scrollTo({
+        top:0,
+        behavior:"smooth"
+      });
+      document
+        .getElementById("frame-title")
+        .scrollIntoView({ behavior:"smooth" });
+    });
+
+  refreshAll();
+  setTab("members");
+})();
+</script>
+</body>
+</html>
